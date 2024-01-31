@@ -5,8 +5,8 @@ import UploadedProjects from './ShowProjects'
 
 const AdminDashboard = () => {
   return (
-    <div>
-      <h1>hii Admin</h1>
+    <div className='main-content'>
+      <h1 className='mainhead'>Hello Admin</h1>
       <AdminHome/>
       <AdminUploadProject/>
       <UploadedProjects/>

@@ -4,10 +4,13 @@
   margin: 0;
   padding: 0;
   width: 15%;
-  position: fixed;
-  height: 100%;
+  height: 100vh;
   background-color: #161928;
   background-size: contain;
+  background-attachment: fixed ;
+  background-position: center;
+  position: fixed;
+  border-right: 2px solid #ADB3CC ;
 }
 .logoo {
   width: 80%;
