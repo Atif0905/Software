@@ -12,7 +12,7 @@ export default function AdminHome({ userData }) {
   const [limit, setLimit] = useState(5);
   const [pageCount, setPageCount] = useState(1);
   const currentPage = useRef();
-
+  
   useEffect(() => {
     currentPage.current = 1;
     getPaginatedUsers();
