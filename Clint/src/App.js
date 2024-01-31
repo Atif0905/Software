@@ -17,6 +17,7 @@ function App() {
     <Router>
       <div className="App">
         {isLoggedIn === "true" && <Sidebar />}
+       <Sidebar/>
         <Routes>
           <Route
             exact
