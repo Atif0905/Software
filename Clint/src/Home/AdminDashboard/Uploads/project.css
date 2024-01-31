@@ -1,0 +1,10 @@
+/* Define styles for units on hold */
+.hold {
+    background-color: yellow; /* Change background color to yellow */
+  }
+  
+  /* Define styles for units sold */
+  .sold {
+    background-color: red; /* Change background color to red */
+  }
+  

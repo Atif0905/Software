@@ -1,0 +1,422 @@
+require('dotenv').config(); // Load environment variables from .env file
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+const cors = require("cors");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const Project = require('./Models/UploadProjects');
+
+const { PORT, MONGODB_URI, JWT_SECRET } = process.env; // Access environment variables
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cors());
+app.set("view engine", "ejs");
+
+mongoose
+  .connect(MONGODB_URI, { useNewUrlParser: true })
+  .then(() => {
+    console.log("Connected to database");
+  })
+  .catch((e) => console.log(e));
+
+require("./userDetails");
+
+const User = mongoose.model("UserInfo");
+
+app.post("/register", async (req, res) => {
+  const { fname, lname, email, password, userType } = req.body;
+
+  const encryptedPassword = await bcrypt.hash(password, 10);
+  try {
+    const oldUser = await User.findOne({ email });
+
+    if (oldUser) {
+      return res.json({ error: "User Exists" });
+    }
+    await User.create({
+      fname,
+      lname,
+      email,
+      password: encryptedPassword,
+      userType,
+    });
+    res.send({ status: "ok" });
+  } catch (error) {
+    res.send({ status: "error" });
+  }
+});
+
+app.post("/login-user", async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.json({ error: "User Not found" });
+  }
+  if (await bcrypt.compare(password, user.password)) {
+    const token = jwt.sign({ email: user.email }, JWT_SECRET, {
+      expiresIn: "30m", // Token expires in 30 minutes
+    });
+
+    return res.json({ status: "ok", data: token });
+  }
+  res.json({ status: "error", error: "Invalid Password" });
+});
+
+
+app.post("/userData", async (req, res) => {
+  const { token } = req.body;
+  try {
+    const user = jwt.verify(token, JWT_SECRET, (err, res) => {
+      if (err) {
+        return "token expired";
+      }
+      return res;
+    });
+    console.log(user);
+    if (user == "token expired") {
+      return res.send({ status: "error", data: "token expired" });
+    }
+
+    const useremail = user.email;
+    User.findOne({ email: useremail })
+      .then((data) => {
+        res.send({ status: "ok", data: data });
+      })
+      .catch((error) => {
+        res.send({ status: "error", data: error });
+      });
+  } catch (error) { }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
+});
+
+app.get("/getAllUser", async (req, res) => {
+  try {
+    const allUser = await User.find({});
+    res.send({ status: "ok", data: allUser });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.post("/deleteUser", async (req, res) => {
+  const { userid } = req.body;
+  try {
+    User.deleteOne({ _id: userid }, function (err, res) {
+      console.log(err);
+    });
+    res.send({ status: "Ok", data: "Deleted" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/paginatedUsers", async (req, res) => {
+  const allUser = await User.find({});
+  const page = parseInt(req.query.page)
+  const limit = parseInt(req.query.limit)
+
+  const startIndex = (page - 1) * limit
+  const lastIndex = (page) * limit
+
+  const results = {}
+  results.totalUser = allUser.length;
+  results.pageCount = Math.ceil(allUser.length / limit);
+
+  if (lastIndex < allUser.length) {
+    results.next = {
+      page: page + 1,
+    }
+  }
+  if (startIndex > 0) {
+    results.prev = {
+      page: page - 1,
+    }
+  }
+  results.result = allUser.slice(startIndex, lastIndex);
+  res.json(results)
+});
+
+
+
+
+// Route handler for uploading projects
+app.post("/uploadProject", async (req, res) => {
+  const { name, description, blocks } = req.body;
+
+  try {
+    // Create an array to store blocks
+    const blocksArray = [];
+
+    // Iterate over blocks in the request
+    for (const block of blocks) {
+      const { name: blockName, units } = block;
+
+      // Create an array to store units within the block
+      const unitsArray = [];
+
+      // Iterate over units in the block
+      for (const unit of units) {
+        const { name: unitName } = unit;
+        
+        // Create a new unit object and push it to the unitsArray
+        const newUnit = { name: unitName };
+        unitsArray.push(newUnit);
+      }
+
+      // Create a new block object with units and push it to the blocksArray
+      const newBlock = { name: blockName, units: unitsArray };
+      blocksArray.push(newBlock);
+    }
+
+    // Create a new project using the Project model with blocks
+    const project = await Project.create({ name, description, blocks: blocksArray });
+    res.status(201).json({ status: "ok", data: project });
+  } catch (error) {
+    console.error("Error uploading project:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/getAllProjects", async (req, res) => {
+  try {
+    const projects = await Project.find({});
+    res.status(200).json({ status: "ok", data: projects });
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    res.status(500).json({ status: "error", error: "Internal server error" });
+  }
+});
+
+// Endpoint to edit project (add/update/delete blocks, add/update/delete units)
+app.put("/editProject/:projectId", async (req, res) => {
+  const { projectId } = req.params;
+  const { name, description, blocks } = req.body;
+
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    // Update project details
+    project.name = name;
+    project.description = description;
+
+    // Update blocks
+    project.blocks = blocks;
+
+    await project.save();
+
+    res.status(200).json({ status: "ok", data: project });
+  } catch (error) {
+    console.error("Error editing project:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Endpoint to add a block to a project
+app.post("/addBlock/:projectId", async (req, res) => {
+  const { projectId } = req.params;
+  const { name } = req.body;
+
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    // Create a new block and add it to the project
+    const newBlock = { name, units: [] };
+    project.blocks.push(newBlock);
+
+    await project.save();
+
+    res.status(201).json({ status: "ok", data: project });
+  } catch (error) {
+    console.error("Error adding block:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Endpoint to add a unit to a block
+app.post("/addUnit/:projectId/:blockId", async (req, res) => {
+  const { projectId, blockId } = req.params;
+  const { name } = req.body;
+
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    const block = project.blocks.id(blockId);
+
+    if (!block) {
+      return res.status(404).json({ error: "Block not found" });
+    }
+
+    // Create a new unit and add it to the block
+    const newUnit = { name };
+    block.units.push(newUnit);
+
+    await project.save();
+
+    res.status(201).json({ status: "ok", data: project });
+  } catch (error) {
+    console.error("Error adding unit:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Endpoint to mark a unit as hold
+app.put("/markUnitHold/:projectId/:blockId/:unitId", async (req, res) => {
+  const { projectId, blockId, unitId } = req.params;
+
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    const block = project.blocks.id(blockId);
+
+    if (!block) {
+      return res.status(404).json({ error: "Block not found" });
+    }
+
+    const unit = block.units.id(unitId);
+
+    if (!unit) {
+      return res.status(404).json({ error: "Unit not found" });
+    }
+
+    // Update unit status
+    unit.status = "hold";
+
+    await project.save();
+
+    res.status(200).json({ status: "ok", data: project });
+  } catch (error) {
+    console.error("Error marking unit as hold:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Endpoint to mark a unit as sold
+app.put("/markUnitSold/:projectId/:blockId/:unitId", async (req, res) => {
+  const { projectId, blockId, unitId } = req.params;
+
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    const block = project.blocks.id(blockId);
+
+    if (!block) {
+      return res.status(404).json({ error: "Block not found" });
+    }
+
+    const unit = block.units.id(unitId);
+
+    if (!unit) {
+      return res.status(404).json({ error: "Unit not found" });
+    }
+
+    // Update unit status
+    unit.status = "sold";
+
+    await project.save();
+
+    res.status(200).json({ status: "ok", data: project });
+  } catch (error) {
+    console.error("Error marking unit as sold:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// Endpoint to delete a project
+app.delete("/deleteProject/:projectId", async (req, res) => {
+  const { projectId } = req.params;
+
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    await project.remove();
+
+    res.status(200).json({ status: "ok", message: "Project deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// Endpoint to delete a block from a project
+app.delete("/deleteBlock/:projectId/:blockId", async (req, res) => {
+  const { projectId, blockId } = req.params;
+
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    // Find the block by id and remove it
+    project.blocks.id(blockId).remove();
+
+    await project.save();
+
+    res.status(200).json({ status: "ok", message: "Block deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting block:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Endpoint to delete a unit from a block
+app.delete("/deleteUnit/:projectId/:blockId/:unitId", async (req, res) => {
+  const { projectId, blockId, unitId } = req.params;
+
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    const block = project.blocks.id(blockId);
+
+    if (!block) {
+      return res.status(404).json({ error: "Block not found" });
+    }
+
+    // Find the unit by id and remove it from the block
+    block.units.id(unitId).remove();
+
+    await project.save();
+
+    res.status(200).json({ status: "ok", message: "Unit deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting unit:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
