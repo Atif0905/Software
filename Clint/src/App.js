@@ -12,9 +12,11 @@ import Sidebar from "./Sidebar/Sidebar";
 
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
+  
   return (
     <Router>
       <div className="App">
+        {isLoggedIn === "true" && <Sidebar />}
        <Sidebar/>
         <Routes>
           <Route
