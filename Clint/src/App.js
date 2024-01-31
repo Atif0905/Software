@@ -7,17 +7,16 @@ import SignUp from "./components/signup_component";
 import UserDetails from "./components/userDetails";
 import AdminDashboard from "./Home/AdminDashboard/AdminDashboard";
 import UploadedProjects from "./Home/AdminDashboard/ShowProjects";
-import ProjectDetails from "./Home/AdminDashboard/Uploads/ProjectDetails"; 
+import ProjectDetails from "./Home/AdminDashboard/Uploads/ProjectDetails";
 import Sidebar from "./Sidebar/Sidebar";
 
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
-  
+
   return (
     <Router>
       <div className="App">
         {isLoggedIn === "true" && <Sidebar />}
-       <Sidebar/>
         <Routes>
           <Route
             exact
@@ -29,7 +28,7 @@ function App() {
           <Route path="/userDetails" element={<UserDetails />} />
           <Route path="/AdminDashboard" element={<AdminDashboard />} />
           <Route path="/uploaded-projects" element={<UploadedProjects />} />
-          <Route path="/project/:projectId" element={<ProjectDetails />} /> 
+          <Route path="/project/:projectId" element={<ProjectDetails />} />
         </Routes>
         {/* <ImageUpload/> */}
       </div>
