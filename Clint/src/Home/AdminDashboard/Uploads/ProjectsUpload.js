@@ -239,7 +239,7 @@ const ProjectsUpload = () => {
               </div>
               <div className="coloureddiv1">
               <h3 className="colouredtext">{project.name}</h3>
-              <p className="descriptiondiv">{project.description} <FontAwesomeIcon icon={faBuilding} className="ico" size="1.5x" /></p>
+              <p className="descriptiondiv">{project.description}</p>
               </div>
               </div>
             {selectedProjectId === project._id && showBlocks && (
