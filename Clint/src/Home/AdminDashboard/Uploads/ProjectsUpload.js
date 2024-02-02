@@ -16,6 +16,9 @@ const ProjectsUpload = () => {
   const [blockwiseUnitCounts, setBlockwiseUnitCounts] = useState({});
   const [totalHoldUnitsCount, setTotalHoldUnitsCount] = useState(0);
   const [blockwiseHoldUnitCounts, setBlockwiseHoldUnitCounts] = useState({});
+  const [totalSoldUnitsCount, setTotalSoldUnitsCount] = useState(0);
+const [blockwiseSoldUnitCounts, setBlockwiseSoldUnitCounts] = useState({});
+const [showModal, setShowModal] = useState(false);
 
   const updateUnitCounts = () => {
     let totalUnits = 0;
@@ -30,6 +33,20 @@ const ProjectsUpload = () => {
 
     setTotalUnitsCount(totalUnits);
     setBlockwiseUnitCounts(blockCounts);
+  };
+  const handleMarkUnitSold = async (projectId, blockId, unitId) => {
+    try {
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${projectId}/${blockId}/${unitId}`);
+      const data = response.data;
+      if (response.status === 200 && data.status === "ok") {
+        fetchProjects(); // Update projects after successfully marking unit as sold
+        alert("Unit marked as sold successfully");
+      } else {
+        console.error("Failed to mark unit as sold:", data.error);
+      }
+    } catch (error) {
+      console.error("Error marking unit as sold:", error);
+    }
   };
   const updateHoldUnitCounts = () => {
     let totalHoldUnits = 0;
@@ -54,8 +71,16 @@ const ProjectsUpload = () => {
     updateUnitCounts();
     updateTotalUnitsCount();
     updateHoldUnitCounts();
+    updateSoldUnitCounts();
   }, [projects]);
 
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
   const updateTotalUnitsCount = () => {
     let totalUnits = 0;
 
@@ -67,7 +92,21 @@ const ProjectsUpload = () => {
 
     setTotalUnitsCount(totalUnits);
   };
-
+  const updateSoldUnitCounts = () => {
+    let totalSoldUnits = 0;
+    let blockwiseSoldCounts = {};
+  
+    projects.forEach((project) => {
+      project.blocks.forEach((block) => {
+        const soldUnits = block.units.filter(unit => unit.status === "sold");
+        totalSoldUnits += soldUnits.length;
+        blockwiseSoldCounts[block._id] = soldUnits.length;
+      });
+    });
+  
+    setTotalSoldUnitsCount(totalSoldUnits);
+    setBlockwiseSoldUnitCounts(blockwiseSoldCounts);
+  };
   const fetchProjects = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
@@ -155,20 +194,7 @@ const ProjectsUpload = () => {
     }
   };
 
-  const handleMarkUnitSold = async (projectId, blockId, unitId) => {
-    try {
-      const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${projectId}/${blockId}/${unitId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects(); // Update projects after successfully marking unit as sold
-        alert("Unit marked as sold successfully");
-      } else {
-        console.error("Failed to mark unit as sold:", data.error);
-      }
-    } catch (error) {
-      console.error("Error marking unit as sold:", error);
-    }
-  };
+  
 
 
 
@@ -230,12 +256,12 @@ const ProjectsUpload = () => {
       <h2 className="mainhead">Our Projects</h2>
       <div className="d-flex flex-wrap">
         {projects.map((project, index) => (
-          <div key={index} className="col-md-4 mb-4 position-relative">
-            <div className="d-flex projectdiv justify-content-arround" onClick={() => handleClickProject(project._id)}>
+          <div key={index} className=" mb-5 position-relative">
+            <div className="d-flex projectdiv justify-content-around ms-5" onClick={() => handleClickProject(project._id)}>
               <div className="coloureddiv">
               <p className="">Total Units: {totalUnitsCount}</p>
               <p className="">Hold Units: {totalHoldUnitsCount}</p>
-              <p>Sold Units:0</p>
+              <p>Sold Units: {totalSoldUnitsCount}</p>
               </div>
               <div className="coloureddiv1">
               <h3 className="colouredtext">{project.name}</h3>
@@ -243,9 +269,36 @@ const ProjectsUpload = () => {
               </div>
               </div>
             {selectedProjectId === project._id && showBlocks && (
-              <>
+              <div className={`showModal ${showModal ? 'visible' : 'hidden'}`}>
                 <div>
+                  <div className="d-flex justify-content-between">
+                  <div className="totalunitsdiv mt-3">
+                  <h2 className="textunits"> Total </h2>
+                  <p className="unitsnum"> {totalUnitsCount}</p>
+                  </div>
+                  <div className="availableunitsdiv mt-3">
+                  <h2 className="textunits"> Availabe </h2>
+                  <p className="unitsnum"> {totalUnitsCount}</p>
+                  </div>
+                  <div className="holunitsdiv mt-3">
+                  <h2 className="textunits"> Hold </h2>
+                  <p className="unitsnum"> {totalHoldUnitsCount}</p>
+                  </div>
+                  <div className="solunitsdiv mt-3">
+                  <h2 className="textunits"> Sold </h2>
+                  <p className="unitsnum"> {totalSoldUnitsCount}</p>
+                  </div>
+                  </div>
                   <h4 className="mainhead">Blocks:</h4>
+                  <div className="bdiv d-flex">
+                    <p className="blockdivstart">id</p>
+                    <p className="blockdiv">Blocks</p>
+                    <p className="blockdiv">Total Units</p>
+                    <p className="blockdiv">Availabe Units</p>
+                    <p className="blockdiv">Hold Units</p>
+                    <p className="blockdivend">Sold units</p>
+                    <div className="bdiv"> </div>
+                    </div>
                   <ul>
                     {project.blocks.map((block, blockIndex) => (
 
@@ -274,7 +327,7 @@ const ProjectsUpload = () => {
                     <button onClick={handleAddBlock}>Add Block</button>
                   </div>
                 </div>
-              </>
+              </div>
             )}
           </div>
         ))}
