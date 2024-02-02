@@ -1,16 +1,28 @@
-.coloureddiv{
-    background-image: linear-gradient(to right, #007CB9, #001B3A);
-    background-size: cover;
+.projectdiv{
+    border: 1px darkgray solid;
     width: 320px;
-    height: 200px;
-    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+}
+.coloureddiv{
+    background-color: white;
+    background-size: cover;
+    width: 120px;
+    height: auto;
     cursor: pointer;
+    padding: 10px;
+}
+.coloureddiv1{
+    background-color: #427AF6 !important;
+    background-size: cover;
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+    padding: 10px;
 }
 .colouredtext{
     font-size: 30px;
-    line-height: 70px;
-    margin: 10px;
     color: azure;
+    padding-left: 20px;
 }
 .descriptiondiv{
     margin-left: 10px;

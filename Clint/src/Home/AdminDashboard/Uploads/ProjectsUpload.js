@@ -3,9 +3,6 @@ import axios from 'axios';
 import Blocks from "./Blocks";
 import '../../../UpdateProjects/Projects.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
-
-
 
 const ProjectsUpload = () => {
   const [projects, setProjects] = useState([]);
@@ -234,12 +231,17 @@ const ProjectsUpload = () => {
       <div className="d-flex flex-wrap">
         {projects.map((project, index) => (
           <div key={index} className="col-md-4 mb-4 position-relative">
-            <div className="coloureddiv" onClick={() => handleClickProject(project._id)}>
-              <h3 className="colouredtext">{project.name}<FontAwesomeIcon icon={faUser} /></h3>
+            <div className="d-flex projectdiv justify-content-arround" onClick={() => handleClickProject(project._id)}>
+              <div className="coloureddiv">
+              <p className="">Total Units: {totalUnitsCount}</p>
+              <p className="">Hold Units: {totalHoldUnitsCount}</p>
+              <p>Sold Units:0</p>
+              </div>
+              <div className="coloureddiv1">
+              <h3 className="colouredtext">{project.name}</h3>
               <p className="descriptiondiv">{project.description} <FontAwesomeIcon icon={faBuilding} className="ico" size="1.5x" /></p>
-              <p className="mainhead">Total Units: {totalUnitsCount}</p>
-              <p className="mainhead">Hold Units: {totalHoldUnitsCount}</p>
-            </div>
+              </div>
+              </div>
             {selectedProjectId === project._id && showBlocks && (
               <>
                 <div>
