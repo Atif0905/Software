@@ -18,12 +18,8 @@ function App() {
     <Router>
       <div className="App">
         {isLoggedIn === "true" && <Sidebar />}
-        <Routes>
-          <Route
-            exact
-            path="/"
-            element={isLoggedIn === "true" ? <UserDetails /> : <Login />}
-          />
+        <Routes> 
+          <Route exact path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
           <Route path="/sign-in" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/userDetails" element={<UserDetails />} />
@@ -33,7 +29,6 @@ function App() {
           <Route path="/user" element={<User />} />
           <Route path="/Projects" element={<Projects />} />
         </Routes>
-        {/* <ImageUpload/> */}
       </div>
     </Router>
   );
