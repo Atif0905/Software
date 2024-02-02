@@ -57,7 +57,7 @@ app.post("/login-user", async (req, res) => {
   }
   if (await bcrypt.compare(password, user.password)) {
     const token = jwt.sign({ email: user.email }, JWT_SECRET, {
-      expiresIn: "30m", // Token expires in 30 minutes
+      expiresIn: "1h", // Token expires in  1h
     });
 
     return res.json({ status: "ok", data: token });
