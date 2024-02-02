@@ -4,6 +4,9 @@ import Blocks from "./Blocks";
 import '../../../UpdateProjects/Projects.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
+
+
+
 const ProjectsUpload = () => {
   const [projects, setProjects] = useState([]);
   const [newBlockName, setNewBlockName] = useState("");
@@ -52,7 +55,7 @@ const ProjectsUpload = () => {
 
   useEffect(() => {
     updateUnitCounts();
-    updateTotalUnitsCount(); 
+    updateTotalUnitsCount();
     updateHoldUnitCounts();
   }, [projects]);
 
@@ -145,7 +148,8 @@ const ProjectsUpload = () => {
       const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitHold/${projectId}/${blockId}/${unitId}`);
       const data = response.data;
       if (response.status === 200 && data.status === "ok") {
-        fetchProjects();
+        fetchProjects(); // Update projects after successfully marking unit as hold
+        alert("Unit marked as hold successfully");
       } else {
         console.error("Failed to mark unit as hold:", data.error);
       }
@@ -153,13 +157,14 @@ const ProjectsUpload = () => {
       console.error("Error marking unit as hold:", error);
     }
   };
-
+  
   const handleMarkUnitSold = async (projectId, blockId, unitId) => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${projectId}/${blockId}/${unitId}`);
       const data = response.data;
       if (response.status === 200 && data.status === "ok") {
-        fetchProjects();
+        fetchProjects(); // Update projects after successfully marking unit as sold
+        alert("Unit marked as sold successfully");
       } else {
         console.error("Failed to mark unit as sold:", data.error);
       }
@@ -168,6 +173,8 @@ const ProjectsUpload = () => {
     }
   };
   
+
+
   const handleClickProject = (projectId) => {
     setSelectedProjectId(projectId);
     setSelectedBlockId(""); // Reset selected block when project is clicked
@@ -207,7 +214,7 @@ const ProjectsUpload = () => {
       console.error("Error deleting block:", error);
     }
   };
-  
+
   const handleDeleteProject = async (projectId) => {
     try {
       const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteProject/${projectId}`);
@@ -239,20 +246,22 @@ const ProjectsUpload = () => {
                   <h4 className="mainhead">Blocks:</h4>
                   <ul>
                     {project.blocks.map((block, blockIndex) => (
+                      
                       <li key={blockIndex} onClick={() => handleClickBlock(block._id)}>
                         <p className="mainhead">{block.name} (Unit count: {block.units.length}, Hold count: {blockwiseHoldUnitCounts[block._id] || 0})</p>
                         {selectedBlockId === block._id && showUnits && (
                           <>
                             <h5 className="mainhead">Units:</h5>
                             <ul>
-                              {block.units.map((unit, unitIndex) => (
-                                <li key={unitIndex} style={{ color: unit.status === "hold" ? "yellow" : unit.status === "sold" ? "red" : "inherit" }}>
-                                  <p className="mainhead">{unit.name}</p>
-                                  <button onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)}>Mark as Hold</button>
-                                  <button onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}>Mark as Sold</button>
-                                  <button onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>Delete Unit</button>
-                                </li>
-                              ))}
+                            {block.units.map((unit, unitIndex) => (
+  <li key={unitIndex} style={{ color: unit.status === "hold" ? "yellow" : unit.status === "sold" ? "red" : "green" }}>
+    <p className="mainhead">{unit.name}</p>
+    <button onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)}>Mark as Hold</button>
+    <button onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}>Mark as Sold</button>
+    <button onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>Delete Unit</button>
+  </li>
+))}
+
                             </ul>
                           </>
                         )}

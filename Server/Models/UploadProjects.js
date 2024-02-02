@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const unitSchema = new mongoose.Schema({
   name: String,
+  status: { type: String, default: "available" },
   // Define other unit properties as needed
 });
 
