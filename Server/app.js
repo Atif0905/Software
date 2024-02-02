@@ -277,7 +277,6 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
   }
 });
 
-// Endpoint to mark a unit as hold
 app.put("/markUnitHold/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
 
@@ -285,26 +284,29 @@ app.put("/markUnitHold/:projectId/:blockId/:unitId", async (req, res) => {
     const project = await Project.findById(projectId);
 
     if (!project) {
+      console.error("Project not found");
       return res.status(404).json({ error: "Project not found" });
     }
 
     const block = project.blocks.id(blockId);
 
     if (!block) {
+      console.error("Block not found");
       return res.status(404).json({ error: "Block not found" });
     }
 
     const unit = block.units.id(unitId);
 
     if (!unit) {
+      console.error("Unit not found");
       return res.status(404).json({ error: "Unit not found" });
     }
 
     // Update unit status
     unit.status = "hold";
-
     await project.save();
 
+    console.log("Unit marked as hold successfully");
     res.status(200).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error marking unit as hold:", error);
@@ -312,7 +314,7 @@ app.put("/markUnitHold/:projectId/:blockId/:unitId", async (req, res) => {
   }
 });
 
-// Endpoint to mark a unit as sold
+// Route to mark a unit as sold
 app.put("/markUnitSold/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
 
@@ -320,33 +322,35 @@ app.put("/markUnitSold/:projectId/:blockId/:unitId", async (req, res) => {
     const project = await Project.findById(projectId);
 
     if (!project) {
+      console.error("Project not found");
       return res.status(404).json({ error: "Project not found" });
     }
 
     const block = project.blocks.id(blockId);
 
     if (!block) {
+      console.error("Block not found");
       return res.status(404).json({ error: "Block not found" });
     }
 
     const unit = block.units.id(unitId);
 
     if (!unit) {
+      console.error("Unit not found");
       return res.status(404).json({ error: "Unit not found" });
     }
 
     // Update unit status
     unit.status = "sold";
-
     await project.save();
 
+    console.log("Unit marked as sold successfully");
     res.status(200).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error marking unit as sold:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 // Endpoint to delete a project
 app.delete("/deleteProject/:projectId", async (req, res) => {
@@ -417,6 +421,34 @@ app.delete("/deleteUnit/:projectId/:blockId/:unitId", async (req, res) => {
     res.status(200).json({ status: "ok", message: "Unit deleted successfully" });
   } catch (error) {
     console.error("Error deleting unit:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Endpoint to get the count of units in a block
+app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
+  const { projectId, blockId } = req.params;
+
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      console.error("Project not found");
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    const block = project.blocks.id(blockId);
+
+    if (!block) {
+      console.error("Block not found");
+      return res.status(404).json({ error: "Block not found" });
+    }
+
+    const unitCount = block.units.length;
+
+    res.status(200).json({ status: "ok", unitCount });
+  } catch (error) {
+    console.error("Error getting unit count:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
