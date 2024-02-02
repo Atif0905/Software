@@ -1,0 +1,21 @@
+.coloureddiv{
+    background-image: linear-gradient(to right, #007CB9, #001B3A);
+    background-size: cover;
+    width: 320px;
+    height: 200px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+.colouredtext{
+    font-size: 30px;
+    line-height: 70px;
+    margin: 10px;
+    color: azure;
+}
+.descriptiondiv{
+    margin-left: 10px;
+    font-size: 22px;
+    font-weight: 500;
+    text-align: center;
+    color: azure;
+} 

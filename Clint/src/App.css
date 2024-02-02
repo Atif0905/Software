@@ -1,0 +1,21 @@
+ body {
+    margin: 0;
+    overflow-x: hidden;
+  }
+.main-content {
+    margin-left: 15%;
+    padding: 16px;
+    background-color: #161928;
+    background-size: contain;
+    background-attachment: fixed ;
+  }
+ .mainhead{
+text-align: left;
+color: #ADB3CC;
+ }
+.profilehead{
+text-align: right;
+}
+.mainico{
+  margin-right: 10px;
+}

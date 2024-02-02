@@ -146,69 +146,7 @@ const UploadedProjects = () => {
   };
   return (
     <div className="container">
-      <h2>Uploaded Projects</h2>
-      <ul>
-        {projects.map((project, index) => (
-          <li key={index}>
-            <h3 onClick={() => handleClickProject(project._id)}>{project.name}</h3>
-            {selectedProjectId === project._id && showBlocks && (
-              <>
-                <p>{project.description}</p>
-                <div>
-                  <h4>Blocks:</h4>
-                  <ul>
-                    {project.blocks.map((block, blockIndex) => (
-                      <li key={blockIndex} onClick={() => handleClickBlock(block._id)}>
-                         <button onClick={() => handleDeleteBlock(project._id, Blocks._id)}>Delete Block</button>
-                        <p>{block.name}</p>
-                        {selectedBlockId === block._id && showUnits && (
-                          <>
-                            <h5>Units:</h5>
-                            <ul>
-                              {block.units.map((unit, unitIndex) => (
-                                <li key={unitIndex} style={{ color: unit.status === "hold" ? "yellow" : unit.status === "sold" ? "red" : "inherit" }}>
-                                  <p>{unit.name}</p>
-                                  <button onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)}>Mark as Hold</button>
-                                  <button onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}>Mark as Sold</button>
-                                  <button onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>Delete Unit</button>
-                                </li>
-                              ))}
-                            </ul>
-                          </>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                  <div>
-                    <input type="text" value={newBlockName} onChange={(e) => setNewBlockName(e.target.value)} />
-                    <button onClick={handleAddBlock}>Add Block</button>
-                  </div>
-                </div>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-      <div>
-        <input type="text" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value)} />
-        <select onChange={(e) => setSelectedProjectId(e.target.value)}>
-          <option value="">Select Project</option>
-          {projects.map((project, index) => (
-            <option key={index} value={project._id}>{project.name}</option>
-          ))}
-        </select>
-        <select onChange={(e) => setSelectedBlockId(e.target.value)}>
-          <option value="">Select Block</option>
-          {projects.map((project, index) => (
-            project.blocks.map((block, blockIndex) => (
-              <option key={blockIndex} value={block._id}>{block.name}</option>
-            ))
-          ))}
-        </select>
-        <button onClick={handleAddUnit}>Add Unit</button>
-        <button onClick={() => handleDeleteProject(selectedProjectId)}>Delete Project</button>
-
-      </div>
+     
     </div>
   );
 };
