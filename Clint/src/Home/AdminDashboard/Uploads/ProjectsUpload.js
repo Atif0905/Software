@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import Blocks from "./Blocks";
 import '../../../UpdateProjects/Projects.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
 const ProjectsUpload = () => {
   const [projects, setProjects] = useState([]);
   const [newBlockName, setNewBlockName] = useState("");
@@ -10,22 +12,97 @@ const ProjectsUpload = () => {
   const [selectedBlockId, setSelectedBlockId] = useState("");
   const [showBlocks, setShowBlocks] = useState(true);
   const [showUnits, setShowUnits] = useState(true);
+  const [totalUnitsCount, setTotalUnitsCount] = useState(0);
+  const [blockwiseUnitCounts, setBlockwiseUnitCounts] = useState({});
+  const [totalHoldUnitsCount, setTotalHoldUnitsCount] = useState(0);
+  const [blockwiseHoldUnitCounts, setBlockwiseHoldUnitCounts] = useState({});
 
+  const updateUnitCounts = () => {
+    let totalUnits = 0;
+    let blockCounts = {};
+
+    projects.forEach((project) => {
+      project.blocks.forEach((block) => {
+        totalUnits += block.units.length;
+        blockCounts[block._id] = block.units.length;
+      });
+    });
+
+    setTotalUnitsCount(totalUnits);
+    setBlockwiseUnitCounts(blockCounts);
+  };
+  const updateHoldUnitCounts = () => {
+    let totalHoldUnits = 0;
+    let blockwiseHoldCounts = {};
+
+    projects.forEach((project) => {
+      project.blocks.forEach((block) => {
+        const holdUnits = block.units.filter(unit => unit.status === "hold");
+        totalHoldUnits += holdUnits.length;
+        blockwiseHoldCounts[block._id] = holdUnits.length;
+      });
+    });
+
+    setTotalHoldUnitsCount(totalHoldUnits);
+    setBlockwiseHoldUnitCounts(blockwiseHoldCounts);
+  };
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  useEffect(() => {
+    updateUnitCounts();
+    updateTotalUnitsCount(); 
+    updateHoldUnitCounts();
+  }, [projects]);
+
+  const updateTotalUnitsCount = () => {
+    let totalUnits = 0;
+
+    projects.forEach((project) => {
+      project.blocks.forEach((block) => {
+        totalUnits += block.units.length;
+      });
+    });
+
+    setTotalUnitsCount(totalUnits);
+  };
 
   const fetchProjects = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
       const data = response.data;
       if (response.status === 200 && data.status === "ok") {
-        setProjects(data.data);
+        const projectsWithUnitCount = await Promise.all(data.data.map(async project => {
+          const blocksWithUnitCount = await Promise.all(project.blocks.map(async block => {
+            const unitCount = await getUnitCount(project._id, block._id);
+            return { ...block, unitCount };
+          }));
+          return { ...project, blocks: blocksWithUnitCount };
+        }));
+
+        setProjects(projectsWithUnitCount);
       } else {
         console.error("Failed to fetch projects:", data.error);
       }
     } catch (error) {
       console.error("Error fetching projects:", error);
+    }
+  };
+
+  const getUnitCount = async (projectId, blockId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnitCount/${projectId}/${blockId}`);
+      const data = response.data;
+      if (response.status === 200 && data.status === "ok") {
+        return data.unitCount;
+      } else {
+        console.error("Failed to get unit count:", data.error);
+        return 0;
+      }
+    } catch (error) {
+      console.error("Error getting unit count:", error);
+      return 0;
     }
   };
 
@@ -130,7 +207,7 @@ const ProjectsUpload = () => {
       console.error("Error deleting block:", error);
     }
   };
-
+  
   const handleDeleteProject = async (projectId) => {
     try {
       const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteProject/${projectId}`);
@@ -145,29 +222,32 @@ const ProjectsUpload = () => {
     }
   };
   return (
-    <div className=" container">
-      <h2 className="mainhead">Uploaded Projects</h2>
-      <ul>
+    <div className="container">
+      <h2 className="mainhead">Our Projects</h2>
+      <div className="d-flex flex-wrap">
         {projects.map((project, index) => (
-          <li key={index}>
-            <h3 onClick={() => handleClickProject(project._id)} className="mainhead">{project.name}</h3>
+          <div key={index} className="col-md-4 mb-4 position-relative">
+            <div className="coloureddiv" onClick={() => handleClickProject(project._id)}>
+              <h3 className="colouredtext">{project.name}<FontAwesomeIcon icon={faUser} /></h3>
+              <p className="descriptiondiv">{project.description} <FontAwesomeIcon icon={faBuilding} className="ico" size="1.5x" /></p>
+              <p className="mainhead">Total Units: {totalUnitsCount}</p>
+              <p className="mainhead">Hold Units: {totalHoldUnitsCount}</p>
+            </div>
             {selectedProjectId === project._id && showBlocks && (
               <>
-                <p>{project.description}</p>
                 <div>
-                  <h4>Blocks:</h4>
+                  <h4 className="mainhead">Blocks:</h4>
                   <ul>
                     {project.blocks.map((block, blockIndex) => (
                       <li key={blockIndex} onClick={() => handleClickBlock(block._id)}>
-                         <button onClick={() => handleDeleteBlock(project._id, Blocks._id)}>Delete Block</button>
-                        <p>{block.name}</p>
+                        <p className="mainhead">{block.name} (Unit count: {block.units.length}, Hold count: {blockwiseHoldUnitCounts[block._id] || 0})</p>
                         {selectedBlockId === block._id && showUnits && (
                           <>
-                            <h5>Units:</h5>
+                            <h5 className="mainhead">Units:</h5>
                             <ul>
                               {block.units.map((unit, unitIndex) => (
                                 <li key={unitIndex} style={{ color: unit.status === "hold" ? "yellow" : unit.status === "sold" ? "red" : "inherit" }}>
-                                  <p>{unit.name}</p>
+                                  <p className="mainhead">{unit.name}</p>
                                   <button onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)}>Mark as Hold</button>
                                   <button onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}>Mark as Sold</button>
                                   <button onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>Delete Unit</button>
@@ -186,9 +266,9 @@ const ProjectsUpload = () => {
                 </div>
               </>
             )}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
       <div>
         <input type="text" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value)} />
         <select onChange={(e) => setSelectedProjectId(e.target.value)}>
@@ -207,7 +287,6 @@ const ProjectsUpload = () => {
         </select>
         <button onClick={handleAddUnit}>Add Unit</button>
         <button onClick={() => handleDeleteProject(selectedProjectId)}>Delete Project</button>
-
       </div>
     </div>
   );
