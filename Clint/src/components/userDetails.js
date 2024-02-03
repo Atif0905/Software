@@ -4,7 +4,7 @@ import AdminDashboard from "../Home/AdminDashboard/AdminDashboard";
 import UserDashBoard from "../Home/UserDashboard/UserDashBoard";
 
 export default function UserDetails() {
-  const [userData, setUserData] = useState("");
+  const [userData, setUserData] = useState({});
   const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function UserDetails() {
     .then((response) => {
       const data = response.data;
       console.log(data, "userData");
-      if (data.data.userType === "Admin") {
+      if (data.data && data.data.userType === "Admin") {
         setAdmin(true);
       }
 
@@ -35,7 +35,12 @@ export default function UserDetails() {
     .catch((error) => {
       console.error('Error fetching user data:', error);
     });
-  }, []);
+  }, [userData]); // Include userData in the dependency array to refetch data when userData changes
+
+  // Check if userData exists before rendering
+  if (!userData) {
+    return null; // or loading indicator
+  }
 
   return admin ? <AdminDashboard /> : <UserDashBoard userData={userData} />;
 }
