@@ -3,7 +3,7 @@ import axios from 'axios';
 import Blocks from "./Blocks";
 import '../../../UpdateProjects/Projects.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown,  faLocationDot} from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 const ProjectsUpload = () => {
   const [projects, setProjects] = useState([]);
@@ -18,11 +18,17 @@ const ProjectsUpload = () => {
   const [totalHoldUnitsCount, setTotalHoldUnitsCount] = useState(0);
   const [blockwiseHoldUnitCounts, setBlockwiseHoldUnitCounts] = useState({});
   const [totalSoldUnitsCount, setTotalSoldUnitsCount] = useState(0);
-const [blockwiseSoldUnitCounts, setBlockwiseSoldUnitCounts] = useState({});
-const [showModal, setShowModal] = useState(false);
-const [totalAvailableUnitsCount, setTotalAvailableUnitsCount] = useState(0);
-const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] = useState({});
-const [projectUnitCounts, setProjectUnitCounts] = useState({});
+  const [blockwiseSoldUnitCounts, setBlockwiseSoldUnitCounts] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [totalAvailableUnitsCount, setTotalAvailableUnitsCount] = useState(0);
+  const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] = useState({});
+  const [projectUnitCounts, setProjectUnitCounts] = useState({});
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+
 
   const updateUnitCounts = () => {
     let totalUnits = 0;
@@ -90,17 +96,17 @@ const [projectUnitCounts, setProjectUnitCounts] = useState({});
     let totalUnits = 0;
     let totalAvailableUnits = 0;
     let blockwiseAvailableCounts = {};
-  
+
     projects.forEach((project) => {
       project.blocks.forEach((block) => {
         const availableUnits = block.units.filter(unit => unit.status !== "hold" && unit.status !== "sold");
         totalAvailableUnits += availableUnits.length;
         blockwiseAvailableCounts[block._id] = availableUnits.length;
-  
+
         totalUnits += block.units.length;
       });
     });
-  
+
     setTotalUnitsCount(totalUnits);
     setTotalAvailableUnitsCount(totalAvailableUnits);
     setBlockwiseAvailableUnitCounts(blockwiseAvailableCounts);
@@ -108,7 +114,7 @@ const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const updateSoldUnitCounts = () => {
     let totalSoldUnits = 0;
     let blockwiseSoldCounts = {};
-  
+
     projects.forEach((project) => {
       project.blocks.forEach((block) => {
         const soldUnits = block.units.filter(unit => unit.status === "sold");
@@ -116,7 +122,7 @@ const [projectUnitCounts, setProjectUnitCounts] = useState({});
         blockwiseSoldCounts[block._id] = soldUnits.length;
       });
     });
-  
+
     setTotalSoldUnitsCount(totalSoldUnits);
     setBlockwiseSoldUnitCounts(blockwiseSoldCounts);
   };
@@ -208,7 +214,7 @@ const [projectUnitCounts, setProjectUnitCounts] = useState({});
   };
   const updateProjectUnitCounts = () => {
     const counts = {};
-  
+
     projects.forEach((project) => {
       const {
         totalUnits,
@@ -216,7 +222,7 @@ const [projectUnitCounts, setProjectUnitCounts] = useState({});
         totalHoldUnits,
         totalSoldUnits,
       } = calculateUnitCountsByProjectId(project._id);
-  
+
       counts[project._id] = {
         totalUnits,
         totalAvailableUnits,
@@ -224,12 +230,12 @@ const [projectUnitCounts, setProjectUnitCounts] = useState({});
         totalSoldUnits,
       };
     });
-  
+
     setProjectUnitCounts(counts);
   };
   const calculateUnitCountsByProjectId = (projectId) => {
     const project = projects.find((project) => project._id === projectId);
-  
+
     if (!project) {
       return {
         totalUnits: 0,
@@ -238,16 +244,16 @@ const [projectUnitCounts, setProjectUnitCounts] = useState({});
         totalSoldUnits: 0,
       };
     }
-  
+
     let totalUnits = 0;
     let totalAvailableUnits = 0;
     let totalHoldUnits = 0;
     let totalSoldUnits = 0;
-  
+
     project.blocks.forEach((block) => {
       block.units.forEach((unit) => {
         totalUnits += 1;
-  
+
         if (unit.status === "hold") {
           totalHoldUnits += 1;
         } else if (unit.status === "sold") {
@@ -257,7 +263,7 @@ const [projectUnitCounts, setProjectUnitCounts] = useState({});
         }
       });
     });
-  
+
     return {
       totalUnits,
       totalAvailableUnits,
@@ -320,88 +326,93 @@ const [projectUnitCounts, setProjectUnitCounts] = useState({});
   };
   return (
     <div className="container">
-      <h2 className="">Our Projects</h2>
+      <h2 className="">OUR PROJECTS</h2>
       <div className="d-flex flex-wrap">
         {projects.map((project, index) => (
           <div key={index} className=" mb-5 position-relative">
             <div className=" projectdiv me-5">
-            <div className="coloureddiv1">
-              <h3 className="colouredtext">{project.name}</h3>
+              <div className="coloureddiv1">
+                <h3 className="colouredtext">{project.name}</h3>
               </div>
               <div className="coloureddiv">
-              <p className="descriptiondiv">{project.description} <FontAwesomeIcon icon={faLocationDot} /></p>
-              
+                <p className="descriptiondiv">{project.description} <FontAwesomeIcon icon={faLocationDot} /></p>
+
               </div>
-              <div className="viewdetail-div" >
-              <div className="viewbutton-div"  onClick={() => handleClickProject(project._id)}>
-                <p className="moredetail-text">View More Details</p>
-                <FontAwesomeIcon icon={faCaretDown} />
+              <div className="viewdetail-div" onClick={() => handleClickProject(project._id)} >
+                <div className="viewbutton-div" >
+                  <p className="moredetail-text mt-3">View More Details</p>
+                  <FontAwesomeIcon icon={faCaretDown} />
+                </div>
               </div>
-              </div>
-              </div>
-        
+            </div>
+
             {selectedProjectId === project._id && showBlocks && (
               <div className={`showModal ${showModal ? 'visible' : 'hidden'}`}>
                 <div>
                   <div className="d-flex justify-content-between">
-                  <div className="totalunitsdiv mt-3">
-                  <h2 className="textunits"> Total </h2>
-                  <p className="unitsnum"> {projectUnitCounts[project._id]?.totalUnits || 0}</p>
-                  </div>
-                  <div className="availableunitsdiv mt-3">
-                  <h2 className="textunits"> Availabe </h2>
-                  <p className="unitsnum"> {projectUnitCounts[project._id]?.totalAvailableUnits || 0}</p>
-                  </div>
-                  <div className="holunitsdiv mt-3">
-                  <h2 className="textunits"> Hold </h2>
-                  <p className="unitsnum"> {projectUnitCounts[project._id]?.totalHoldUnits || 0}</p>
-                  </div>
-                  <div className="solunitsdiv mt-3">
-                  <h2 className="textunits"> Sold </h2>
-                  <p className="unitsnum"> {projectUnitCounts[project._id]?.totalSoldUnits || 0}</p>
-                  </div>
+                    <div className="totalunitsdiv mt-3">
+                      <h2 className="textunits"> Total </h2>
+                      <p className="unitsnum"> {projectUnitCounts[project._id]?.totalUnits || 0}</p>
+                    </div>
+                    <div className="availableunitsdiv mt-3">
+                      <h2 className="textunits"> Availabe </h2>
+                      <p className="unitsnum"> {projectUnitCounts[project._id]?.totalAvailableUnits || 0}</p>
+                    </div>
+                    <div className="holunitsdiv mt-3">
+                      <h2 className="textunits"> Hold </h2>
+                      <p className="unitsnum"> {projectUnitCounts[project._id]?.totalHoldUnits || 0}</p>
+                    </div>
+                    <div className="solunitsdiv mt-3">
+                      <h2 className="textunits"> Sold </h2>
+                      <p className="unitsnum"> {projectUnitCounts[project._id]?.totalSoldUnits || 0}</p>
+                    </div>
                   </div>
                   <h4 className="mainhead">Blocks:</h4>
                   <table className="table">
-  <thead>
-    <tr>
-      <th className="blockdivstart">ID</th>
-      <th className="blockdiv">Blocks</th>
-      <th className="blockdiv">Total Units</th>
-      <th className="blockdiv">Available Units</th>
-      <th className="blockdiv">Hold Units</th>
-      <th className="blockdiv">Sold Units</th>
-    </tr>
-  </thead>
-  <tbody>
-    {project.blocks.map((block, blockIndex) => (
-      <tr key={blockIndex} onClick={() => handleClickBlock(block._id)}>
-        <td>{blockIndex + 1}</td>
-        <td className="tablecursor">{block.name}</td>
-        <td className="tablecursor">{blockwiseUnitCounts[block._id]}</td>
-        <td className="tablecursor">{blockwiseAvailableUnitCounts[block._id]}</td>
-        <td className="tablecursor">{blockwiseHoldUnitCounts[block._id] || 0}</td>
-        <td className="tablecursor">{blockwiseSoldUnitCounts[block._id] || 0}</td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+                    <thead>
+                      <tr>
+                        <th className="blockdivstart">ID</th>
+                        <th className="blockdiv">Blocks</th>
+                        <th className="blockdiv">Total Units</th>
+                        <th className="blockdiv">Available Units</th>
+                        <th className="blockdiv">Hold Units</th>
+                        <th className="blockdiv">Sold Units</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {project.blocks.map((block, blockIndex) => (
+                        <tr key={blockIndex} onClick={() => handleClickBlock(block._id)}>
+                          <td>{blockIndex + 1}</td>
+                          <td className="tablecursor">{block.name}</td>
+                          <td className="tablecursor">{blockwiseUnitCounts[block._id]}</td>
+                          <td className="tablecursor">{blockwiseAvailableUnitCounts[block._id]}</td>
+                          <td className="tablecursor">{blockwiseHoldUnitCounts[block._id] || 0}</td>
+                          <td className="tablecursor">{blockwiseSoldUnitCounts[block._id] || 0}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                   <ul>
                     {project.blocks.map((block, blockIndex) => (
 
-                      <li className="d-flex "key={blockIndex} onClick={() => handleClickBlock(block._id)}>
-                        
+                      <li className="d-flex " key={blockIndex} onClick={() => handleClickBlock(block._id)}>
+
                         {selectedBlockId === block._id && showUnits && (
                           <>
                             <h5 className="mainhead">Units:</h5>
                             <ul>
                               {block.units.map((unit, unitIndex) => (
-                                <li key={unitIndex} style={{ color: unit.status === "hold" ? "yellow" : unit.status === "sold" ? "red" : "green" }}>
-                                  <p className="mainhead">{unit.name}</p>
-                                  <button onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)}>Mark as Hold</button>
-                                  <button onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}>Mark as Sold</button>
-                                  <button onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>Delete Unit</button>
-                                </li>
+                                <div className="units-div" key={unitIndex} style={{ backgroundColor: unit.status === "hold" ? "yellow" : unit.status === "sold" ? "red" : "green" }}>
+
+                                  <p className="mainhead" onClick={toggleDropdown}>{unit.name}</p>
+                                  {showDropdown && (
+                                    <div className="dropdown-content">
+                                      <button onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)}>Mark as Hold</button>
+                                      <button onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}>Mark as Sold</button>
+                                      <button onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>Delete Unit</button>
+                                    </div>
+                                  )}
+                                </div>
                               ))}
                             </ul>
                           </>
@@ -409,33 +420,35 @@ const [projectUnitCounts, setProjectUnitCounts] = useState({});
                       </li>
                     ))}
                   </ul>
-                  <div>
-                  <input type="text" value={newBlockName} onChange={(e) => setNewBlockName(e.target.value)} />
-                  <button onClick={handleAddBlock} disabled={!newBlockName.trim()} >Add Block</button>
-                  </div>
+
                 </div>
               </div>
             )}
           </div>
         ))}
       </div>
+      <h1>EDIT PROJECT</h1>
       <div>
-      <input type="text" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value)} required />
-  <select onChange={(e) => setSelectedProjectId(e.target.value)}>
-    <option value="">Select Project</option>
-    {projects.map((project, index) => (
-      <option key={index} value={project._id}>{project.name}</option>
-    ))}
-  </select>
-  <select onChange={(e) => setSelectedBlockId(e.target.value)}>
-    <option value="">Select Block</option>
-    {selectedProjectId && projects.find(project => project._id === selectedProjectId)?.blocks.map((block, index) => (
-      <option key={index} value={block._id}>{block.name}</option>
-    ))}
-  </select>
-  <button onClick={handleAddUnit}>Add Unit</button>
-  <button onClick={() => handleDeleteProject(selectedProjectId)}>Delete Project</button>
-</div>
+        <div>
+          <input type="text" value={newBlockName} onChange={(e) => setNewBlockName(e.target.value)} />
+          <button onClick={handleAddBlock} disabled={!newBlockName.trim()} >Add Block</button>
+        </div>
+        <input type="text" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value)} required />
+        <select onChange={(e) => setSelectedProjectId(e.target.value)}>
+          <option value="">Select Project</option>
+          {projects.map((project, index) => (
+            <option key={index} value={project._id}>{project.name}</option>
+          ))}
+        </select>
+        <select onChange={(e) => setSelectedBlockId(e.target.value)}>
+          <option value="">Select Block</option>
+          {selectedProjectId && projects.find(project => project._id === selectedProjectId)?.blocks.map((block, index) => (
+            <option key={index} value={block._id}>{block.name}</option>
+          ))}
+        </select>
+        <button onClick={handleAddUnit}>Add Unit</button>
+        <button onClick={() => handleDeleteProject(selectedProjectId)}>Delete Project</button>
+      </div>
     </div>
   );
 };

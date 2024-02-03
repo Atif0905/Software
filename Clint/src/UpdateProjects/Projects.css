@@ -147,3 +147,7 @@ border-radius: 5px;
 .tablecursor{
   cursor: pointer;
 }
+
+.units-div{
+  cursor: pointer;
+}
