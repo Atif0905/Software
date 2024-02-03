@@ -26,7 +26,7 @@ export default function Login() {
         alert("login successful");
         window.localStorage.setItem("token", data.data);
         window.localStorage.setItem("loggedIn", true);
-        window.location.href = "./userDetails";
+        window.location.href = "/userDetails";
       }
       else {
         setError(data.error || "Login failed");
