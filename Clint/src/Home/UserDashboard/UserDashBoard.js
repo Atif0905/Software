@@ -1,11 +1,8 @@
-import UploadedProjects from "../AdminDashboard/ShowProjects";
 import axios from 'axios';
 import React, { useState, useEffect } from "react";
+
 const UserDashBoard = ({ userData }) => {
-  const logOut = () => {
-    window.localStorage.clear();
-    window.location.href = "./sign-in";
-  };
+
   const [projects, setProjects] = useState([]);
   const [newBlockName, setNewBlockName] = useState("");
   const [newUnitName, setNewUnitName] = useState("");

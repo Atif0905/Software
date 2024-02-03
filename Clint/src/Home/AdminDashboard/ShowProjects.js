@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import Blocks from "./Uploads/Blocks";
+// import Blocks from "./Uploads/Blocks";
 
 const UploadedProjects = () => {
   const [projects, setProjects] = useState([]);
