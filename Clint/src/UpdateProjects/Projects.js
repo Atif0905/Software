@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import './Projects.css'
 const Projects = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -64,53 +64,28 @@ const Projects = () => {
 
   return (
     <div className=" main-content container">
-      <h2 className='mainhead'>Upload Project</h2>
+      <h2 className=''>Upload Project</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="name" className='mainhead'>Project Name:</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+        <label htmlFor="name" className=""></label>
+          <input type="text" id="name" value={name} placeholder="Enter project name" onChange={(e) => setName(e.target.value)}  required />
         </div>
         <div className="form-group">
-          <label htmlFor="description" className='mainhead'>Description:</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows="4"
-            required
-          ></textarea>
+          <label htmlFor="description" className=''></label>
+          <textarea id="description" placeholder='Description:' value={description} onChange={(e) => setDescription(e.target.value)} rows="4" required ></textarea>
         </div>
         {blocks.map((block, blockIndex) => (
           <div key={blockIndex}>
             <div className="form-group">
-              <label htmlFor={`blockName${blockIndex}`} className='mainhead'>Block Name:</label>
-              <input
-                type="text"
-                id={`blockName${blockIndex}`}
-                name="name"
-                value={block.name}
-                onChange={(e) => handleBlockChange(blockIndex, e)}
-                required
-              />
+              <label htmlFor={`blockName${blockIndex}`} className=''></label>
+              <input type="text" id={`blockName${blockIndex}`} name="name" placeholder='Block Name:' value={block.name} onChange={(e) => handleBlockChange(blockIndex, e)} required />
             </div>
             {block.units.map((unit, unitIndex) => (
               <div key={unitIndex}>
                 <div className="form-group">
-                  <label htmlFor={`unitName${blockIndex}_${unitIndex}`} className='mainhead'>Unit Name:</label>
+                  <label htmlFor={`unitName${blockIndex}_${unitIndex}`} className=''></label>
                   <input
-                    type="text"
-                    id={`unitName${blockIndex}_${unitIndex}`}
-                    name="name"
-                    value={unit.name}
-                    onChange={(e) => handleUnitChange(blockIndex, unitIndex, e)}
-                    required
-                  />
+                    type="text" id={`unitName${blockIndex}_${unitIndex}`} name="name" placeholder='Unit Name:' value={unit.name} onChange={(e) => handleUnitChange(blockIndex, unitIndex, e)} required />
                 </div>
               </div>
             ))}
@@ -119,7 +94,7 @@ const Projects = () => {
         ))}
         <button type="button" onClick={addBlock}>Add Block</button>
         <div className="form-group">
-          <button type="submit">Upload Project</button>
+          <button type="submit" className='uploadbutt'>Upload Project</button>
         </div>
       </form>
     </div>

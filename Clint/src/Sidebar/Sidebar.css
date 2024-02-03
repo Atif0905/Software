@@ -21,12 +21,13 @@
   border-bottom-right-radius: 10px;
   background-color: azure;
   border: 2px solid azure;
+  margin-bottom: 10px;
 }
 .sidebar li a {
   display: block;
   color: azure;
   font-size: 20px;
-  line-height: 60px;
+  margin-bottom: 30px;
   padding: 8px 16px;
   text-decoration: none;
 }
