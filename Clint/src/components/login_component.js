@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 import axios from 'axios'; 
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -26,7 +28,8 @@ export default function Login() {
         alert("login successful");
         window.localStorage.setItem("token", data.data);
         window.localStorage.setItem("loggedIn", true);
-        window.location.href = "/userDetails";
+        // Use navigate to navigate to "/userDetails" route
+        navigate("/userDetails");
       }
       else {
         setError(data.error || "Login failed");
@@ -77,7 +80,7 @@ export default function Login() {
           </div>
 
           <div className="d-grid">
-            <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
+            <button type="submit" className="btn btn-primary">
               Submit
             </button>
           </div>
