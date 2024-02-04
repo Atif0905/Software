@@ -64,40 +64,46 @@ const Projects = () => {
 
   return (
     <div className=" main-content container">
-      <h2 className=''>Upload Project</h2>
+      <h2 className='upload-title'>UPLOAD PROJECT</h2>
+   <div className='row'>
+    <div className='col-12'>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className="form-group mt-4">
         <label htmlFor="name" className=""></label>
-          <input type="text" id="name" value={name} placeholder="Enter project name" onChange={(e) => setName(e.target.value)}  required />
+          <input type="text" className='form-input-field' id="name" value={name} placeholder="Enter Project Name" onChange={(e) => setName(e.target.value)}  required />
         </div>
-        <div className="form-group">
+        <div className="form-group mt-3">
           <label htmlFor="description" className=''></label>
-          <textarea id="description" placeholder='Description:' value={description} onChange={(e) => setDescription(e.target.value)} rows="4" required ></textarea>
+          <textarea className='form-msg-field' id="description" placeholder='Description' value={description} onChange={(e) => setDescription(e.target.value)} rows="5" required ></textarea>
         </div>
         {blocks.map((block, blockIndex) => (
           <div key={blockIndex}>
-            <div className="form-group">
+            <div className="form-group mt-2">
               <label htmlFor={`blockName${blockIndex}`} className=''></label>
-              <input type="text" id={`blockName${blockIndex}`} name="name" placeholder='Block Name:' value={block.name} onChange={(e) => handleBlockChange(blockIndex, e)} required />
+              <input type="text" className='form-input-field' id={`blockName${blockIndex}`} name="name" placeholder='Block Name' value={block.name} onChange={(e) => handleBlockChange(blockIndex, e)} required />
             </div>
             {block.units.map((unit, unitIndex) => (
               <div key={unitIndex}>
-                <div className="form-group">
+                <div className="form-group mt-3">
                   <label htmlFor={`unitName${blockIndex}_${unitIndex}`} className=''></label>
                   <input
-                    type="text" id={`unitName${blockIndex}_${unitIndex}`} name="name" placeholder='Unit Name:' value={unit.name} onChange={(e) => handleUnitChange(blockIndex, unitIndex, e)} required />
+                    type="text" className='form-input-field' id={`unitName${blockIndex}_${unitIndex}`} name="name" placeholder='Unit Name' value={unit.name} onChange={(e) => handleUnitChange(blockIndex, unitIndex, e)} required />
                 </div>
               </div>
             ))}
-            <button type="button" onClick={() => addUnit(blockIndex)}>Add Unit</button>
+           
+            <button className='add-buttons mt-3' type="button" onClick={() => addUnit(blockIndex)}>Add Unit</button>
           </div>
         ))}
-        <button type="button" onClick={addBlock}>Add Block</button>
-        <div className="form-group">
+        <button className='add-buttons mt-3' type="button" onClick={addBlock}>Add Block</button>
+     
+        <div className="form-group mt-3">
           <button type="submit" className='uploadbutt'>Upload Project</button>
         </div>
       </form>
-    </div>
+      </div>
+      </div>
+      </div>
   );
 };
 
