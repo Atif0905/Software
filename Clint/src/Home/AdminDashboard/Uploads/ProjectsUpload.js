@@ -25,7 +25,7 @@ const ProjectsUpload = () => {
   const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (index) => {
     setShowDropdown(!showDropdown);
   };
 
@@ -401,19 +401,24 @@ const ProjectsUpload = () => {
                           <>
                             <h5 className="mainhead">Units:</h5>
                             <ul>
+                       <div className="row">
                               {block.units.map((unit, unitIndex) => (
-                                <div className="units-div" key={unitIndex} style={{ backgroundColor: unit.status === "hold" ? "yellow" : unit.status === "sold" ? "red" : "green" }}>
-
-                                  <p className="mainhead" onClick={toggleDropdown}>{unit.name}</p>
+                               <div className="col-6 ">
+                                <div className="units-div " key={unitIndex} style={{ backgroundColor: unit.status === "hold" ? "yellow" : unit.status === "sold" ? "red" : "green" }}  onClick={toggleDropdown}>
+                                <p className="unit-div">{unit.name}</p>
+                                </div>
                                   {showDropdown && (
-                                    <div className="dropdown-content">
-                                      <button onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)}>Mark as Hold</button>
-                                      <button onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}>Mark as Sold</button>
-                                      <button onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>Delete Unit</button>
+                                    <div className="unit-div-dropdown">
+                                      <button className="hold-unit" onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)}>Hold</button>
+                                      <button className="sold-unit" onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}>Sold</button>
+                                      <button className="delete-unit" onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>Delete</button>
                                     </div>
                                   )}
-                                </div>
+                             
+                           
+                             </div>
                               ))}
+                             </div>
                             </ul>
                           </>
                         )}
