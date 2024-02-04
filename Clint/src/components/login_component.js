@@ -28,7 +28,7 @@ export default function Login() {
         alert("login successful");
         window.localStorage.setItem("token", data.data);
         window.localStorage.setItem("loggedIn", true);
-        // navigate("/userDetails");
+        navigate("/userDetails");
       }
       else {
         setError(data.error || "Login failed");
