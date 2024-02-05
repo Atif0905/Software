@@ -17,7 +17,7 @@ app.set("view engine", "ejs");
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
-    console.log("Connected to database");
+   
   })
   .catch((e) => console.log(e));
 
@@ -75,7 +75,6 @@ app.post("/userData", async (req, res) => {
       }
       return res;
     });
-    console.log(user);
     if (user == "token expired") {
       return res.send({ status: "error", data: "token expired" });
     }
