@@ -10,7 +10,7 @@ const ProjectsUpload = () => {
   const [newBlockName, setNewBlockName] = useState("");
   const [newUnitName, setNewUnitName] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState("");
-  const [selectedBlockId, setSelectedBlockId] = useState("");
+  const [selectedBlockId, setSelectedBlockId] = useState("null");
   const [showBlocks, setShowBlocks] = useState(true);
   const [showUnits, setShowUnits] = useState(true);
   const [totalUnitsCount, setTotalUnitsCount] = useState(0);
@@ -23,13 +23,13 @@ const ProjectsUpload = () => {
   const [totalAvailableUnitsCount, setTotalAvailableUnitsCount] = useState(0);
   const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] = useState({});
   const [projectUnitCounts, setProjectUnitCounts] = useState({});
-  const [showDropdown, setShowDropdown] = useState(false);
-
-  const toggleDropdown = (index) => {
-    setShowDropdown(!showDropdown);
+  const [UnitDropdown, setUnitDropdown] = useState(null);
+  
+  const DropdownToggle = (unitIndex) => {
+    setUnitDropdown((prevIndex) => (prevIndex === unitIndex ? null : unitIndex));
   };
-
-
+  
+ 
   const updateUnitCounts = () => {
     let totalUnits = 0;
     let blockCounts = {};
@@ -273,14 +273,13 @@ const ProjectsUpload = () => {
   };
   const handleClickProject = (projectId) => {
     setSelectedProjectId(projectId);
-    setSelectedBlockId(""); // Reset selected block when project is clicked
+    setSelectedBlockId("null"); // Reset selected block when project is clicked
     setShowBlocks(!showBlocks); // Toggle showing blocks
     setShowUnits(true); // Reset showing units
   };
 
   const handleClickBlock = (blockId) => {
-    setSelectedBlockId(blockId);
-    setShowUnits(!showUnits); // Toggle showing units
+    setSelectedBlockId((prevId) => (prevId === blockId ? null : blockId));
   };
 
   const handleDeleteUnit = async (projectId, blockId, unitId) => {
@@ -395,34 +394,36 @@ const ProjectsUpload = () => {
                   <ul>
                     {project.blocks.map((block, blockIndex) => (
 
-                      <li className="d-flex " key={blockIndex} onClick={() => handleClickBlock(block._id)}>
+                      <div className=" " key={blockIndex} >
 
-                        {selectedBlockId === block._id && showUnits && (
+                    {selectedBlockId === block._id &&  showUnits &&(
                           <>
                             <h5 className="mainhead">Units:</h5>
                             <ul>
                        <div className="row">
                               {block.units.map((unit, unitIndex) => (
-                               <div className="col-6 ">
-                                <div className="units-div " key={unitIndex} style={{ backgroundColor: unit.status === "hold" ? "yellow" : unit.status === "sold" ? "red" : "green" }}  onClick={toggleDropdown}>
+                                 
+                               <div className="col-2" key={unitIndex}>
+                                <div className="units-div "  style={{ backgroundColor: unit.status === "hold" ? "#FEE69F" : unit.status === "sold" ? "#FE8B8B" : "#A6FFBF" }}  onClick={() => DropdownToggle(unitIndex)}  >
                                 <p className="unit-div">{unit.name}</p>
                                 </div>
-                                  {showDropdown && (
+                                
+                                {UnitDropdown === unitIndex &&
                                     <div className="unit-div-dropdown">
                                       <button className="hold-unit" onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)}>Hold</button>
                                       <button className="sold-unit" onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}>Sold</button>
                                       <button className="delete-unit" onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>Delete</button>
                                     </div>
-                                  )}
-                             
-                           
+}
+
                              </div>
+                             
                               ))}
                              </div>
                             </ul>
                           </>
                         )}
-                      </li>
+                      </div>
                     ))}
                   </ul>
 
@@ -432,27 +433,27 @@ const ProjectsUpload = () => {
           </div>
         ))}
       </div>
-      <h1>EDIT PROJECT</h1>
+      <h1 className='edit-title'>EDIT PROJECT</h1>
       <div>
-        <div>
-          <input type="text" value={newBlockName} onChange={(e) => setNewBlockName(e.target.value)} />
-          <button onClick={handleAddBlock} disabled={!newBlockName.trim()} >Add Block</button>
+        <div className="mt-3">
+          <input type="text" className='form-input-field' value={newBlockName} onChange={(e) => setNewBlockName(e.target.value)} />
+          <button className="add-buttons ms-3" onClick={handleAddBlock} disabled={!newBlockName.trim()} >Add Block</button>
         </div>
-        <input type="text" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value)} required />
-        <select onChange={(e) => setSelectedProjectId(e.target.value)}>
+        <input type="text" className='form-input-field mt-4' value={newUnitName} onChange={(e) => setNewUnitName(e.target.value)} required />
+        <select className="select-buttons ms-3 ps-1" onChange={(e) => setSelectedProjectId(e.target.value)}>
           <option value="">Select Project</option>
           {projects.map((project, index) => (
             <option key={index} value={project._id}>{project.name}</option>
           ))}
         </select>
-        <select onChange={(e) => setSelectedBlockId(e.target.value)}>
+        <select className="select-buttons ms-3 ps-1" onChange={(e) => setSelectedBlockId(e.target.value)}>
           <option value="">Select Block</option>
           {selectedProjectId && projects.find(project => project._id === selectedProjectId)?.blocks.map((block, index) => (
             <option key={index} value={block._id}>{block.name}</option>
           ))}
         </select>
-        <button onClick={handleAddUnit}>Add Unit</button>
-        <button onClick={() => handleDeleteProject(selectedProjectId)}>Delete Project</button>
+        <button className="add-buttons ms-3" onClick={handleAddUnit}>Add Unit</button>
+        <button className="delete-buttons ms-3" onClick={() => handleDeleteProject(selectedProjectId)}>Delete Project</button>
       </div>
     </div>
   );
