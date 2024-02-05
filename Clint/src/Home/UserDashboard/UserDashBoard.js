@@ -24,6 +24,7 @@ const UserDashBoard = ({ userData }) => {
   const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const [UnitDropdown, setUnitDropdown] = useState(null);
 
+
   const DropdownToggle = (unitIndex) => {
     setUnitDropdown((prevIndex) =>
       prevIndex === unitIndex ? null : unitIndex
@@ -251,10 +252,15 @@ const UserDashBoard = ({ userData }) => {
   const handleClickBlock = (blockId) => {
     setSelectedBlockId((prevId) => (prevId === blockId ? null : blockId));
   };
-
+  
+  
   return (
-    <div className="container main-content ">
+    <>
+    <p className='user-profile'>HELLO, {userData.fname && userData.fname.toUpperCase()}</p>
+    <div className=" main-content ">
+   
       <h2 className="">OUR PROJECTS</h2>
+     
       <div className="d-flex flex-wrap">
         {projects.map((project, index) => (
           <div key={index} className=" mb-5 position-relative">
@@ -407,6 +413,7 @@ const UserDashBoard = ({ userData }) => {
         ))}
       </div>
     </div>
+    </>
   );
 };
 

@@ -87,6 +87,11 @@ export default function Login() {
             <a href="/sign-up">Sign Up</a>
           </p>
         </form>
+        {error && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );

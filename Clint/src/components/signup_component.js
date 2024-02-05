@@ -8,6 +8,7 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("");
   const [secretKey, setSecretKey] = useState("");
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
