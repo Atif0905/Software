@@ -137,7 +137,13 @@ border: 2px solid #C2C4C7
 .tablecursor{
   cursor: pointer;
 }
-
+.available-unit{
+  width: 80px;
+  height: 35px;
+  text-align: center;
+  border: 1px solid #E4E6E8;
+  background-color: #A6FFBF;
+}
 .hold-unit{
   width: 60px;
   height: 35px;

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios'; // Import Axios
 import AdminDashboard from "../Home/AdminDashboard/AdminDashboard";
 import UserDashBoard from "../Home/UserDashboard/UserDashBoard";
-
 export default function UserDetails() {
   const [userData, setUserData] = useState({});
   const [admin, setAdmin] = useState(false);
@@ -35,12 +34,13 @@ export default function UserDetails() {
     .catch((error) => {
       console.error('Error fetching user data:', error);
     });
-  }, [userData]); // Include userData in the dependency array to refetch data when userData changes
+  }, [userData]);
 
-  // Check if userData exists before rendering
+
   if (!userData) {
-    return null; // or loading indicator
+    return null; 
   }
 
   return admin ? <AdminDashboard /> : <UserDashBoard userData={userData} />;
+  
 }
