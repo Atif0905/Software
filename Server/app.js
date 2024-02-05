@@ -14,10 +14,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.set("view engine", "ejs");
 
-mongoose
-  .connect(MONGODB_URI, { useNewUrlParser: true })
+mongoose.set('strictQuery', false); 
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
-   
+    console.log("DB Connected")
   })
   .catch((e) => console.log(e));
 
