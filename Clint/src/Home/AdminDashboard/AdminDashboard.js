@@ -4,14 +4,17 @@ import AdminUploadProject from './Uploads/ProjectsUpload'
 import UploadedProjects from './ShowProjects'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
+
 const AdminDashboard = () => {
   return (
-    <div className='main-content '>
-      <h1 className='mainhead profilehead'><FontAwesomeIcon icon={faUser} className='mainico'/>Hello Admin</h1>
+    <>
+    <h1 className='mainhead profilehead '><FontAwesomeIcon icon={faUser} className='mainico'/>Hello Admin</h1>
+    <div className='main-content'>
       {/* <AdminHome/> */}
       <AdminUploadProject/>
       <UploadedProjects/>
     </div>
+    </>
   )
 }
 

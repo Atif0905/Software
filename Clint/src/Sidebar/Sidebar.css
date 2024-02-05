@@ -13,14 +13,10 @@
   border-right: 2px solid #ADB3CC ;
 }
 .logoo {
-  margin-left: 5%;
-  width:80%;
-  height: 40px;
-  background-color: azure;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  background-color: azure;
-  border: 2px solid azure;
+  margin-left: 10%;
+  margin-top: 5%;
+  width:75%;
+  height: 65px;
   margin-bottom: 10px;
 }
 .sidebar li a {
