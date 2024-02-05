@@ -43,20 +43,7 @@ const UserDashBoard = ({ userData }) => {
     setTotalUnitsCount(totalUnits);
     setBlockwiseUnitCounts(blockCounts);
   };
-  const handleMarkUnitSold = async (projectId, blockId, unitId) => {
-    try {
-      const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${projectId}/${blockId}/${unitId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects(); // Update projects after successfully marking unit as sold
-        alert("Unit marked as sold successfully");
-      } else {
-        console.error("Failed to mark unit as sold:", data.error);
-      }
-    } catch (error) {
-      console.error("Error marking unit as sold:", error);
-    }
-  };
+  
   const updateHoldUnitCounts = () => {
     let totalHoldUnits = 0;
     let blockwiseHoldCounts = {};
@@ -163,52 +150,23 @@ const UserDashBoard = ({ userData }) => {
     }
   };
 
-  const handleAddBlock = async () => {
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/addBlock/${selectedProjectId}`, {
-        name: newBlockName
-      });
-      const data = response.data;
-      if (response.status === 201 && data.status === "ok") {
-        fetchProjects();
-        setNewBlockName("");
-      } else {
-        console.error("Failed to add block:", data.error);
-      }
-    } catch (error) {
-      console.error("Error adding block:", error);
-    }
-  };
 
-  const handleAddUnit = async () => {
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/addUnit/${selectedProjectId}/${selectedBlockId}`, {
-        name: newUnitName
-      });
-      const data = response.data;
-      if (response.status === 201 && data.status === "ok") {
-        fetchProjects();
-        setNewUnitName("");
-      } else {
-        console.error("Failed to add unit:", data.error);
-      }
-    } catch (error) {
-      console.error("Error adding unit:", error);
-    }
-  };
 
   const handleMarkUnitHold = async (projectId, blockId, unitId) => {
-    try {
-      const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitHold/${projectId}/${blockId}/${unitId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects(); // Update projects after successfully marking unit as hold
-        alert("Unit marked as hold successfully");
-      } else {
-        console.error("Failed to mark unit as hold:", data.error);
+    const isConfirmed = window.confirm("Are you sure you want to mark this unit as hold?");
+    if (isConfirmed) {
+      try {
+        const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitHold/${projectId}/${blockId}/${unitId}`);
+        const data = response.data;
+        if (response.status === 200 && data.status === "ok") {
+          fetchProjects(); // Update projects after successfully marking unit as hold
+          alert("Unit marked as hold successfully");
+        } else {
+          console.error("Failed to mark unit as hold:", data.error);
+        }
+      } catch (error) {
+        console.error("Error marking unit as hold:", error);
       }
-    } catch (error) {
-      console.error("Error marking unit as hold:", error);
     }
   };
   const updateProjectUnitCounts = () => {
@@ -281,47 +239,6 @@ const UserDashBoard = ({ userData }) => {
     setSelectedBlockId((prevId) => (prevId === blockId ? null : blockId));
   };
 
-  const handleDeleteUnit = async (projectId, blockId, unitId) => {
-    try {
-      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteUnit/${projectId}/${blockId}/${unitId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects();
-      } else {
-        console.error("Failed to delete unit:", data.error);
-      }
-    } catch (error) {
-      console.error("Error deleting unit:", error);
-    }
-  };
-
-  const handleDeleteBlock = async (projectId, blockId) => {
-    try {
-      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteBlock/${projectId}/${blockId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects();
-      } else {
-        console.error("Failed to delete block:", data.error);
-      }
-    } catch (error) {
-      console.error("Error deleting block:", error);
-    }
-  };
-
-  const handleDeleteProject = async (projectId) => {
-    try {
-      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteProject/${projectId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects();
-      } else {
-        console.error("Failed to delete project:", data.error);
-      }
-    } catch (error) {
-      console.error("Error deleting project:", error);
-    }
-  };
   return (
     <div className="container main-content ">
       <h2 className="">OUR PROJECTS</h2>
