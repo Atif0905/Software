@@ -4,14 +4,17 @@ import './Sidebar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faUser, faClipboard  } from '@fortawesome/free-regular-svg-icons';
 import { faRightFromBracket,  faListCheck, faChalkboardUser } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from "react-router-dom"; // Import useNavigate hook
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
 
   const logOut = () => {
-    window.localStorage.clear();
-    navigate("/sign-in"); // Navigate to the userDetails route
+    const isConfirmed = window.confirm("Are you sure you want to log out?");
+    if (isConfirmed) {
+      window.localStorage.clear();
+      navigate("/sign-in");
+    }
   };
 
   return (
