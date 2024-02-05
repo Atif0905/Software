@@ -314,6 +314,45 @@ app.put("/markUnitHold/:projectId/:blockId/:unitId", async (req, res) => {
   }
 });
 
+//available api
+
+app.put("/markUnitAvailable/:projectId/:blockId/:unitId", async (req, res) => {
+  const { projectId, blockId, unitId } = req.params;
+
+  try {
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      console.error("Project not found");
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    const block = project.blocks.id(blockId);
+
+    if (!block) {
+      console.error("Block not found");
+      return res.status(404).json({ error: "Block not found" });
+    }
+
+    const unit = block.units.id(unitId);
+
+    if (!unit) {
+      console.error("Unit not found");
+      return res.status(404).json({ error: "Unit not found" });
+    }
+
+    // Update unit status
+    unit.status = "available";
+    await project.save();
+
+    console.log("Unit marked as available successfully");
+    res.status(200).json({ status: "ok", data: project });
+  } catch (error) {
+    console.error("Error marking unit as available:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // Route to mark a unit as sold
 app.put("/markUnitSold/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;

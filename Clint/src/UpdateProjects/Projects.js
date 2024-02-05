@@ -63,8 +63,7 @@ const Projects = () => {
   };
 
   return (
-    <div className=" main-content container">
-      <h2 className='upload-title'>UPLOAD PROJECT</h2>
+    <div className="  container">
    <div className='row'>
     <div className='col-12'>
       <form onSubmit={handleSubmit}>
