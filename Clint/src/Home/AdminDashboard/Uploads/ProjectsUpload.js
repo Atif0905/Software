@@ -24,6 +24,7 @@ const ProjectsUpload = () => {
   const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] = useState({});
   const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const [UnitDropdown, setUnitDropdown] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   
   const DropdownToggle = (unitIndex) => {
     setUnitDropdown((prevIndex) => (prevIndex === unitIndex ? null : unitIndex));
@@ -45,6 +46,8 @@ const ProjectsUpload = () => {
     setBlockwiseUnitCounts(blockCounts);
   };
   const handleMarkUnitSold = async (projectId, blockId, unitId) => {
+    const isConfirmed = window.confirm("Are you sure you want to mark this unit as Sold?");
+  if (isConfirmed) {
     try {
       const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${projectId}/${blockId}/${unitId}`);
       const data = response.data;
@@ -57,6 +60,7 @@ const ProjectsUpload = () => {
     } catch (error) {
       console.error("Error marking unit as sold:", error);
     }
+  }
   };
   const updateHoldUnitCounts = () => {
     let totalHoldUnits = 0;
@@ -165,51 +169,60 @@ const ProjectsUpload = () => {
   };
 
   const handleAddBlock = async () => {
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/addBlock/${selectedProjectId}`, {
-        name: newBlockName
-      });
-      const data = response.data;
-      if (response.status === 201 && data.status === "ok") {
-        fetchProjects();
-        setNewBlockName("");
-      } else {
-        console.error("Failed to add block:", data.error);
+    const isConfirmed = window.confirm("Are you sure you want to add this block?");
+    if (isConfirmed) {
+      try {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/addBlock/${selectedProjectId}`, {
+          name: newBlockName
+        });
+        const data = response.data;
+        if (response.status === 201 && data.status === "ok") {
+          fetchProjects();
+          setNewBlockName("");
+        } else {
+          console.error("Failed to add block:", data.error);
+        }
+      } catch (error) {
+        console.error("Error adding block:", error);
       }
-    } catch (error) {
-      console.error("Error adding block:", error);
     }
   };
 
   const handleAddUnit = async () => {
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/addUnit/${selectedProjectId}/${selectedBlockId}`, {
-        name: newUnitName
-      });
-      const data = response.data;
-      if (response.status === 201 && data.status === "ok") {
-        fetchProjects();
-        setNewUnitName("");
-      } else {
-        console.error("Failed to add unit:", data.error);
+    const isConfirmed = window.confirm("Are you sure you want to add this unit?");
+    if (isConfirmed) {
+      try {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/addUnit/${selectedProjectId}/${selectedBlockId}`, {
+          name: newUnitName
+        });
+        const data = response.data;
+        if (response.status === 201 && data.status === "ok") {
+          fetchProjects();
+          setNewUnitName("");
+        } else {
+          console.error("Failed to add unit:", data.error);
+        }
+      } catch (error) {
+        console.error("Error adding unit:", error);
       }
-    } catch (error) {
-      console.error("Error adding unit:", error);
     }
   };
 
   const handleMarkUnitHold = async (projectId, blockId, unitId) => {
-    try {
-      const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitHold/${projectId}/${blockId}/${unitId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects(); // Update projects after successfully marking unit as hold
-        alert("Unit marked as hold successfully");
-      } else {
-        console.error("Failed to mark unit as hold:", data.error);
+    const isConfirmed = window.confirm("Are you sure you want to mark this unit as hold?");
+    if (isConfirmed) {
+      try {
+        const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitHold/${projectId}/${blockId}/${unitId}`);
+        const data = response.data;
+        if (response.status === 200 && data.status === "ok") {
+          fetchProjects(); // Update projects after successfully marking unit as hold
+          alert("Unit marked as hold successfully");
+        } else {
+          console.error("Failed to mark unit as hold:", data.error);
+        }
+      } catch (error) {
+        console.error("Error marking unit as hold:", error);
       }
-    } catch (error) {
-      console.error("Error marking unit as hold:", error);
     }
   };
   const updateProjectUnitCounts = () => {
@@ -283,6 +296,8 @@ const ProjectsUpload = () => {
   };
 
   const handleDeleteUnit = async (projectId, blockId, unitId) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this unit?");
+  if (isConfirmed) {
     try {
       const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteUnit/${projectId}/${blockId}/${unitId}`);
       const data = response.data;
@@ -294,33 +309,29 @@ const ProjectsUpload = () => {
     } catch (error) {
       console.error("Error deleting unit:", error);
     }
-  };
-
-  const handleDeleteBlock = async (projectId, blockId) => {
-    try {
-      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteBlock/${projectId}/${blockId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects();
-      } else {
-        console.error("Failed to delete block:", data.error);
-      }
-    } catch (error) {
-      console.error("Error deleting block:", error);
-    }
+  }
   };
 
   const handleDeleteProject = async (projectId) => {
-    try {
-      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteProject/${projectId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects();
-      } else {
-        console.error("Failed to delete project:", data.error);
+    // Check if a project is selected
+    if (!projectId) {
+      console.error("No project selected.");
+      return;
+    }
+  
+    const isConfirmed = window.confirm("Are you sure you want to delete this project?");
+    if (isConfirmed) {
+      try {
+        const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteProject/${projectId}`);
+        const data = response.data;
+        if (response.status === 200 && data.status === "ok") {
+          fetchProjects();
+        } else {
+          console.error("Failed to delete project:", data.error);
+        }
+      } catch (error) {
+        console.error("Error deleting project:", error);
       }
-    } catch (error) {
-      console.error("Error deleting project:", error);
     }
   };
   return (
@@ -348,7 +359,7 @@ const ProjectsUpload = () => {
             {selectedProjectId === project._id && showBlocks && (
               <div className={`showModal ${showModal ? 'visible' : 'hidden'}`}>
                 <div>
-                  <div className="d-flex justify-content-between">
+                  <div className="d-flex justify-content-between mb-3">
                     <div className="totalunitsdiv mt-3">
                       <h2 className="textunits"> Total </h2>
                       <p className="unitsnum"> {projectUnitCounts[project._id]?.totalUnits || 0}</p>
@@ -366,7 +377,6 @@ const ProjectsUpload = () => {
                       <p className="unitsnum"> {projectUnitCounts[project._id]?.totalSoldUnits || 0}</p>
                     </div>
                   </div>
-                  <h4 className="mainhead">Blocks:</h4>
                   <table className="table">
                     <thead>
                       <tr>
@@ -398,7 +408,6 @@ const ProjectsUpload = () => {
 
                     {selectedBlockId === block._id &&  showUnits &&(
                           <>
-                            <h5 className="mainhead">Units:</h5>
                             <ul>
                        <div className="row">
                               {block.units.map((unit, unitIndex) => (
@@ -433,28 +442,34 @@ const ProjectsUpload = () => {
           </div>
         ))}
       </div>
-      <h1 className='edit-title'>EDIT PROJECT</h1>
       <div>
-        <div className="mt-3">
-          <input type="text" className='form-input-field' value={newBlockName} onChange={(e) => setNewBlockName(e.target.value)} />
-          <button className="add-buttons ms-3" onClick={handleAddBlock} disabled={!newBlockName.trim()} >Add Block</button>
+      <button className={`edit-title ${dropdownOpen ? 'open' : ''}`} onClick={() => setDropdownOpen(!dropdownOpen)}>
+        EDIT PROJECT
+      </button>
+      {dropdownOpen && (
+        <div>
+          <div className="mt-3">
+            <input type="text" className='form-input-field' value={newBlockName} onChange={(e) => setNewBlockName(e.target.value)} />
+            <button className="add-buttons ms-3" onClick={handleAddBlock} disabled={!newBlockName.trim()} >Add Block</button>
+          </div>
+          <input type="text" className='form-input-field mt-4' value={newUnitName} onChange={(e) => setNewUnitName(e.target.value)} required />
+          <select className="select-buttons ms-3 ps-1" onChange={(e) => setSelectedProjectId(e.target.value)}>
+            <option value="">Select Project</option>
+            {projects.map((project, index) => (
+              <option key={index} value={project._id}>{project.name}</option>
+            ))}
+          </select>
+          <select className="select-buttons ms-3 ps-1" onChange={(e) => setSelectedBlockId(e.target.value)}>
+            <option value="">Select Block</option>
+            {selectedProjectId && projects.find(project => project._id === selectedProjectId)?.blocks.map((block, index) => (
+              <option key={index} value={block._id}>{block.name}</option>
+            ))}
+          </select>
+          <button className="add-buttons ms-3" onClick={handleAddUnit} disabled={!newUnitName.trim()} >Add Unit</button>
+          <button className="delete-buttons ms-3" onClick={() => handleDeleteProject(selectedProjectId)}>Delete Project</button>
         </div>
-        <input type="text" className='form-input-field mt-4' value={newUnitName} onChange={(e) => setNewUnitName(e.target.value)} required />
-        <select className="select-buttons ms-3 ps-1" onChange={(e) => setSelectedProjectId(e.target.value)}>
-          <option value="">Select Project</option>
-          {projects.map((project, index) => (
-            <option key={index} value={project._id}>{project.name}</option>
-          ))}
-        </select>
-        <select className="select-buttons ms-3 ps-1" onChange={(e) => setSelectedBlockId(e.target.value)}>
-          <option value="">Select Block</option>
-          {selectedProjectId && projects.find(project => project._id === selectedProjectId)?.blocks.map((block, index) => (
-            <option key={index} value={block._id}>{block.name}</option>
-          ))}
-        </select>
-        <button className="add-buttons ms-3" onClick={handleAddUnit}>Add Unit</button>
-        <button className="delete-buttons ms-3" onClick={() => handleDeleteProject(selectedProjectId)}>Delete Project</button>
-      </div>
+      )}
+    </div>
     </div>
   );
 };
