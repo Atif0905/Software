@@ -25,6 +25,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "preview": "npm start -- --host",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
