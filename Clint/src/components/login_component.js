@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate hook
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate hook
 import axios from 'axios'; 
 
 export default function Login() {
@@ -84,7 +84,7 @@ export default function Login() {
             </button>
           </div>
           <p className="forgot-password text-right">
-            <a href="/sign-up">Sign Up</a>
+            <Link to="/sign-up">Sign Up</Link>
           </p>
         </form>
         {error && (

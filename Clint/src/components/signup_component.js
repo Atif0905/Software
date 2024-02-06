@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from 'axios'; // Import Axios
+import { Link } from "react-router-dom";
 
 export default function SignUp() {
   const [fname, setFname] = useState("");
@@ -124,7 +125,7 @@ export default function SignUp() {
             </button>
           </div>
           <p className="forgot-password text-right">
-            Already registered <a href="/sign-in">sign in?</a>
+            Already registered <Link to="/sign-in">sign in?</Link>
           </p>
         </form>
       </div>
