@@ -144,9 +144,8 @@ app.get("/paginatedUsers", async (req, res) => {
 
 
 
-// Route handler for uploading projects
 app.post("/uploadProject", async (req, res) => {
-  const { name, description, blocks } = req.body;
+  const { name, description, totalLand, blocks } = req.body;
 
   try {
     // Create an array to store blocks
@@ -223,7 +222,7 @@ app.put("/editProject/:projectId", async (req, res) => {
 // Endpoint to add a block to a project
 app.post("/addBlock/:projectId", async (req, res) => {
   const { projectId } = req.params;
-  const { name } = req.body;
+  const { name, totalPlotInBlock, plotSize, basicRateOfBlock, idcRateOfBlock, edcRateOfBlock } = req.body;
 
   try {
     const project = await Project.findById(projectId);
@@ -233,7 +232,15 @@ app.post("/addBlock/:projectId", async (req, res) => {
     }
 
     // Create a new block and add it to the project
-    const newBlock = { name, units: [] };
+    const newBlock = {
+      name,
+      totalPlotInBlock,
+      plotSize,
+      basicRateOfBlock,
+      idcRateOfBlock,
+      edcRateOfBlock,
+    };
+
     project.blocks.push(newBlock);
 
     await project.save();
@@ -248,7 +255,7 @@ app.post("/addBlock/:projectId", async (req, res) => {
 // Endpoint to add a unit to a block
 app.post("/addUnit/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
-  const { name } = req.body;
+  const { name, plotSize, sizeType, rate, idcCharges, plcCharges } = req.body;
 
   try {
     const project = await Project.findById(projectId);
@@ -264,7 +271,16 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
     }
 
     // Create a new unit and add it to the block
-    const newUnit = { name };
+    const newUnit = {
+      name,
+      plotSize,
+      sizeType,
+      rate,
+      idcCharges,
+      plcCharges,
+      status: 'available', // Assuming default status is available
+    };
+
     block.units.push(newUnit);
 
     await project.save();
