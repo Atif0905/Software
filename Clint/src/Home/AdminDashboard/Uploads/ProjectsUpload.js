@@ -30,6 +30,16 @@ const ProjectsUpload = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [totalPlotInBlock, setTotalPlotInBlock] = useState("");
+  const [plotSize, setPlotSize] = useState("");
+  const [basicRateOfBlock, setBasicRateOfBlock] = useState("");
+  const [idcRateOfBlock, setIdcRateOfBlock] = useState("");
+  const [edcRateOfBlock, setEdcRateOfBlock] = useState("");
+  // const [plotSize, setPlotSize] = useState("");
+  const [sizeType, setSizeType] = useState(""); // Assuming sizeType is selected from options (sqft or sqyd)
+  const [rate, setRate] = useState("");
+  const [idcCharges, setIdcCharges] = useState("");
+  const [plcCharges, setPlcCharges] = useState("");
 
   const DropdownToggle = (unitIndex) => {
     setUnitDropdown((prevIndex) =>
@@ -102,7 +112,7 @@ const ProjectsUpload = () => {
     const isConfirmed = window.confirm(
       "Are you sure you want to mark this unit as Hold?"
     );
-  
+
     if (isConfirmed) {
       try {
         const response = await axios.put(
@@ -120,7 +130,7 @@ const ProjectsUpload = () => {
       }
     }
   };
-  
+
   const updateTotalUnitsCount = () => {
     let totalUnits = 0;
     let totalAvailableUnits = 0;
@@ -237,12 +247,23 @@ const ProjectsUpload = () => {
           `${process.env.REACT_APP_API_URL}/addBlock/${selectedProjectId}`,
           {
             name: newBlockName,
+            totalPlotInBlock,
+            plotSize,
+            basicRateOfBlock,
+            idcRateOfBlock,
+            edcRateOfBlock,
           }
         );
         const data = response.data;
         if (response.status === 201 && data.status === "ok") {
           fetchProjects();
           setNewBlockName("");
+          setTotalPlotInBlock("");
+          setPlotSize("");
+          setBasicRateOfBlock("");
+          setIdcRateOfBlock("");
+          setEdcRateOfBlock("");
+          console.log("ok")
         } else {
           console.error("Failed to add block:", data.error);
         }
@@ -252,22 +273,36 @@ const ProjectsUpload = () => {
     }
   };
 
+
   const handleAddUnit = async () => {
     const isConfirmed = window.confirm(
       "Are you sure you want to add this unit?"
     );
+  
     if (isConfirmed) {
       try {
         const response = await axios.post(
           `${process.env.REACT_APP_API_URL}/addUnit/${selectedProjectId}/${selectedBlockId}`,
           {
             name: newUnitName,
+            plotSize,
+            sizeType, // Assuming sizeType is selected from options (sqft or sqyd)
+            rate,
+            idcCharges,
+            plcCharges
           }
         );
+  
         const data = response.data;
+        
         if (response.status === 201 && data.status === "ok") {
           fetchProjects();
           setNewUnitName("");
+          setPlotSize("");
+          setSizeType("");
+          setRate("");
+          setIdcCharges("");
+          setPlcCharges("");
         } else {
           console.error("Failed to add unit:", data.error);
         }
@@ -276,6 +311,7 @@ const ProjectsUpload = () => {
       }
     }
   };
+  
 
   const handleMarkUnitAvailable = async (projectId, blockId, unitId) => {
     const isConfirmed = window.confirm(
@@ -517,92 +553,92 @@ const ProjectsUpload = () => {
                         {selectedBlockId === block._id && showUnits && (
                           <>
                             <ul>
-                            <div className="row">
-  {block.units.map((unit, unitIndex) => (
-    <div className="col-2" key={unitIndex}>
-      <div
-        className="units-div"
-        style={{
-          backgroundColor:
-          unit.status === "hold"
-          ? "#FEE69F"
-          : unit.status === "sold"
-          ? "#FE8B8B"
-          : unit.status === "available"
-          ? "#A6FFBF"
-          : "#A6FFBF",
-        }}
-        onClick={() => DropdownToggle(unitIndex)}
-      >
-        <p className="unit-div">{unit.name}</p>
-      </div>
+                              <div className="row">
+                                {block.units.map((unit, unitIndex) => (
+                                  <div className="col-2" key={unitIndex}>
+                                    <div
+                                      className="units-div"
+                                      style={{
+                                        backgroundColor:
+                                          unit.status === "hold"
+                                            ? "#FEE69F"
+                                            : unit.status === "sold"
+                                              ? "#FE8B8B"
+                                              : unit.status === "available"
+                                                ? "#A6FFBF"
+                                                : "#A6FFBF",
+                                      }}
+                                      onClick={() => DropdownToggle(unitIndex)}
+                                    >
+                                      <p className="unit-div">{unit.name}</p>
+                                    </div>
 
-      {UnitDropdown === unitIndex && (
-        <div className="unit-div-dropdown">
-          {unit.status === "available" && (
-            <>
-            </>
-          )}
-          {unit.status === "sold" && (
-            <>
-              <button
-                className="hold-unit"
-                onClick={() =>
-                  handleMarkUnitHold(project._id, block._id, unit._id)
-                }
-              >
-                Hold
-              </button>
-              <button
-                className="available-unit"
-                style={{ backgroundColor: "#A6FFBF" }}
-                onClick={() =>
-                  handleMarkUnitAvailable(project._id, block._id, unit._id)
-                }
-              >
-                Available
-              </button>
-            </>
-          )}
-          {unit.status === "hold" && (
-            <>
-              <button
-                className="available-unit"
-                style={{ backgroundColor: "#A6FFBF" }}
-                onClick={() =>
-                  handleMarkUnitAvailable(project._id, block._id, unit._id)
-                }
-              >
-                Available
-              </button>
-              <button
-                className="sold-unit"
-                onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}
-              >
-                Sold
-              </button>
-            </>
-          )}
-          {unit.status === "available" && (
-            <>
-              <button
-                className="hold-unit" onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)} >
-                Hold
-              </button>
-              <button className="sold-unit" onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)} >
-                Sold
-              </button>
-            </>
-          )}
-          <button
-            className="delete-unit" onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>
-            Delete
-          </button>
-        </div>
-      )}
-    </div>
-  ))}
-</div>
+                                    {UnitDropdown === unitIndex && (
+                                      <div className="unit-div-dropdown">
+                                        {unit.status === "available" && (
+                                          <>
+                                          </>
+                                        )}
+                                        {unit.status === "sold" && (
+                                          <>
+                                            <button
+                                              className="hold-unit"
+                                              onClick={() =>
+                                                handleMarkUnitHold(project._id, block._id, unit._id)
+                                              }
+                                            >
+                                              Hold
+                                            </button>
+                                            <button
+                                              className="available-unit"
+                                              style={{ backgroundColor: "#A6FFBF" }}
+                                              onClick={() =>
+                                                handleMarkUnitAvailable(project._id, block._id, unit._id)
+                                              }
+                                            >
+                                              Available
+                                            </button>
+                                          </>
+                                        )}
+                                        {unit.status === "hold" && (
+                                          <>
+                                            <button
+                                              className="available-unit"
+                                              style={{ backgroundColor: "#A6FFBF" }}
+                                              onClick={() =>
+                                                handleMarkUnitAvailable(project._id, block._id, unit._id)
+                                              }
+                                            >
+                                              Available
+                                            </button>
+                                            <button
+                                              className="sold-unit"
+                                              onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}
+                                            >
+                                              Sold
+                                            </button>
+                                          </>
+                                        )}
+                                        {unit.status === "available" && (
+                                          <>
+                                            <button
+                                              className="hold-unit" onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)} >
+                                              Hold
+                                            </button>
+                                            <button className="sold-unit" onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)} >
+                                              Sold
+                                            </button>
+                                          </>
+                                        )}
+                                        <button
+                                          className="delete-unit" onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>
+                                          Delete
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
                             </ul>
                           </>
                         )}
@@ -625,6 +661,59 @@ const ProjectsUpload = () => {
         {dropdownOpen && (
           <div>
             <div className="mt-3">
+              <select
+                className="select-buttons ms-3 ps-1"
+                onChange={(e) => setSelectedProjectId(e.target.value)}
+              >
+                <option value="">Select Project</option>
+                {/* Rendering options from IPI projects */}
+                {projects.map((project, index) => (
+                  <option key={index} value={project._id}>
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+              {/* New input fields */}
+              <input
+                type="text"
+                className="form-input-field mt-4"
+                placeholder="Total Plot in Block"
+                value={totalPlotInBlock}
+                onChange={(e) => setTotalPlotInBlock(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                className="form-input-field mt-4"
+                placeholder="Plot Size (sqyd)"
+                value={plotSize}
+                onChange={(e) => setPlotSize(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                className="form-input-field mt-4"
+                placeholder="Basic Rate of Block"
+                value={basicRateOfBlock}
+                onChange={(e) => setBasicRateOfBlock(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                className="form-input-field mt-4"
+                placeholder="IDC rate of Block"
+                value={idcRateOfBlock}
+                onChange={(e) => setIdcRateOfBlock(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                className="form-input-field mt-4"
+                placeholder="EDC Rate of Block"
+                value={edcRateOfBlock}
+                onChange={(e) => setEdcRateOfBlock(e.target.value)}
+                required
+              />
               <input
                 type="text"
                 className="form-input-field"
@@ -657,6 +746,51 @@ const ProjectsUpload = () => {
                 </option>
               ))}
             </select>
+            <input
+  type="text"
+  className="form-input-field mt-4"
+  placeholder="Plot Size"
+  value={plotSize}
+  onChange={(e) => setPlotSize(e.target.value)}
+  required
+/>
+
+<select
+  className="select-buttons ms-3 ps-1"
+  value={sizeType}
+  onChange={(e) => setSizeType(e.target.value)}
+>
+  <option value="">Select Size Type</option>
+  <option value="sqft">sqft</option>
+  <option value="sqyd">sqyd</option>
+</select>
+
+<input
+  type="text"
+  className="form-input-field mt-4"
+  placeholder="Rate"
+  value={rate}
+  onChange={(e) => setRate(e.target.value)}
+  required
+/>
+
+<input
+  type="text"
+  className="form-input-field mt-4"
+  placeholder="IDC Charges"
+  value={idcCharges}
+  onChange={(e) => setIdcCharges(e.target.value)}
+  required
+/>
+
+<input
+  type="text"
+  className="form-input-field mt-4"
+  placeholder="PLC Charges"
+  value={plcCharges}
+  onChange={(e) => setPlcCharges(e.target.value)}
+  required
+/>
             <select
               className="select-buttons ms-3 ps-1"
               onChange={(e) => setSelectedBlockId(e.target.value)}
