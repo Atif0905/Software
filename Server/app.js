@@ -173,7 +173,7 @@ app.post("/uploadProject", async (req, res) => {
     }
 
     // Create a new project using the Project model with blocks
-    const project = await Project.create({ name, description, blocks: blocksArray });
+    const project = await Project.create({ name, description,totalLand, blocks: blocksArray });
     res.status(201).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error uploading project:", error);
