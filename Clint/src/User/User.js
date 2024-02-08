@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactPaginate from 'react-paginate';
 import axios from 'axios'; // Import Axios
 import { useRef } from "react";
-
+import './User.css'
 const User = () => {
   const [data, setData] = useState([]);
   const [limit, setLimit] = useState(5);
@@ -13,7 +13,7 @@ const User = () => {
   
   useEffect(() => {
     currentPage.current = 1;
-    getPaginatedUsers();
+    // getPaginatedUsers();
   }, []);
 
   // Logout
@@ -106,7 +106,7 @@ const User = () => {
           forcePage={currentPage.current - 1}
         />
         <input placeholder="Limit" value={limit} onChange={e => setLimit(e.target.value)} />
-        <button onClick={changeLimit}>Set Limit</button>
+        <button onClick={changeLimit} className="setbutton">Set Limit</button>
         <button onClick={logOut} className="btn btn-primary">
           Log Out
         </button>
