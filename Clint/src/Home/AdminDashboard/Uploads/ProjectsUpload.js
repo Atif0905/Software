@@ -610,7 +610,7 @@ const ProjectsUpload = () => {
                 setShowUnitDropdown(false); // Close the Addition of Unit dropdown
               }}
             >
-              Upload of Block <FontAwesomeIcon icon={showBlockDropdown ? faArrowUp : faArrowDown} />
+              UPLOAD BLOCKS <FontAwesomeIcon icon={showBlockDropdown ? faArrowUp : faArrowDown} />
             </button>
             <div>
               {showBlockDropdown && (
@@ -621,7 +621,7 @@ const ProjectsUpload = () => {
                   setShowUnitDropdown(!showUnitDropdown);
                   setShowBlockDropdown(false); // Close the Addition of Block dropdown
                 }}
-                > Upload of Unit <FontAwesomeIcon icon={showUnitDropdown ? faArrowUp : faArrowDown} />
+                > UPLOAD  UNITS <FontAwesomeIcon icon={showUnitDropdown ? faArrowUp : faArrowDown} />
                 </button>
                 {showUnitDropdown && (
                   <AdditionUnit />)} </div> </div> </div>
