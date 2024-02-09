@@ -3,7 +3,7 @@ import axios from "axios";
 // import Blocks from "./Blocks";
 import "../../../UpdateProjects/Projects.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretDown, faLocationDot, faArrowDown, faArrowUp   } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown, faLocationDot, faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import Projects from "../../../UpdateProjects/Projects";
 import User from "../../../User/User";
 import AdditionBlock from "../Addblockandunit/AdditionBlock";
@@ -53,7 +53,7 @@ const ProjectsUpload = () => {
     // setTotalUnitsCount(totalUnits);
     setBlockwiseUnitCounts(blockCounts);
   };
-  
+
   const handleMarkUnitSold = async (projectId, blockId, unitId) => {
     const isConfirmed = window.confirm(
       "Are you sure you want to mark this unit as Sold?"
@@ -225,9 +225,44 @@ const ProjectsUpload = () => {
       return 0;
     }
   };
+  const handleAddUnit = async () => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to add this unit?"
+    );
 
-  
-  
+    if (isConfirmed) {
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_URL}/addUnit/${selectedProjectId}/${selectedBlockId}`,
+          {
+            name: newUnitName,
+            plotSize,
+            sizeType, // Assuming sizeType is selected from options (sqft or sqyd)
+            rate,
+            idcCharges,
+            plcCharges
+          }
+        );
+
+        const data = response.data;
+
+        if (response.status === 201 && data.status === "ok") {
+          fetchProjects();
+          setNewUnitName("");
+          setPlotSize("");
+          setSizeType("");
+          setRate("");
+          setIdcCharges("");
+          setPlcCharges("");
+        } else {
+          console.error("Failed to add unit:", data.error);
+        }
+      } catch (error) {
+        console.error("Error adding unit:", error);
+      }
+    }
+  };
+
   const handleMarkUnitAvailable = async (projectId, blockId, unitId) => {
     const isConfirmed = window.confirm(
       "Are you sure you want to mark this unit as Available?"
@@ -346,229 +381,229 @@ const ProjectsUpload = () => {
       <h2 className="">OUR PROJECTS</h2>
       <div className="d-flex flex-wrap">
         {projects.map((project, index) => (
-      <div key={index} className=" mb-5 position-relative">
-<div className=" projectdiv me-5">
-  <div className="coloureddiv1">
-    <h3 className="colouredtext">{project.name}</h3>
-  </div>
-  <div className="coloureddiv">
-    <p className="descriptiondiv">{project.description} <FontAwesomeIcon icon={faLocationDot} /> </p>
-  </div>
-  <div className="viewdetail-div" onClick={() => handleClickProject(project._id)} >
-    <div className="viewbutton-div">
-      <p className="moredetail-text mt-3">View More Details</p>
-      <FontAwesomeIcon icon={faCaretDown} />
-    </div>
-  </div>
-</div>
-{selectedProjectId === project._id && showBlocks && (
-  <div className={`showModal ${showModal ? "visible" : "hidden"}`}>
-    <div>
-<div className="d-flex justify-content-between mb-3">
-  <div className="totalunitsdiv mt-3">
-    <h2 className="textunits"> Total </h2>
-    <p className="unitsnum">
-      {" "}
-      {projectUnitCounts[project._id]?.totalUnits || 0}
-    </p>
-  </div>
-  <div className="availableunitsdiv mt-3">
-    <h2 className="textunits"> Availabe </h2>
-    <p className="unitsnum">
-      {" "}
-      {projectUnitCounts[project._id]?.totalAvailableUnits ||
-        0}
-    </p>
-  </div>
-  <div className="holunitsdiv mt-3">
-    <h2 className="textunits"> Hold </h2>
-    <p className="unitsnum">
-      {" "}
-      {projectUnitCounts[project._id]?.totalHoldUnits || 0}
-    </p>
-  </div>
-  <div className="solunitsdiv mt-3">
-    <h2 className="textunits"> Sold </h2>
-    <p className="unitsnum">
-      {" "}
-      {projectUnitCounts[project._id]?.totalSoldUnits || 0}
-    </p>
-  </div>
-</div>
-<table className="table">
-  <thead>
-    <tr>
-      <th className="blockdivstart">ID</th>
-      <th className="blockdiv">Blocks</th>
-      <th className="blockdiv">Total Units</th>
-      <th className="blockdiv">Available Units</th>
-      <th className="blockdiv">Hold Units</th>
-      <th className="blockdiv">Sold Units</th>
-    </tr>
-  </thead>
-  <tbody>
-    {project.blocks.map((block, blockIndex) => (
-      <tr
-        key={blockIndex}
-        onClick={() => handleClickBlock(block._id)}
-      >
-        <td>{blockIndex + 1}</td>
-        <td className="tablecursor">{block.name}</td>
-        <td className="tablecursor">
-          {blockwiseUnitCounts[block._id]}
-        </td>
-        <td className="tablecursor">
-          {blockwiseAvailableUnitCounts[block._id]}
-        </td>
-        <td className="tablecursor">
-          {blockwiseHoldUnitCounts[block._id] || 0}
-        </td>
-        <td className="tablecursor">
-          {blockwiseSoldUnitCounts[block._id] || 0}
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-<ul>
-  {project.blocks.map((block, blockIndex) => (
-    <div className=" " key={blockIndex}>
-      {selectedBlockId === block._id && showUnits && (
-        <>
-          <ul>
-            <div className="row">
-              {block.units.map((unit, unitIndex) => (
-                <div className="col-2" key={unitIndex}>
-<div
-  className="units-div"
-  style={{
-    backgroundColor:
-      unit.status === "hold"
-        ? "#FEE69F"
-        : unit.status === "sold"
-          ? "#FE8B8B"
-          : unit.status === "available"
-            ? "#A6FFBF"
-            : "#A6FFBF",
-  }} onClick={() => DropdownToggle(unitIndex)}>
-  <p className="unit-div">{unit.name}</p>
-</div>
-{UnitDropdown === unitIndex && (
-  <div className="unit-div-dropdown">
-    {unit.status === "available" && (
-      <></>)}
-    {unit.status === "sold" && (
-      <>
-  <button className="hold-unit" onClick={() =>handleMarkUnitHold(project._id, block._id, unit._id)}>
-    Hold
- </button>
- <button
-   className="available-unit"
-   style={{ backgroundColor: "#A6FFBF" }}
-   onClick={() =>
-     handleMarkUnitAvailable(project._id, block._id, unit._id)
-   }
- >
-   Available
- </button>
-  </>
-)}
-{unit.status === "hold" && (
-  <>
-    <button
-      className="available-unit"
-      style={{ backgroundColor: "#A6FFBF" }}
-      onClick={() =>
-        handleMarkUnitAvailable(project._id, block._id, unit._id)
-      }
-    >
-      Available
-    </button>
-    <button
-      className="sold-unit"
-      onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}
-    >
-      Sold
-    </button>
-  </>
-)}
-{unit.status === "available" && (
-  <>
-    <button
-      className="hold-unit" onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)} >
-      Hold
-    </button>
-    <button className="sold-unit" onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)} >
-      Sold
-    </button>
-  </>
-)}
-<button
-  className="delete-unit" onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>
-  Delete
-</button>
- </div>
- )}
-</div>
-))}
- </div>
- </ul>
-</>
- )}
- </div>
- ))}
- </ul>
- </div>
- </div>
- )}
-</div>
-  ))}
-</div>
-<div className="">
-  <button
-    className={`edit-title ${dropdownOpen ? "open" : ""}`}
-    onClick={() => setDropdownOpen(!dropdownOpen)}
-  >
-    EDIT PROJECT
-  </button>
-  {dropdownOpen && (
-    <div className="mt-3 ">
-      <button
-  className={`dropdown-button editbutton ${showBlockDropdown ? "active " : ""}`}
-  onClick={() => {
-    setShowBlockDropdown(!showBlockDropdown);
-    setShowUnitDropdown(false); // Close the Addition of Unit dropdown
-  }}
->
-  Addition of Block <FontAwesomeIcon icon={showBlockDropdown ? faArrowUp : faArrowDown} />
-</button>
-<div>
-  {showBlockDropdown && (
-      <AdditionBlock />
-  )}
-  <div className="mt-3">
-  <button className={`dropdown-button editbutton ${showUnitDropdown ? "active " : ""}`} onClick={() => {
-    setShowUnitDropdown(!showUnitDropdown);
-    setShowBlockDropdown(false); // Close the Addition of Block dropdown
-  }}
-> Addition of Unit <FontAwesomeIcon icon={showUnitDropdown ? faArrowUp : faArrowDown} />
-</button>
-  {showUnitDropdown && (
-  <AdditionUnit /> )} </div> </div> </div>
-  )}
-</div>
-<div className="mt-3">
-  <button onClick={toggleProjectsDropdown} className="edit-title">
-    {" "}
-    Upload Projects
-  </button>
-  {showProjectsDropdown && <Projects />}
-</div>
-<div className="mt-3">
-  <button onClick={toggleUserDropdown} className="edit-title">
-    User Details
-  </button>
-  {showUserDropdown && <User />}
+          <div key={index} className=" mb-5 position-relative">
+            <div className=" projectdiv me-5">
+              <div className="coloureddiv1">
+                <h3 className="colouredtext">{project.name}</h3>
+              </div>
+              <div className="coloureddiv">
+                <p className="descriptiondiv">{project.description} <FontAwesomeIcon icon={faLocationDot} /> </p>
+              </div>
+              <div className="viewdetail-div" onClick={() => handleClickProject(project._id)} >
+                <div className="viewbutton-div">
+                  <p className="moredetail-text mt-3">View More Details</p>
+                  <FontAwesomeIcon icon={faCaretDown} />
+                </div>
+              </div>
+            </div>
+            {selectedProjectId === project._id && showBlocks && (
+              <div className={`showModal ${showModal ? "visible" : "hidden"}`}>
+                <div>
+                  <div className="d-flex justify-content-between mb-3">
+                    <div className="totalunitsdiv mt-3">
+                      <h2 className="textunits"> Total </h2>
+                      <p className="unitsnum">
+                        {" "}
+                        {projectUnitCounts[project._id]?.totalUnits || 0}
+                      </p>
+                    </div>
+                    <div className="availableunitsdiv mt-3">
+                      <h2 className="textunits"> Availabe </h2>
+                      <p className="unitsnum">
+                        {" "}
+                        {projectUnitCounts[project._id]?.totalAvailableUnits ||
+                          0}
+                      </p>
+                    </div>
+                    <div className="holunitsdiv mt-3">
+                      <h2 className="textunits"> Hold </h2>
+                      <p className="unitsnum">
+                        {" "}
+                        {projectUnitCounts[project._id]?.totalHoldUnits || 0}
+                      </p>
+                    </div>
+                    <div className="solunitsdiv mt-3">
+                      <h2 className="textunits"> Sold </h2>
+                      <p className="unitsnum">
+                        {" "}
+                        {projectUnitCounts[project._id]?.totalSoldUnits || 0}
+                      </p>
+                    </div>
+                  </div>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th className="blockdivstart">ID</th>
+                        <th className="blockdiv">Blocks</th>
+                        <th className="blockdiv">Total Units</th>
+                        <th className="blockdiv">Available Units</th>
+                        <th className="blockdiv">Hold Units</th>
+                        <th className="blockdiv">Sold Units</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {project.blocks.map((block, blockIndex) => (
+                        <tr
+                          key={blockIndex}
+                          onClick={() => handleClickBlock(block._id)}
+                        >
+                          <td>{blockIndex + 1}</td>
+                          <td className="tablecursor">{block.name}</td>
+                          <td className="tablecursor">
+                            {blockwiseUnitCounts[block._id]}
+                          </td>
+                          <td className="tablecursor">
+                            {blockwiseAvailableUnitCounts[block._id]}
+                          </td>
+                          <td className="tablecursor">
+                            {blockwiseHoldUnitCounts[block._id] || 0}
+                          </td>
+                          <td className="tablecursor">
+                            {blockwiseSoldUnitCounts[block._id] || 0}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <ul>
+                    {project.blocks.map((block, blockIndex) => (
+                      <div className=" " key={blockIndex}>
+                        {selectedBlockId === block._id && showUnits && (
+                          <>
+                            <ul>
+                              <div className="row">
+                                {block.units.map((unit, unitIndex) => (
+                                  <div className="col-2" key={unitIndex}>
+                                    <div
+                                      className="units-div"
+                                      style={{
+                                        backgroundColor:
+                                          unit.status === "hold"
+                                            ? "#FEE69F"
+                                            : unit.status === "sold"
+                                              ? "#FE8B8B"
+                                              : unit.status === "available"
+                                                ? "#A6FFBF"
+                                                : "#A6FFBF",
+                                      }} onClick={() => DropdownToggle(unitIndex)}>
+                                      <p className="unit-div">{unit.name}</p>
+                                    </div>
+                                    {UnitDropdown === unitIndex && (
+                                      <div className="unit-div-dropdown">
+                                        {unit.status === "available" && (
+                                          <></>)}
+                                        {unit.status === "sold" && (
+                                          <>
+                                            <button className="hold-unit" onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)}>
+                                              Hold
+                                            </button>
+                                            <button
+                                              className="available-unit"
+                                              style={{ backgroundColor: "#A6FFBF" }}
+                                              onClick={() =>
+                                                handleMarkUnitAvailable(project._id, block._id, unit._id)
+                                              }
+                                            >
+                                              Available
+                                            </button>
+                                          </>
+                                        )}
+                                        {unit.status === "hold" && (
+                                          <>
+                                            <button
+                                              className="available-unit"
+                                              style={{ backgroundColor: "#A6FFBF" }}
+                                              onClick={() =>
+                                                handleMarkUnitAvailable(project._id, block._id, unit._id)
+                                              }
+                                            >
+                                              Available
+                                            </button>
+                                            <button
+                                              className="sold-unit"
+                                              onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}
+                                            >
+                                              Sold
+                                            </button>
+                                          </>
+                                        )}
+                                        {unit.status === "available" && (
+                                          <>
+                                            <button
+                                              className="hold-unit" onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)} >
+                                              Hold
+                                            </button>
+                                            <button className="sold-unit" onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)} >
+                                              Sold
+                                            </button>
+                                          </>
+                                        )}
+                                        <button
+                                          className="delete-unit" onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>
+                                          Delete
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </ul>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="">
+        <button
+          className={`edit-title ${dropdownOpen ? "open" : ""}`}
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+        >
+          EDIT PROJECT
+        </button>
+        {dropdownOpen && (
+          <div className="mt-3 ">
+            <button
+              className={`dropdown-button editbutton ${showBlockDropdown ? "active " : ""}`}
+              onClick={() => {
+                setShowBlockDropdown(!showBlockDropdown);
+                setShowUnitDropdown(false); // Close the Addition of Unit dropdown
+              }}
+            >
+              UPLOAD BLOCKS <FontAwesomeIcon icon={showBlockDropdown ? faArrowUp : faArrowDown} />
+            </button>
+            <div>
+              {showBlockDropdown && (
+                <AdditionBlock />
+              )}
+              <div className="mt-3">
+                <button className={`dropdown-button editbutton ${showUnitDropdown ? "active " : ""}`} onClick={() => {
+                  setShowUnitDropdown(!showUnitDropdown);
+                  setShowBlockDropdown(false); // Close the Addition of Block dropdown
+                }}
+                > UPLOAD  UNITS <FontAwesomeIcon icon={showUnitDropdown ? faArrowUp : faArrowDown} />
+                </button>
+                {showUnitDropdown && (
+                  <AdditionUnit />)} </div> </div> </div>
+        )}
+      </div>
+      <div className="mt-3">
+        <button onClick={toggleProjectsDropdown} className="edit-title">
+          {" "}
+          Upload Projects
+        </button>
+        {showProjectsDropdown && <Projects />}
+      </div>
+      <div className="mt-3">
+        <button onClick={toggleUserDropdown} className="edit-title">
+          User Details
+        </button>
+        {showUserDropdown && <User />}
       </div>
     </div>
   );
