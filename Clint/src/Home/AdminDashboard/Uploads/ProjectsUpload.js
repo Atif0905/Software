@@ -11,7 +11,6 @@ import AdditionUnit from "../Addblockandunit/AdditionUnit";
 
 const ProjectsUpload = () => {
   const [projects, setProjects] = useState([]);
-  const [newUnitName, setNewUnitName] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [selectedBlockId, setSelectedBlockId] = useState("null");
   const [showBlocks, setShowBlocks] = useState(true);
@@ -33,11 +32,6 @@ const ProjectsUpload = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showBlockDropdown, setShowBlockDropdown] = useState(false);
   const [showUnitDropdown, setShowUnitDropdown] = useState(false);
-  const [plotSize, setPlotSize] = useState("");
-  const [sizeType, setSizeType] = useState(""); // Assuming sizeType is selected from options (sqft or sqyd)
-  const [rate, setRate] = useState("");
-  const [idcCharges, setIdcCharges] = useState("");
-  const [plcCharges, setPlcCharges] = useState("");
 
   const DropdownToggle = (unitIndex) => {
     setUnitDropdown((prevIndex) =>
@@ -231,8 +225,6 @@ const ProjectsUpload = () => {
       return 0;
     }
   };
-
-
   const handleAddUnit = async () => {
     const isConfirmed = window.confirm(
       "Are you sure you want to add this unit?"
@@ -270,7 +262,6 @@ const ProjectsUpload = () => {
       }
     }
   };
-
 
   const handleMarkUnitAvailable = async (projectId, blockId, unitId) => {
     const isConfirmed = window.confirm(
@@ -385,32 +376,6 @@ const ProjectsUpload = () => {
     }
   };
 
-  const handleDeleteProject = async (projectId) => {
-    // Check if a project is selected
-    if (!projectId) {
-      console.error("No project selected.");
-      return;
-    }
-
-    const isConfirmed = window.confirm(
-      "Are you sure you want to delete this project?"
-    );
-    if (isConfirmed) {
-      try {
-        const response = await axios.delete(
-          `${process.env.REACT_APP_API_URL}/deleteProject/${projectId}`
-        );
-        const data = response.data;
-        if (response.status === 200 && data.status === "ok") {
-          fetchProjects();
-        } else {
-          console.error("Failed to delete project:", data.error);
-        }
-      } catch (error) {
-        console.error("Error deleting project:", error);
-      }
-    }
-  };
   return (
     <div className="container">
       <h2 className="">OUR PROJECTS</h2>

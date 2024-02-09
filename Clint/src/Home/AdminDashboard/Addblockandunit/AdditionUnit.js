@@ -131,10 +131,10 @@ const AdditionUnit = () => {
   return (
     <div className=""> 
 <div><input type="text" className="form-input-field mt-4" placeholder="Unit Name" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value)} required /></div>
-<div><input  type="text" className="form-input-field mt-4" placeholder="Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required/></div>
-<div><input type="text" className="form-input-field mt-4"  placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} required/></div>
-<div><input type="text" className="form-input-field mt-4" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} required/></div>
-<div><input type="text" className="form-input-field mt-4" placeholder="PLC Charges" value={plcCharges} onChange={(e) => setPlcCharges(e.target.value)}  required/></div>
+<div><input  type="number" className="form-input-field mt-4" placeholder="Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required/></div>
+<div><input type="number" className="form-input-field mt-4"  placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} required/></div>
+<div><input type="number" className="form-input-field mt-4" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} required/></div>
+<div><input type="number" className="form-input-field mt-4" placeholder="PLC Charges" value={plcCharges} onChange={(e) => setPlcCharges(e.target.value)}  required/></div>
 <div className="mt-3"><select className="select-buttons ps-1" onChange={(e) => setSelectedProjectId(e.target.value)} >
   <option value="">Select Project</option>
   {projects.map((project, index) => ( <option key={index} value={project._id}> {project.name} </option>
