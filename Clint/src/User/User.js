@@ -13,7 +13,7 @@ const User = () => {
   
   useEffect(() => {
     currentPage.current = 1;
-    // getPaginatedUsers();
+    getPaginatedUsers();
   }, []);
 
   // Logout
