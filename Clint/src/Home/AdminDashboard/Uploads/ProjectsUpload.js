@@ -11,7 +11,6 @@ import AdditionUnit from "../Addblockandunit/AdditionUnit";
 
 const ProjectsUpload = () => {
   const [projects, setProjects] = useState([]);
-  const [newUnitName, setNewUnitName] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [selectedBlockId, setSelectedBlockId] = useState("null");
   const [showBlocks, setShowBlocks] = useState(true);
@@ -33,11 +32,6 @@ const ProjectsUpload = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showBlockDropdown, setShowBlockDropdown] = useState(false);
   const [showUnitDropdown, setShowUnitDropdown] = useState(false);
-  const [plotSize, setPlotSize] = useState("");
-  const [sizeType, setSizeType] = useState(""); // Assuming sizeType is selected from options (sqft or sqyd)
-  const [rate, setRate] = useState("");
-  const [idcCharges, setIdcCharges] = useState("");
-  const [plcCharges, setPlcCharges] = useState("");
 
   const DropdownToggle = (unitIndex) => {
     setUnitDropdown((prevIndex) =>

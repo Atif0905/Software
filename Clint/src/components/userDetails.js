@@ -18,7 +18,7 @@ export default function UserDetails() {
     })
     .then((response) => {
       const data = response.data;
-      console.log(data, "userData");
+      // console.log(data, "userData");
       if (data.data && data.data.userType === "Admin") {
         setAdmin(true);
       }
