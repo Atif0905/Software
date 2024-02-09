@@ -233,45 +233,7 @@ const ProjectsUpload = () => {
   };
 
   
-  const handleAddUnit = async () => {
-    const isConfirmed = window.confirm(
-      "Are you sure you want to add this unit?"
-    );
   
-    if (isConfirmed) {
-      try {
-        const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/addUnit/${selectedProjectId}/${selectedBlockId}`,
-          {
-            name: newUnitName,
-            plotSize,
-            sizeType, // Assuming sizeType is selected from options (sqft or sqyd)
-            rate,
-            idcCharges,
-            plcCharges
-          }
-        );
-  
-        const data = response.data;
-        
-        if (response.status === 201 && data.status === "ok") {
-          fetchProjects();
-          setNewUnitName("");
-          setPlotSize("");
-          setSizeType("");
-          setRate("");
-          setIdcCharges("");
-          setPlcCharges("");
-        } else {
-          console.error("Failed to add unit:", data.error);
-        }
-      } catch (error) {
-        console.error("Error adding unit:", error);
-      }
-    }
-  };
-  
-
   const handleMarkUnitAvailable = async (projectId, blockId, unitId) => {
     const isConfirmed = window.confirm(
       "Are you sure you want to mark this unit as Available?"
@@ -385,32 +347,6 @@ const ProjectsUpload = () => {
     }
   };
 
-  const handleDeleteProject = async (projectId) => {
-    // Check if a project is selected
-    if (!projectId) {
-      console.error("No project selected.");
-      return;
-    }
-
-    const isConfirmed = window.confirm(
-      "Are you sure you want to delete this project?"
-    );
-    if (isConfirmed) {
-      try {
-        const response = await axios.delete(
-          `${process.env.REACT_APP_API_URL}/deleteProject/${projectId}`
-        );
-        const data = response.data;
-        if (response.status === 200 && data.status === "ok") {
-          fetchProjects();
-        } else {
-          console.error("Failed to delete project:", data.error);
-        }
-      } catch (error) {
-        console.error("Error deleting project:", error);
-      }
-    }
-  };
   return (
     <div className="container">
       <h2 className="">OUR PROJECTS</h2>

@@ -96,7 +96,7 @@ const AdditionBlock = () => {
   return (
     <div className="">
     <input
-      type="text"
+      type="number"
       className="form-input-field mt-4"
       placeholder="Total Plot in Block"
       value={totalPlotInBlock}
@@ -104,7 +104,7 @@ const AdditionBlock = () => {
       required
     />
     <div><input
-      type="text"
+      type="number"
       className="form-input-field mt-4"
       placeholder="Plot Size (sqyd)"
       value={plotSize}
@@ -112,7 +112,7 @@ const AdditionBlock = () => {
       required
     /></div>
     <div><input
-      type="text"
+      type="number"
       className="form-input-field mt-4"
       placeholder="Basic Rate of Block"
       value={basicRateOfBlock}
@@ -120,14 +120,14 @@ const AdditionBlock = () => {
       required
     /></div>
     <div><input
-      type="text"
+      type="number"
       className="form-input-field mt-4"
       placeholder="IDC rate of Block"
       value={idcRateOfBlock}
       onChange={(e) => setIdcRateOfBlock(e.target.value)}
       required
     /></div>
-    <div><input type="text" className="form-input-field mt-4" placeholder="EDC Rate of Block" value={edcRateOfBlock}  onChange={(e) => setEdcRateOfBlock(e.target.value)} required/></div>
+    <div><input type="number" className="form-input-field mt-4" placeholder="EDC Rate of Block" value={edcRateOfBlock}  onChange={(e) => setEdcRateOfBlock(e.target.value)} required/></div>
     <div><input type="text" className="form-input-field mt-4" placeholder="Block Name" value={newBlockName} onChange={(e) => setNewBlockName(e.target.value)}/></div>
     <div><select
               className="select-buttons mt-3 ps-1"
