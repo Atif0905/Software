@@ -1,4 +1,4 @@
-import React ,{useState}from 'react'
+import React ,{useState, useEffect}from 'react'
 import axios from 'axios';
 
 const AdditionBlock = () => {
@@ -76,6 +76,9 @@ const AdditionBlock = () => {
       console.error("Error fetching projects:", error);
     }
   };
+  useEffect(() => {
+    fetchProjects();
+  }, []);
   const getUnitCount = async (projectId, blockId) => {
     try {
       const response = await axios.get(
@@ -128,7 +131,7 @@ const AdditionBlock = () => {
       required
     /></div>
     <div><input type="number" className="form-input-field mt-4" placeholder="EDC Rate of Block" value={edcRateOfBlock}  onChange={(e) => setEdcRateOfBlock(e.target.value)} required/></div>
-    <div><input type="text" className="form-input-field mt-4" placeholder="Block Name" value={newBlockName} onChange={(e) => setNewBlockName(e.target.value)}/></div>
+    <div><input type="text" className="form-input-field mt-4" placeholder="Block Name" value={newBlockName} onChange={(e) => setNewBlockName(e.target.value.toUpperCase())}/></div>
     <div><select
               className="select-buttons mt-3 ps-1"
               onChange={(e) => setSelectedProjectId(e.target.value)}

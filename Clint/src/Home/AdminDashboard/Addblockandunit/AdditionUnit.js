@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import axios from 'axios';
 
 const AdditionUnit = () => {
@@ -128,9 +128,12 @@ const AdditionUnit = () => {
         // setShowBlocks(!showBlocks); 
         // setShowUnits(true); 
       };
+      useEffect(() => {
+        fetchProjects();
+      }, []);
   return (
     <div className=""> 
-<div><input type="text" className="form-input-field mt-4" placeholder="Unit Name" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value)} required /></div>
+<div><input type="text" className="form-input-field mt-4" placeholder="Unit Name" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value.toUpperCase())} required /></div>
 <div><input  type="number" className="form-input-field mt-4" placeholder="Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required/></div>
 <div><input type="number" className="form-input-field mt-4"  placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} required/></div>
 <div><input type="number" className="form-input-field mt-4" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} required/></div>
