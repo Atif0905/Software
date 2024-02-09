@@ -15,16 +15,11 @@ const ProjectsUpload = () => {
   const [selectedBlockId, setSelectedBlockId] = useState("null");
   const [showBlocks, setShowBlocks] = useState(true);
   const [showUnits, setShowUnits] = useState(true);
-  // const [totalUnitsCount, setTotalUnitsCount] = useState(0);
   const [blockwiseUnitCounts, setBlockwiseUnitCounts] = useState({});
-  // const [totalHoldUnitsCount, setTotalHoldUnitsCount] = useState(0);
   const [blockwiseHoldUnitCounts, setBlockwiseHoldUnitCounts] = useState({});
-  // const [totalSoldUnitsCount, setTotalSoldUnitsCount] = useState(0);
   const [blockwiseSoldUnitCounts, setBlockwiseSoldUnitCounts] = useState({});
   const [showModal, setShowModal] = useState(false);
-  // const [totalAvailableUnitsCount, setTotalAvailableUnitsCount] = useState(0);
-  const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] =
-    useState({});
+  const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] =  useState({});
   const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const [UnitDropdown, setUnitDropdown] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
