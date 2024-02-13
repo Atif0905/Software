@@ -6,6 +6,7 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Project = require('./Models/UploadProjects');
+const Customer = require('./Models/CastumerUpload')
 
 const { PORT, MONGODB_URI, JWT_SECRET } = process.env; // Access environment variables
 
@@ -144,42 +145,42 @@ app.get("/paginatedUsers", async (req, res) => {
 
 
 
-app.post("/uploadProject", async (req, res) => {
-  const { name, description, totalLand, blocks } = req.body;
+  app.post("/uploadProject", async (req, res) => {
+    const { name, description, totalLand, blocks } = req.body;
 
-  try {
-    // Create an array to store blocks
-    const blocksArray = [];
+    try {
+      // Create an array to store blocks
+      const blocksArray = [];
 
-    // Iterate over blocks in the request
-    for (const block of blocks) {
-      const { name: blockName, units } = block;
+      // Iterate over blocks in the request
+      for (const block of blocks) {
+        const { name: blockName, units } = block;
 
-      // Create an array to store units within the block
-      const unitsArray = [];
+        // Create an array to store units within the block
+        const unitsArray = [];
 
-      // Iterate over units in the block
-      for (const unit of units) {
-        const { name: unitName } = unit;
-        
-        // Create a new unit object and push it to the unitsArray
-        const newUnit = { name: unitName };
-        unitsArray.push(newUnit);
+        // Iterate over units in the block
+        for (const unit of units) {
+          const { name: unitName } = unit;
+          
+          // Create a new unit object and push it to the unitsArray
+          const newUnit = { name: unitName };
+          unitsArray.push(newUnit);
+        }
+
+        // Create a new block object with units and push it to the blocksArray
+        const newBlock = { name: blockName, units: unitsArray };
+        blocksArray.push(newBlock);
       }
 
-      // Create a new block object with units and push it to the blocksArray
-      const newBlock = { name: blockName, units: unitsArray };
-      blocksArray.push(newBlock);
+      // Create a new project using the Project model with blocks
+      const project = await Project.create({ name, description,totalLand, blocks: blocksArray });
+      res.status(201).json({ status: "ok", data: project });
+    } catch (error) {
+      console.error("Error uploading project:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
-
-    // Create a new project using the Project model with blocks
-    const project = await Project.create({ name, description,totalLand, blocks: blocksArray });
-    res.status(201).json({ status: "ok", data: project });
-  } catch (error) {
-    console.error("Error uploading project:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+  });
 
 app.get("/getAllProjects", async (req, res) => {
   try {
@@ -503,6 +504,32 @@ app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
     res.status(200).json({ status: "ok", unitCount });
   } catch (error) {
     console.error("Error getting unit count:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// Add customer
+app.post("/uploadCustomer", async (req, res) => {
+  const { name, fatherOrHusbandName, address, email, phone, aadharNumber, panNumber, income, photo } = req.body;
+
+  try {
+    // Create a new customer using the Customer model
+    const customer = await Customer.create({ 
+      name, 
+      fatherOrHusbandName, 
+      address, 
+      email, 
+      phone, 
+      aadharNumber, 
+      panNumber, 
+      income, 
+      photo 
+    });
+
+    res.status(201).json({ status: "ok", data: customer });
+  } catch (error) {
+    console.error("Error uploading customer:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
