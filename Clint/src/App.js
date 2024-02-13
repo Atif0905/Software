@@ -17,6 +17,8 @@ import UserSidebar from './Sidebar/UserSidebar'
 import Userprojects from "./UpdateProjects/Userprojects";
 import UserReports from "./components/Reports/UserReports";
 import AdminUser from "./User/AdminUser";
+import AdditionBlock from "./Home/AdminDashboard/Addblockandunit/AdditionBlock";
+import AdditionUnit from "./Home/AdminDashboard/Addblockandunit/AdditionUnit";
 
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
@@ -55,6 +57,8 @@ function App() {
           <Route path="/Reports" element={<SidebarComponent />} />
           <Route path="/Users-Reports" element={<SidebarComponent/>} />
           <Route path="/Adminuser" element={<SidebarComponent />} />
+          <Route path="/Addblock" element={<SidebarComponent/>}/>
+          <Route path="/Addunit" element={<SidebarComponent/>}/>
           </Routes>
         )}
         <Routes>
@@ -70,6 +74,8 @@ function App() {
           <Route path="/Reports" element={<Reports />} />
           <Route path="/Users-Projects" element={<Userprojects />} />
           <Route path="/Users-Reports" element={<UserReports />} />
+          <Route path="/Addblock" element={<AdditionBlock/>}/>
+          <Route path="/Addunit" element={<AdditionUnit/>}/>
         </Routes>
       </div>
     </Router>

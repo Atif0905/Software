@@ -22,8 +22,8 @@
 .sidebar li a {
   display: block;
   color: azure;
-  font-size: 20px;
-  margin-bottom: 30px;
+  font-size: 16px;
+  margin-bottom: 10px;
   padding: 8px 16px;
   text-decoration: none;
 }
@@ -34,6 +34,44 @@
   background-color: azure;
   border: 2px solid azure;
   color: black;
+}
+.dropdown .dropdown-toggle {
+  color: azure;
+  font-size: 16px;
+  margin-bottom: 10px;
+  padding: 8px 16px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.dropdown-toggle:hover{
+  background-color: azure;
+  border: 2px solid azure;
+  color: black;
+}
+.dropdown .dropdown-menu {
+  display: none;
+  position: relative;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+  z-index: 1; 
+  list-style-type: none; 
+  padding: 0;
+  transition: opacity 1s ease-in-out; 
+}
+
+.dropdown .dropdown-menu.active {
+  
+  display: block;
+  background-color: azure;
+  /* border: 2px solid azure; */
+  color: black;
   border-radius: 20px;
-  width: 95%;
+  /* width: 95%; */
+}
+
+.dropdown .dropdown-item {
+  color: azure;
+  font-size: 16px !important;
+  /* padding: 8px 16px; */
+  text-decoration: none;
+  background-color: rgb(56, 56, 56);
 }

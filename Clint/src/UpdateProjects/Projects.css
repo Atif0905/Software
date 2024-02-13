@@ -255,12 +255,6 @@ margin-top: 25%;
   background-color: #FFFFFF;
   margin-left: -25%;
 }
-.main-content{
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-}
 .upload-title{
   font-size: 28px;
   font-weight: 600;
