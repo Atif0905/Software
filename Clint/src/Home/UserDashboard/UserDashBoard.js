@@ -1,12 +1,12 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretDown, faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown, faLocationDot, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const UserDashBoard = ({ userData }) => {
   const [projects, setProjects] = useState([]);
-  const [newBlockName, setNewBlockName] = useState("");
-  const [newUnitName, setNewUnitName] = useState("");
+  // const [newBlockName, setNewBlockName] = useState("");
+  // const [newUnitName, setNewUnitName] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [selectedBlockId, setSelectedBlockId] = useState("null");
   const [showBlocks, setShowBlocks] = useState(true);
@@ -73,12 +73,17 @@ const UserDashBoard = ({ userData }) => {
     updateProjectUnitCounts();
   }, [projects]);
 
-  const openModal = () => {
-    setShowModal(true);
+  const handleModalToggle = () => {
+    const body = document.querySelector('body');
+    setShowModal(!showModal);
+    body.style.overflow = 'hidden';
+    
   };
-
   const closeModal = () => {
-    setShowModal(false);
+    const body = document.querySelector('body');
+    const modalWrapper = document.querySelector('.modal-wrapper');
+    modalWrapper.style.display = 'none';
+    body.style.overflow = 'auto';
   };
   const updateTotalUnitsCount = () => {
     let totalUnits = 0;
@@ -277,16 +282,17 @@ const UserDashBoard = ({ userData }) => {
                 className="viewdetail-div"
                 onClick={() => handleClickProject(project._id)}
               >
-                <div className="viewbutton-div">
-                  <p className="moredetail-text mt-3">View More Details</p>
-                  <FontAwesomeIcon icon={faCaretDown} />
+                <div className="viewbutton-div" onClick={() => handleClickProject(project._id)}>
+                <p className="moredetail-text mt-3">View More Details</p>
+      <FontAwesomeIcon icon={faCaretDown} />
                 </div>
               </div>
             </div>
 
             {selectedProjectId === project._id && showBlocks && (
-              <div className={`showModal ${showModal ? "visible" : "hidden"}`}>
-                <div>
+                <div className="modal-wrapper">
+                  <FontAwesomeIcon icon={faTimes} size="2x" className="closeicon" onClick={closeModal} />
+                  <div className="modal-container">
                   <div className="d-flex justify-content-between">
                     <div className="totalunitsdiv mt-3">
                       <h2 className="textunits"> Total </h2>
@@ -359,7 +365,7 @@ const UserDashBoard = ({ userData }) => {
                       <div className=" " key={blockIndex}>
                         {selectedBlockId === block._id && showUnits && (
                           <>
-                            <h5 className="mainhead">Units:</h5>
+                            
                             <ul>
                               <div className="row">
                                 {block.units.map((unit, unitIndex) => (
@@ -406,8 +412,8 @@ const UserDashBoard = ({ userData }) => {
                       </div>
                     ))}
                   </ul>
+                  </div>
                 </div>
-              </div>
             )}
           </div>
         ))}

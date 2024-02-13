@@ -5,7 +5,7 @@ import "../../../UpdateProjects/Projects.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faLocationDot, faArrowDown, faArrowUp   } from "@fortawesome/free-solid-svg-icons";
 import Projects from "../../../UpdateProjects/Projects";
-import User from "../../../User/User";
+import User from "../../../User/AdminUser";
 import AdditionBlock from "../Addblockandunit/AdditionBlock";
 import AdditionUnit from "../Addblockandunit/AdditionUnit";
 

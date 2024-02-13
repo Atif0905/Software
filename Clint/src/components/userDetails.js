@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios'; // Import Axios
 import AdminDashboard from "../Home/AdminDashboard/AdminDashboard";
 import UserDashBoard from "../Home/UserDashboard/UserDashBoard";
-import User from "../User/User";
+// import User from "../User/User";
 export default function UserDetails() {
   const [userData, setUserData] = useState({});
   const [admin, setAdmin] = useState(false);

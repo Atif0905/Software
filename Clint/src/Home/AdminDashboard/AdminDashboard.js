@@ -8,8 +8,8 @@ import { faUser } from '@fortawesome/free-regular-svg-icons';
 const AdminDashboard = () => {
   return (
     <>
-    <h1 className='mainhead profilehead '><FontAwesomeIcon icon={faUser} className='mainico'/>Hello Admin</h1>
     <div className='main-content'>
+    <h1 className='mainhead profilehead '><FontAwesomeIcon icon={faUser} className='mainico'/>Hello Admin</h1>
       {/* <AdminHome/> */}
       <AdminUploadProject/>
       <UploadedProjects/>
