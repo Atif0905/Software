@@ -603,39 +603,6 @@ const UploadedProjects = () => {
 </div>
   ))}
 </div>
-<div className="">
-  <button
-    className={`edit-title ${dropdownOpen ? "open" : ""}`}
-    onClick={() => setDropdownOpen(!dropdownOpen)}
-  >
-    EDIT PROJECT
-  </button>
-  {dropdownOpen && (
-    <div className="mt-3 ">
-      <button
-  className={`dropdown-button editbutton ${showBlockDropdown ? "active " : ""}`}
-  onClick={() => {
-    setShowBlockDropdown(!showBlockDropdown);
-    setShowUnitDropdown(false); // Close the Addition of Unit dropdown
-  }}
->
-  Addition of Block <FontAwesomeIcon icon={showBlockDropdown ? faArrowUp : faArrowDown} />
-</button>
-<div>
-  {showBlockDropdown && (
-      <AdditionBlock />
-  )}
-  <div className="mt-3">
-  <button className={`dropdown-button editbutton ${showUnitDropdown ? "active " : ""}`} onClick={() => {
-    setShowUnitDropdown(!showUnitDropdown);
-    setShowBlockDropdown(false); // Close the Addition of Block dropdown
-  }}
-> Addition of Unit <FontAwesomeIcon icon={showUnitDropdown ? faArrowUp : faArrowDown} />
-</button>
-  {showUnitDropdown && (
-  <AdditionUnit /> )} </div> </div> </div>
-  )}
-</div>
     </div>
   );
 };

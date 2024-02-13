@@ -97,7 +97,8 @@ const AdditionBlock = () => {
     }
   };
   return (
-    <div className="">
+    <div className="main-content">
+      <h2>Add Block </h2>
     <input
       type="number"
       className="form-input-field mt-4"
