@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretDown, faLocationDot, faArrowDown, faArrowUp   } from "@fortawesome/free-solid-svg-icons";
-import User from "../../User/User";
+import { faCaretDown, faLocationDot, faArrowDown, faArrowUp, faTimes   } from "@fortawesome/free-solid-svg-icons";
+import User from "../../User/AdminUser";
 import AdditionBlock from "./Addblockandunit/AdditionBlock";
 import AdditionUnit from "./Addblockandunit/AdditionUnit";
 import Projects from "../../UpdateProjects/Projects";
@@ -31,7 +31,7 @@ const UploadedProjects = () => {
   const [showUnitDropdown, setShowUnitDropdown] = useState(false);
   const [newUnitName, setNewUnitName] = useState("");
   const [newBlockName, setNewBlockName] = useState("");
-
+  const modalRef = useRef();
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -92,6 +92,7 @@ const UploadedProjects = () => {
     // setTotalHoldUnitsCount(totalHoldUnits);
     setBlockwiseHoldUnitCounts(blockwiseHoldCounts);
   };
+  
 
   useEffect(() => {
     updateUnitCounts();
@@ -393,7 +394,18 @@ const UploadedProjects = () => {
       console.error("Error deleting block:", error);
     }
   };
-
+  const handleModalToggle = () => {
+    const body = document.querySelector('body');
+    setShowModal(!showModal);
+    body.style.overflow = 'hidden';
+    
+  };
+  const closeModal = () => {
+    const body = document.querySelector('body');
+    const modalWrapper = document.querySelector('.modal-wrapper');
+    modalWrapper.style.display = 'none';
+    body.style.overflow = 'auto';
+  };
   const handleDeleteProject = async (projectId) => {
     try {
       const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteProject/${projectId}`);
@@ -421,15 +433,16 @@ const UploadedProjects = () => {
     <p className="descriptiondiv">{project.description} <FontAwesomeIcon icon={faLocationDot} /> </p>
   </div>
   <div className="viewdetail-div" onClick={() => handleClickProject(project._id)} >
-    <div className="viewbutton-div">
-      <p className="moredetail-text mt-3">View More Details</p>
+  <div className="viewbutton-div">
+  <p className="moredetail-text mt-3">View More Details</p>
       <FontAwesomeIcon icon={faCaretDown} />
     </div>
   </div>
 </div>
 {selectedProjectId === project._id && showBlocks && (
-  <div className={`showModal ${showModal ? "visible" : "hidden"}`}>
-    <div>
+    <div className="modal-wrapper"  >
+      <FontAwesomeIcon icon={faTimes} size="2x" className="closeicon" onClick={closeModal} />
+      <div className="modal-container">
 <div className="d-flex justify-content-between mb-3">
   <div className="totalunitsdiv mt-3">
     <h2 className="textunits"> Total </h2>
@@ -590,52 +603,6 @@ const UploadedProjects = () => {
 </div>
   ))}
 </div>
-<div className="">
-  <button
-    className={`edit-title ${dropdownOpen ? "open" : ""}`}
-    onClick={() => setDropdownOpen(!dropdownOpen)}
-  >
-    EDIT PROJECT
-  </button>
-  {dropdownOpen && (
-    <div className="mt-3 ">
-      <button
-  className={`dropdown-button editbutton ${showBlockDropdown ? "active " : ""}`}
-  onClick={() => {
-    setShowBlockDropdown(!showBlockDropdown);
-    setShowUnitDropdown(false); // Close the Addition of Unit dropdown
-  }}
->
-  Addition of Block <FontAwesomeIcon icon={showBlockDropdown ? faArrowUp : faArrowDown} />
-</button>
-<div>
-  {showBlockDropdown && (
-      <AdditionBlock />
-  )}
-  <div className="mt-3">
-  <button className={`dropdown-button editbutton ${showUnitDropdown ? "active " : ""}`} onClick={() => {
-    setShowUnitDropdown(!showUnitDropdown);
-    setShowBlockDropdown(false); // Close the Addition of Block dropdown
-  }}
-> Addition of Unit <FontAwesomeIcon icon={showUnitDropdown ? faArrowUp : faArrowDown} />
-</button>
-  {showUnitDropdown && (
-  <AdditionUnit /> )} </div> </div> </div>
-  )}
-</div>
-<div className="mt-3">
-  <button onClick={toggleProjectsDropdown} className="edit-title">
-    {" "}
-    Upload Projects
-  </button>
-  {showProjectsDropdown && <Projects />}
-</div>
-<div className="mt-3">
-  <button onClick={toggleUserDropdown} className="edit-title">
-    User Details
-  </button>
-  {showUserDropdown && <User />}
-      </div>
     </div>
   );
 };

@@ -8,16 +8,6 @@
     background-size: contain;
     background-attachment: fixed ;
   }
- .mainhead{
-text-align: left;
-color: #ADB3CC;
- }
-.profilehead{
-text-align: right;
-font-size: 30px;
-margin-right: 1%;
-padding-top: 1%;
-}
 .user-profile{
   text-align: right;
   font-size: 30px;

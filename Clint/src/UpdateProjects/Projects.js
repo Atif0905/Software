@@ -67,8 +67,9 @@ const Projects = () => {
   };
 
   return (
-    <div className="  container">
-      <div className='row'>
+    <div className="main-content ">
+      <div className=''>
+        <h1 className='Headtext' >Upload Project</h1>
         <div className='col-12'>
           <form onSubmit={handleSubmit}>
             <div className="form-group mt-4">

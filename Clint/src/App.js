@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect} from "react";
+import axios from "axios";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
@@ -9,26 +10,55 @@ import AdminDashboard from "./Home/AdminDashboard/AdminDashboard";
 import UploadedProjects from "./Home/AdminDashboard/ShowProjects";
 import ProjectDetails from "./Home/AdminDashboard/Uploads/ProjectDetails";
 import Sidebar from "./Sidebar/Sidebar";
-import User from "./User/User";
+import User from "./User/AdminUser";
 import Projects from "./UpdateProjects/Projects";
 import Reports from "./components/Reports/Reports";
+import UserSidebar from './Sidebar/UserSidebar'
+import Userprojects from "./UpdateProjects/Userprojects";
+import UserReports from "./components/Reports/UserReports";
+import AdminUser from "./User/AdminUser";
+import AdditionBlock from "./Home/AdminDashboard/Addblockandunit/AdditionBlock";
+import AdditionUnit from "./Home/AdminDashboard/Addblockandunit/AdditionUnit";
 
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
+  const [userData, setUserData] = useState({});
+  const [admin, setAdmin] = useState(false);
+  useEffect(() => {
+    axios.post(`${process.env.REACT_APP_API_URL}/userData`, {
+      token: window.localStorage.getItem("token"),
+    })
+    .then((response) => {
+      const data = response.data;
+      // console.log(data, "userData");
+      if (data.data && data.data.userType === "Admin") {
+        setAdmin(true);
+      }
 
+      setUserData(data.data);
+    })
+    .catch((error) => {
+      console.error('Error fetching user data:', error);
+    });
+  }, [userData]);
+  const SidebarComponent = admin ? Sidebar : UserSidebar;
   return (
     <Router>
       <div className="App">
         {isLoggedIn === "true" && (
           <Routes>
           <Route path="/" element={<Navigate to="/userDetails" />} />
-          <Route path="/userDetails" element={<Sidebar />} />
-          <Route path="/AdminDashboard/*" element={<Sidebar />} />
-          <Route path="/uploaded-projects" element={<Sidebar />} />
-          <Route path="/project/:projectId" element={<Sidebar />} />
-          <Route path="/user" element={<Sidebar/>} />
-          <Route path="/Projects" element={<Sidebar />} />
-          <Route path="/Reports" element={<Sidebar />} />
+          <Route path="/userDetails" element={<SidebarComponent />} />
+          <Route path="/AdminDashboard/*" element={<SidebarComponent />} />
+          <Route path="/uploaded-projects" element={<SidebarComponent />} />
+          <Route path="/project/:projectId" element={<SidebarComponent />} />
+          <Route path="/user" element={<SidebarComponent/>} />
+          <Route path="/Projects" element={<SidebarComponent />} />
+          <Route path="/Reports" element={<SidebarComponent />} />
+          <Route path="/Users-Reports" element={<SidebarComponent/>} />
+          <Route path="/Adminuser" element={<SidebarComponent />} />
+          <Route path="/Addblock" element={<SidebarComponent/>}/>
+          <Route path="/Addunit" element={<SidebarComponent/>}/>
           </Routes>
         )}
         <Routes>
@@ -39,9 +69,13 @@ function App() {
           <Route path="/AdminDashboard" element={<AdminDashboard />} />
           <Route path="/uploaded-projects" element={<UploadedProjects />} />
           <Route path="/project/:projectId" element={<ProjectDetails />} />
-          <Route path="/user" element={<User />} />
+          <Route path="/Adminuser" element={<AdminUser />} />
           <Route path="/Projects" element={<Projects />} />
           <Route path="/Reports" element={<Reports />} />
+          <Route path="/Users-Projects" element={<Userprojects />} />
+          <Route path="/Users-Reports" element={<UserReports />} />
+          <Route path="/Addblock" element={<AdditionBlock/>}/>
+          <Route path="/Addunit" element={<AdditionUnit/>}/>
         </Routes>
       </div>
     </Router>
