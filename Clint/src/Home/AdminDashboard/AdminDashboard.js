@@ -4,6 +4,7 @@ import AdminUploadProject from './Uploads/ProjectsUpload'
 import UploadedProjects from './ShowProjects'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
+import AddCustomerForm from "./Uploads/Coustmer"
 
 const AdminDashboard = () => {
   return (
@@ -13,6 +14,7 @@ const AdminDashboard = () => {
       {/* <AdminHome/> */}
       <AdminUploadProject/>
       <UploadedProjects/>
+      <AddCustomerForm/>
     </div>
     </>
   )
