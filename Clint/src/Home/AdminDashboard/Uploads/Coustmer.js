@@ -56,8 +56,12 @@ const AddCustomerForm = () => {
     }
   };
 
-  const handleChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value.toUpperCase() // Convert value to uppercase
+    });
   };
 
   const handleSubmit = async e => {
@@ -88,44 +92,44 @@ const AddCustomerForm = () => {
   };
 
   return (
-    <div>
+    <div className='main-content'>
       <h2>Add Customer</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name" name="name" value={formData.name} onChange={handleChange} />
-        <input type="text" placeholder="Father/Husband Name" name="fatherOrHusbandName" value={formData.fatherOrHusbandName} onChange={handleChange} />
-        <input type="text" placeholder="Address" name="address" value={formData.address} onChange={handleChange} />
-        <input type="email" placeholder="Email" name="email" value={formData.email} onChange={handleChange} />
-        <input type="text" placeholder="Phone" name="phone" value={formData.phone} onChange={handleChange} />
-        <input type="text" placeholder="Aadhar Number" name="aadharNumber" value={formData.aadharNumber} onChange={handleChange} />
-        <input type="text" placeholder="PAN Number" name="panNumber" value={formData.panNumber} onChange={handleChange} />
-        <input type="number" placeholder="Income" name="income" value={formData.income} onChange={handleChange} />
-        <input type="text" placeholder="Photo URL" name="photo" value={formData.photo} onChange={handleChange} />
-        
-        <select name="propertyType" value={formData.propertyType} onChange={handleChange}>
+        <div><input type="text" className="form-input-field mt-4" placeholder="Name" name="name" value={formData.name} onChange={handleChange} required /></div>
+        <div><input type="text" className="form-input-field mt-4" placeholder="Father/Husband Name" name="fatherOrHusbandName" value={formData.fatherOrHusbandName} onChange={handleChange} required /></div>
+        <div><input type="text" className="form-input-field mt-4" placeholder="Address" name="address" value={formData.address} onChange={handleChange} required /></div>
+        <div><input type="email" className="form-input-field mt-4" placeholder="Email" name="email" value={formData.email} onChange={handleChange} required /></div>
+        <div><input type="text" className="form-input-field mt-4" placeholder="Phone" name="phone" value={formData.phone} onChange={handleChange} required /></div>
+        <div><input type="number" className="form-input-field mt-4" placeholder="Aadhar Number" name="aadharNumber" value={formData.aadharNumber} onChange={handleChange} required /></div>
+        <div><input type="number" className="form-input-field mt-4" placeholder="PAN Number" name="panNumber" value={formData.panNumber} onChange={handleChange} required /></div>
+        <div><input type="number" className="form-input-field mt-4" placeholder="Income" name="income" value={formData.income} onChange={handleChange} required /></div>
+        {/* <div><input type="text" className="form-input-field mt-4" placeholder="Photo URL" name="photo" value={formData.photo} onChange={handleChange} required /></div> */}
+        <div>
+        <select name="propertyType" className="select-buttons mt-3 ps-1" value={formData.propertyType} onChange={handleChange}>
           <option value="">Select Property Type</option>
           {propertyTypes.map(propertyType => (
             <option key={propertyType._id} value={propertyType._id}>{propertyType.name}</option>
           ))}
         </select>
-
-        <select name="project" value={formData.project} onChange={e => {handleChange(e); handleProjectChange(e.target.value)}}>
+        </div>
+        <div><select name="project" className="select-buttons mt-3 ps-1" value={formData.project} onChange={e => {handleChange(e); handleProjectChange(e.target.value)}}>
           <option value="">Select Project</option>
           {projects.map(project => (
             <option key={project._id} value={project._id}>{project.name}</option>
           ))}
         </select>
-
-        <select name="block" value={formData.block} onChange={handleChange}>
+        </div>
+        <div><select name="block" className="select-buttons mt-3 ps-1" value={formData.block} onChange={handleChange}>
           <option value="">Select Block</option>
           {blocks.map(block => (
             <option key={block._id} value={block._id}>{block.name}</option>
           ))}
         </select>
-
-        <input type="text" placeholder="Plot/Unit" name="plotUnit" value={formData.plotUnit} onChange={handleChange} />
-        <input type="number" placeholder="Discount (%)" name="discount" value={formData.discount} onChange={handleChange} />
+        </div>
+        <div><input type="text" className="form-input-field mt-4" placeholder="Plot/Unit" name="plotUnit" value={formData.plotUnit} onChange={handleChange} required /></div>
+        <div><input type="number" className="form-input-field mt-4" placeholder="Discount (%)" name="discount" value={formData.discount} onChange={handleChange} required /></div>
         
-        <button type="submit">Add Customer</button>
+        <button type="submit" className="add-buttons mt-3">Add Customer</button>
       </form>
     </div>
   );

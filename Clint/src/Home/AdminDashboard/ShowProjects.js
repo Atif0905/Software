@@ -2,10 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faLocationDot, faArrowDown, faArrowUp, faTimes   } from "@fortawesome/free-solid-svg-icons";
-import User from "../../User/AdminUser";
-import AdditionBlock from "./Addblockandunit/AdditionBlock";
-import AdditionUnit from "./Addblockandunit/AdditionUnit";
-import Projects from "../../UpdateProjects/Projects";
 import '../../UpdateProjects/Projects.css'
 const UploadedProjects = () => {
   const [projects, setProjects] = useState([]);
@@ -27,11 +23,7 @@ const UploadedProjects = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const [showBlockDropdown, setShowBlockDropdown] = useState(false);
-  const [showUnitDropdown, setShowUnitDropdown] = useState(false);
-  const [newUnitName, setNewUnitName] = useState("");
-  const [newBlockName, setNewBlockName] = useState("");
-  const modalRef = useRef();
+
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -145,16 +137,6 @@ const UploadedProjects = () => {
     // setTotalAvailableUnitsCount(totalAvailableUnits);
     setBlockwiseAvailableUnitCounts(blockwiseAvailableCounts);
   };
-  // const toggleDropdown = (dropdown) => {
-  //   setShowProjectsDropdown(false);
-  //   setShowUserDropdown(false);
-
-  //   if (dropdownOpen === dropdown) {
-  //     setDropdownOpen(null); // Close the clicked dropdown if it's already open
-  //   } else {
-  //     setDropdownOpen(dropdown); // Open the clicked dropdown
-  //   }
-  // };
 
   const toggleProjectsDropdown = () => {
     setDropdownOpen(null);
@@ -343,57 +325,6 @@ const UploadedProjects = () => {
       }
     }
   };
-// delete after this 
-
-
-  const handleAddBlock = async () => {
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/addBlock/${selectedProjectId}`, {
-        name: newBlockName
-      });
-      const data = response.data;
-      if (response.status === 201 && data.status === "ok") {
-        fetchProjects();
-        setNewBlockName("");
-      } else {
-        console.error("Failed to add block:", data.error);
-      }
-    } catch (error) {
-      console.error("Error adding block:", error);
-    }
-  };
-  
-  const handleAddUnit = async () => {
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/addUnit/${selectedProjectId}/${selectedBlockId}`, {
-        name: newUnitName
-      });
-      const data = response.data;
-      if (response.status === 201 && data.status === "ok") {
-        fetchProjects();
-        setNewUnitName("");
-      } else {
-        console.error("Failed to add unit:", data.error);
-      }
-    } catch (error) {
-      console.error("Error adding unit:", error);
-    }
-  };
-  
-  
-  const handleDeleteBlock = async (projectId, blockId) => {
-    try {
-      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteBlock/${projectId}/${blockId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects();
-      } else {
-        console.error("Failed to delete block:", data.error);
-      }
-    } catch (error) {
-      console.error("Error deleting block:", error);
-    }
-  };
   const handleModalToggle = () => {
     const body = document.querySelector('body');
     setShowModal(!showModal);
@@ -406,19 +337,7 @@ const UploadedProjects = () => {
     modalWrapper.style.display = 'none';
     body.style.overflow = 'auto';
   };
-  const handleDeleteProject = async (projectId) => {
-    try {
-      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteProject/${projectId}`);
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        fetchProjects();
-      } else {
-        console.error("Failed to delete project:", data.error);
-      }
-    } catch (error) {
-      console.error("Error deleting project:", error);
-    }
-  };
+  
   return (
     <div className="container">
       <h2 className="">OUR PROJECTS</h2>

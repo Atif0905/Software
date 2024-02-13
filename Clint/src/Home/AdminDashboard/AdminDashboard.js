@@ -14,7 +14,6 @@ const AdminDashboard = () => {
       {/* <AdminHome/> */}
       <AdminUploadProject/>
       <UploadedProjects/>
-      <AddCustomerForm/>
     </div>
     </>
   )
