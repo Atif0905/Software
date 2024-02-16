@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   return (
     <>
     <div className='main-content'>
-    <h2 className='profilehead'><FontAwesomeIcon icon={faUser} className='mainico'/>Hello A</h2>
+    <h4 className='profilehead'><FontAwesomeIcon icon={faUser} className='mainico'/>Hello, A</h4>
       {/* <AdminHome/> */}
       <AdminUploadProject/>
       <UploadedProjects/>

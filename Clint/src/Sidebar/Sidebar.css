@@ -1,11 +1,15 @@
-
+.sidehead{
+  color: white;
+  text-align: center;
+  font-size: 30px;
+}
 .sidebar {
   list-style-type: none;
   margin: 0;
   padding: 0;
   width: 15%;
   height: 100vh;
-  background-color: black;
+  background-color: #343434;
   background-size: contain;
   background-attachment: fixed ;
   background-position: center;
@@ -18,10 +22,11 @@
   width:75%;
   height: 65px;
   margin-bottom: 10px;
+  object-fit: contain ;
 }
 .sidebar li a {
   display: block;
-  color: azure;
+  color: white;
   font-size: 16px;
   margin-bottom: 10px;
   padding: 8px 16px;
@@ -31,12 +36,12 @@
   margin-right: 8px;
 }
 .sidebar li a:hover {
-  background-color: azure;
-  border: 2px solid azure;
+  background-color: #CCCCCC;
+  border: 2px solid #CCCCCC;
   color: black;
 }
 .dropdown .dropdown-toggle {
-  color: azure;
+  color: white;
   font-size: 16px;
   margin-bottom: 10px;
   padding: 8px 16px;
@@ -44,14 +49,13 @@
   cursor: pointer;
 }
 .dropdown-toggle:hover{
-  background-color: azure;
-  border: 2px solid azure;
+  background-color: #CCCCCC;
+  border: 2px solid #CCCCCC;
   color: black;
 }
 .dropdown .dropdown-menu {
   display: none;
   position: relative;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
   z-index: 1; 
   list-style-type: none; 
   padding: 0;
@@ -61,17 +65,45 @@
 .dropdown .dropdown-menu.active {
   
   display: block;
-  background-color: azure;
-  /* border: 2px solid azure; */
+  background-color: #343434;
   color: black;
   border-radius: 20px;
-  /* width: 95%; */
 }
 
 .dropdown .dropdown-item {
   color: azure;
   font-size: 16px !important;
-  /* padding: 8px 16px; */
+  line-height: 10px;
   text-decoration: none;
-  background-color: rgb(56, 56, 56);
+  background-color: #343434;
+}
+@media (max-width:992px) {
+  .sidebar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 25%;
+    height: 100vh;
+    background-color: #343434;
+    background-size: contain;
+    background-attachment: fixed;
+    background-position: center;
+    position: fixed;
+    border-right: 2px solid #ADB3CC;
+}
+}
+@media (max-width:480px) {
+  .sidebar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 25%;
+    height: 100%;
+    background-color: #343434;
+    background-size: contain;
+    background-attachment: fixed;
+    background-position: center;
+    position: fixed;
+    border-right: 2px solid #ADB3CC;
+}
 }

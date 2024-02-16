@@ -18,3 +18,11 @@
 .mainico{
   margin-right: 10px;
 }
+@media (max-width:992px) {
+  .main-content {
+    margin-left: 25%;
+    padding: 16px;
+    background-size: contain;
+    background-attachment: fixed;
+}
+}

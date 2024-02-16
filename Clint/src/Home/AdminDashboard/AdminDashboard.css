@@ -2,3 +2,44 @@
     color: black;
     text-align: right;
 } 
+.flexy{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.paymentmaindiv{
+    height: 120px;
+    width: 320px;
+    background-color: rgb(221, 76, 57);
+}
+.view-paymentdiv{
+    background-color: rgb(198, 66, 51);
+    width: 100%;
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+.view-paymentbutton-div{
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@media (max-width:1025px) {
+    .paymentmaindiv {
+        height: 120px;
+        width: 250px;
+        background-color: rgb(221, 76, 57);
+    }
+}
+@media (max-width:992px) {
+    .paymentmaindiv {
+        height: 120px;
+        width: 250px;
+        background-color: rgb(221, 76, 57);
+        margin-bottom: 20px;
+    }
+}

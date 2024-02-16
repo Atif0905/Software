@@ -266,10 +266,10 @@ const UserDashBoard = ({ userData }) => {
    
       <h2 className="">OUR PROJECTS</h2>
      
-      <div className="d-flex flex-wrap">
+      <div className="d-flex flex-wrap justify-content-between">
         {projects.map((project, index) => (
-          <div key={index} className=" mb-5 position-relative">
-            <div className=" projectdiv me-5">
+          <div key={index} className=" mb-4 position-relative">
+            <div className=" projectdiv ">
               <div className="coloureddiv1">
                 <h3 className="colouredtext">{project.name}</h3>
               </div>
