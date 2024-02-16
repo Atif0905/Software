@@ -1,20 +1,24 @@
 import React from 'react'
-
+import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import './Sidebar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faBell, faUser, faClipboard  } from '@fortawesome/free-regular-svg-icons';
 import { faRightFromBracket,  faChalkboardUser } from '@fortawesome/free-solid-svg-icons';
 const UserSidebar = () => {
+  const navigate = useNavigate();
   const logOut = () => {
-    window.localStorage.clear();
-    window.location.href = "./sign-in";
+    const isConfirmed = window.confirm("Are you sure you want to log out?");
+    if (isConfirmed) {
+      window.localStorage.clear();
+      navigate("/sign-in");
+    }
   };
   return (
     <div>
-      <ul className="sidebar">
-        <img src='./grouplogo.png' className='logoo' alt=''/>
-      <div className='mt-2'>
+      <ul className="sidebar ">
+      <h1 className='sidehead'>WIC</h1>
+      <div className='mt-5'>
       <li className='Links'><Link to="/"><FontAwesomeIcon icon={faChalkboardUser} className='mar'/>Dashboard</Link></li>
         {/* <li className='Links'><Link to="/Users-Reports"><FontAwesomeIcon icon={faClipboard} className='mar' />Reports</Link></li> */}
         {/* <li className='Links'><Link to="/notifications"><FontAwesomeIcon icon={faBell} className='mar'/>Notifications</Link></li> */}

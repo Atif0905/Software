@@ -58,8 +58,8 @@ const AdminUser = () => {
       });
   }
   return (
-    <div className=" auth-wrapper" style={{ height: "auto" }}>
-      <div className="auth-inner" style={{ width: "auto" }}>
+    <div className=" auth-wrapper " style={{ height: "auto" }}>
+      <div className="auth-inner mt-5" style={{ width: "auto" }}>
         <h3>Welcome Admin</h3>
         <table style={{ width: 500 }}>
           <thead>

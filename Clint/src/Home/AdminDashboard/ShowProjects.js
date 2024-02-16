@@ -340,11 +340,11 @@ const UploadedProjects = () => {
   
   return (
     <div className="container">
-      <h2 className="">OUR PROJECTS</h2>
-      <div className="d-flex flex-wrap">
+      <h4 className=""> PROJECTS</h4>
+      <div className="d-flex flex-wrap justify-content-between">
         {projects.map((project, index) => (
-      <div key={index} className=" mb-5 position-relative">
-<div className=" projectdiv me-5">
+      <div key={index} className=" mb-4 position-relative">
+<div className=" projectdiv ">
   <div className="coloureddiv1">
     <h3 className="colouredtext">{project.name}</h3>
   </div>
@@ -354,7 +354,7 @@ const UploadedProjects = () => {
   <div className="viewdetail-div" onClick={() => handleClickProject(project._id)} >
   <div className="viewbutton-div">
   <p className="moredetail-text mt-3">View More Details</p>
-      <FontAwesomeIcon icon={faCaretDown} />
+      <FontAwesomeIcon icon={faCaretDown} className="moredetail"/>
     </div>
   </div>
 </div>
@@ -436,7 +436,7 @@ const UploadedProjects = () => {
           <ul>
             <div className="row">
               {block.units.map((unit, unitIndex) => (
-                <div className="col-2" key={unitIndex}>
+                <div className="col-1" key={unitIndex}>
 <div
   className="units-div"
   style={{
