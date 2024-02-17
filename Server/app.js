@@ -253,6 +253,8 @@ app.post("/addBlock/:projectId", async (req, res) => {
   }
 });
 
+
+
 // Endpoint to add a unit to a block
 app.post("/addUnit/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
@@ -510,26 +512,60 @@ app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
 
 
 // Add customer
-app.post("/uploadCustomer", async (req, res) => {
-  const { name, fatherOrHusbandName, address, email, phone, aadharNumber, panNumber, income, photo } = req.body;
+// Endpoint to add a customer
+app.post("/addCustomer", async (req, res) => {
+  const {
+    name,
+    fatherOrHusbandName,
+    address,
+    aadharNumber,
+    panNumber,
+    mobileNumber,
+    income,
+    email,
+    propertyType,
+    selectedProject,
+    selectedBlock,
+    selectedUnit,
+    discount,
+    paymentPlan,
+    bookingDate,
+    bookingType,
+    sendEmail
+  } = req.body;
 
   try {
-    // Create a new customer using the Customer model
-    const customer = await Customer.create({ 
-      name, 
-      fatherOrHusbandName, 
-      address, 
-      email, 
-      phone, 
-      aadharNumber, 
-      panNumber, 
-      income, 
-      photo 
+    // Check if the customer already exists
+    const existingCustomer = await Customer.findOne({ email });
+
+    if (existingCustomer) {
+      return res.status(400).json({ error: "Customer already exists" });
+    }
+
+    // Create a new customer
+    const newCustomer = await Customer.create({
+      name,
+      fatherOrHusbandName,
+      address,
+      aadharNumber,
+      panNumber,
+      mobileNumber,
+      income,
+      email,
+      propertyType,
+      project: selectedProject,
+      block: selectedBlock,  
+      plotOrUnit: selectedUnit,
+      discount,
+      paymentPlan,
+      bookingDate,
+      bookingType,
+      sendEmail
     });
 
-    res.status(201).json({ status: "ok", data: customer });
+    res.status(201).json({ status: "ok", data: newCustomer });
   } catch (error) {
-    console.error("Error uploading customer:", error);
+    console.error("Error adding customer:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
