@@ -43,3 +43,19 @@
         margin-bottom: 20px;
     }
 }
+@media (max-width:425px) {
+    .paymentmaindiv {
+        height: 120px;
+        width: 180px;
+        background-color: rgb(221, 76, 57);
+        margin-bottom: 20px;
+    }
+}
+@media (max-width:376px) {
+    .paymentmaindiv {
+        height: 120px;
+        width: 220px;
+        background-color: rgb(221, 76, 57);
+        margin-bottom: 20px;
+    }
+}
