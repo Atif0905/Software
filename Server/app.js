@@ -142,9 +142,6 @@ app.get("/paginatedUsers", async (req, res) => {
   res.json(results)
 });
 
-
-
-
   app.post("/uploadProject", async (req, res) => {
     const { name, description, totalLand, blocks } = req.body;
 
@@ -189,6 +186,67 @@ app.get("/getAllProjects", async (req, res) => {
   } catch (error) {
     console.error("Error fetching projects:", error);
     res.status(500).json({ status: "error", error: "Internal server error" });
+  }
+});
+
+
+// Endpoint to fetch project by ID
+app.get("/getProject/:projectId", async (req, res) => {
+  const { projectId } = req.params;
+  
+  try {
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+    res.status(200).json({ status: "ok", data: project });
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Endpoint to fetch block by ID
+app.get("/getBlock/:projectId/:blockId", async (req, res) => {
+  const { projectId, blockId } = req.params;
+  
+  try {
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+    const block = project.blocks.id(blockId);
+    if (!block) {
+      return res.status(404).json({ error: "Block not found" });
+    }
+    res.status(200).json({ status: "ok", data: block });
+  } catch (error) {
+    console.error("Error fetching block:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Endpoint to fetch unit by ID
+app.get("/getUnit/:projectId/:blockId/:unitId", async (req, res) => {
+  const { projectId, blockId, unitId } = req.params;
+  
+  try {
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+    const block = project.blocks.id(blockId);
+    if (!block) {
+      return res.status(404).json({ error: "Block not found" });
+    }
+    const unit = block.units.id(unitId);
+    if (!unit) {
+      return res.status(404).json({ error: "Unit not found" });
+    }
+    res.status(200).json({ status: "ok", data: unit });
+  } catch (error) {
+    console.error("Error fetching unit:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -567,5 +625,17 @@ app.post("/addCustomer", async (req, res) => {
   } catch (error) {
     console.error("Error adding customer:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// View Castumer
+app.get('/customers', async (req, res) => {
+  try {
+    // Fetch all customers from the database
+    const customers = await Customer.find();
+    res.json(customers);
+  } catch (error) {
+    console.error('Error fetching customers:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });

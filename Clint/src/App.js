@@ -20,6 +20,7 @@ import AdminUser from "./User/AdminUser";
 import AdditionBlock from "./Home/AdminDashboard/Addblockandunit/AdditionBlock";
 import AdditionUnit from "./Home/AdminDashboard/Addblockandunit/AdditionUnit";
 import AddCustomerForm from "./Home/AdminDashboard/Uploads/Coustmer";
+import ViewCastumer from "./Home/AdminDashboard/ViewCastumer";
 
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
@@ -61,6 +62,7 @@ function App() {
           <Route path="/Addblock" element={<SidebarComponent/>}/>
           <Route path="/Addunit" element={<SidebarComponent/>}/>
           <Route path="/Addcustomer" element={<SidebarComponent/>}/>
+          <Route path="/ViewCustomer" element={<SidebarComponent/>}/>
           </Routes>
         )}
         <Routes>
@@ -79,6 +81,7 @@ function App() {
           <Route path="/Addblock" element={<AdditionBlock/>}/>
           <Route path="/Addunit" element={<AdditionUnit/>}/>
           <Route path="/Addcustomer" element={<AddCustomerForm/>}/>
+          <Route path="/ViewCustomer" element={<ViewCastumer/>} />
         </Routes>
       </div>
     </Router>
