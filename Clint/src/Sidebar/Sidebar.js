@@ -38,6 +38,7 @@ const Sidebar = () => {
     </div>
           {/* <li className='Links'><Link to="/reports"><FontAwesomeIcon icon={faClipboard} className='mar' />Reports</Link></li> */}
           <li className='Links'><Link to='/Addcustomer'><FontAwesomeIcon icon={faPerson} className='mar'/>Customer</Link></li>
+          <li className='Links'><Link to='/ViewCustomer'><FontAwesomeIcon icon={faPerson} className='mar'/> View Customer</Link></li>
           <li className='Links'><Link to="/Adminuser"><FontAwesomeIcon icon={faUser} className='mar'/>User</Link></li>
           <li className='Links' onClick={logOut}><Link ><FontAwesomeIcon icon={faRightFromBracket} className='mar'/>Logout</Link></li>
         </div>
