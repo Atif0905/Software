@@ -101,7 +101,7 @@ const AdditionBlock = () => {
       <h2>Add Block </h2>
     <input
       type="number"
-      className="form-input-field mt-4"
+      className="form-input-field mt-4 inputBox"
       placeholder="Total Plot in Block"
       value={totalPlotInBlock}
       onChange={(e) => setTotalPlotInBlock(e.target.value)}
@@ -109,7 +109,7 @@ const AdditionBlock = () => {
     />
     <div><input
       type="number"
-      className="form-input-field mt-4"
+      className="form-input-field mt-4 "
       placeholder="Plot Size (sqyd)"
       value={plotSize}
       onChange={(e) => setPlotSize(e.target.value)}

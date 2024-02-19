@@ -371,7 +371,7 @@ const UploadedProjects = () => {
     </p>
   </div>
   <div className="availableunitsdiv mt-3">
-    <h2 className="textunits"> Availabe </h2>
+    <h2 className="textunits"> Available </h2>
     <p className="unitsnum">
       {" "}
       {projectUnitCounts[project._id]?.totalAvailableUnits ||
@@ -436,7 +436,7 @@ const UploadedProjects = () => {
           <ul>
             <div className="row">
               {block.units.map((unit, unitIndex) => (
-                <div className="col-1" key={unitIndex}>
+                <div className="col-md-1 col-sm-2" key={unitIndex}>
 <div
   className="units-div"
   style={{

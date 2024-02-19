@@ -21,25 +21,27 @@ const Sidebar = () => {
       navigate("/sign-in");
     }
   };
-
+  const closeDropdown = () => {
+    setIsOpen(false); // Close the dropdown
+  };
   return (
     <div>
       <ul className="sidebar">
         <h1 className='sidehead'>WIC</h1>
         <div className='mt-5'>
-          <li className='Links'><Link to="/"><FontAwesomeIcon icon={faChalkboardUser} className='mar'/>Dashboard</Link></li>
+          <li className='Links'><Link to="/"><FontAwesomeIcon icon={faChalkboardUser} className='mar'/><span className='dis'>Dashboard</span></Link></li>
           <div className="dropdown">
-      <li className="dropdown-toggle" onClick={toggleDropdown}> <FontAwesomeIcon icon={faListCheck} className='mar'/>Project Master</li>
-      <div className={"dropdown-menu" + (isOpen ? " active" : "")} aria-labelledby="dropdownMenuButton">
-        <li className=" dropdown-item"><Link to='/Projects'> Upload Project</Link></li>
-        <li className=" dropdown-item"><Link to='/Addblock'>Add block</Link></li>
-        <li className=" dropdown-item"><Link to='/Addunit'>Add Unit</Link></li>
-      </div>
-    </div>
+            <li className="links dropdown-toggle" onClick={toggleDropdown}><FontAwesomeIcon icon={faListCheck} className='mar'/><span className='dis'>Project Master</span></li>
+            <div className={"dropdown-menu" + (isOpen ? " active" : "")} aria-labelledby="dropdownMenuButton">
+              <li className="dropdown-item" onClick={closeDropdown}><Link to='/Projects'>Upload Project</Link></li>
+              <li className="dropdown-item" onClick={closeDropdown}><Link to='/Addblock'>Add block</Link></li>
+              <li className="dropdown-item" onClick={closeDropdown}><Link to='/Addunit'>Add Unit</Link></li>
+            </div>
+          </div>
           {/* <li className='Links'><Link to="/reports"><FontAwesomeIcon icon={faClipboard} className='mar' />Reports</Link></li> */}
-          <li className='Links'><Link to='/Addcustomer'><FontAwesomeIcon icon={faPerson} className='mar'/>Customer</Link></li>
-          <li className='Links'><Link to="/Adminuser"><FontAwesomeIcon icon={faUser} className='mar'/>User</Link></li>
-          <li className='Links' onClick={logOut}><Link ><FontAwesomeIcon icon={faRightFromBracket} className='mar'/>Logout</Link></li>
+          <li className='Links'><Link to='/Addcustomer'><FontAwesomeIcon icon={faPerson} className='mar'/><span className='dis'>Customer</span></Link></li>
+          <li className='Links'><Link to="/Adminuser"><FontAwesomeIcon icon={faUser} className='mar'/><span className='dis'>User</span></Link></li>
+          <li className='Links' onClick={logOut}><Link ><FontAwesomeIcon icon={faRightFromBracket} className='mar'/><span className='dis'>Logout</span></Link></li>
         </div>
       </ul>
     </div>

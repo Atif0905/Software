@@ -58,9 +58,9 @@ const AdminUser = () => {
       });
   }
   return (
-    <div className=" auth-wrapper " style={{ height: "auto" }}>
-      <div className="auth-inner mt-5" style={{ width: "auto" }}>
-        <h3>Welcome Admin</h3>
+    <div className=" auth-wrapper ">
+      <div className="auth-inner ">
+        <h3 className="heading">Welcome Admin</h3>
         <table style={{ width: 500 }}>
           <thead>
             <tr>
@@ -95,7 +95,7 @@ const AdminUser = () => {
           previousLabel="< previous"
           renderOnZeroPageCount={null}
           marginPagesDisplayed={2}
-          containerClassName="pagination justify-content-center"
+          containerClassName="pagination justify-content-start  "
           pageClassName="page-item"
           pageLinkClassName="page-link"
           previousClassName="page-item"
