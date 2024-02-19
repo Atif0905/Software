@@ -12,9 +12,7 @@ const AdditionBlock = () => {
   const [projects, setProjects] = useState([]);
 
   const handleAddBlock = async () => {
-    const isConfirmed = window.confirm("Are you sure you want to add this block?");
-    if (isConfirmed) {
-      try {
+    
         const response = await axios.post(
           `${process.env.REACT_APP_API_URL}/addBlock/${selectedProjectId}`,
           {
@@ -41,14 +39,8 @@ const AdditionBlock = () => {
           
           // Log success message
           console.log("Block added successfully");
-        } else {
-          console.error("Failed to add block:", data.error);
-        }
-      } catch (error) {
-        console.error("Error adding block:", error);
-      }
-    }
-  };
+        } 
+      };
   const fetchProjects = async () => {
     try {
       const response = await axios.get(
@@ -99,6 +91,19 @@ const AdditionBlock = () => {
   return (
     <div className="main-content">
       <h2>Add Block </h2>
+      <form onSubmit={handleAddBlock}>
+      <div><select
+              className="select-buttons mt-3 ps-1"
+              onChange={(e) => setSelectedProjectId(e.target.value)}
+            >
+      <option value="">Select Project</option>
+      {projects.map((project, index) => (
+        <option key={index} value={project._id}>
+          {project.name}
+        </option>
+      ))}
+    </select></div>
+      <div><input type="text" className="form-input-field mt-4" placeholder="Block Name" value={newBlockName} onChange={(e) => setNewBlockName(e.target.value.toUpperCase())}/></div>
     <input
       type="number"
       className="form-input-field mt-4"
@@ -132,25 +137,16 @@ const AdditionBlock = () => {
       required
     /></div>
     <div><input type="number" className="form-input-field mt-4" placeholder="EDC Rate of Block" value={edcRateOfBlock}  onChange={(e) => setEdcRateOfBlock(e.target.value)} required/></div>
-    <div><input type="text" className="form-input-field mt-4" placeholder="Block Name" value={newBlockName} onChange={(e) => setNewBlockName(e.target.value.toUpperCase())}/></div>
-    <div><select
-              className="select-buttons mt-3 ps-1"
-              onChange={(e) => setSelectedProjectId(e.target.value)}
-            >
-      <option value="">Select Project</option>
-      {projects.map((project, index) => (
-        <option key={index} value={project._id}>
-          {project.name}
-        </option>
-      ))}
-    </select></div>
+    
+    
     <button
       className="add-buttons mt-3"
       onClick={handleAddBlock}
-      disabled={!newBlockName.trim()}
     >
       Add Block
-    </button></div>
+    </button>
+    </form>
+    </div>
   )
 }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './AdminDashboard.css'
 const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +72,8 @@ const CustomerList = () => {
   return (
     <div className='main-content'>
       <h2>Customer List</h2>
-      <table>
+      <div class="table-container">
+      <table id="myTable">
         <thead>
           <tr>
             <th>Name</th>
@@ -116,6 +117,7 @@ const CustomerList = () => {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

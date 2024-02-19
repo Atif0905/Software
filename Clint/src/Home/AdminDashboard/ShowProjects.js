@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faLocationDot, faArrowDown, faArrowUp, faTimes   } from "@fortawesome/free-solid-svg-icons";
 import '../../UpdateProjects/Projects.css'
+import '../AdminDashboard/Uploads/Coustmer'
 const UploadedProjects = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
@@ -48,7 +49,7 @@ const UploadedProjects = () => {
     setBlockwiseUnitCounts(blockCounts);
   };
   
-  const handleMarkUnitSold = async (projectId, blockId, unitId) => {
+  const handleMarkUnitSold =  async (projectId, blockId, unitId) => {
     const isConfirmed = window.confirm(
       "Are you sure you want to mark this unit as Sold?"
     );
@@ -495,6 +496,7 @@ const UploadedProjects = () => {
     <button
       className="hold-unit" onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)} >
       Hold
+
     </button>
     <button className="sold-unit" onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)} >
       Sold
