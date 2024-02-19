@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './Customer.css'
 
 const AddCustomerForm = () => {
   const [formData, setFormData] = useState({
@@ -155,37 +156,53 @@ const AddCustomerForm = () => {
 
   return (
     <div className='main-content'>
-      <h2>Customer Form</h2>
+      <h2 >Customer Form</h2>
       <form onSubmit={handleSubmit}>
-        <label>Name:</label>
-        <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
-        
-        <label>Father or Husband Name:</label>
-        <input type="text" name="fatherOrHusbandName" value={formData.fatherOrHusbandName} onChange={handleInputChange} />
-        
-        <label>Address:</label>
-        <input type="text" name="address" value={formData.address} onChange={handleInputChange} />
-        
-        <label>Aadhar Number:</label>
-        <input type="text" name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} />
-        
-        <label>PAN Number:</label>
-        <input type="text" name="panNumber" value={formData.panNumber} onChange={handleInputChange} />
-        
-        <label>Mobile Number:</label>
-        <input type="text" name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} />
-        
-        <label>Income:</label>
-        <input type="text" name="income" value={formData.income} onChange={handleInputChange} />
-        
-        <label>Email:</label>
-        <input type="email" name="email" value={formData.email} onChange={handleInputChange} required />
-        
-        <label>Property Type:</label>
-        <input type="text" name="propertyType" value={formData.propertyType} onChange={handleInputChange} />
-        
-        <div className="d-flex flex-wrap justify-content-between">
-          <select onChange={(e) => handleClickProject(e.target.value)}>
+        <div className='d-flex justify-content-between m-3'>
+        <div class="relative">
+  <input class="input-cal input-base" name="name" id="input" placeholder="" type="text" value={formData.name} onChange={handleInputChange} required/>
+  <label id="label-input">Name</label>
+</div>
+<div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="text" name="fatherOrHusbandName" value={formData.fatherOrHusbandName} onChange={handleInputChange}/>
+  <label id="label-input">Fathers/Husband Name</label>
+</div>
+        </div>
+        <div className='d-flex justify-content-between m-3'>
+        <div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="text" name="address" value={formData.address} onChange={handleInputChange}/>
+  <label id="label-input">Fathers/Husband Name</label>
+</div>
+<div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="number" name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} />
+  <label id="label-input">Adhar Number</label>
+</div>
+        </div>
+        <div className='d-flex justify-content-between m-3'>
+        <div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="text" name="panNumber" value={formData.panNumber} onChange={handleInputChange}/>
+  <label id="label-input">Pan Number</label>
+</div>
+<div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="number" name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange}/> 
+  <label id="label-input">Mobile Number</label>
+</div>
+       </div>
+        <div className='d-flex justify-content-between m-3'>
+        <div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="text" name="income" value={formData.income} onChange={handleInputChange}/>  
+  <label id="label-input">Income</label>
+</div><div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="text" name="email" value={formData.email} onChange={handleInputChange} required/>
+  <label id="label-input">Email</label>
+</div></div>
+        <div className='d-flex justify-content-between m-3'>
+        <div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="text" name="propertyType" value={formData.propertyType} onChange={handleInputChange}/> 
+  <label id="label-input">property Type</label>
+</div>
+        <div className="d-flex flex-wrap justify-content-between ">
+          <select className='input-select' onChange={(e) => handleClickProject(e.target.value)}>
             <option value="">Select Project</option>
             {projects.map((project, index) => (
               <option key={index} value={project._id}>{project.name}</option>
@@ -193,7 +210,7 @@ const AddCustomerForm = () => {
           </select>
           
           {showBlocks && formData.selectedProjectId && (
-            <select onChange={(e) => handleClickBlock(e.target.value)}>
+            <select className='input-select' onChange={(e) => handleClickBlock(e.target.value)}>
               <option value="">Select Block</option>
               {projects.find(project => project._id === formData.selectedProjectId)?.blocks.map((block, index) => (
                 <option key={index} value={block._id}>{block.name}</option>
@@ -202,7 +219,7 @@ const AddCustomerForm = () => {
           )}
           
           {showUnits && formData.selectedBlockId && (
-            <select onChange={(e) => handleClickUnit(e.target.value)}>
+            <select className='input-select' onChange={(e) => handleClickUnit(e.target.value)}>
               <option value="">Select Unit</option>
               {projects
                 .find(project => project._id === formData.selectedProjectId)
@@ -212,26 +229,34 @@ const AddCustomerForm = () => {
                 ))}
             </select>
           )}
+          </div>
         </div>
-        
-        <label>Discount:</label>
-        <input type="text" name="discount" value={formData.discount} onChange={handleInputChange} />
-        
-        <label>Payment Plan:</label>
-        <input type="text" name="paymentPlan" value={formData.paymentPlan} onChange={handleInputChange} />
-        
-        <label>Booking Date:</label>
-        <input type="date" name="bookingDate" value={formData.bookingDate} onChange={handleInputChange} />
-        
-        <label>Booking Type:</label>
-        <input type="text" name="bookingType" value={formData.bookingType} onChange={handleInputChange} />
-        
-        <label>
-          <input type="checkbox" name="sendEmail" checked={formData.sendEmail} onChange={handleCheckboxChange} />
+        <div className='d-flex justify-content-between m-3'>
+        <div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="text"name="discount" value={formData.discount} onChange={handleInputChange} />  
+  <label id="label-input">Discount</label>
+</div>
+
+<div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="text"name="paymentPlan" value={formData.paymentPlan} onChange={handleInputChange}/> 
+  <label id="label-input">Payment Plan</label>
+</div></div>
+        <div className='d-flex justify-content-between m-3'>
+        <div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="date" name="bookingDate" value={formData.bookingDate} onChange={handleInputChange}/> 
+  <label id="label-input">Booking Date</label>
+</div><div className="relative">
+  <input className="input-cal input-base" id="input" placeholder="" type="text" name="bookingType" value={formData.bookingType} onChange={handleInputChange}required/>
+  <label id="label-input">Booking Type</label>
+</div>
+        </div>
+        <label className='imput-name m-3'>
+          <input type="checkbox" name="sendEmail"  checked={formData.sendEmail} onChange={handleCheckboxChange} />
           Send Email
         </label>
+        <div className='d-flex justify-content-center'>
+        <button type="submit" className='submitbutton'>Submit</button></div>
         
-        <button type="submit">Submit</button>
       </form>
     </div>
   );
