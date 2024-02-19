@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './AdminDashboard.css'
+import './AdminDashboard.css';
 
 const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
@@ -10,8 +9,12 @@ const CustomerList = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/customers`);
-        const customersWithProjectNames = await Promise.all(response.data.map(async (customer) => {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/customers`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch customers');
+        }
+        const data = await response.json();
+        const customersWithProjectNames = await Promise.all(data.map(async (customer) => {
           const [projectName, blockName, unitName] = await Promise.all([
             fetchProjectName(customer.project),
             fetchBlockName(customer.project, customer.block),
@@ -33,8 +36,12 @@ const CustomerList = () => {
 
   const fetchData = async (url) => {
     try {
-      const response = await axios.get(url);
-      return response.data.data.name;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      return data.data.name;
     } catch (error) {
       console.error('Error fetching data:', error);
       return 'Unknown';
