@@ -171,7 +171,7 @@ const AddCustomerForm = () => {
         <div className='d-flex justify-content-between m-3'>
         <div className="relative">
   <input className="input-cal input-base" id="input" placeholder="" type="text" name="address" value={formData.address} onChange={handleInputChange}/>
-  <label id="label-input">Fathers/Husband Name</label>
+  <label id="label-input">Address</label>
 </div>
 <div className="relative">
   <input className="input-cal input-base" id="input" placeholder="" type="number" name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} />
