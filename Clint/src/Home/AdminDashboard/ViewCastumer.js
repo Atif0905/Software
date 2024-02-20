@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AdminDashboard.css'
+
+
+
+
+
 const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,12 +15,27 @@ const CustomerList = () => {
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-        const customersWithProjectNames = await Promise.all(response.data.map(async (customer) => {
-          const projectName = await fetchProjectName(customer.project);
-          const blockName = await fetchBlockName(customer.project, customer.block);
-          const unitName = await fetchUnitName(customer.project, customer.block, customer.plotOrUnit);
+  
+        // Create an array of promises for fetching project, block, and unit names concurrently
+        const promises = response.data.map(async (customer) => {
+          const projectNamePromise = fetchProjectName(customer.project);
+          const blockNamePromise = fetchBlockName(customer.project, customer.block);
+          const unitNamePromise = fetchUnitName(customer.project, customer.block, customer.plotOrUnit);
+  
+          // Wait for all promises to resolve
+          const [projectName, blockName, unitName] = await Promise.all([
+            projectNamePromise,
+            blockNamePromise,
+            unitNamePromise
+          ]);
+  
+          // Return customer object with additional details
           return { ...customer, projectName, blockName, unitName };
-        }));
+        });
+  
+        // Wait for all customer data to be fetched and processed
+        const customersWithProjectNames = await Promise.all(promises);
+  
         setCustomers(customersWithProjectNames);
       } catch (error) {
         console.error('Error fetching customers:', error);
@@ -24,10 +44,10 @@ const CustomerList = () => {
         setLoading(false);
       }
     };
-
+  
     fetchCustomers();
   }, []);
-
+  
   const fetchProjectName = async (projectId) => {
     try {
       if (!projectId) throw new Error('Project ID is not defined');
