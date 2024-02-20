@@ -9,7 +9,7 @@ const CustomerList = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/customers`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
         const customersWithProjectNames = await Promise.all(response.data.map(async (customer) => {
           const projectName = await fetchProjectName(customer.project);
           const blockName = await fetchBlockName(customer.project, customer.block);
