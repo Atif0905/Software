@@ -6,7 +6,7 @@ import './AdminDashboard.css'
 
 
 
-const CustomerList = () => {
+const ViewCastumer = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -142,4 +142,4 @@ const CustomerList = () => {
   );
 };
 
-export default CustomerList;
+export default ViewCastumer;
