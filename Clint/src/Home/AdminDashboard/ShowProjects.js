@@ -336,11 +336,11 @@ const UploadedProjects = () => {
   return (
     <div className="container">
       <h4 className=""> PROJECTS</h4>
-      <div className=" grids-container ">
+      
   
   <div className="projects-grid">
     {projects.map((project, index) => (
-      <div key={index} className="mb-4 position-relative">
+      <div key={index} className=" position-relative">
         <div className="projectdiv">
           <div className="coloureddiv1">
             <h3 className="colouredtext">{project.name}</h3>
@@ -574,8 +574,6 @@ const UploadedProjects = () => {
     ))}
   </div>
 </div>
-
-    </div>
   );
 };
 export default UploadedProjects;

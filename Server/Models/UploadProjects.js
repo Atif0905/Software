@@ -8,7 +8,8 @@ const unitSchema = new mongoose.Schema({
   sizeType: String,
   rate: String,
   idcCharges: String,
-  plcCharges: String
+  plcCharges: String,
+  totalPrice: String
 });
 
 // Define the schema for the Block model
@@ -33,4 +34,4 @@ const projectSchema = new mongoose.Schema({
 // Create the Project model using the schema
 const Project = mongoose.model('Project', projectSchema);
 
-module.exports = Project;
+module.exports = Project;

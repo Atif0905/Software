@@ -292,7 +292,7 @@ app.post("/addBlock/:projectId", async (req, res) => {
 // Endpoint to add a unit to a block
 app.post("/addUnit/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
-  const { name, plotSize, sizeType, rate, idcCharges, plcCharges } = req.body;
+  const { name, plotSize, sizeType, rate, idcCharges, plcCharges,totalPrice } = req.body;
 
   try {
     const project = await Project.findById(projectId);
@@ -315,6 +315,7 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
       rate,
       idcCharges,
       plcCharges,
+      totalPrice,
       status: 'available', // Assuming default status is available
     };
 
@@ -325,8 +326,8 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
     res.status(201).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error adding unit:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 app.put("/markUnitHold/:projectId/:blockId/:unitId", async (req, res) => {
@@ -565,7 +566,8 @@ app.post("/addCustomer", async (req, res) => {
     paymentPlan,
     bookingDate,
     bookingType,
-    sendEmail
+    sendEmail,
+    paymentReceived
   } = req.body;
 
   try {
@@ -594,7 +596,8 @@ app.post("/addCustomer", async (req, res) => {
       paymentPlan,
       bookingDate,
       bookingType,
-      sendEmail
+      sendEmail,
+      paymentReceived
     });
 
     res.status(201).json({ status: "ok", data: newCustomer });

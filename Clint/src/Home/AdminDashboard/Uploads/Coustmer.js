@@ -306,9 +306,11 @@ const AddCustomerForm = () => {
             />
             <label id="label-input">Email</label>
           </div>
-
+          </div>
           {/* Property details */}
-          <h4 className='Headtext'>Property Details</h4>
+          <h4 className='Headtext mt-5'>Property Details</h4>
+          <div className='gridcontainer'>
+          
           <div className="relative grid-item">
             <input 
               className="input-cal input-base" 
@@ -501,7 +503,7 @@ const AddCustomerForm = () => {
             <label id="label-input">Payment Received</label>
           </div>
         </div>
-        <div className='d-flex justify-content-center'>
+        <div className='d-flex justify-content-center mt-4'>
           <button type="submit" className='submitbutton'>Submit</button>
         </div>
       </form>

@@ -16,6 +16,7 @@ const CustomerList = () => {
           projectName: await fetchName('getProject', customer.project),
           blockName: await fetchName('getBlock', customer.project, customer.block),
           unitName: await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit),
+         
         })));
         setCustomers(customersWithDetails);
       } catch (error) {
@@ -25,7 +26,7 @@ const CustomerList = () => {
         setLoading(false);
       }
     };
-
+    
     fetchCustomers();
   }, []);
 
@@ -50,46 +51,33 @@ const CustomerList = () => {
   return (
     <div className='main-content'>
       <h2>Customer List</h2>
-      <div className="table-container">
-        <table id="myTable">
+      <div className="table-wrapper">
+        <table id="myTable" className='fl-table'>
           <thead>
             <tr>
               <th>Name</th>
-              <th>Father/Husband Name</th>
-              <th>Address</th>
               <th>Aadhar Number</th>
-              <th>PAN Number</th>
               <th>Mobile Number</th>
               <th>Email</th>
-              <th>Property Type</th>
               <th>Project</th>
-              <th>Block</th>
-              <th>Plot/Unit</th>
-              <th>Discount</th>
-              <th>Payment Plan</th>
-              <th>Booking Date</th>
-              <th>Booking Type</th>
+              <th>Block-Plot/Unit</th>
+              <th>Payment Received</th>
               <th>Send Email</th>
+              <th>Payment Plan</th>
+              
+
             </tr>
           </thead>
           <tbody>
             {customers.map((customer, index) => (
               <tr key={index}>
                 <td>{customer.name}</td>
-                <td>{customer.fatherOrHusbandName}</td>
-                <td>{customer.address}</td>
                 <td>{customer.aadharNumber}</td>
-                <td>{customer.panNumber}</td>
                 <td>{customer.mobileNumber}</td>
                 <td>{customer.email}</td>
-                <td>{customer.propertyType}</td>
                 <td>{customer.projectName}</td>
-                <td>{customer.blockName}</td>
-                <td>{customer.unitName}</td>
-                <td>{customer.discount}</td>
-                <td>{customer.paymentPlan}</td>
-                <td>{customer.bookingDate}</td>
-                <td>{customer.bookingType}</td>
+                <td>{customer.blockName}-{customer.unitName}</td>
+                <td>{customer.paymentReceived}</td>
                 <td>{customer.sendEmail ? 'Yes' : 'No'}</td>
               </tr>
             ))}
