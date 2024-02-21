@@ -66,7 +66,10 @@ const customerSchema = new mongoose.Schema({
   selected: {
     type: Boolean,
     default: false
-  }
+  },
+  paymentReceived: { // Add paymentReceived field
+    type: String
+}
 });
 
 const Customer = mongoose.model("Customer", customerSchema);
