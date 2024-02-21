@@ -15,7 +15,7 @@
   
   #input:focus ~ label#label-input,
   #input:not(:placeholder-shown) ~ #label-input {
-    top: -20% !important;
+    top: -24% !important;
     left: 2px !important;
     transform: scale(0.8);
     background: white;
@@ -30,8 +30,8 @@
     outline-color: var(--button-text);
     outline: unset;
     border: 1px solid #bbbbbb;
-    padding: 17px 10px 10px 17px;
-    width: 500px;
+    padding: 10px 5px 3px 17px;
+    width: 95%;
   }
   
   #input:focus {

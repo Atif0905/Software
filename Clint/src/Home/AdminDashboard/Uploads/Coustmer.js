@@ -224,73 +224,72 @@ const AddCustomerForm = () => {
     }
   };
   return (
-    <div className='main-content'>
-      <h2 >Applicant Details</h2>
+    <div className='main-content back'>
+      <h3 className='Headtext'>Customer Details</h3>
       <form onSubmit={handleSubmit}>
-        <div className='d-flex justify-content-between m-3'>
-        <div class="relative">
+        <div className='gridcontainer'>
+        <div class="relative grid-item grid-item">
   <input class="input-cal input-base" name="name" id="input" placeholder="" type="text" value={formData.name} onChange={handleInputChange} required/>
-  <label id="label-input">Name</label>
-</div>
-<div className="relative">
+  <label id="label-input">Name</label></div>
+<div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="text" name="fatherOrHusbandName" value={formData.fatherOrHusbandName} onChange={handleInputChange} required />
-  <label id="label-input">Fathers/Husband Name</label>
-</div>
-        </div>
-        <div className='d-flex justify-content-between m-3'>
-        <div className="relative">
+  <label id="label-input">Fathers/Husband Name</label></div>
+        
+        
+        <div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="text" name="address" value={formData.address} onChange={handleInputChange} required/>
   <label id="label-input">Address</label>
 </div>
-<div className="relative">
+<div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="number" name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} required />
   <label id="label-input">Adhar Number</label>
 </div>
-        </div>
-        <div className='d-flex justify-content-between m-3'>
-        <div className="relative">
+        
+        
+        <div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="text" name="panNumber" value={formData.panNumber} onChange={handleInputChange} required />
   <label id="label-input">Pan Number</label>
 </div>
-<div className="relative">
+<div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="number" name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} required /> 
   <label id="label-input">Mobile Number</label>
 </div>
-       </div>
-        <div className='d-flex justify-content-between m-3'>
-        <div className="relative">
+<div className="relative grid-item">
+  <input className="input-cal input-base" id="input" placeholder="" type="text" name="income" value={formData.income} onChange={handleInputChange} required/>  
+  <label id="label-input">Income</label>
+</div>
+        <div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="text" name="email" value={formData.email} onChange={handleInputChange} required/>
   <label id="label-input">Email</label>
-</div></div>
-        
-        <h2>Property Details</h2>
-        <div className='d-flex justify-content-between m-3'>
-        <div className="relative">
+</div>
+</div>
+        <h4 className='Headtext'>Property Details</h4>
+        <div className='gridcontainer'>
+        <div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="text" name="propertyType" value={formData.propertyType} onChange={handleInputChange} required /> 
   <label id="label-input">property Type</label>
 </div>
-<div className="relative">
+<div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="text" name="bookingType" value={formData.bookingType} onChange={handleInputChange}required/>
   <label id="label-input">Booking Type</label>
 </div>
-        </div>
-        <div className='d-flex justify-content-between m-3'>
-        <div className="relative">
+        
+        <div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="text"name="discount" value={formData.discount} onChange={handleInputChange} required />  
   <label id="label-input">Discount</label>
 </div>
 
-<div className="relative">
+<div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="text"name="paymentPlan" value={formData.paymentPlan} onChange={handleInputChange} required /> 
   <label id="label-input">Payment Plan</label>
 </div>
-</div>
-        <div className='d-flex justify-content-between m-3'>
-        <div className="relative">
+
+        
+        <div className="relative grid-item">
   <input className="input-cal input-base" id="input" placeholder="" type="date" name="bookingDate" value={formData.bookingDate} onChange={handleInputChange} required /> 
   <label id="label-input">Booking Date</label>
 </div>
-<div className="d-flex flex-wrap justify-content-around ">
+<div className="grid-item ">
           <select className='input-select' onChange={(e) => handleClickProject(e.target.value)}>
             <option value="">Select Project</option>
             {projects.map((project, index) => (
@@ -318,27 +317,11 @@ const AddCustomerForm = () => {
   </select>
 )}
 
-
-          </div>
-        </div>
-        <div className='d-flex justify-content-between m-3'>
-        <div className="relative">
-  <input className="input-cal input-base" id="input" placeholder="" type="text" name="income" value={formData.income} onChange={handleInputChange} required/>  
-  <label id="label-input">Income</label>
 </div>
-        <div className="container">
-      <input type="checkbox" id="cbx2" name="sendEmail"  checked={formData.sendEmail} onChange={handleCheckboxChange} style={{ display: 'none' }} required />
-      <label htmlFor="cbx2" className="check">
-        <svg width="18px" height="18px" viewBox="0 0 18 18">
-          <path d="M 1 9 L 1 9 c 0 -5 3 -8 8 -8 L 9 1 C 14 1 17 5 17 9 L 17 9 c 0 4 -4 8 -8 8 L 9 17 C 5 17 1 14 1 9 L 1 9 Z"></path>
-          <polyline points="1 9 7 14 15 4"></polyline>
-        </svg>
-      </label>
-      Send Email
-    </div>
-    </div>
-    <div className='d-flex justify-content-between m-3'>
-          <div className='relative'>
+        
+        
+    
+          <div className='relative grid-item'>
             <input
               type="number"
               className="input-cal input-base"
@@ -350,7 +333,7 @@ const AddCustomerForm = () => {
             />
             <label id="label-input">Plot size</label>
           </div>
-          <div className='relative'>
+          <div className='relative grid-item'>
             <input
               type="number"
               className="input-cal input-base"
@@ -362,9 +345,8 @@ const AddCustomerForm = () => {
             />
             <label id="label-input">Rate</label>
           </div>
-        </div>
-        <div className='d-flex justify-content-between m-3'>
-          <div className='relative'>
+        
+          <div className='relative grid-item'>
             <input
               type="number"
               className="input-cal input-base"
@@ -376,7 +358,7 @@ const AddCustomerForm = () => {
             />
             <label id="label-input">IDC Charges</label>
           </div>
-          <div className='relative'>
+          <div className='relative grid-item'>
             <input
               type="number"
               className="input-cal input-base"
@@ -388,8 +370,18 @@ const AddCustomerForm = () => {
             />
             <label id="label-input">PLC Charges</label>
           </div>
-        </div>
-    
+          
+        <div className="container mt-2 grid-item">
+      <input type="checkbox" id="cbx2" name="sendEmail"  checked={formData.sendEmail} onChange={handleCheckboxChange} style={{ display: 'none' }} required />
+      <label htmlFor="cbx2" className="check">
+        <svg width="18px" height="18px" viewBox="0 0 18 18">
+          <path d="M 1 9 L 1 9 c 0 -5 3 -8 8 -8 L 9 1 C 14 1 17 5 17 9 L 17 9 c 0 4 -4 8 -8 8 L 9 17 C 5 17 1 14 1 9 L 1 9 Z"></path>
+          <polyline points="1 9 7 14 15 4"></polyline>
+        </svg>
+      </label>
+      Send Email
+    </div>
+    </div>
         <div className='d-flex justify-content-center'>
         <button type="submit" className='submitbutton'>Submit</button></div>
       </form>

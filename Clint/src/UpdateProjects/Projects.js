@@ -67,33 +67,33 @@ const Projects = () => {
   };
 
   return (
-    <div className="main-content ">
+    <div className="main-content back ">
       <div className=''>
-        <h1 className='Headtext' >Upload Project</h1>
-        <div className='col-12'>
+        <h3 className='Headtext' >Add a New Project</h3>
+        <div className='col-6 whiteback '>
           <form onSubmit={handleSubmit}>
-            <div className="form-group mt-4">
-              <label htmlFor="name" className=""></label>
+            <div className="form-group mt-3">
+              <label htmlFor="name" className="ml">Project Name</label>
               <input type="text" className='form-input-field' id="name" value={name} placeholder="Enter Project Name" onChange={(e) => setName(e.target.value)} required />
             </div>
-            <div className="form-group mt-4">
-              <label htmlFor="name" className=""></label>
-              <input type="text" className='form-input-field' id="name" value={totalLand} placeholder="Total Land" onChange={(e) => settotalLand(e.target.value)} required />
+            <div className="form-group mt-3">
+              <label htmlFor="description" className='ml'>Location</label>
+              <input type='text' className='form-input-field' id="description" placeholder='Location' value={description} onChange={(e) => setDescription(e.target.value)} rows="5" required ></input>
             </div>
             <div className="form-group mt-3">
-              <label htmlFor="description" className=''></label>
-              <textarea className='form-msg-field' id="description" placeholder='Description' value={description} onChange={(e) => setDescription(e.target.value)} rows="5" required ></textarea>
+              <label htmlFor="name" className="ml">Total land</label>
+              <input type="text" className='form-input-field' id="name" value={totalLand} placeholder="Total Land" onChange={(e) => settotalLand(e.target.value)} required />
             </div>
-            {blocks.map((block, blockIndex) => (
+            {/* {blocks.map((block, blockIndex) => (
               <div key={blockIndex}>
                 <div className="form-group mt-2">
-                  <label htmlFor={`blockName${blockIndex}`} className=''></label>
+                  <label htmlFor={`blockName${blockIndex}`} className='ml'>Block Name</label>
                   <input type="text" className='form-input-field' id={`blockName${blockIndex}`} name="name" placeholder='Block Name' value={block.name} onChange={(e) => handleBlockChange(blockIndex, e)} required />
                 </div>
                 {block.units.map((unit, unitIndex) => (
                   <div key={unitIndex}>
                     <div className="form-group mt-3">
-                      <label htmlFor={`unitName${blockIndex}_${unitIndex}`} className=''></label>
+                      <label htmlFor={`unitName${blockIndex}_${unitIndex}`} className='ml'>Unit Name</label>
                       <input
                         type="text" className='form-input-field' id={`unitName${blockIndex}_${unitIndex}`} name="name" placeholder='Unit Name' value={unit.name} onChange={(e) => handleUnitChange(blockIndex, unitIndex, e)} required />
                     </div>
@@ -102,10 +102,10 @@ const Projects = () => {
 
                 <button className='add-buttons mt-3' type="button" onClick={() => addUnit(blockIndex)}>Add Unit</button>
               </div>
-            ))}
-            <button className='add-buttons mt-3' type="button" onClick={addBlock}>Add Block</button>
+            ))} */}
+            {/* <button className='add-buttons mt-3' type="button" onClick={addBlock}>Add Block</button> */}
 
-            <div className="form-group mt-3">
+            <div className="form-group mt-3 mb-3">
               <button type="submit" className='uploadbutt'>Upload Project</button>
             </div>
           </form>

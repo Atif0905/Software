@@ -132,25 +132,42 @@ const AdditionUnit = () => {
         fetchProjects();
       }, []);
   return (
-    <div className="main-content"> 
-    <h2> Add Unit</h2>
-<div><input type="text" className="form-input-field mt-4" placeholder="Unit Name" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value.toUpperCase())} required /></div>
-<div><input  type="number" className="form-input-field mt-4" placeholder="Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required/></div>
-<div><input type="number" className="form-input-field mt-4"  placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} required/></div>
-<div><input type="number" className="form-input-field mt-4" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} required/></div>
-<div><input type="number" className="form-input-field mt-4" placeholder="PLC Charges" value={plcCharges} onChange={(e) => setPlcCharges(e.target.value)}  required/></div>
-<div className="mt-3"><select className="select-buttons ps-1" onChange={(e) => setSelectedProjectId(e.target.value)} >
+    <div className="main-content back"> 
+    <h4 className='Haedtext'> Add Unit</h4>
+    <div className='col-6 whiteback'>
+<div className='mt-3'>
+  <label className=''>Unit Name</label>
+  <input type="text" className="form-input-field " placeholder="Unit Name" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value.toUpperCase())} required /></div>
+<div className='mt-2'>
+<label className=''>Plot size</label>
+  <input  type="number" className="form-input-field" placeholder="Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required/></div>
+<div className='mt-2'>
+<label className=''>Rate</label>
+<input type="number" className="form-input-field"  placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} required/></div>
+<div className='mt-2'>
+  <label className=''>IDC charges</label>
+  <input type="number" className="form-input-field" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} required/></div>
+<div className='mt-2'>
+  <label className=''>PLC charges</label>
+  <input type="number" className="form-input-field " placeholder="PLC Charges" value={plcCharges} onChange={(e) => setPlcCharges(e.target.value)}  required/></div>
+<div className="mt-2">
+  <label>Select Project</label>
+    <select className="select-buttons ps-1" onChange={(e) => setSelectedProjectId(e.target.value)} >
   <option value="">Select Project</option>
   {projects.map((project, index) => ( <option key={index} value={project._id}> {project.name} </option>
   ))}
 </select></div>
 
-<div className="mt-3"><select className="select-buttons ps-1" value={sizeType} onChange={(e) => setSizeType(e.target.value)}>
+<div className="mt-2">
+<label>Select Size Type</label>
+<select className="select-buttons ps-1" value={sizeType} onChange={(e) => setSizeType(e.target.value)}>
 <option value="">Select Size Type</option>
 <option value="sqft">sqft</option>
 <option value="sqyd">sqyd</option>
 </select></div>
-<div className="mt-3"><select className="select-buttons  ps-1" onChange={(e) => setSelectedBlockId(e.target.value)}>
+<div className="mt-2">
+<label>Select Block</label>
+<select className="select-buttons  ps-1" onChange={(e) => setSelectedBlockId(e.target.value)}>
   <option value="">Select Block</option>
   {selectedProjectId && projects.find((project) => project._id === selectedProjectId) ?.blocks.map((block, index) => ( <option key={index} value={block._id}> {block.name} </option>))}
 </select></div>
@@ -158,6 +175,7 @@ const AdditionUnit = () => {
   Add Unit
 </button></div>
 <button className="delete-buttons mt-3" onClick={() => handleDeleteProject(selectedProjectId)} > Delete Project </button>
+</div>
 </div>
   )
 }
