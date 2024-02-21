@@ -615,3 +615,36 @@ app.get('/Viewcustomer', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+// Route for sending email
+app.post('/send-email', async (req, res) => {
+  const { to, subject, text } = req.body;
+
+  try {
+      // Create a Nodemailer transporter object
+      const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+              user: 'your-email@gmail.com', // Your Gmail address
+              pass: 'your-password' // Your Gmail password or App Password
+          }
+      });
+
+      // Define email options
+      const mailOptions = {
+          from: 'your-email@gmail.com',
+          to,
+          subject,
+          text
+      };
+
+      // Send email
+      const info = await transporter.sendMail(mailOptions);
+      console.log('Email sent: ' + info.response);
+      res.status(200).send('Email sent successfully');
+  } catch (error) {
+      console.error('Error sending email:', error);
+      res.status(500).send('Error sending email');
+  }
+});
