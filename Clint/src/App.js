@@ -46,10 +46,9 @@ function App() {
   const SidebarComponent = admin ? Sidebar : UserSidebar;
   return (
     <Router>
-      <div className="App">
-        
+      <div className="App">        
           <Routes>
-          <Route path="/" element={<Navigate to="/userDetails" />} />
+          {/* <Route path="/" element={<Navigate to="/userDetails" />} /> */}
           <Route path="/userDetails" element={<SidebarComponent />} />
           <Route path="/AdminDashboard/*" element={<SidebarComponent />} />
           <Route path="/uploaded-projects" element={<SidebarComponent />} />
