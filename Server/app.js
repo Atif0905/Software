@@ -629,7 +629,7 @@ app.post("/addCustomer", async (req, res) => {
 });
 
 // View Castumer
-app.get('/customers', async (req, res) => {
+app.get('/Viewcustomer', async (req, res) => {
   try {
     // Fetch all customers from the database
     const customers = await Customer.find();
