@@ -10,6 +10,18 @@
   /* border-radius: 10px; */
   border-bottom: 1px solid rgba(0, 0, 0, 0.45);
 }
+.grids-container {
+  display: grid;
+  grid-template-columns: repeat(3, 320px);
+  
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 320px);
+  row-gap: 10px;
+  column-gap: 35px;
+}
 .modal-wrapper{
   position: fixed;
   left: 0;

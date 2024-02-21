@@ -151,10 +151,9 @@ app.post("/uploadProject", async (req, res) => {
       res.status(201).json({ status: "ok", data: project });
   } catch (error) {
       console.error("Error uploading project:", error);
-      res.status(500).json({ error: "Internal server error" });
-  }
+      res.status(500).json({ error: "Internal server error" });
+  }
 });
-
 
 app.get("/getAllProjects", async (req, res) => {
   try {
@@ -550,6 +549,35 @@ app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
 // Endpoint to add a customer
 app.post("/addCustomer", async (req, res) => {
   const {
+    name,
+    fatherOrHusbandName,
+    address,
+    aadharNumber,
+    panNumber,
+    mobileNumber,
+    income,
+    email,
+    propertyType,
+    selectedProject,
+    selectedBlock,
+    selectedUnit,
+    discount,
+    paymentPlan,
+    bookingDate,
+    bookingType,
+    sendEmail
+  } = req.body;
+
+  try {
+    // Check if the customer already exists
+    const existingCustomer = await Customer.findOne({ email });
+
+    if (existingCustomer) {
+      return res.status(400).json({ error: "Customer already exists" });
+    }
+
+    // Create a new customer
+    const newCustomer = await Customer.create({
       name,
       fatherOrHusbandName,
       address,
@@ -559,54 +587,22 @@ app.post("/addCustomer", async (req, res) => {
       income,
       email,
       propertyType,
-      selectedProject,
-      selectedBlock,
-      selectedUnit,
+      project: selectedProject,
+      block: selectedBlock,  
+      plotOrUnit: selectedUnit,
       discount,
       paymentPlan,
       bookingDate,
       bookingType,
-      sendEmail,
-      paymentReceived // Add paymentReceived field
-  } = req.body;
+      sendEmail
+    });
 
-  try {
-      // Check if the customer already exists
-      const existingCustomer = await Customer.findOne({ email });
-
-      if (existingCustomer) {
-          return res.status(400).json({ error: "Customer already exists" });
-      }
-
-      // Create a new customer
-      const newCustomer = await Customer.create({
-          name,
-          fatherOrHusbandName,
-          address,
-          aadharNumber,
-          panNumber,
-          mobileNumber,
-          income,
-          email,
-          propertyType,
-          project: selectedProject,
-          block: selectedBlock,
-          plotOrUnit: selectedUnit,
-          discount,
-          paymentPlan,
-          bookingDate,
-          bookingType,
-          sendEmail,
-          paymentReceived // Include paymentReceived field in the new customer data
-      });
-
-      res.status(201).json({ status: "ok", data: newCustomer });
+    res.status(201).json({ status: "ok", data: newCustomer });
   } catch (error) {
-      console.error("Error adding customer:", error);
-      res.status(500).json({ error: "Internal server error" });
+    console.error("Error adding customer:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 // View Castumer
 app.get('/Viewcustomer', async (req, res) => {
