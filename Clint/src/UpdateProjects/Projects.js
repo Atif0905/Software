@@ -41,31 +41,6 @@ const Projects = () => {
       alert('An error occurred while uploading project');
     }
   };
-
-  const handleBlockChange = (index, e) => {
-    const { name, value } = e.target;
-    const updatedBlocks = [...blocks];
-    updatedBlocks[index][name] = value;
-    setBlocks(updatedBlocks);
-  };
-
-  const handleUnitChange = (blockIndex, unitIndex, e) => {
-    const { name, value } = e.target;
-    const updatedBlocks = [...blocks];
-    updatedBlocks[blockIndex].units[unitIndex][name] = value;
-    setBlocks(updatedBlocks);
-  };
-
-  const addBlock = () => {
-    setBlocks([...blocks, { name: '', units: [{ name: '' }] }]);
-  };
-
-  const addUnit = (blockIndex) => {
-    const updatedBlocks = [...blocks];
-    updatedBlocks[blockIndex].units.push({ name: '' });
-    setBlocks(updatedBlocks);
-  };
-
   return (
     <div className="main-content back ">
       <div className=''>
