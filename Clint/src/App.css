@@ -18,6 +18,25 @@
 .mainico{
   margin-right: 10px;
 }
+.back{
+  background-color: #ebf5fa;
+  min-height: 100vh; 
+}
+.whiteback{
+  border-top: 5px solid rgb(98, 174, 255);
+  background-color: white;
+  padding: 10px;
+}
+.gridcontainer{
+  display: grid;
+  grid-template-columns: 320px 320px 320px;
+  grid-gap: 20px;
+}
+.grid-item{
+  border-top: 5px solid rgb(98, 174, 255);
+  background-color: white;
+  padding: 10px;
+}
 @media (max-width:992px) {
   .main-content {
     margin-left: 25%;

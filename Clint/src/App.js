@@ -47,7 +47,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {isLoggedIn === "true" && (
+        
           <Routes>
           <Route path="/" element={<Navigate to="/userDetails" />} />
           <Route path="/userDetails" element={<SidebarComponent />} />
@@ -64,7 +64,6 @@ function App() {
           <Route path="/Addcustomer" element={<SidebarComponent/>}/>
           <Route path="/ViewCustomer" element={<SidebarComponent/>}/>
           </Routes>
-        )}
         <Routes>
           <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
           <Route path="/sign-in" element={<Login />} />
