@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faLocationDot, faArrowDown, faArrowUp, faTimes   } from "@fortawesome/free-solid-svg-icons";
@@ -49,15 +49,12 @@ const UploadedProjects = () => {
     setBlockwiseUnitCounts(blockCounts);
   };
   
-  const handleMarkUnitSold =  async (projectId, blockId, unitId) => {
-    const isConfirmed = window.confirm(
-      "Are you sure you want to mark this unit as Sold?"
-    );
+  const handleMarkUnitSold = async (projectId, blockId, unitId) => {
+    // Confirmation dialog
+    const isConfirmed = window.confirm("Are you sure you want to mark this unit as Sold?");
     if (isConfirmed) {
       try {
-        const response = await axios.put(
-          `${process.env.REACT_APP_API_URL}/markUnitSold/${projectId}/${blockId}/${unitId}`
-        );
+        const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${projectId}/${blockId}/${unitId}`);
         const data = response.data;
         if (response.status === 200 && data.status === "ok") {
           fetchProjects(); // Update projects after successfully marking unit as sold
@@ -166,11 +163,9 @@ const UploadedProjects = () => {
     // setTotalSoldUnitsCount(totalSoldUnits);
     setBlockwiseSoldUnitCounts(blockwiseSoldCounts);
   };
-  const fetchProjects = async () => {
+  const fetchProjects = useMemo(() => async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/getAllProjects`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
       const data = response.data;
       if (response.status === 200 && data.status === "ok") {
         const projectsWithUnitCount = await Promise.all(
@@ -192,13 +187,11 @@ const UploadedProjects = () => {
     } catch (error) {
       console.error("Error fetching projects:", error);
     }
-  };
+  }, []);
 
   const getUnitCount = async (projectId, blockId) => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/getUnitCount/${projectId}/${blockId}`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnitCount/${projectId}/${blockId}`);
       const data = response.data;
       if (response.status === 200 && data.status === "ok") {
         return data.unitCount;
@@ -211,6 +204,7 @@ const UploadedProjects = () => {
       return 0;
     }
   };
+
 
   
   
@@ -342,188 +336,245 @@ const UploadedProjects = () => {
   return (
     <div className="container">
       <h4 className=""> PROJECTS</h4>
-      <div className="d-flex flex-wrap justify-content-between">
-        {projects.map((project, index) => (
-      <div key={index} className=" mb-4 position-relative">
-<div className=" projectdiv ">
-  <div className="coloureddiv1">
-    <h3 className="colouredtext">{project.name}</h3>
-  </div>
-  <div className="coloureddiv">
-    <p className="descriptiondiv">{project.description} <FontAwesomeIcon icon={faLocationDot} /> </p>
-  </div>
-  <div className="viewdetail-div" onClick={() => handleClickProject(project._id)} >
-  <div className="viewbutton-div">
-  <p className="moredetail-text mt-3">View More Details</p>
-      <FontAwesomeIcon icon={faCaretDown} className="moredetail"/>
-    </div>
-  </div>
-</div>
-{selectedProjectId === project._id && showBlocks && (
-    <div className="modal-wrapper"  >
-      <FontAwesomeIcon icon={faTimes} size="2x" className="closeicon" onClick={closeModal} />
-      <div className="modal-container">
-<div className="d-flex justify-content-between mb-3">
-  <div className="totalunitsdiv mt-3">
-    <h2 className="textunits"> Total </h2>
-    <p className="unitsnum">
-      {" "}
-      {projectUnitCounts[project._id]?.totalUnits || 0}
-    </p>
-  </div>
-  <div className="availableunitsdiv mt-3">
-    <h2 className="textunits"> Availabe </h2>
-    <p className="unitsnum">
-      {" "}
-      {projectUnitCounts[project._id]?.totalAvailableUnits ||
-        0}
-    </p>
-  </div>
-  <div className="holunitsdiv mt-3">
-    <h2 className="textunits"> Hold </h2>
-    <p className="unitsnum">
-      {" "}
-      {projectUnitCounts[project._id]?.totalHoldUnits || 0}
-    </p>
-  </div>
-  <div className="solunitsdiv mt-3">
-    <h2 className="textunits"> Sold </h2>
-    <p className="unitsnum">
-      {" "}
-      {projectUnitCounts[project._id]?.totalSoldUnits || 0}
-    </p>
-  </div>
-</div>
-<table className="table">
-  <thead>
-    <tr>
-      <th className="blockdivstart">ID</th>
-      <th className="blockdiv">Blocks</th>
-      <th className="blockdiv">Total Units</th>
-      <th className="blockdiv">Available Units</th>
-      <th className="blockdiv">Hold Units</th>
-      <th className="blockdiv">Sold Units</th>
-    </tr>
-  </thead>
-  <tbody>
-    {project.blocks.map((block, blockIndex) => (
-      <tr
-        key={blockIndex}
-        onClick={() => handleClickBlock(block._id)}
-      >
-        <td>{blockIndex + 1}</td>
-        <td className="tablecursor">{block.name}</td>
-        <td className="tablecursor">
-          {blockwiseUnitCounts[block._id]}
-        </td>
-        <td className="tablecursor">
-          {blockwiseAvailableUnitCounts[block._id]}
-        </td>
-        <td className="tablecursor">
-          {blockwiseHoldUnitCounts[block._id] || 0}
-        </td>
-        <td className="tablecursor">
-          {blockwiseSoldUnitCounts[block._id] || 0}
-        </td>
-      </tr>
+      <div className=" grids-container ">
+  
+  <div className="projects-grid">
+    {projects.map((project, index) => (
+      <div key={index} className="mb-4 position-relative">
+        <div className="projectdiv">
+          <div className="coloureddiv1">
+            <h3 className="colouredtext">{project.name}</h3>
+          </div>
+          <div className="coloureddiv">
+            <p className="descriptiondiv">
+              {project.description} <FontAwesomeIcon icon={faLocationDot} />
+            </p>
+          </div>
+          <div
+            className="viewdetail-div"
+            onClick={() => handleClickProject(project._id)}
+          >
+            <div className="viewbutton-div">
+              <p className="moredetail-text mt-3">View More Details</p>
+              <FontAwesomeIcon icon={faCaretDown} className="moredetail" />
+            </div>
+          </div>
+        </div>
+        {selectedProjectId === project._id && showBlocks && (
+          <div className="modal-wrapper">
+            <FontAwesomeIcon
+              icon={faTimes}
+              size="2x"
+              className="closeicon"
+              onClick={closeModal}
+            />
+            <div className="modal-container">
+              <div className="d-flex justify-content-between mb-3">
+                <div className="totalunitsdiv mt-3">
+                  <h2 className="textunits"> Total </h2>
+                  <p className="unitsnum">
+                    {projectUnitCounts[project._id]?.totalUnits || 0}
+                  </p>
+                </div>
+                <div className="availableunitsdiv mt-3">
+                  <h2 className="textunits"> Available </h2>
+                  <p className="unitsnum">
+                    {projectUnitCounts[project._id]?.totalAvailableUnits || 0}
+                  </p>
+                </div>
+                <div className="holunitsdiv mt-3">
+                  <h2 className="textunits"> Hold </h2>
+                  <p className="unitsnum">
+                    {projectUnitCounts[project._id]?.totalHoldUnits || 0}
+                  </p>
+                </div>
+                <div className="solunitsdiv mt-3">
+                  <h2 className="textunits"> Sold </h2>
+                  <p className="unitsnum">
+                    {projectUnitCounts[project._id]?.totalSoldUnits || 0}
+                  </p>
+                </div>
+              </div>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th className="blockdivstart">ID</th>
+                    <th className="blockdiv">Blocks</th>
+                    <th className="blockdiv">Total Units</th>
+                    <th className="blockdiv">Available Units</th>
+                    <th className="blockdiv">Hold Units</th>
+                    <th className="blockdiv">Sold Units</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {project.blocks.map((block, blockIndex) => (
+                    <tr
+                      key={blockIndex}
+                      onClick={() => handleClickBlock(block._id)}
+                    >
+                      <td>{blockIndex + 1}</td>
+                      <td className="tablecursor">{block.name}</td>
+                      <td className="tablecursor">
+                        {blockwiseUnitCounts[block._id]}
+                      </td>
+                      <td className="tablecursor">
+                        {blockwiseAvailableUnitCounts[block._id]}
+                      </td>
+                      <td className="tablecursor">
+                        {blockwiseHoldUnitCounts[block._id] || 0}
+                      </td>
+                      <td className="tablecursor">
+                        {blockwiseSoldUnitCounts[block._id] || 0}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <ul>
+                {project.blocks.map((block, blockIndex) => (
+                  <div className="" key={blockIndex}>
+                    {selectedBlockId === block._id && showUnits && (
+                      <>
+                        <ul>
+                          <div className="row">
+                            {block.units.map((unit, unitIndex) => (
+                              <div className="col-1" key={unitIndex}>
+                                <div
+                                  className="units-div"
+                                  style={{
+                                    backgroundColor:
+                                      unit.status === "hold"
+                                        ? "#FEE69F"
+                                        : unit.status === "sold"
+                                        ? "#FE8B8B"
+                                        : unit.status === "available"
+                                        ? "#A6FFBF"
+                                        : "#A6FFBF",
+                                  }}
+                                  onClick={() => DropdownToggle(unitIndex)}
+                                >
+                                  <p className="unit-div">{unit.name}</p>
+                                </div>
+                                {UnitDropdown === unitIndex && (
+                                  <div className="unit-div-dropdown">
+                                    {unit.status === "available" && <></>}
+                                    {unit.status === "sold" && (
+                                      <>
+                                        <button
+                                          className="hold-unit"
+                                          onClick={() =>
+                                            handleMarkUnitHold(
+                                              project._id,
+                                              block._id,
+                                              unit._id
+                                            )
+                                          }
+                                        >
+                                          Hold
+                                        </button>
+                                        <button
+                                          className="available-unit"
+                                          style={{ backgroundColor: "#A6FFBF" }}
+                                          onClick={() =>
+                                            handleMarkUnitAvailable(
+                                              project._id,
+                                              block._id,
+                                              unit._id
+                                            )
+                                          }
+                                        >
+                                          Available
+                                        </button>
+                                      </>
+                                    )}
+                                    {unit.status === "hold" && (
+                                      <>
+                                        <button
+                                          className="available-unit"
+                                          style={{ backgroundColor: "#A6FFBF" }}
+                                          onClick={() =>
+                                            handleMarkUnitAvailable(
+                                              project._id,
+                                              block._id,
+                                              unit._id
+                                            )
+                                          }
+                                        >
+                                          Available
+                                        </button>
+                                        <button
+                                          className="sold-unit"
+                                          onClick={() =>
+                                            handleMarkUnitSold(
+                                              project._id,
+                                              block._id,
+                                              unit._id
+                                            )
+                                          }
+                                        >
+                                          Sold
+                                        </button>
+                                      </>
+                                    )}
+                                    {unit.status === "available" && (
+                                      <>
+                                        <button
+                                          className="hold-unit"
+                                          onClick={() =>
+                                            handleMarkUnitHold(
+                                              project._id,
+                                              block._id,
+                                              unit._id
+                                            )
+                                          }
+                                        >
+                                          Hold
+                                        </button>
+                                        <button
+                                          className="sold-unit"
+                                          onClick={() =>
+                                            handleMarkUnitSold(
+                                              project._id,
+                                              block._id,
+                                              unit._id
+                                            )
+                                          }
+                                        >
+                                          Sold
+                                        </button>
+                                      </>
+                                    )}
+                                    <button
+                                      className="delete-unit"
+                                      onClick={() =>
+                                        handleDeleteUnit(
+                                          project._id,
+                                          block._id,
+                                          unit._id
+                                        )
+                                      }
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </ul>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
     ))}
-  </tbody>
-</table>
-<ul>
-  {project.blocks.map((block, blockIndex) => (
-    <div className=" " key={blockIndex}>
-      {selectedBlockId === block._id && showUnits && (
-        <>
-          <ul>
-            <div className="row">
-              {block.units.map((unit, unitIndex) => (
-                <div className="col-1" key={unitIndex}>
-<div
-  className="units-div"
-  style={{
-    backgroundColor:
-      unit.status === "hold"
-        ? "#FEE69F"
-        : unit.status === "sold"
-          ? "#FE8B8B"
-          : unit.status === "available"
-            ? "#A6FFBF"
-            : "#A6FFBF",
-  }} onClick={() => DropdownToggle(unitIndex)}>
-  <p className="unit-div">{unit.name}</p>
+  </div>
 </div>
-{UnitDropdown === unitIndex && (
-  <div className="unit-div-dropdown">
-    {unit.status === "available" && (
-      <></>)}
-    {unit.status === "sold" && (
-      <>
-  <button className="hold-unit" onClick={() =>handleMarkUnitHold(project._id, block._id, unit._id)}>
-    Hold
- </button>
- <button
-   className="available-unit"
-   style={{ backgroundColor: "#A6FFBF" }}
-   onClick={() =>
-     handleMarkUnitAvailable(project._id, block._id, unit._id)
-   }
- >
-   Available
- </button>
-  </>
-)}
-{unit.status === "hold" && (
-  <>
-    <button
-      className="available-unit"
-      style={{ backgroundColor: "#A6FFBF" }}
-      onClick={() =>
-        handleMarkUnitAvailable(project._id, block._id, unit._id)
-      }
-    >
-      Available
-    </button>
-    <button
-      className="sold-unit"
-      onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)}
-    >
-      Sold
-    </button>
-  </>
-)}
-{unit.status === "available" && (
-  <>
-    <button
-      className="hold-unit" onClick={() => handleMarkUnitHold(project._id, block._id, unit._id)} >
-      Hold
 
-    </button>
-    <button className="sold-unit" onClick={() => handleMarkUnitSold(project._id, block._id, unit._id)} >
-      Sold
-    </button>
-  </>
-)}
-<button
-  className="delete-unit" onClick={() => handleDeleteUnit(project._id, block._id, unit._id)}>
-  Delete
-</button>
- </div>
- )}
-</div>
-))}
- </div>
- </ul>
-</>
- )}
- </div>
- ))}
- </ul>
- </div>
- </div>
- )}
-</div>
-  ))}
-</div>
     </div>
   );
 };
