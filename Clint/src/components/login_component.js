@@ -84,7 +84,7 @@ export default function Login() {
             </button>
           </div>
           <p className="forgot-password text-right">
-            <Link to="/sign-up">Sign Up</Link>
+            {/* <Link to="/sign-up">Sign Up</Link> */}
           </p>
         </form>
         {error && (
