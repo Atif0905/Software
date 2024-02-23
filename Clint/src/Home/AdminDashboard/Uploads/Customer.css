@@ -15,8 +15,8 @@
   
   #input:focus ~ label#label-input,
   #input:not(:placeholder-shown) ~ #label-input {
-    top: -24% !important;
-    left: 2px !important;
+    top: 0% !important;
+    left: 7px !important;
     transform: scale(0.8);
     background: white;
     color: black;

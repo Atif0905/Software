@@ -50,7 +50,7 @@ const CustomerList = () => {
 
   return (
     <div className='main-content'>
-      <h2>Customer List</h2>
+      <h2 className='Headtext'>Customer List</h2>
       <div className="table-wrapper">
         <table id="myTable" className='fl-table'>
           <thead>

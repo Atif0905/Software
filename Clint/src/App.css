@@ -7,6 +7,8 @@
     padding: 16px;
     background-size: contain;
     background-attachment: fixed ;
+    background-color: #ecf0f5;
+    min-height: 100%;
   }
 .user-profile{
   text-align: right;
@@ -14,28 +16,36 @@
   font-weight: 600;
   margin-right: 1%;
   padding-top: 1%; 
+  margin-top: 40px;
 }
 .mainico{
   margin-right: 10px;
 }
 .back{
-  background-color: #ebf5fa;
+  background-color: #ebf0f5;
   min-height: 100vh; 
 }
 .whiteback{
-  border-top: 5px solid rgb(98, 174, 255);
+  border-top: 3px solid rgb(98, 174, 255);
   background-color: white;
   padding: 10px;
 }
 .gridcontainer{
   display: grid;
-  grid-template-columns: 320px 320px 320px;
+  grid-template-columns: repeat(3,31%);
   grid-gap: 20px;
 }
 .grid-item{
-  border-top: 5px solid rgb(98, 174, 255);
+  border-top: 3px solid rgb(98, 174, 255);
   background-color: white;
   padding: 10px;
+}
+@media (max-width:1205px) {
+  .gridcontainer{
+    display: grid;
+    grid-template-columns: repeat(3,30%);
+    grid-gap: 20px;
+  }
 }
 @media (max-width:992px) {
   .main-content {
@@ -43,5 +53,10 @@
     padding: 16px;
     background-size: contain;
     background-attachment: fixed;
+}
+.gridcontainer{
+  display: grid;
+  grid-template-columns: repeat(2,48%);
+  grid-gap: 20px;
 }
 }
