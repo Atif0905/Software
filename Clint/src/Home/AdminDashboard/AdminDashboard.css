@@ -16,8 +16,19 @@
     height: 120px;
     width: 320px;
     background-color: rgb(221, 76, 57);
-
 }
+.react-icon-red{
+    color: rgb(149, 51, 41);
+    margin-right: 20px;
+    font-size: 70px;
+    margin-top: -35px;
+    transition: transform .7s;
+}
+.paymentmaindiv:hover{
+    .react-icon-red{
+      transform: scale(1.2); 
+    }
+  }
 .view-paymentdiv{
     background-color: rgb(198, 66, 51);
     width: 100%;
@@ -81,18 +92,37 @@
 .fl-table tr:nth-child(even) {
     background: #F8F8F8;
 }
-@media (max-width:1025px) {
+@media (min-width:1440px) {
+    .flexy{
+        display: grid;
+        grid-template-columns: repeat(3, 30%);
+        gap: 20px;
+    }
     .paymentmaindiv {
         height: 120px;
-        width: 300px;
+        width: 100%;
+    }
+}
+@media (max-width:1205px) {
+    .paymentmaindiv {
+        height: 120px;
+        width: 100%;
         background-color: rgb(221, 76, 57);
+    }
+    .flexy {
+        display: grid;
+        grid-template-columns: repeat(2, 48%);
+        gap: 20px;
     }
 }
 @media (max-width:992px) {
     .paymentmaindiv {
         height: 120px;
-        width: 250px;
-        background-color: rgb(221, 76, 57);
-        margin-bottom: 20px;
+        width: 100%;
+    }
+    .flexy {
+        display: grid;
+        grid-template-columns: repeat(2, 48%);
+        gap: 15px;
     }
 }

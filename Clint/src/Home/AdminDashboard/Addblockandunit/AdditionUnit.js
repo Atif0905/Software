@@ -146,7 +146,7 @@ const AdditionUnit = () => {
   };
   return (
     <div className="main-content back"> 
-      <h4 className='Haedtext'> Add Unit</h4>
+      <h4 className='Headtext'> Add Unit</h4>
       <div className='col-6 whiteback'>
         <div className='mt-3'>
           <label className=''>Unit Name</label>

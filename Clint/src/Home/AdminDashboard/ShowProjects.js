@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faLocationDot, faArrowDown, faArrowUp, faTimes   } from "@fortawesome/free-solid-svg-icons";
 import '../../UpdateProjects/Projects.css'
 import '../AdminDashboard/Uploads/Coustmer'
+import { IoBagOutline } from "react-icons/io5";
 const UploadedProjects = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
@@ -335,7 +336,7 @@ const UploadedProjects = () => {
   
   return (
     <div className="container">
-      <h4 className=""> PROJECTS</h4>
+      <h4 className="mt-4 "> PROJECTS</h4>
       
   
   <div className="projects-grid">
@@ -345,10 +346,11 @@ const UploadedProjects = () => {
           <div className="coloureddiv1">
             <h3 className="colouredtext">{project.name}</h3>
           </div>
-          <div className="coloureddiv">
+          <div className="coloureddiv d-flex justify-content-between">
             <p className="descriptiondiv">
               {project.description} <FontAwesomeIcon icon={faLocationDot} />
             </p>
+            <p className='react-icon'><IoBagOutline /></p>
           </div>
           <div
             className="viewdetail-div"

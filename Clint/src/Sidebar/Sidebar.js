@@ -28,8 +28,11 @@ const Sidebar = () => {
 
   return (
     <div>
+      <div className='nav1'> </div>
       <ul className="sidebar">
+        <div className='nav d-flex justify-content-center'>
         <h1 className='sidehead'>WIC</h1>
+        </div>
         <div className='mt-5'>
           <li className='Links'><Link to="/"><FontAwesomeIcon icon={faChalkboardUser} className='mar'/>Dashboard</Link></li>
           <div className="dropdown">

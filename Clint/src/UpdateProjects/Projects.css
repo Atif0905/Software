@@ -1,6 +1,7 @@
 .Headtext{
   font-size: 22px;
   font-weight: 300;
+  margin-top: 40px;
 }
 .projectdiv {
   width: 320px;
@@ -10,8 +11,18 @@
   /* border-radius: 10px; */
   border-bottom: 1px solid rgba(0, 0, 0, 0.45);
 }
-
-
+.react-icon{
+  color: #3c8dbc;
+  margin-right: 20px;
+  font-size: 70px;
+  margin-top: -45px;
+  transition: transform .7s  ;
+}
+.projectdiv:hover{
+  .react-icon{
+    transform: scale(1.2); 
+  }
+}
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(3, 320px);
@@ -339,23 +350,40 @@ margin-top: 25%;
   border: 1px solid #C0C0C0;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
-@media (max-width:1025px) {
+@media (min-width:1440px) {
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 30%);
+    gap: 20px;
+}
   .projectdiv {
-    width: 300px;
+    width: 100%;
     height: auto;
-    /* box-shadow: rgba(0, 0, 0, 0.45) 0px 4px 2px 0px; */
+  }
+}
+@media (max-width:1205px) {
+  .projectdiv {
+    width: 100%;
+    height: auto;
     background-color: rgb(0, 192, 239);
-    /* border-radius: 10px; */
     border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+}
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 48%);
+  gap: 20px;
 }
 }
 @media (max-width:992px) {
   .projectdiv {
-    width: 250px;
+    width: 100%;
     height: auto;
-    /* box-shadow: rgba(0, 0, 0, 0.45) 0px 4px 2px 0px; */
     background-color: rgb(0, 192, 239);
-    /* border-radius: 10px; */
     border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+}
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 48%);
+  gap: 15px;
 }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import '../AdminDashboard.css';
-
+import { FaMoneyCheck } from "react-icons/fa6";
 const ProjectsUpload = () => {
   const [projects, setProjects] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -123,48 +123,45 @@ const ProjectsUpload = () => {
   return (
     <div className="container">
       <h4>Payment Blocks</h4>
-      <div className=" mb-3 flexy ">
+      <div className="  flexy ">
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
             <h3 className="colouredtext">Total Payment</h3>
+            <div className="d-flex justify-content-between">
             <p className="colouredtext1">{totalPrice}</p>
+            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+            </div>
           </div>
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
           </div>
-          <div className="view-paymentdiv">
-            <div className="view-paymentbutton-div">
-              <p className="moredetail-text mt-3">View More Details</p>
-            </div>
-          </div>
+          
         </div>
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
             <h3 className="colouredtext">Received Payment</h3>
+            <div className="d-flex justify-content-between">
             <p className="colouredtext1">{totalReceivedPayment}</p>
+            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+            </div>
           </div>
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
           </div>
-          <div className="view-paymentdiv">
-            <div className="view-paymentbutton-div">
-              <p className="moredetail-text mt-3">View More Details</p>
-            </div>
-          </div>
+          
         </div>
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
             <h3 className="colouredtext">Due Payment</h3>
+            <div className="d-flex justify-content-between">
             <p className="colouredtext1">{duePayment}</p>
+            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+            </div>
           </div>
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
           </div>
-          <div className="view-paymentdiv">
-            <div className="view-paymentbutton-div">
-              <p className="moredetail-text mt-3">View More Details</p>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>
