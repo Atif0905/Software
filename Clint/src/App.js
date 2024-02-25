@@ -30,6 +30,8 @@ import Addkhata from "./Registry/Addkhata";
 import Addkhasra from "./Registry/Addkhasra";
 import ViewKhata from "./Registry/Viewkhata"
 import Viewkhasra from './Registry/Viewkhasra'
+
+
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});

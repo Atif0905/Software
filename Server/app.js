@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Project = require('./Models/UploadProjects');
 const Customer = require('./Models/CastumerUpload')
+const PaymentPlan = require('./Models/PaymentPlan');
 
 const { PORT, MONGODB_URI, JWT_SECRET } = process.env; // Access environment variables
 
@@ -65,7 +66,6 @@ app.post("/login-user", async (req, res) => {
   }
   res.json({ status: "error", error: "Invalid Password" });
 });
-
 
 app.post("/userData", async (req, res) => {
   const { token } = req.body;
@@ -164,7 +164,6 @@ app.get("/getAllProjects", async (req, res) => {
     res.status(500).json({ status: "error", error: "Internal server error" });
   }
 });
-
 
 // Endpoint to fetch project by ID
 app.get("/getProject/:projectId", async (req, res) => {
@@ -287,8 +286,6 @@ app.post("/addBlock/:projectId", async (req, res) => {
   }
 });
 
-
-
 // Endpoint to add a unit to a block
 app.post("/addUnit/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
@@ -368,7 +365,6 @@ app.put("/markUnitHold/:projectId/:blockId/:unitId", async (req, res) => {
 });
 
 //available api
-
 app.put("/markUnitAvailable/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
 
@@ -464,7 +460,6 @@ app.delete("/deleteProject/:projectId", async (req, res) => {
   }
 });
 
-
 // Endpoint to delete a block from a project
 app.delete("/deleteBlock/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
@@ -545,8 +540,6 @@ app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
   }
 });
 
-
-// Add customer
 // Endpoint to add a customer
 app.post("/addCustomer", async (req, res) => {
   const {
@@ -618,3 +611,44 @@ app.get('/Viewcustomer', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+// Search by Adhar 
+app.get("/viewcustomer/:aadharNumber", async (req, res) => {
+  try {
+    const { aadharNumber } = req.params;
+    const customer = await Customer.findOne({ aadharNumber });
+    if (!customer) {
+      return res.status(404).json({ error: "Customer not found" });
+    }
+    res.json(customer);
+  } catch (error) {
+    console.error("Error fetching customer:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+// payment plan 
+// Assuming you have a route handler for creating payment plans
+app.post('/createPaymentPlan', async (req, res) => {
+  try {
+    const { type, planName, numInstallments, amount, installments } = req.body;
+
+    if (!type || !planName || !numInstallments || !amount || !installments) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const paymentPlan = new PaymentPlan({
+      type: type,
+      planName: planName,
+      numInstallments: numInstallments,
+      amount: amount,
+      installments: installments,
+    });
+
+    await paymentPlan.save();
+
+    res.status(201).json({ message: 'Payment plan created successfully', paymentPlan });
+  } catch (error) {
+    console.error('Error creating payment plan:', error);
+    res.status(500).json({ error: 'An error occurred while creating the payment plan' });
+  }
+});
+
