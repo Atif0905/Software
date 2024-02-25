@@ -122,7 +122,6 @@ const ProjectsUpload = () => {
 
   return (
     <div className="container">
-      <h4>Payment Blocks</h4>
       <div className="  flexy ">
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
