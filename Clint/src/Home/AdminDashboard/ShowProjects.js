@@ -335,11 +335,8 @@ const UploadedProjects = () => {
   };
   
   return (
-    <div className="container">
-      <h4 className="mt-4 "> PROJECTS</h4>
-      
-  
-  <div className="projects-grid">
+    <div className="container">  
+  <div className="projects-grid mt-3">
     {projects.map((project, index) => (
       <div key={index} className=" position-relative">
         <div className="projectdiv">

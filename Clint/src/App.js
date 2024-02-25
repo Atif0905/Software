@@ -21,7 +21,15 @@ import AdditionBlock from "./Home/AdminDashboard/Addblockandunit/AdditionBlock";
 import AdditionUnit from "./Home/AdminDashboard/Addblockandunit/AdditionUnit";
 import AddCustomerForm from "./Home/AdminDashboard/Uploads/Coustmer";
 import ViewCastumer from "./Home/AdminDashboard/ViewCastumer";
-
+import Addplan from "./PaymentPlan/Addplan";
+import Viewplan from "./PaymentPlan/Viewplan";
+import Incentiveplan from "./Incentiveplan/Incentiveplan";
+import Receivedpayments from "./Payments/Receivedpayments";
+import Unclearcheque from "./Payments/Unclearcheque";
+import Addkhata from "./Registry/Addkhata";
+import Addkhasra from "./Registry/Addkhasra";
+import ViewKhata from "./Registry/Viewkhata"
+import Viewkhasra from './Registry/Viewkhasra'
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -62,6 +70,15 @@ function App() {
           <Route path="/Addunit" element={<SidebarComponent/>}/>
           <Route path="/Addcustomer" element={<SidebarComponent/>}/>
           <Route path="/ViewCustomer" element={<SidebarComponent/>}/>
+          <Route path="/AddPlan" element={<SidebarComponent/>}/>
+          <Route path="/ViewPlan" element={<SidebarComponent/>}/>
+          <Route path="/Incentiveplan" element={<SidebarComponent/>} />
+          <Route path="/ReceivedPayments" element={<SidebarComponent/>} />
+          <Route path="/Unclearchequedetails" element={<SidebarComponent/>} />
+          <Route path="/Addkhata" element={<SidebarComponent/>} />
+          <Route path="/Addkhasra" element={<SidebarComponent/>} />
+          <Route path="/Viewkhata" element={<SidebarComponent/>} />
+          <Route path="/Viewkhasra" element={<SidebarComponent/>} />
           </Routes>
         <Routes>
           <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
@@ -80,6 +97,15 @@ function App() {
           <Route path="/Addunit" element={<AdditionUnit/>}/>
           <Route path="/Addcustomer" element={<AddCustomerForm/>}/>
           <Route path="/ViewCustomer" element={<ViewCastumer/>} />
+          <Route path="/AddPlan" element={<Addplan/>} />
+          <Route path='/ViewPlan' element={<Viewplan/>} />
+          <Route path="/Incentiveplan" element={<Incentiveplan/>} />
+          <Route path="/ReceivedPayments" element={<Receivedpayments/>} />
+          <Route path="/Unclearchequedetails" element={<Unclearcheque/>} />
+          <Route path="/Addkhata" element={<Addkhata/>}/>
+          <Route path="/Addkhasra" element={<Addkhasra/>}/>
+          <Route path="/Viewkhata" element={<ViewKhata/>} />
+          <Route path="/Viewkhasra" element={<Viewkhasra/>}/>
         </Routes>
       </div>
     </Router>

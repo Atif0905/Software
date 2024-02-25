@@ -6,28 +6,30 @@
 .nav1{
   width: 100%;
   background-color: #3c8dbc;
-  height: 40px;
+  height: 50px;
   position: fixed;
   z-index: 1;
 }
 .nav{
   width: 100%;
   background-color: #367fa9;
-  height: 40px;
+  height: 50px;
 }
 .sidebar {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  width: 15%;
+  width: 18%;
   height: 100%;
-  background-color: #343434;
+  background-color: rgb(34,45,50);
   background-size: contain;
   background-attachment: fixed ;
   background-position: center;
   position: fixed;
   border-right: 2px solid #ADB3CC ;
   z-index: 2;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 .logoo {
   margin-left: 10%;
@@ -39,56 +41,48 @@
 }
 .sidebar li a {
   display: block;
-  color: white;
-  font-size: 16px;
-  margin-bottom: 10px;
+  color: rgb(184,199,206);
+  font-size: 14px;
   padding: 8px 16px;
   text-decoration: none;
+  margin-bottom: 10px;
 }
 .mar{
   margin-right: 8px;
 }
 .sidebar li a:hover {
-  background-color: #CCCCCC;
-  border: 2px solid #CCCCCC;
-  color: black;
+  background-color: rgb(30,40,44);
+  color: #fff;
 }
 .dropdown .dropdown-toggle {
-  color: white;
-  font-size: 16px;
-  margin-bottom: 10px;
+  color: rgb(184,199,206);
+  font-size: 14px;
   padding: 8px 16px;
   text-decoration: none;
   cursor: pointer;
+  margin-bottom: 10px;
 }
 .dropdown-toggle:hover{
-  background-color: #CCCCCC;
-  border: 2px solid #CCCCCC;
-  color: black;
+  background-color: rgb(30,40,44);
+  color: #fff;
 }
 .dropdown .dropdown-menu {
   display: none;
   position: relative;
-  z-index: 1; 
   list-style-type: none; 
   padding: 0;
-  transition: opacity 1s ease-in-out; 
+  transition: opacity 3s ease-in;
 }
-
 .dropdown .dropdown-menu.active {
-  
   display: block;
-  background-color: #343434;
-  color: black;
-  border-radius: 20px;
+  color: #fff;
 }
 
 .dropdown .dropdown-item {
-  color: azure;
-  font-size: 16px !important;
-  line-height: 10px;
+  font-size: 14px !important;
+  line-height: 0px;
   text-decoration: none;
-  background-color: #343434;
+  background-color: rgb(44,59,65);
 }
 @media (max-width:1205px) {
   .sidebar li a {
