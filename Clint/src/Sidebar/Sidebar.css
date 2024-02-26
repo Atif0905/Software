@@ -1,3 +1,4 @@
+
 .sidehead{
   color: white;
   text-align: center;
@@ -84,6 +85,7 @@
   text-decoration: none;
   background-color: rgb(44,59,65);
 }
+
 @media (max-width:1205px) {
   .sidebar li a {
     display: block;

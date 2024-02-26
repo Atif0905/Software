@@ -34,7 +34,7 @@
 }
 .gridcontainer{
   display: grid;
-  grid-template-columns: repeat(3,31%);
+  grid-template-columns: repeat(4,23%);
   grid-gap: 20px;
 }
 .grid-item{
@@ -42,6 +42,31 @@
   background-color: white;
   padding: 10px;
 }
+.Headtext1{
+  font-size: 18px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: 300;
+    line-height: 1.1;
+    color: inherit;
+}
+table {
+  width: 100%;
+  border: none !important;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border: none !important;
+  font-size: 14px;
+}
+
+table th {
+  border-top: none !important;
+  border-bottom: 1px solid black !important ;
+}
+
 @media (max-width:1205px) {
   .gridcontainer{
     display: grid;

@@ -259,7 +259,6 @@ const Sidebar = () => {
       </div>
     </div>
       <li className='Links' onClick={logOut}><Link ><MdLogout />Logout</Link></li>
-      
         
         </div>
       </ul>

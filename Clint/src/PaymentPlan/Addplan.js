@@ -86,7 +86,7 @@ const AddPlan = () => {
 
   return (
     <div className='main-content'>
-      <div className='col-6'>
+      <div className='col-5'>
         <h4 className='Headtext'>Add a New Payment Plan</h4>
         <div className='whiteback'>
           <form onSubmit={handleSubmit}>
@@ -96,11 +96,6 @@ const AddPlan = () => {
               <option value="percentage">Percentage</option>
               <option value="amount">Amount</option>
             </select>
-            {selectedOption && (
-              <div className='mt-2'>
-                <p>Selected option: {selectedOption}</p>
-              </div>
-            )}
             <div className='mt-2'>
               <label>Plan Name</label>
               <input type="text" className="form-input-field" placeholder="Enter Plan Name" value={planName} onChange={handlePlanNameChange} required />
@@ -110,15 +105,15 @@ const AddPlan = () => {
               <input type="number" className="form-input-field" placeholder="Enter No of Installments" value={numInstallments} onChange={handleNumInstallmentsChange} required />
             </div>
             <div className='mt-2'>
-              <label>Installments</label>
+              {/* <label>Installments</label> */}
               {installments.map((installment, index) => (
-                <div key={index} className='installment'>
-                  <input type="number" placeholder="Days from Booking" value={installment.daysFromBooking} onChange={(e) => handleInstallmentChange(index, 'daysFromBooking', e.target.value)} />
-                  <input type="number" placeholder="Amount (RS)" value={installment.amountRS} onChange={(e) => handleInstallmentChange(index, 'amountRS', e.target.value)} />
-                  <button type="button" onClick={() => handleRemoveInstallment(index)}>Remove</button>
+                <div key={index} className='installment '>
+                  <input type="number" className='form-input-field' placeholder="Days from Booking" value={installment.daysFromBooking} onChange={(e) => handleInstallmentChange(index, 'daysFromBooking', e.target.value)} />
+                  <input type="number" className='form-input-field' placeholder="Amount (RS)" value={installment.amountRS} onChange={(e) => handleInstallmentChange(index, 'amountRS', e.target.value)} />
+                  <button type="button" className="btn btn-primary mb-2" onClick={() => handleRemoveInstallment(index)}>Remove</button>
                 </div>
               ))}
-              <button type="button" onClick={handleAddInstallment}>Add Installment</button>
+              {/* <button type="button" className='form-input-field' onClick={handleAddInstallment}>Add Installment</button> */}
             </div>
             <div className='mt-2'>
               <label>Amount</label>

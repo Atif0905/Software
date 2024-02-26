@@ -198,8 +198,9 @@ const AddCustomerForm = () => {
 
   return (
     <div className='main-content back'>
-      <h3 className='Headtext'>Customer Details</h3>
+      <h3 className='Headtext'>Add a New Customer </h3>
       <form onSubmit={handleSubmit}>
+      <h4 className='Headtext'>First Customer </h4>
         <div className='gridcontainer'>
           {/* Input fields for customer details */}
           <div className="relative grid-item">
@@ -503,8 +504,8 @@ const AddCustomerForm = () => {
             <label id="label-input">Payment Received</label>
           </div>
         </div>
-        <div className='d-flex justify-content-center mt-4'>
-          <button type="submit" className='submitbutton'>Submit</button>
+        <div className='mt-4'>
+          <button type="submit" className="btn btn-primary ">Submit</button>
         </div>
       </form>
     </div>
