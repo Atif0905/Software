@@ -1,0 +1,8 @@
+.list{
+    list-style: none;
+    font-size: 18px;
+}
+.view{
+    text-decoration: underline blue;
+    cursor: pointer;
+}

@@ -652,3 +652,17 @@ app.post('/createPaymentPlan', async (req, res) => {
   }
 });
 
+//view payment plan endpoint
+
+app.get('/paymentPlans', async (req, res) => {
+  try {
+    // Fetch all payment plans from the database
+    const paymentPlans = await PaymentPlan.find();
+
+    // Send the response with the fetched payment plans
+    res.status(200).json({ paymentPlans });
+  } catch (error) {
+    console.error('Error fetching payment plans:', error);
+    res.status(500).json({ error: 'An error occurred while fetching payment plans' });
+  }
+});

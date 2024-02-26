@@ -1,0 +1,29 @@
+.head{
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 24px;    
+    font-weight: 300;
+}
+.fl-table {
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: normal;
+    border: none;
+    border-collapse: collapse;
+    width: 100% !important;
+    max-width: 100% !important ;
+    white-space: nowrap;
+    background-color: rgb(249,249,249);
+}
+
+.fl-table td,
+.fl-table th {
+    text-align: left;
+    padding: 8px;
+    border-bottom: none !important;
+}
+
+.fl-table td {
+    border-right: 1px solid #f8f8f8;
+    font-size: 14px;
+}

@@ -51,8 +51,8 @@ const CustomerList = () => {
   return (
     <div className='main-content'>
       <h2 className='Headtext'>Customer List</h2>
-      <div className="table-wrapper">
-        <table id="myTable" className='fl-table'>
+      <div className="table-wrapper whiteback">
+        <table>
           <thead>
             <tr>
               <th>Name</th>
@@ -64,8 +64,6 @@ const CustomerList = () => {
               <th>Payment Received</th>
               <th>Send Email</th>
               <th>Payment Plan</th>
-              
-
             </tr>
           </thead>
           <tbody>
