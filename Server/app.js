@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const Project = require('./Models/UploadProjects');
 const Customer = require('./Models/CastumerUpload')
 const PaymentPlan = require('./Models/PaymentPlan');
+const Payment = require('./Models/PaymentRecive')
 
 const { PORT, MONGODB_URI, JWT_SECRET } = process.env; // Access environment variables
 
@@ -665,4 +666,46 @@ app.get('/paymentPlans', async (req, res) => {
     console.error('Error fetching payment plans:', error);
     res.status(500).json({ error: 'An error occurred while fetching payment plans' });
   }
+});
+
+// Endpoint to handle payment details
+// Endpoint to add payment details
+app.post("/paymentDetails", async (req, res) => {
+  const { paymentType, paymentMode, amount, reference, comment, aadharNumber } = req.body;
+
+  try {
+    // Check if required fields are provided
+    if (!paymentType || !reference) {
+      return res.status(400).json({ error: "PaymentType and Reference are required fields" });
+    }
+
+    // Create a new payment record
+    const payment = await Payment.create({
+      paymentType,
+      paymentMode,
+      amount,
+      reference,
+      comment,
+      aadharNumber
+    });
+
+    res.status(201).json({ status: "ok", message: "Payment details added successfully", data: payment });
+  } catch (error) {
+    console.error("Error adding payment details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// Endpoint to get all payment details
+app.get("/paymentDetails", async (req, res) => {
+  try {
+    // Fetch all payment details from the database
+    const payments = await Payment.find();
+
+    res.status(200).json({ status: "ok", data: payments });
+  } catch (error) {
+    console.error("Error fetching payment details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });

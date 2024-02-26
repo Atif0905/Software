@@ -11,13 +11,20 @@ const CustomerList = () => {
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-        const customersWithDetails = await Promise.all(response.data.map(async (customer) => ({
-          ...customer,
-          projectName: await fetchName('getProject', customer.project),
-          blockName: await fetchName('getBlock', customer.project, customer.block),
-          unitName: await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit),
-         
-        })));
+        const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
+          const projectName = await fetchName('getProject', customer.project);
+          const blockName = await fetchName('getBlock', customer.project, customer.block);
+          const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
+          const unitPrice = await fetchUnitPrice(customer.project, customer.block, customer.plotOrUnit); // Fetch unit price
+          
+          return {
+            ...customer,
+            projectName,
+            blockName,
+            unitName,
+            unitPrice,
+          };
+        }));
         setCustomers(customersWithDetails);
       } catch (error) {
         console.error('Error fetching customers:', error);
@@ -26,7 +33,7 @@ const CustomerList = () => {
         setLoading(false);
       }
     };
-    
+
     fetchCustomers();
   }, []);
 
@@ -36,6 +43,16 @@ const CustomerList = () => {
       return response.data.data.name;
     } catch (error) {
       console.error(`Error fetching ${endpoint} name:`, error);
+      return 'Unknown';
+    }
+  };
+
+  const fetchUnitPrice = async (projectId, blockId, unitId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
+      return response.data.data.totalPrice; // Assuming unitPrice is a property of the unit object
+    } catch (error) {
+      console.error('Error fetching unit price:', error);
       return 'Unknown';
     }
   };
@@ -61,7 +78,9 @@ const CustomerList = () => {
               <th>Email</th>
               <th>Project</th>
               <th>Block-Plot/Unit</th>
+              <th>Unit Price</th>
               <th>Payment Received</th>
+              <th>Balance</th>
               <th>Send Email</th>
               <th>Payment Plan</th>
             </tr>
@@ -75,7 +94,9 @@ const CustomerList = () => {
                 <td>{customer.email}</td>
                 <td>{customer.projectName}</td>
                 <td>{customer.blockName}-{customer.unitName}</td>
+                <td>{customer.unitPrice}</td>
                 <td>{customer.paymentReceived}</td>
+                <td>{customer.unitPrice - customer.paymentReceived}</td> {/* Calculating balance */}
                 <td>{customer.sendEmail ? 'Yes' : 'No'}</td>
               </tr>
             ))}
