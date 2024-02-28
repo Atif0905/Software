@@ -8,7 +8,6 @@ const AddPlan = () => {
   const [planName, setPlanName] = useState('');
   const [numInstallments, setNumInstallments] = useState('');
   const [installments, setInstallments] = useState([]);
-  const [amountValue, setAmountValue] = useState('');
 
   // Event handler for select input change
   const handleSelectChange = (event) => {
@@ -29,11 +28,6 @@ const AddPlan = () => {
       amountRS: '', // Add amountRS field
     }));
     setInstallments(updatedInstallments);
-  };
-
-  // Event handler for amount value input change
-  const handleAmountValueChange = (event) => {
-    setAmountValue(event.target.value);
   };
 
   // Event handler for installment input change
@@ -73,7 +67,6 @@ const AddPlan = () => {
       planName: planName,
       numInstallments: numInstallments,
       installments: installments,
-      amount: selectedOption === 'percentage' ? parseFloat(amountValue) : parseInt(amountValue),
     })
       .then((response) => {
         console.log('Success:', response.data);
@@ -113,11 +106,6 @@ const AddPlan = () => {
                   <button type="button" className="btn btn-primary mb-2" onClick={() => handleRemoveInstallment(index)}>Remove</button>
                 </div>
               ))}
-              {/* <button type="button" className='form-input-field' onClick={handleAddInstallment}>Add Installment</button> */}
-            </div>
-            <div className='mt-2'>
-              <label>Amount</label>
-              <input type="text" className="form-input-field" placeholder="Enter Amount" value={amountValue} onChange={handleAmountValueChange} required />
             </div>
             <button type="submit" className="btn btn-primary mt-3">Submit</button>
           </form>

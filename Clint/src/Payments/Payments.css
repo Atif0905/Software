@@ -15,7 +15,11 @@
     white-space: nowrap;
     background-color: rgb(249,249,249);
 }
-
+.makepayment{
+    color: blue;
+    text-decoration: underline blue;
+    cursor: pointer;
+}
 .fl-table td,
 .fl-table th {
     text-align: left;
