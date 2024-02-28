@@ -67,9 +67,6 @@ const customerSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  paymentReceived: { // Add paymentReceived field
-    type: String
-}
 });
 
 const Customer = mongoose.model("Customer", customerSchema);

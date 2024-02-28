@@ -20,8 +20,7 @@ const AddCustomerForm = () => {
     paymentPlan: '',
     bookingDate: '',
     bookingType: '',
-    sendEmail: false,
-    paymentReceived: '' // Changed to string
+    sendEmail: false
   });
 
   const [projects, setProjects] = useState([]);
@@ -33,11 +32,21 @@ const AddCustomerForm = () => {
   const [idcCharges, setIdcCharges] = useState('');
   const [plcCharges, setPlcCharges] = useState('');
   const [selectedBlockUnits, setSelectedBlockUnits] = useState([]);
-  
+  const [paymentPlans, setPaymentPlans] = useState([]);
   useEffect(() => {
     fetchProjects();
   }, []);
-
+  useEffect(() => {
+    const fetchPaymentPlans = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
+        setPaymentPlans(response.data.paymentPlans);
+      } catch (error) {
+        console.error('Error fetching payment plans:', error);
+      }
+    };
+    fetchPaymentPlans();
+  }, []);
   const fetchProjects = async () => {
     try {
       const response = await axios.get(
@@ -91,7 +100,7 @@ const AddCustomerForm = () => {
 
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
-    setFormData({ ...formData, [name]: checked ? '1' : '0' }); // Convert boolean to string
+    setFormData({ ...formData, [name]: checked });
   };
 
   const handleSubmit = async (e) => {
@@ -144,7 +153,6 @@ const AddCustomerForm = () => {
             bookingDate: '',
             bookingType: '',
             sendEmail: false,
-            paymentReceived: '', // Reset paymentReceived to empty string
             plotSize : '',
             rate : '',
             idcCharges : '',
@@ -352,18 +360,21 @@ const AddCustomerForm = () => {
             <label id="label-input">Discount</label>
           </div>
           <div className="relative grid-item">
-            <input 
-              className="input-cal input-base" 
-              id="input" 
-              placeholder="" 
-              type="text" 
-              name="paymentPlan" 
-              value={formData.paymentPlan} 
-              onChange={handleInputChange} 
-              required
-            />
-            <label id="label-input">Payment Plan</label>
-          </div>
+      <select 
+        className='input-cal input-base' 
+        id="input" 
+        name="paymentPlan" 
+        value={formData.paymentPlan} 
+        onChange={handleInputChange} 
+        required
+      >
+        <option>Select plan</option>
+        {paymentPlans.map((plan, index) => (
+          <option key={index} value={plan.planName}>{plan.planName}</option>
+        ))}
+      </select>
+      <label id="label-input">Payment Plan</label>
+    </div>
           <div className="relative grid-item">
             <input 
               className="input-cal input-base" 
@@ -487,21 +498,6 @@ const AddCustomerForm = () => {
               </svg>
             </label>
             Send Email
-          </div>
-
-          {/* Payment Received */}
-          <div className='relative grid-item'>
-            <input 
-              type="text" // Changed to text input
-              className="input-cal input-base" 
-              id="input" 
-              placeholder=""
-              name="paymentReceived" 
-              value={formData.paymentReceived} 
-              onChange={handleInputChange} 
-              required
-            />
-            <label id="label-input">Payment Received</label>
           </div>
         </div>
         <div className='mt-4'>

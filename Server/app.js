@@ -561,7 +561,6 @@ app.post("/addCustomer", async (req, res) => {
     bookingDate,
     bookingType,
     sendEmail,
-    paymentReceived
   } = req.body;
 
   try {
@@ -591,7 +590,6 @@ app.post("/addCustomer", async (req, res) => {
       bookingDate,
       bookingType,
       sendEmail,
-      paymentReceived
     });
 
     res.status(201).json({ status: "ok", data: newCustomer });
@@ -630,9 +628,9 @@ app.get("/viewcustomer/:aadharNumber", async (req, res) => {
 // Assuming you have a route handler for creating payment plans
 app.post('/createPaymentPlan', async (req, res) => {
   try {
-    const { type, planName, numInstallments, amount, installments } = req.body;
+    const { type, planName, numInstallments, installments } = req.body;
 
-    if (!type || !planName || !numInstallments || !amount || !installments) {
+    if (!type || !planName || !numInstallments  || !installments) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -640,7 +638,6 @@ app.post('/createPaymentPlan', async (req, res) => {
       type: type,
       planName: planName,
       numInstallments: numInstallments,
-      amount: amount,
       installments: installments,
     });
 

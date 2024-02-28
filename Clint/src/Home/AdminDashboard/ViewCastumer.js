@@ -11,6 +11,7 @@ const CustomerList = () => {
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+        console.log(response)
         const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
           const projectName = await fetchName('getProject', customer.project);
           const blockName = await fetchName('getBlock', customer.project, customer.block);
@@ -98,6 +99,7 @@ const CustomerList = () => {
                 <td>{customer.paymentReceived}</td>
                 <td>{customer.unitPrice - customer.paymentReceived}</td> {/* Calculating balance */}
                 <td>{customer.sendEmail ? 'Yes' : 'No'}</td>
+                <td>{customer.paymentPlan}</td>
               </tr>
             ))}
           </tbody>
