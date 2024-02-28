@@ -25,10 +25,6 @@ const customerSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  // income: {
-  //   type: String,
-  //   required: true
-  // },
   email: {
     type: String,
     required: true,
@@ -51,7 +47,7 @@ const customerSchema = new mongoose.Schema({
     default: 0
   },
   paymentPlan: {
-    type: String
+    type: String  // Adjusted to store only the name of the payment plan
   },
   bookingDate: {
     type: Date
@@ -60,8 +56,8 @@ const customerSchema = new mongoose.Schema({
     type: String
   },
   sendEmail: {
-    type: Boolean, // Adjusted to Boolean type as per the given code
-    default: false // Assuming default value is false
+    type: Boolean,
+    default: false
   },
   selected: {
     type: Boolean,
