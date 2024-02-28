@@ -557,7 +557,7 @@ app.post("/addCustomer", async (req, res) => {
     selectedBlock,
     selectedUnit,
     discount,
-    paymentPlan,
+    paymentPlan, // Assuming paymentPlan is an array of payment plan objects
     bookingDate,
     bookingType,
     sendEmail,
@@ -571,7 +571,8 @@ app.post("/addCustomer", async (req, res) => {
       return res.status(400).json({ error: "Customer already exists" });
     }
 
-    // Create a new customer
+
+    // Create a new customer with payment plan names
     const newCustomer = await Customer.create({
       name,
       fatherOrHusbandName,
@@ -586,7 +587,7 @@ app.post("/addCustomer", async (req, res) => {
       block: selectedBlock,  
       plotOrUnit: selectedUnit,
       discount,
-      paymentPlan,
+      paymentPlan, // Ensure paymentPlan is an array of strings (names)
       bookingDate,
       bookingType,
       sendEmail,
