@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const customerSchema = new mongoose.Schema({
+  customerId: String,
   name: {
     type: String,
     required: true
@@ -63,6 +64,19 @@ const customerSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+});
+
+// Before saving, generate and set the customer ID
+customerSchema.pre('save', async function(next) {
+  try {
+    // Generate a scenario number
+    const scenarioNumber = await mongoose.models.Customer.countDocuments() + 1;
+    // Construct the customer ID
+    this.customerId = `WI0${scenarioNumber}`;
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 const Customer = mongoose.model("Customer", customerSchema);

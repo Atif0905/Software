@@ -571,9 +571,15 @@ app.post("/addCustomer", async (req, res) => {
       return res.status(400).json({ error: "Customer already exists" });
     }
 
+    // Generate a scenario number
+    const scenarioNumber = await Customer.countDocuments() + 1;
+
+    // Generate unique ID
+    const customerId = `WI0${scenarioNumber}`;
 
     // Create a new customer with payment plan names
     const newCustomer = await Customer.create({
+      customerId, // Add the generated ID
       name,
       fatherOrHusbandName,
       address,
@@ -584,7 +590,7 @@ app.post("/addCustomer", async (req, res) => {
       email,
       propertyType,
       project: selectedProject,
-      block: selectedBlock,  
+      block: selectedBlock,
       plotOrUnit: selectedUnit,
       discount,
       paymentPlan, // Ensure paymentPlan is an array of strings (names)
@@ -599,7 +605,6 @@ app.post("/addCustomer", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 // View Castumer
 app.get('/Viewcustomer', async (req, res) => {
   try {
@@ -612,10 +617,10 @@ app.get('/Viewcustomer', async (req, res) => {
   }
 });
 // Search by Adhar 
-app.get("/viewcustomer/:aadharNumber", async (req, res) => {
+app.get("/viewcustomer/:customerId", async (req, res) => {
   try {
-    const { aadharNumber } = req.params;
-    const customer = await Customer.findOne({ aadharNumber });
+    const { customerId } = req.params;
+    const customer = await Customer.findOne({ customerId });
     if (!customer) {
       return res.status(404).json({ error: "Customer not found" });
     }
@@ -625,6 +630,7 @@ app.get("/viewcustomer/:aadharNumber", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 // payment plan 
 // Assuming you have a route handler for creating payment plans
 app.post('/createPaymentPlan', async (req, res) => {
@@ -705,6 +711,24 @@ app.get("/paymentDetails", async (req, res) => {
     res.status(200).json({ status: "ok", data: payments });
   } catch (error) {
     console.error("Error fetching payment details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/paymentDetails/:aadharNumber", async (req, res) => {
+  const { aadharNumber } = req.params;
+
+  try {
+    // Fetch payment details for the specified Aadhar number from the database
+    const payments = await Payment.find({ aadharNumber });
+
+    if (payments.length === 0) {
+      return res.status(404).json({ error: "No payments found for the specified Aadhar number" });
+    }
+
+    res.status(200).json({ status: "ok", data: payments });
+  } catch (error) {
+    console.error("Error fetching payment details:", error);  
     res.status(500).json({ error: "Internal server error" });
   }
 });

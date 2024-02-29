@@ -3,12 +3,13 @@ import axios from "axios";
 import "./Payments.css";
 
 const Receivedpayments = () => {
-  const [aadharNumber, setAadharNumber] = useState('');
+  const [customerId, setCustomerId] = useState('');
   const [customerDetails, setCustomerDetails] = useState(null);
   const [error, setError] = useState(null);
-  const [yourAadharNumber, setYourAadharNumber] = useState('');
+  const [yourCustomerId, setYourCustomerId] = useState('');
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [submittedInstallments, setSubmittedInstallments] = useState([]);
+  const [matchedPayments, setMatchedPayments] = useState([]);
 
   const [payment, setPayment] = useState({
     paymentType: '',
@@ -20,7 +21,7 @@ const Receivedpayments = () => {
   });
   const [paymentPlans, setPaymentPlans] = useState([]);
   const [selectedPlanInstallments, setSelectedPlanInstallments] = useState([]);
-  const [installmentInputs, setInstallmentInputs] = useState({});
+  const [disabledInstallments, setDisabledInstallments] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,8 +32,8 @@ const Receivedpayments = () => {
     e.preventDefault();
     console.log('form submit successfully');
     try {
-      if (aadharNumber !== yourAadharNumber) {
-        setError('Entered Aadhar number does not match the searched Aadhar number');
+      if (customerId !== yourCustomerId) {
+        setError('Entered Customer ID does not match the searched Customer ID');
         return;
       }
       console.log('Form Data:', {
@@ -41,7 +42,7 @@ const Receivedpayments = () => {
         amount: payment.amount,
         reference: payment.reference,
         comment: payment.comment,
-        aadharNumber: yourAadharNumber,
+        customerId: yourCustomerId,
         PaymentDate: payment.PaymentDate
       });
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/paymentDetails`, {
@@ -50,10 +51,11 @@ const Receivedpayments = () => {
         amount: payment.amount,
         reference: payment.reference,
         comment: payment.comment,
-        aadharNumber: yourAadharNumber,
+        customerId: yourCustomerId,
         PaymentDate: payment.PaymentDate
       });
-      setInstallmentInputs({ ...installmentInputs, [payment.paymentType]: payment });
+      setSubmittedInstallments([...submittedInstallments, payment.paymentType]);
+      setDisabledInstallments([...disabledInstallments, payment.paymentType]); // Disable selected installment
       setPayment({
         paymentType: '',
         paymentMode: '',
@@ -68,27 +70,31 @@ const Receivedpayments = () => {
       setError('Error submitting payment. Please try again later.'); // Set error message for display
     }
   };
+
+  // Function to fetch payment details based on Customer ID
+  const fetchPaymentDetailsByCustomerId = async (customerId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
+      return response.data.data; // Assuming 'data' contains the array of payments
+    } catch (error) {
+      console.error('Error fetching payment details:', error);
+      throw new Error('Error fetching payment details. Please try again later.');
+    }
+  };
+
   useEffect(() => {
-    const fetchPaymentDetails = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails`);
-        console.log(response  )
-        // Assuming the response data is an array of payment details
-        const installmentInputs = {};
-        response.data.forEach(installment => {
-          installmentInputs[installment.installment] = {
-            PaymentDate: installment.PaymentDate,
-            amount: installment.amount
-          };
-        });
-        setInstallmentInputs(installmentInputs);
+        const paymentDetails = await fetchPaymentDetailsByCustomerId(customerId);
+        setMatchedPayments(paymentDetails); // Set matched payments in state
       } catch (error) {
-        console.error('Error fetching payment details:', error);
+        setError(error.message);
       }
     };
 
-    fetchPaymentDetails();
-  }, []);
+    fetchData();
+  }, [customerId]);
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -109,7 +115,11 @@ const Receivedpayments = () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
         if (Array.isArray(response.data.paymentPlans)) {
-          setPaymentPlans(response.data.paymentPlans);
+          const filteredPlans = response.data.paymentPlans.map(plan => {
+            const filteredInstallments = plan.installments.filter(installment => !installment.rendered);
+            return { ...plan, installments: filteredInstallments };
+          });
+          setPaymentPlans(filteredPlans);
         } else {
           console.error('Invalid data format for payment plans:', response.data);
         }
@@ -122,17 +132,21 @@ const Receivedpayments = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!aadharNumber) {
-      setError('Please enter a valid Aadhar number');
+    if (!customerId) {
+      setError('Please enter a valid Customer ID');
       return;
     }
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/viewcustomer/${aadharNumber}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/viewcustomer/${customerId}`);
       setCustomerDetails(response.data);
       if (response.data.paymentPlan) {
         const matchedPlan = paymentPlans.find(plan => plan.planName === response.data.paymentPlan);
         if (matchedPlan) {
           setSelectedPlanInstallments(matchedPlan.installments);
+          const disabledInstallments = matchedPlan.installments
+            .filter(installment => submittedInstallments.includes(installment.installment))
+            .map(installment => installment.installment);
+          setDisabledInstallments(disabledInstallments);
         } else {
           setSelectedPlanInstallments([]);
         }
@@ -155,13 +169,13 @@ const Receivedpayments = () => {
         <form onSubmit={handleSearch}>
           <div className="col-8">
             <div className="whiteback">
-              <label className="mt-3">Customer Aadhar Number</label>
+              <label className="mt-3">Customer ID</label>
               <input
                 className="form-input-field"
                 type="text"
-                placeholder="Enter Customer Aadhar Number"
-                value={aadharNumber}
-                onChange={(e) => setAadharNumber(e.target.value)}
+                placeholder="Enter Customer ID"
+                value={customerId}
+                onChange={(e) => setCustomerId(e.target.value)}
               />
               <button className="add-buttons mt-3" type="submit">
                 Search
@@ -185,7 +199,7 @@ const Receivedpayments = () => {
                     <th>Address</th>
                   </tr>
                   <tr>
-                    <th>Aadhar Number</th>
+                    <th>Customer ID</th>
                   </tr>
                   <tr>
                     <th>Pan Number</th>
@@ -205,7 +219,7 @@ const Receivedpayments = () => {
                     <td>{customerDetails.address}</td>
                   </tr>
                   <tr>
-                    <td>{customerDetails.aadharNumber}</td>
+                    <td>{customerDetails.customerId}</td>
                   </tr>
                   <tr>
                     <td>{customerDetails.panNumber}</td>
@@ -226,30 +240,34 @@ const Receivedpayments = () => {
         <div>
           <h4 className="Headtext">Post Payment of customers</h4>
           <h4 className="Headtext1">
-            Name: {customerDetails.name}, Aadhar Number:{" "}
-            {customerDetails.aadharNumber} , Phone Number :{" "}
+            Name: {customerDetails.name}, Customer ID:{" "}
+            {customerDetails.customerId} , Phone Number :{" "}
             {customerDetails.mobileNumber}
           </h4>
           <div className="d-flex justify-content-between">
             <div className="col-3 whiteback mt-4">
               <form onSubmit={handleSubmit}>
-              <label>Select Payment Mode</label>
-              <select
-  className="select-buttons ps-1"
-  name="paymentType"
-  value={payment.paymentType}
-  onChange={handleChange}
->
-  <option>Select</option>
-  {selectedPlanInstallments.map((installment, index) => (
-    !submittedInstallments.includes(installment.installment) && (
-      <option key={index} value={installment.installment}>
-        {installment.installment} - {installment.dueDate} -{" "}
-        {installment.amount}
-      </option>
-    )
-  ))}
-</select>
+                <label>Select Installments</label>
+                <select
+                  className="select-buttons ps-1"
+                  name="paymentType"
+                  value={payment.paymentType}
+                  onChange={handleChange}
+                >
+                  <option>Select</option>
+                  {selectedPlanInstallments.map((installment, index) => (
+                    !submittedInstallments.includes(installment.installment) && (
+                      <option
+                        key={index}
+                        value={installment.installment}
+                        disabled={disabledInstallments.includes(installment.installment)}
+                      >
+                        {installment.installment}{installment.dueDate}
+                        {installment.amount}
+                      </option>
+                    )
+                  ))}
+                </select>
                 <label>Select Payment Mode</label>
                 <select
                   className="select-buttons ps-1"
@@ -289,14 +307,14 @@ const Receivedpayments = () => {
                   value={payment.PaymentDate}
                   onChange={handleChange}
                 />
-                <label>Aadhar Number</label>
+                <label>Customer ID</label>
                 <input
                   required
                   className="form-input-field"
                   type="text"
-                  placeholder="Enter Your Aadhar Number"
-                  value={yourAadharNumber}
-                  onChange={(e) => setYourAadharNumber(e.target.value)}
+                  placeholder="Enter Your Customer ID"
+                  value={yourCustomerId}
+                  onChange={(e) => setYourCustomerId(e.target.value)}
                 />
                 <label>Comment</label>
                 <input
@@ -327,15 +345,11 @@ const Receivedpayments = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedPlanInstallments.map((installment, index) => (
+                    {matchedPayments.map((payment, index) => (
                       <tr key={index}>
-                        <td>{installment.installment} Installment</td>
-                        <td>
-                          {installmentInputs[installment.installment]?.PaymentDate || ""}
-                        </td>
-                        <td>
-                          {installmentInputs[installment.installment]?.amount || ""}
-                        </td>
+                        <td>{payment.paymentType}</td>
+                        <td>{payment.PaymentDate}</td>
+                        <td>{payment.amount}</td>
                       </tr>
                     ))}
                   </tbody>
