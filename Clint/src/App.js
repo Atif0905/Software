@@ -30,6 +30,7 @@ import Addkhata from "./Registry/Addkhata";
 import Addkhasra from "./Registry/Addkhasra";
 import ViewKhata from "./Registry/Viewkhata"
 import Viewkhasra from './Registry/Viewkhasra'
+import PaymentPage from "./Payments/Paymentpage";
 
 
 function App() {
@@ -81,6 +82,7 @@ function App() {
           <Route path="/Addkhasra" element={<SidebarComponent/>} />
           <Route path="/Viewkhata" element={<SidebarComponent/>} />
           <Route path="/Viewkhasra" element={<SidebarComponent/>} />
+          <Route path="/PaymentPage/:id" element={<Sidebar/>}/>
           </Routes>
         <Routes>
           <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
@@ -107,6 +109,7 @@ function App() {
           <Route path="/Addkhata" element={<Addkhata/>}/>
           <Route path="/Addkhasra" element={<Addkhasra/>}/>
           <Route path="/Viewkhata" element={<ViewKhata/>} />
+          <Route path="/PaymentPage/:id" element={<PaymentPage/>}/>
           <Route path="/Viewkhasra" element={<Viewkhasra/>}/>
         </Routes>
       </div>

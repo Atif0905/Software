@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Payments.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./Payments.css";
 
 const Receivedpayments = () => {
   const [aadharNumber, setAadharNumber] = useState('');
@@ -8,49 +8,99 @@ const Receivedpayments = () => {
   const [error, setError] = useState(null);
   const [yourAadharNumber, setYourAadharNumber] = useState('');
   const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [submittedInstallments, setSubmittedInstallments] = useState([]);
+
   const [payment, setPayment] = useState({
     paymentType: '',
     paymentMode: '',
     amount: '',
     reference: '',
-    comment: ''
+    comment: '',
+    PaymentDate: '',
   });
   const [paymentPlans, setPaymentPlans] = useState([]);
   const [selectedPlanInstallments, setSelectedPlanInstallments] = useState([]);
+  const [installmentInputs, setInstallmentInputs] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'paymentType') {
-      const selectedInstallment = selectedPlanInstallments.find(installment => installment.installment === value);
-      if (selectedInstallment) {
-        setPayment({
-          ...payment,
-          [name]: value,
-          amount: selectedInstallment.amount // Set the amount based on the selected installment
-        });
-      } else {
-        setPayment({
-          ...payment,
-          [name]: value,
-          amount: '' // Clear the amount if no installment is selected
-        });
-      }
-    } else {
-      setPayment({ ...payment, [name]: value });
-    }
+    setPayment({ ...payment, [name]: value });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('form submit successfully');
+    try {
+      if (aadharNumber !== yourAadharNumber) {
+        setError('Entered Aadhar number does not match the searched Aadhar number');
+        return;
+      }
+      console.log('Form Data:', {
+        paymentType: payment.paymentType,
+        paymentMode: payment.paymentMode,
+        amount: payment.amount,
+        reference: payment.reference,
+        comment: payment.comment,
+        aadharNumber: yourAadharNumber,
+        PaymentDate: payment.PaymentDate
+      });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/paymentDetails`, {
+        paymentType: payment.paymentType,
+        paymentMode: payment.paymentMode,
+        amount: payment.amount,
+        reference: payment.reference,
+        comment: payment.comment,
+        aadharNumber: yourAadharNumber,
+        PaymentDate: payment.PaymentDate
+      });
+      setInstallmentInputs({ ...installmentInputs, [payment.paymentType]: payment });
+      setPayment({
+        paymentType: '',
+        paymentMode: '',
+        amount: '',
+        reference: '',
+        comment: '',
+        PaymentDate: ''
+      });
+      setError(null);
+    } catch (error) {
+      console.error('Error submitting payment:', error);
+      setError('Error submitting payment. Please try again later.'); // Set error message for display
+    }
+  };
   useEffect(() => {
-    const fetchCustomers = async () => {
+    const fetchPaymentDetails = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-        setCustomerDetails(response.data);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails`);
+        console.log(response  )
+        // Assuming the response data is an array of payment details
+        const installmentInputs = {};
+        response.data.forEach(installment => {
+          installmentInputs[installment.installment] = {
+            PaymentDate: installment.PaymentDate,
+            amount: installment.amount
+          };
+        });
+        setInstallmentInputs(installmentInputs);
       } catch (error) {
-        console.error('Error fetching customers:', error);
-        setError('Error fetching customers. Please try again later.');
+        console.error('Error fetching payment details:', error);
       }
     };
 
+    fetchPaymentDetails();
+  }, []);
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/Viewcustomer`
+        );
+        setCustomerDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+        setError("Error fetching customers. Please try again later.");
+      }
+    };
     fetchCustomers();
   }, []);
 
@@ -67,41 +117,8 @@ const Receivedpayments = () => {
         console.error('Error fetching payment plans:', error);
       }
     };
-
     fetchPaymentPlans();
   }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (aadharNumber !== yourAadharNumber) {
-        setError('Entered Aadhar number does not match the searched Aadhar number');
-        return;
-      }
-
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/paymentDetails`, {
-        paymentType: payment.paymentType,
-        paymentMode: payment.paymentMode,
-        amount: payment.amount,
-        reference: payment.reference,
-        comment: payment.comment,
-        aadharNumber: yourAadharNumber
-      });
-
-      setPayment({
-        paymentType: '',
-        paymentMode: '',
-        amount: '',
-        reference: '',
-        comment: ''
-      });
-
-      setError(null);
-    } catch (error) {
-      console.error('Error submitting payment:', error);
-      setError('Error submitting payment');
-    }
-  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -132,73 +149,114 @@ const Receivedpayments = () => {
   };
 
   return (
-    <div className='main-content'>
-      <h4 className='Headtext'>Receive Payment from Customer</h4>
-      <div className='d-flex'>
+    <div className="main-content">
+      <h4 className="Headtext">Receive Payment from Customer</h4>
+      <div className="d-flex">
         <form onSubmit={handleSearch}>
-          <div className='col-8'>
-            <div className='whiteback'>
-              <label className='mt-3'>Customer Aadhar Number</label>
+          <div className="col-8">
+            <div className="whiteback">
+              <label className="mt-3">Customer Aadhar Number</label>
               <input
-                className='form-input-field'
-                type='text'
-                placeholder='Enter Customer Aadhar Number'
+                className="form-input-field"
+                type="text"
+                placeholder="Enter Customer Aadhar Number"
                 value={aadharNumber}
                 onChange={(e) => setAadharNumber(e.target.value)}
               />
-              <button className='add-buttons mt-3' type='submit'>Search</button>
+              <button className="add-buttons mt-3" type="submit">
+                Search
+              </button>
             </div>
           </div>
         </form>
         {error && <p>{error}</p>}
-
         {customerDetails && (
-          <div className='col-8 whiteback'>
+          <div className="col-8 whiteback">
             <div className="table-wrapper">
               <table className="fl-table d-flex">
                 <thead>
-                  <tr><th>Name</th></tr>
-                  <tr><th>Father/Husband Name</th></tr>
-                  <tr><th>Address</th></tr>
-                  <tr><th>Aadhar Number</th></tr>
-                  <tr><th>Pan Number</th></tr>
-                  <tr><th>Mobile Number</th></tr>
+                  <tr>
+                    <th>Name</th>
+                  </tr>
+                  <tr>
+                    <th>Father/Husband Name</th>
+                  </tr>
+                  <tr>
+                    <th>Address</th>
+                  </tr>
+                  <tr>
+                    <th>Aadhar Number</th>
+                  </tr>
+                  <tr>
+                    <th>Pan Number</th>
+                  </tr>
+                  <tr>
+                    <th>Mobile Number</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  <tr><td>{customerDetails.name}</td></tr>
-                  <tr><td>{customerDetails.fatherOrHusbandName}</td></tr>
-                  <tr><td>{customerDetails.address}</td></tr>
-                  <tr><td>{customerDetails.aadharNumber}</td></tr>
-                  <tr><td>{customerDetails.panNumber}</td></tr>
-                  <tr><td>{customerDetails.mobileNumber}</td></tr>
+                  <tr>
+                    <td>{customerDetails.name}</td>
+                  </tr>
+                  <tr>
+                    <td>{customerDetails.fatherOrHusbandName}</td>
+                  </tr>
+                  <tr>
+                    <td>{customerDetails.address}</td>
+                  </tr>
+                  <tr>
+                    <td>{customerDetails.aadharNumber}</td>
+                  </tr>
+                  <tr>
+                    <td>{customerDetails.panNumber}</td>
+                  </tr>
+                  <tr>
+                    <td>{customerDetails.mobileNumber}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
-            <h4 className='Headtext1' onClick={handleMakePayment}><span className='makepayment'>Make Payment</span></h4>
+            <h4 className="Headtext1" onClick={handleMakePayment}>
+              <span className="makepayment">Make Payment</span>
+            </h4>
           </div>
         )}
       </div>
-
       {showPaymentForm && (
         <div>
-          <h4 className='Headtext'>Post Payment of customers</h4>
-          
-          <h4 className='Headtext1'>Name: {customerDetails.name}, Aadhar Number: {customerDetails.aadharNumber} , Phone Number : {customerDetails.mobileNumber}</h4>
-          
-          <div className='d-flex justify-content-between'>
-            <div className='col-3 whiteback mt-4'>
+          <h4 className="Headtext">Post Payment of customers</h4>
+          <h4 className="Headtext1">
+            Name: {customerDetails.name}, Aadhar Number:{" "}
+            {customerDetails.aadharNumber} , Phone Number :{" "}
+            {customerDetails.mobileNumber}
+          </h4>
+          <div className="d-flex justify-content-between">
+            <div className="col-3 whiteback mt-4">
               <form onSubmit={handleSubmit}>
+              <label>Select Payment Mode</label>
+              <select
+  className="select-buttons ps-1"
+  name="paymentType"
+  value={payment.paymentType}
+  onChange={handleChange}
+>
+  <option>Select</option>
+  {selectedPlanInstallments.map((installment, index) => (
+    !submittedInstallments.includes(installment.installment) && (
+      <option key={index} value={installment.installment}>
+        {installment.installment} - {installment.dueDate} -{" "}
+        {installment.amount}
+      </option>
+    )
+  ))}
+</select>
                 <label>Select Payment Mode</label>
-                <select className='select-buttons ps-1' name='paymentType' value={payment.paymentType} onChange={handleChange}>
-                      <option>Select</option>
-                      {selectedPlanInstallments.map((installment, index) => (
-                        <option key={index} value={installment.installment}>
-                          {installment.installment} - {installment.dueDate} - {installment.amount}
-                        </option>
-                      ))}
-                    </select>
-                    <label>Select Payment Mode</label>
-                <select className='select-buttons ps-1' name='paymentMode' value={payment.paymentMode} onChange={handleChange}>
+                <select
+                  className="select-buttons ps-1"
+                  name="paymentMode"
+                  value={payment.paymentMode}
+                  onChange={handleChange}
+                >
                   <option>Select</option>
                   <option>cheque</option>
                   <option>cash</option>
@@ -208,26 +266,58 @@ const Receivedpayments = () => {
                   <option>commision Adjustment</option>
                 </select>
                 <label>Amount</label>
-                <input type='number' className='form-input-field' name='amount' value={payment.amount} onChange={handleChange} />
+                <input
+                  type="number"
+                  className="form-input-field"
+                  name="amount"
+                  value={payment.amount}
+                  onChange={handleChange}
+                />
                 <label>Cheque/ Receipt/ No.</label>
-                <input type='text' className='form-input-field' name='reference' value={payment.reference} onChange={handleChange} />
+                <input
+                  type="text"
+                  className="form-input-field"
+                  name="reference"
+                  value={payment.reference}
+                  onChange={handleChange}
+                />
+                <label>Payment Date</label>
+                <input
+                  type="date"
+                  className="form-input-field"
+                  name="PaymentDate"
+                  value={payment.PaymentDate}
+                  onChange={handleChange}
+                />
                 <label>Aadhar Number</label>
-                <input required
-                  className='form-input-field'
-                  type='text'
-                  placeholder='Enter Your Aadhar Number'
+                <input
+                  required
+                  className="form-input-field"
+                  type="text"
+                  placeholder="Enter Your Aadhar Number"
                   value={yourAadharNumber}
                   onChange={(e) => setYourAadharNumber(e.target.value)}
                 />
                 <label>Comment</label>
-                <input type='text' className='form-input-field' name='comment' placeholder='Enter comment regarding payment' value={payment.comment} onChange={handleChange} />
-                <button type='submit' className='btn btn-primary mt-3'>Submit</button>
+                <input
+                  type="text"
+                  className="form-input-field"
+                  name="comment"
+                  placeholder="Enter comment regarding payment"
+                  value={payment.comment}
+                  onChange={handleChange}
+                />
+                <button type="submit" className="btn btn-primary mt-3">
+                  Submit
+                </button>
               </form>
             </div>
-            <div className='col-8 mt-4'>
-              <div className='whiteback'>
-                <h2 className='head'>Total Due Till date : {customerDetails.totalprice}</h2>
-                <h4 className='Headtext1'>Payment Plan Installments</h4>
+            <div className="col-8 mt-4">
+              <div className="whiteback">
+                <h2 className="head">
+                  Total Due Till date : {customerDetails.totalPrice}
+                </h2>
+                <h4 className="Headtext1">Payment Plan Installments</h4>
                 <table>
                   <thead>
                     <tr>
@@ -237,6 +327,17 @@ const Receivedpayments = () => {
                     </tr>
                   </thead>
                   <tbody>
+                    {selectedPlanInstallments.map((installment, index) => (
+                      <tr key={index}>
+                        <td>{installment.installment} Installment</td>
+                        <td>
+                          {installmentInputs[installment.installment]?.PaymentDate || ""}
+                        </td>
+                        <td>
+                          {installmentInputs[installment.installment]?.amount || ""}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

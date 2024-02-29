@@ -23,6 +23,9 @@ const PaymentSchema = new mongoose.Schema({
   },
   aadharNumber: {
     type: Number
+  },
+  PaymentDate: {
+    type: Date
   }
 });
 
