@@ -669,7 +669,7 @@ app.get('/paymentPlans', async (req, res) => {
 // Endpoint to handle payment details
 // Endpoint to add payment details
 app.post("/paymentDetails", async (req, res) => {
-  const { paymentType, paymentMode, amount, reference, comment, aadharNumber } = req.body;
+  const { paymentType, paymentMode, amount, reference, comment, aadharNumber,   PaymentDate } = req.body;
 
   try {
     // Check if required fields are provided
@@ -684,7 +684,8 @@ app.post("/paymentDetails", async (req, res) => {
       amount,
       reference,
       comment,
-      aadharNumber
+      aadharNumber,
+      PaymentDate
     });
 
     res.status(201).json({ status: "ok", message: "Payment details added successfully", data: payment });
