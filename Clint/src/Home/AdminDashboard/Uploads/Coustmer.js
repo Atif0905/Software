@@ -211,50 +211,50 @@ const AddCustomerForm = () => {
       <h4 className='Headtext'>First Customer </h4>
         <div className='gridcontainer'>
           {/* Input fields for customer details */}
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder=" Enter Name" 
               type="text" 
               name="name" 
-              value={formData.name} 
+              value={formData.name.toUpperCase()} 
               onChange={handleInputChange} 
               required
             />
             <label id="label-input">Name</label>
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Enter Father/HusbandName" 
               type="text" 
               name="fatherOrHusbandName" 
-              value={formData.fatherOrHusbandName} 
+              value={formData.fatherOrHusbandName.toUpperCase()} 
               onChange={handleInputChange} 
               required
             />
             <label id="label-input">Father/Husband Name</label>
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Enter Address" 
               type="text" 
               name="address" 
-              value={formData.address} 
+              value={formData.address.toUpperCase()} 
               onChange={handleInputChange} 
               required
             />
             <label id="label-input">Address</label>
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Enter Aadhar Number" 
               type="number" 
               name="aadharNumber" 
               value={formData.aadharNumber} 
@@ -263,11 +263,11 @@ const AddCustomerForm = () => {
             />
             <label id="label-input">Aadhar Number</label>
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Enter Pan Number" 
               type="text" 
               name="panNumber" 
               value={formData.panNumber} 
@@ -276,11 +276,11 @@ const AddCustomerForm = () => {
             />
             <label id="label-input">PAN Number</label>
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Enter Mobile Number" 
               type="number" 
               name="mobileNumber" 
               value={formData.mobileNumber} 
@@ -289,27 +289,27 @@ const AddCustomerForm = () => {
             />
             <label id="label-input">Mobile Number</label>
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Enter Income" 
               type="text" 
               name="income" 
-              value={formData.income} 
+              value={formData.income.toUpperCase()} 
               onChange={handleInputChange} 
               required
             />
             <label id="label-input">Income</label>
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Enter Email" 
               type="text" 
               name="email" 
-              value={formData.email} 
+              value={formData.email.toUpperCase()} 
               onChange={handleInputChange} 
               required
             />
@@ -320,51 +320,51 @@ const AddCustomerForm = () => {
           <h4 className='Headtext mt-5'>Property Details</h4>
           <div className='gridcontainer'>
           
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Enter Property Type" 
               type="text" 
               name="propertyType" 
-              value={formData.propertyType} 
+              value={formData.propertyType.toUpperCase()} 
               onChange={handleInputChange} 
               required
             />
             <label id="label-input">Property Type</label>
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Enter Booking Type" 
               type="text" 
               name="bookingType" 
-              value={formData.bookingType} 
+              value={formData.bookingType.toUpperCase()} 
               onChange={handleInputChange} 
               required
             />
             <label id="label-input">Booking Type</label>
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Enter Discount " 
               type="text" 
               name="discount" 
-              value={formData.discount} 
+              value={formData.discount.toUpperCase()} 
               onChange={handleInputChange} 
               required
             />
             <label id="label-input">Discount</label>
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
       <select 
         className='input-cal input-base' 
         id="input" 
         name="paymentPlan" 
-        value={formData.paymentPlan} 
+        value={formData.paymentPlan.toUpperCase()} 
         onChange={handleInputChange} 
         required
       >
@@ -379,7 +379,7 @@ const AddCustomerForm = () => {
             <input 
               className="input-cal input-base" 
               id="input" 
-              placeholder="" 
+              placeholder="Booking Date" 
               type="date" 
               name="bookingDate" 
               value={formData.bookingDate} 
@@ -431,48 +431,48 @@ const AddCustomerForm = () => {
           </div>
 
           {/* Additional property details */}
-          <div className='relative grid-item'>
+          <div className=' grid-item'>
             <input
               type="number"
               className="input-cal input-base"
               id="input"
-              placeholder=""
+              placeholder="Enter Plot Size"
               value={plotSize}
               onChange={(e) => setPlotSize(e.target.value)}
               required
             />
             <label id="label-input">Plot size</label>
           </div>
-          <div className='relative grid-item'>
+          <div className=' grid-item'>
             <input
               type="number"
               className="input-cal input-base"
               id="input"
-              placeholder=""
+              placeholder="Enter Base Price"
               value={rate}
               onChange={(e) => setRate(e.target.value)}
               required
             />
-            <label id="label-input">Rate</label>
+            <label id="label-input">Base Price</label>
           </div>
-          <div className='relative grid-item'>
+          <div className=' grid-item'>
             <input
               type="number"
               className="input-cal input-base"
               id="input"
-              placeholder=""
+              placeholder="Enter IDC Charges"
               value={idcCharges}
               onChange={(e) => setIdcCharges(e.target.value)}
               required
             />
             <label id="label-input">IDC Charges</label>
           </div>
-          <div className='relative grid-item'>
+          <div className=' grid-item'>
             <input
               type="number"
               className="input-cal input-base"
               id="input"
-              placeholder=""
+              placeholder="Enter Plc Charges"
               value={plcCharges}
               onChange={(e) => setPlcCharges(e.target.value)}
               required

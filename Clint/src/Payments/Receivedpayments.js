@@ -4,13 +4,18 @@ import "./Payments.css";
 
 const Receivedpayments = () => {
   const [customerId, setCustomerId] = useState('');
+  const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [customerDetails, setCustomerDetails] = useState(null);
   const [error, setError] = useState(null);
   const [yourCustomerId, setYourCustomerId] = useState('');
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [submittedInstallments, setSubmittedInstallments] = useState([]);
   const [matchedPayments, setMatchedPayments] = useState([]);
-
+  const [selectedPlanInstallments, setSelectedPlanInstallments] = useState([]);
+  const [disabledInstallments, setDisabledInstallments] = useState([]);
+  const [paymentPlans, setPaymentPlans] = useState([]);
+  const [showCustomerDetails, setShowCustomerDetails] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [payment, setPayment] = useState({
     paymentType: '',
     paymentMode: '',
@@ -19,9 +24,6 @@ const Receivedpayments = () => {
     comment: '',
     PaymentDate: '',
   });
-  const [paymentPlans, setPaymentPlans] = useState([]);
-  const [selectedPlanInstallments, setSelectedPlanInstallments] = useState([]);
-  const [disabledInstallments, setDisabledInstallments] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,7 +47,7 @@ const Receivedpayments = () => {
         customerId: yourCustomerId,
         PaymentDate: payment.PaymentDate
       });
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/paymentDetails`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/paymentDetails`,{
         paymentType: payment.paymentType,
         paymentMode: payment.paymentMode,
         amount: payment.amount,
@@ -71,7 +73,6 @@ const Receivedpayments = () => {
     }
   };
 
-  // Function to fetch payment details based on Customer ID
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
@@ -152,6 +153,8 @@ const Receivedpayments = () => {
         }
       }
       setError(null);
+      setShowCustomerDetails(true); // Show customer details after search
+      setSelectedCustomerId(customerId); // Set selected customer ID
     } catch (error) {
       setError('Customer not found');
       setCustomerDetails(null);
@@ -161,7 +164,95 @@ const Receivedpayments = () => {
   const handleMakePayment = () => {
     setShowPaymentForm(true);
   };
+  
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return date.toLocaleDateString('en-US', options);
+  };
+  const fetchName = async (endpoint, ...ids) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join('/')}`);
+      return response.data.data.name;
+    } catch (error) {
+      console.error(`Error fetching ${endpoint} name:`, error);
+      return 'Unknown';
+    }
+  };
 
+  const fetchUnitPrice = async (projectId, blockId, unitId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
+      return response.data.data.totalPrice; // Assuming unitPrice is a property of the unit object
+    } catch (error) {
+      console.error('Error fetching unit price:', error);
+      return 'Unknown';
+    }
+  };
+
+  const fetchUnitDetails = async (projectId, blockId, unitId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
+      const unitData = response.data.data;
+      console.log('Unit details:', unitData); // Log the unit data
+
+      return {
+        unitPrice: unitData.totalPrice.toUpperCase(),
+        idcCharges: unitData.idcCharges.toUpperCase(),
+        plcCharges: unitData.plcCharges.toUpperCase(),
+        plotSize: unitData.plotSize.toUpperCase(),
+        sizeType: unitData.sizeType.toUpperCase(),
+        rate: unitData.rate.toUpperCase() // Include rate in the returned object
+      };
+    } catch (error) {
+      console.error('Error fetching unit details:', error);
+      return {
+        unitPrice: 'Unknown',
+        idcCharges: 'Unknown',
+        plcCharges: 'Unknown',
+        plotSize: 'Unknown',
+        sizeType: 'Unknown',
+        rate: 'unknown',
+      };
+    }
+  };
+  const handleViewDetails = (customerDetails) => {
+    setSelectedCustomer(customerDetails);
+  };
+  useEffect(() => {
+    const fetchUnitDetails = async () => {
+      try {
+        if (customerDetails && customerDetails.plotorunitid) {
+          const unitId = customerDetails.plotorunitid; // Get the unit ID from customerDetails
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnitDetails/${unitId}`); // Assuming API endpoint to fetch unit details by ID
+          const unitData = response.data.data;
+          console.log('Unit details:', unitData); // Log the unit data
+          setCustomerDetails(prevCustomerDetails => ({
+            ...prevCustomerDetails,
+            unitDetails: {
+              unitPrice: unitData.totalPrice.toUpperCase(),
+              idcCharges: unitData.idcCharges.toUpperCase(),
+              plcCharges: unitData.plcCharges.toUpperCase(),
+              plotSize: unitData.plotSize.toUpperCase(),
+              sizeType: unitData.sizeType.toUpperCase(),
+              rate: unitData.rate.toUpperCase(),
+              // Include any other unit details you need
+            }
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching unit details:', error);
+        setCustomerDetails(prevCustomerDetails => ({
+          ...prevCustomerDetails,
+          unitDetails: null // Set unitDetails to null in case of error
+        }));
+      }
+    };
+  
+    fetchUnitDetails();
+  }, [customerDetails]);
+  
+  const filteredPayments = matchedPayments.filter(payment => payment.customerId === selectedCustomerId);
   return (
     <div className="main-content">
       <h4 className="Headtext">Receive Payment from Customer</h4>
@@ -174,7 +265,7 @@ const Receivedpayments = () => {
                 className="form-input-field"
                 type="text"
                 placeholder="Enter Customer ID"
-                value={customerId}
+                value={customerId.toUpperCase()}
                 onChange={(e) => setCustomerId(e.target.value)}
               />
               <button className="add-buttons mt-3" type="submit">
@@ -183,8 +274,8 @@ const Receivedpayments = () => {
             </div>
           </div>
         </form>
-        {error && <p>{error}</p>}
-        {customerDetails && (
+        {showCustomerDetails && error && <p>{error}</p>}
+        {showCustomerDetails && customerDetails && (
           <div className="col-8 whiteback">
             <div className="table-wrapper">
               <table className="fl-table d-flex">
@@ -236,13 +327,14 @@ const Receivedpayments = () => {
           </div>
         )}
       </div>
-      {showPaymentForm && (
+      {!showCustomerDetails && error && <p>{error}</p>}
+        {showCustomerDetails && customerDetails && (
         <div>
           <h4 className="Headtext">Post Payment of customers</h4>
           <h4 className="Headtext1">
             Name: {customerDetails.name}, Customer ID:{" "}
             {customerDetails.customerId} , Phone Number :{" "}
-            {customerDetails.mobileNumber}
+            {customerDetails.mobileNumber} , unitPrice : {customerDetails.unitPrice}
           </h4>
           <div className="d-flex justify-content-between">
             <div className="col-3 whiteback mt-4">
@@ -313,7 +405,7 @@ const Receivedpayments = () => {
                   className="form-input-field"
                   type="text"
                   placeholder="Enter Your Customer ID"
-                  value={yourCustomerId}
+                  value={yourCustomerId.toUpperCase()}
                   onChange={(e) => setYourCustomerId(e.target.value)}
                 />
                 <label>Comment</label>
@@ -345,15 +437,16 @@ const Receivedpayments = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {matchedPayments.map((payment, index) => (
+                  {filteredPayments.map((payment, index) => (
                       <tr key={index}>
                         <td>{payment.paymentType}</td>
-                        <td>{payment.PaymentDate}</td>
+                        <td>{formatDate(payment.PaymentDate)}</td>
                         <td>{payment.amount}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+                
               </div>
             </div>
           </div>

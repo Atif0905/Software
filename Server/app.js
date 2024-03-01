@@ -675,16 +675,17 @@ app.get('/paymentPlans', async (req, res) => {
 // Endpoint to handle payment details
 // Endpoint to add payment details
 app.post("/paymentDetails", async (req, res) => {
-  const { paymentType, paymentMode, amount, reference, comment, aadharNumber,   PaymentDate } = req.body;
+  const { customerId, paymentType, paymentMode, amount, reference, comment, aadharNumber, PaymentDate } = req.body;
 
   try {
     // Check if required fields are provided
-    if (!paymentType || !reference) {
-      return res.status(400).json({ error: "PaymentType and Reference are required fields" });
+    if (!paymentType || !reference || !customerId) {
+      return res.status(400).json({ error: "PaymentType, Reference, and CustomerId are required fields" });
     }
 
     // Create a new payment record
     const payment = await Payment.create({
+      customerId,
       paymentType,
       paymentMode,
       amount,
@@ -697,8 +698,8 @@ app.post("/paymentDetails", async (req, res) => {
     res.status(201).json({ status: "ok", message: "Payment details added successfully", data: payment });
   } catch (error) {
     console.error("Error adding payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 
