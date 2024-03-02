@@ -716,12 +716,12 @@ app.get("/paymentDetails", async (req, res) => {
   }
 });
 
-app.get("/paymentDetails/:aadharNumber", async (req, res) => {
-  const { aadharNumber } = req.params;
+app.get("/paymentDetails/:customerId", async (req, res) => {
+  const { customerId } = req.params;
 
   try {
     // Fetch payment details for the specified Aadhar number from the database
-    const payments = await Payment.find({ aadharNumber });
+    const payments = await Payment.find({ customerId });
 
     if (payments.length === 0) {
       return res.status(404).json({ error: "No payments found for the specified Aadhar number" });

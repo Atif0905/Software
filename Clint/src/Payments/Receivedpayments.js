@@ -16,6 +16,10 @@ const Receivedpayments = () => {
   const [paymentPlans, setPaymentPlans] = useState([]);
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isPaymentClicked, setIsPaymentClicked] = useState(false);
+  const [unitData, setUnitData] = useState(null);
   const [payment, setPayment] = useState({
     paymentType: '',
     paymentMode: '',
@@ -99,17 +103,44 @@ const Receivedpayments = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/Viewcustomer`
-        );
-        setCustomerDetails(response.data);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+        const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
+          const projectName = await fetchName('getProject', customer.project);
+          const blockName = await fetchName('getBlock', customer.project, customer.block);
+          const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
+          const unitDetails = await fetchUnitDetails(customer.project, customer.block, customer.plotOrUnit);
+          return {
+            ...customer,
+            projectName: projectName.toUpperCase(),
+            blockName: blockName.toUpperCase(),
+            unitName: unitName.toUpperCase(),
+            ...unitDetails,
+          };
+        }));
+        setCustomers(customersWithDetails);
       } catch (error) {
-        console.error("Error fetching customers:", error);
-        setError("Error fetching customers. Please try again later.");
+        console.error('Error fetching customers:', error);
+        setError('Error fetching customers. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
     fetchCustomers();
   }, []);
+  
+  const fetchUnitDetails = async (projectId, blockId, unitId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
+      const unitData = response.data.data;
+      console.log('Unit Data:', unitData);
+      return unitData; // Return unit data
+    } catch (error) {
+      console.error('Error fetching unit details:', error);
+      return null; // Return null in case of error
+    }
+  };
+  
+  
 
   useEffect(() => {
     const fetchPaymentPlans = async () => {
@@ -139,30 +170,32 @@ const Receivedpayments = () => {
     }
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/viewcustomer/${customerId}`);
-      setCustomerDetails(response.data);
-      if (response.data.paymentPlan) {
-        const matchedPlan = paymentPlans.find(plan => plan.planName === response.data.paymentPlan);
-        if (matchedPlan) {
-          setSelectedPlanInstallments(matchedPlan.installments);
-          const disabledInstallments = matchedPlan.installments
-            .filter(installment => submittedInstallments.includes(installment.installment))
-            .map(installment => installment.installment);
-          setDisabledInstallments(disabledInstallments);
-        } else {
-          setSelectedPlanInstallments([]);
-        }
+      console.log('Fetched customer details:', response.data);
+      const customerDetails = response.data;
+  
+      // Fetch unit details based on customer data
+      const unitDetails = await fetchUnitDetails(customerDetails.project, customerDetails.block, customerDetails.plotOrUnit);
+  
+      // Check if unitDetails is an object and has data
+      if (unitDetails && Object.keys(unitDetails).length > 0) {
+        console.log('Unit details:', unitDetails);
+        setCustomerDetails({ ...customerDetails, unitDetails }); // Set customer details including unit details
+      } else {
+        console.log('No unit details found');
+        setCustomerDetails(customerDetails); // Set customer details without unit details
       }
-      setError(null);
-      setShowCustomerDetails(true); // Show customer details after search
-      setSelectedCustomerId(customerId); // Set selected customer ID
+  
+      // Other code...
     } catch (error) {
+      console.error('Error fetching customer details:', error);
       setError('Customer not found');
       setCustomerDetails(null);
     }
   };
-
+  
+  
   const handleMakePayment = () => {
-    setShowPaymentForm(true);
+    setIsPaymentClicked(true);
   };
   
   const formatDate = (dateString) => {
@@ -179,73 +212,16 @@ const Receivedpayments = () => {
       return 'Unknown';
     }
   };
-
-  const fetchUnitPrice = async (projectId, blockId, unitId) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
-      return response.data.data.totalPrice; // Assuming unitPrice is a property of the unit object
-    } catch (error) {
-      console.error('Error fetching unit price:', error);
-      return 'Unknown';
-    }
-  };
-
-  const fetchUnitDetails = async (projectId, blockId, unitId) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
-      const unitData = response.data.data;
-      console.log('Unit details:', unitData); // Log the unit data
-
-      return {
-        unitPrice: unitData.totalPrice.toUpperCase(),
-        idcCharges: unitData.idcCharges.toUpperCase(),
-        plcCharges: unitData.plcCharges.toUpperCase(),
-        plotSize: unitData.plotSize.toUpperCase(),
-        sizeType: unitData.sizeType.toUpperCase(),
-        rate: unitData.rate.toUpperCase() // Include rate in the returned object
-      };
-    } catch (error) {
-      console.error('Error fetching unit details:', error);
-      return {
-        unitPrice: 'Unknown',
-        idcCharges: 'Unknown',
-        plcCharges: 'Unknown',
-        plotSize: 'Unknown',
-        sizeType: 'Unknown',
-        rate: 'unknown',
-      };
-    }
-  };
-  const handleViewDetails = (customerDetails) => {
-    setSelectedCustomer(customerDetails);
-  };
   useEffect(() => {
-    const fetchUnitDetails = async () => {
+    const fetchUnitDetails = async (projectId, blockId, unitId) => {
       try {
-        if (customerDetails && customerDetails.plotorunitid) {
-          const unitId = customerDetails.plotorunitid; // Get the unit ID from customerDetails
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnitDetails/${unitId}`); // Assuming API endpoint to fetch unit details by ID
-          const unitData = response.data.data;
-          console.log('Unit details:', unitData); // Log the unit data
-          setCustomerDetails(prevCustomerDetails => ({
-            ...prevCustomerDetails,
-            unitDetails: {
-              unitPrice: unitData.totalPrice.toUpperCase(),
-              idcCharges: unitData.idcCharges.toUpperCase(),
-              plcCharges: unitData.plcCharges.toUpperCase(),
-              plotSize: unitData.plotSize.toUpperCase(),
-              sizeType: unitData.sizeType.toUpperCase(),
-              rate: unitData.rate.toUpperCase(),
-              // Include any other unit details you need
-            }
-          }));
-        }
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
+        const unitData = response.data.data;
+        console.log('Unit Data:', unitData);
+        return unitData; // Return unit data
       } catch (error) {
         console.error('Error fetching unit details:', error);
-        setCustomerDetails(prevCustomerDetails => ({
-          ...prevCustomerDetails,
-          unitDetails: null // Set unitDetails to null in case of error
-        }));
+        return null; // Return null in case of error
       }
     };
   
@@ -322,19 +298,19 @@ const Receivedpayments = () => {
               </table>
             </div>
             <h4 className="Headtext1" onClick={handleMakePayment}>
-              <span className="makepayment">Make Payment</span>
+              <span className="makepayment">Make a Payment</span>
             </h4>
           </div>
         )}
       </div>
-      {!showCustomerDetails && error && <p>{error}</p>}
-        {showCustomerDetails && customerDetails && (
+      {!isPaymentClicked && error && <p>{error}</p>}
+        {isPaymentClicked && customerDetails &&   (
         <div>
           <h4 className="Headtext">Post Payment of customers</h4>
           <h4 className="Headtext1">
             Name: {customerDetails.name}, Customer ID:{" "}
             {customerDetails.customerId} , Phone Number :{" "}
-            {customerDetails.mobileNumber} , unitPrice : {customerDetails.unitPrice}
+            {customerDetails.mobileNumber} , unitPrice : {customerDetails.unitDetails?.unitPrice || '-'}
           </h4>
           <div className="d-flex justify-content-between">
             <div className="col-3 whiteback mt-4">
@@ -445,13 +421,13 @@ const Receivedpayments = () => {
                       </tr>
                     ))}
                   </tbody>
-                </table>
-                
+                </table>                
               </div>
             </div>
           </div>
         </div>
       )}
+      
     </div>
   );
 };

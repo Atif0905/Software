@@ -25,9 +25,6 @@ const mongoose = require('mongoose');
     comment: {
       type: String
     },
-    aadharNumber: {
-      type: Number
-    },
     PaymentDate: {
       type: Date
     }

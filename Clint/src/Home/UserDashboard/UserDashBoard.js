@@ -260,16 +260,12 @@ const UserDashBoard = ({ userData }) => {
   
   
   return (
-    <>
+    <div className="main-content">
     <p className='user-profile'>HELLO, {userData.fname && userData.fname.toUpperCase()}</p>
-    <div className=" main-content ">
-   
-      <h2 className="">OUR PROJECTS</h2>
-     
-      <div className="d-flex flex-wrap justify-content-between">
+    <div className="projects-grid ">     
         {projects.map((project, index) => (
-          <div key={index} className=" mb-4 position-relative">
-            <div className=" projectdiv ">
+          <div key={index} className="position-relative">
+            <div className=" projectdiv">
               <div className="coloureddiv1">
                 <h3 className="colouredtext">{project.name}</h3>
               </div>
@@ -419,7 +415,6 @@ const UserDashBoard = ({ userData }) => {
         ))}
       </div>
     </div>
-    </>
   );
 };
 
