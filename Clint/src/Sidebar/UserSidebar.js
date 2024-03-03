@@ -16,9 +16,12 @@ const UserSidebar = () => {
   };
   return (
     <div>
+      <div className='nav1'> </div>
       <ul className="sidebar ">
+      <div className='nav d-flex justify-content-center'>
       <h1 className='sidehead'>WIC</h1>
-      <div className='mt-5'>
+      </div>
+      <div className=''>
       <li className='Links'><Link to="/"><FontAwesomeIcon icon={faChalkboardUser} className='mar'/>Dashboard</Link></li>
         {/* <li className='Links'><Link to="/Users-Reports"><FontAwesomeIcon icon={faClipboard} className='mar' />Reports</Link></li> */}
         {/* <li className='Links'><Link to="/notifications"><FontAwesomeIcon icon={faBell} className='mar'/>Notifications</Link></li> */}
