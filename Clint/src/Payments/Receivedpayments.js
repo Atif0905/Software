@@ -140,7 +140,6 @@ const Receivedpayments = () => {
     }
   };
   
-  
 
   useEffect(() => {
     const fetchPaymentPlans = async () => {
@@ -176,23 +175,55 @@ const Receivedpayments = () => {
       // Fetch unit details based on customer data
       const unitDetails = await fetchUnitDetails(customerDetails.project, customerDetails.block, customerDetails.plotOrUnit);
   
-      // Check if unitDetails is an object and has data
-      if (unitDetails && Object.keys(unitDetails).length > 0) {
-        console.log('Unit details:', unitDetails);
-        setCustomerDetails({ ...customerDetails, unitDetails }); // Set customer details including unit details
-      } else {
-        console.log('No unit details found');
-        setCustomerDetails(customerDetails); // Set customer details without unit details
-      }
+      // Check if unitDetails is an array and has data
+      if (Array.isArray(unitDetails) && unitDetails.length > 0) {
+        // Check if any unit details match the customer's plotOrUnit ID
+        const matchedUnit = unitDetails.find(unit => unit.id === customerDetails.plotOrUnit);
+        if (matchedUnit) {
+          console.log('Matched unit details:', matchedUnit); // Log the matched unit details
+          // Set the matched unit details into a separate constant
+          const customerUnitDetails = {
+            unitPrice: matchedUnit.unitPrice,
+            idcCharges: matchedUnit.idcCharges,
+            plcCharges: matchedUnit.plcCharges,
+            plotSize: matchedUnit.plotSize,
+            sizeType: matchedUnit.sizeType,
+            rate: matchedUnit.rate,
+            // Include any other unit details you need
+          };
+          setCustomerDetails({ ...customerDetails, unitDetails: customerUnitDetails });
+          setUnitData(matchedUnit); // Set the unitData state here
+          // Additional code if needed
+          return; // Stop the function execution here
+        } else {
+          console.log('No matching unit found');
+        }
+      } 
+      // If no unit is matched, continue with the rest of the code
+      setCustomerDetails(customerDetails);
+      setUnitData(null); // Set unitData to null if no unit is matched
   
-      // Other code...
+      if (response.data.paymentPlan) {
+        const matchedPlan = paymentPlans.find(plan => plan.planName === response.data.paymentPlan);
+        if (matchedPlan) {
+          setSelectedPlanInstallments(matchedPlan.installments);
+          const disabledInstallments = matchedPlan.installments
+            .filter(installment => submittedInstallments.includes(installment.installment))
+            .map(installment => installment.installment);
+          setDisabledInstallments(disabledInstallments);
+        } else {
+          setSelectedPlanInstallments([]);
+        }
+      }
+      setError(null);
+      setShowCustomerDetails(true); // Show customer details after search
+      setSelectedCustomerId(customerId); // Set selected customer ID
     } catch (error) {
       console.error('Error fetching customer details:', error);
       setError('Customer not found');
       setCustomerDetails(null);
     }
   };
-  
   
   const handleMakePayment = () => {
     setIsPaymentClicked(true);
@@ -211,6 +242,10 @@ const Receivedpayments = () => {
       console.error(`Error fetching ${endpoint} name:`, error);
       return 'Unknown';
     }
+  };
+
+  const handleViewDetails = (customerDetails) => {
+    setSelectedCustomer(customerDetails);
   };
   useEffect(() => {
     const fetchUnitDetails = async (projectId, blockId, unitId) => {
