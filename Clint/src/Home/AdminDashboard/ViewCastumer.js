@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AdminDashboard.css';
+import Receivedpayments from '../../Payments/Receivedpayments';
 
-const CustomerList = () => {
+const CustomerList = ({totalDue}) => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -186,6 +187,8 @@ const CustomerList = () => {
           <tr>
             <td><strong>Total Price</strong></td>
           <td>{total}</td>
+          <td><strong>Balance</strong></td>
+            <td>  {totalDue} </td>
         </tr>
       </tbody>
     </table>

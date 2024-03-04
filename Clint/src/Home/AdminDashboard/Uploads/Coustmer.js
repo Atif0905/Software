@@ -343,30 +343,37 @@ const AddCustomerForm = () => {
           <div className='gridcontainer'>
           
           <div className=" grid-item">
-            <input 
-              className="input-cal input-base" 
-              id="input" 
-              placeholder="Enter Property Type" 
-              type="text" 
-              name="propertyType" 
-              value={formData.propertyType.toUpperCase()} 
-              onChange={handleInputChange} 
-              required
-            />
-            <label id="label-input">Property Type</label>
+          <select
+  className="input-cal input-base"
+  id="input"
+  name="propertyType"
+  value={formData.propertyType}
+  onChange={handleInputChange}
+  required
+>
+  <option value="">Select Property Type</option>
+  <option value="Plot">Plot</option>
+  <option value="Shop">Shop</option>
+  <option value="Farmhouse Villa">Farmhouse Villa</option>
+  <option value="Flat">Flat</option>
+</select>
+{/* <label >Property Type</label> */}
           </div>
           <div className=" grid-item">
-            <input 
-              className="input-cal input-base" 
-              id="input" 
-              placeholder="Enter Booking Type" 
-              type="text" 
-              name="bookingType" 
-              value={formData.bookingType.toUpperCase()} 
-              onChange={handleInputChange} 
-              required
-            />
-            <label id="label-input">Booking Type</label>
+          <select
+  className="input-cal input-base"
+  id="input"
+  name="bookingType"
+  value={formData.bookingType}
+  onChange={handleInputChange}
+  required
+>
+  <option value="">Select Booking Type</option>
+  <option value="Booking Confirmed">Booking Confirmed</option>
+  <option value="Booking Hold">Booking Hold</option>
+</select>
+{/* <label htmlFor="input" id="label-input">Booking Type</label> */}
+
           </div>
           <div className=" grid-item">
             <input 
@@ -381,22 +388,23 @@ const AddCustomerForm = () => {
             />
             <label id="label-input">Discount</label>
           </div>
-          <div className=" grid-item">
-      <select 
-        className='input-cal input-base' 
-        id="input" 
-        name="paymentPlan" 
-        value={formData.paymentPlan.toUpperCase()} 
-        onChange={handleInputChange} 
-        required
-      >
-        <option>Select plan</option>
-        {paymentPlans.map((plan, index) => (
-          <option key={index} value={plan.planName}>{plan.planName}</option>
-        ))}
-      </select>
-      <label id="label-input">Payment Plan</label>
-    </div>
+          <div className="grid-item">
+  <select
+    className="input-cal input-base"
+    id="input"
+    name="paymentPlan"
+    value={formData.paymentPlan}  
+    onChange={handleInputChange}  
+    required
+  >
+    <option value="">Select plan</option>
+    {paymentPlans.map((plan, index) => (
+      <option key={index} value={plan.planName}>{plan.planName}</option>
+    ))}
+  </select>
+  <label id="label-input">Payment Plan</label>
+</div>
+
           <div className="relative grid-item">
             <input 
               className="input-cal input-base" 

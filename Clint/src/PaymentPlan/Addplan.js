@@ -55,7 +55,7 @@ const AddPlan = () => {
     event.preventDefault();
   
     // Ensure all installments have amountRS and daysFromBooking fields
-    const validInstallments = installments.every(installment => installment.amountRS && installment.daysFromBooking);
+    const validInstallments = installments.every(installment => installment.amountRS && installment.daysFromBooking );
   
     if (!validInstallments) {
       console.error('Error: All installments must have amountRS and daysFromBooking');
@@ -70,6 +70,11 @@ const AddPlan = () => {
     })
       .then((response) => {
         console.log('Success:', response.data);
+        // Reset the form fields
+        setSelectedOption('');
+        setPlanName('');
+        setNumInstallments('');
+        setInstallments([]);
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -101,9 +106,9 @@ const AddPlan = () => {
               {/* <label>Installments</label> */}
               {installments.map((installment, index) => (
                 <div key={index} className='installment '>
-                  <input type="number" className='form-input-field' placeholder="Days from Booking" value={installment.daysFromBooking} onChange={(e) => handleInstallmentChange(index, 'daysFromBooking', e.target.value)} />
-                  <input type="number" className='form-input-field' placeholder="Amount (RS)" value={installment.amountRS} onChange={(e) => handleInstallmentChange(index, 'amountRS', e.target.value)} />
-                  <button type="button" className="btn btn-primary mb-2" onClick={() => handleRemoveInstallment(index)}>Remove</button>
+                  <input type="number" className='form-input-field ' placeholder="Days from Booking" value={installment.daysFromBooking} onChange={(e) => handleInstallmentChange(index, 'daysFromBooking', e.target.value)} />
+                  <input type="number" className='form-input-field mt-1' placeholder="Amount (RS)" value={installment.amountRS} onChange={(e) => handleInstallmentChange(index, 'amountRS', e.target.value)} />
+                  <button type="button" className="btn btn-primary mt-1 mb-2" onClick={() => handleRemoveInstallment(index)}>Remove</button>
                 </div>
               ))}
             </div>
