@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
 const customerSchema = new mongoose.Schema({
-  customerId: String,
+  customerId: {
+    type: String,
+    required: true,
+    unique: true
+  },
   name: {
     type: String,
     required: true
@@ -66,7 +70,7 @@ const customerSchema = new mongoose.Schema({
   },
 });
 
-// Before saving, generate and set the customer ID
+// Pre-save middleware to generate and set the customer ID
 customerSchema.pre('save', async function(next) {
   try {
     // Generate a scenario number

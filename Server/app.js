@@ -566,13 +566,6 @@ app.post("/addCustomer", async (req, res) => {
   } = req.body;
 
   try {
-    // Check if the customer already exists
-    const existingCustomer = await Customer.findOne({ email });
-
-    if (existingCustomer) {
-      return res.status(400).json({ error: "Customer already exists" });
-    }
-
     // Generate a scenario number
     const scenarioNumber = await Customer.countDocuments() + 1;
 
@@ -607,6 +600,7 @@ app.post("/addCustomer", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 // View Castumer
 app.get('/Viewcustomer', async (req, res) => {
   try {
@@ -794,10 +788,11 @@ const generatePdf = async (customerName, customerAddress, unitNo, area) => {
 // Assuming you already have the route for sending emails
 app.post('/send-email', async (req, res) => {
   try {
-    const { to, subject, customerName, customerAddress, unitNo, area } = req.body;
+    const { to, subject, customerName, customerAddress, unitName, unitArea } = req.body;
+    console.log(customerName)
 
     // Generate PDF document
-    const pdfBuffer = await generatePdf(customerName, customerAddress, unitNo, area);
+    const pdfBuffer = await generatePdf(customerName, customerAddress, unitName, unitArea);
 
     // Create a transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
