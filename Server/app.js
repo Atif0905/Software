@@ -9,6 +9,8 @@ const Project = require('./Models/UploadProjects');
 const Customer = require('./Models/CastumerUpload')
 const PaymentPlan = require('./Models/PaymentPlan');
 const Payment = require('./Models/PaymentRecive')
+const pdfMakePrinter = require('pdfmake/src/printer');
+const nodemailer = require('nodemailer');
 
 const { PORT, MONGODB_URI, JWT_SECRET } = process.env; // Access environment variables
 
@@ -731,5 +733,103 @@ app.get("/paymentDetails/:customerId", async (req, res) => {
   } catch (error) {
     console.error("Error fetching payment details:", error);  
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+const generatePdf = async (customerName, customerAddress, unitNo, area) => {
+  const fonts = {
+    Roboto: {
+      normal: 'node_modules/roboto-font/fonts/Roboto/roboto-regular-webfont.ttf',
+      bold: 'node_modules/roboto-font/fonts/Roboto/roboto-bold-webfont.ttf',
+      italics: 'node_modules/roboto-font/fonts/Roboto/roboto-italic-webfont.ttf',
+      bolditalics: 'node_modules/roboto-font/fonts/Roboto/roboto-bolditalic-webfont.ttf'
+    }
+  };
+
+  const printer = new pdfMakePrinter(fonts);
+  const docDefinition = {
+    content: [
+      { text: 'WELCOME LETTER', style: 'header' },
+      { text: '\n' },
+      { text: `To,\nMr / Mrs : ${customerName}\tDate : ${new Date().toLocaleDateString()}\n${customerAddress}\n\n`, style: 'normal' },
+      { text: `Unit No. : ${unitNo}\nArea : ${area} sqyd (Approx)\n\n`, style: 'normal' },
+      { text: 'RE: Thank you for your Patronage!\n', style: 'header' },
+      { text: 'On behalf of WOMEKI INVESTORS CLUB Private Limited, we truly appreciate your recent association with us for your booking of a unit in our project “SHRI SHYAM TOWNSHIP ,VILL. JALOON THEHSHIL DATARAMDARH DISTRICT SIKAR RAJASTHAN. ".\n\n', style: 'normal' },
+      { text: 'We value your trust in our company, and we will do our best to meet your service expectations. Rest assured, with its location advantage and a truly low price at the moment, you will receive good appreciation on your purchase. My staff will always extend all its help to increase your customer experience and to make sure that you have a very good experience dealing with us.\n\n', style: 'normal' },
+      { text: 'Your association is absolutely valued and we definitely look forward to your patronage. Also, any references from you would be great support and will help us give you an amazingly good neighborhood at “SHRI SHYAM TOWNSHIP ”\n\n', style: 'normal' },
+      { text: 'Thank you once again, for your booking. If you have any queries, please don’t hesitate to call us on +91-9871127024\n\n', style: 'normal' },
+      { text: 'Sincerely,\n\n', style: 'normal' },
+      { text: 'WOMEKI INVESTORS CLUB Private Limited\n', style: 'normal' }
+    ],
+    styles: {
+      header: {
+        fontSize: 14,
+        bold: true
+      },
+      normal: {
+        fontSize: 12
+      }
+    }
+  };
+
+  const pdfDoc = printer.createPdfKitDocument(docDefinition);
+  const chunks = [];
+
+  return new Promise((resolve, reject) => {
+    pdfDoc.on('data', (chunk) => {
+      chunks.push(chunk);
+    });
+    pdfDoc.on('end', () => {
+      const result = Buffer.concat(chunks);
+      resolve(result);
+    });
+    pdfDoc.on('error', (err) => {
+      reject(err);
+    });
+
+    pdfDoc.end();
+  });
+};
+
+// Assuming you already have the route for sending emails
+app.post('/send-email', async (req, res) => {
+  try {
+    const { to, subject, customerName, customerAddress, unitNo, area } = req.body;
+
+    // Generate PDF document
+    const pdfBuffer = await generatePdf(customerName, customerAddress, unitNo, area);
+
+    // Create a transporter object using the default SMTP transport
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'atif123n@gmail.com', // your Gmail address
+        pass: 'fhff biym mbow yuhd' // your Gmail password
+      }
+    });
+
+    // Define email content with PDF attachment
+    const mailOptions = {
+      from: 'atif123n@gmail.com',
+      to,
+      subject,
+      text: 'Please find attached the welcome letter.',
+      attachments: [
+        {
+          filename: 'welcome_letter.pdf', // Name of the attachment
+          content: pdfBuffer, // Content of the PDF file
+          contentType: 'application/pdf'
+        }
+      ]
+    };
+
+    // Send email
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent:', info.response);
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).send('Failed to send email');
   }
 });
