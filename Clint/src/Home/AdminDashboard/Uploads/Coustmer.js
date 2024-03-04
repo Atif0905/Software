@@ -33,9 +33,11 @@ const AddCustomerForm = () => {
   const [plcCharges, setPlcCharges] = useState('');
   const [selectedBlockUnits, setSelectedBlockUnits] = useState([]);
   const [paymentPlans, setPaymentPlans] = useState([]);
+
   useEffect(() => {
     fetchProjects();
   }, []);
+
   useEffect(() => {
     const fetchPaymentPlans = async () => {
       try {
@@ -47,6 +49,7 @@ const AddCustomerForm = () => {
     };
     fetchPaymentPlans();
   }, []);
+
   const fetchProjects = async () => {
     try {
       const response = await axios.get(
@@ -74,7 +77,7 @@ const AddCustomerForm = () => {
       console.error("Error fetching projects:", error);
     }
   };
-  
+
   const getUnitCount = async (projectId, blockId) => {
     try {
       const response = await axios.get(
@@ -112,18 +115,18 @@ const AddCustomerForm = () => {
         income: parseFloat(formData.income),
         discount: parseFloat(formData.discount)
       };
-  
+
       const selectedProject = projects.find(project => project._id === formData.selectedProjectId);
       const selectedBlock = selectedProject?.blocks.find(block => block._id === formData.selectedBlockId);
       const selectedUnit = selectedBlock?.units.find(unit => unit._id === formData.selectedUnitId);
-  
+
       const dataToSend = {
         ...parsedFormData,
         selectedProject,
         selectedBlock,
         selectedUnit
       };
-  
+
       // Add a PUT request to mark the unit as sold
       const markUnitSoldResponse = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${selectedProject._id}/${selectedBlock._id}/${selectedUnit._id}`);
       
@@ -134,6 +137,24 @@ const AddCustomerForm = () => {
         if (addCustomerResponse.status === 201) {
           console.log('Customer added successfully:', addCustomerResponse.data);
           alert('Customer Added Successfully');
+
+          // If sendEmail checkbox is checked, send an email
+          if (formData.sendEmail) {
+            // Make a POST request to send the email
+            const emailData = {
+              to: formData.email,
+              subject: 'Subject of the email',
+              text: 'Body of the email',
+            };
+            const sendEmailResponse = await axios.post(`${process.env.REACT_APP_API_URL}/send-email`, emailData);
+
+            if (sendEmailResponse.status === 200) {
+              console.log('Email sent successfully');
+            } else {
+              console.error('Failed to send email:', sendEmailResponse.statusText);
+            }
+          }
+
           // Reset form data
           setFormData({
             name: '',
@@ -168,15 +189,16 @@ const AddCustomerForm = () => {
       console.error('Error adding customer:', error);
     }
   };
-  
+
+
   const handleClickBlock = (blockId) => {
     setFormData({ ...formData, selectedBlockId: blockId });
     setShowUnits(true);
-  
+
     const selectedBlock = projects
       .find(project => project._id === formData.selectedProjectId)
       ?.blocks.find(block => block._id === blockId);
-  
+
     if (selectedBlock) {
       // Filter out units that are already booked or sold
       const availableUnits = selectedBlock.units.filter(unit => unit.status !== 'Booked' && unit.status !== 'Sold');
@@ -309,7 +331,7 @@ const AddCustomerForm = () => {
               placeholder="Enter Email" 
               type="text" 
               name="email" 
-              value={formData.email.toUpperCase()} 
+              value={formData.email} 
               onChange={handleInputChange} 
               required
             />
