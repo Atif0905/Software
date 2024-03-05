@@ -149,7 +149,8 @@ const AddCustomerForm = () => {
               customerAddress: formData.address,
               customerfather:formData.fatherOrHusbandName,
               unitName: selectedUnit.name, // Add unit name to emailData
-              unitArea: selectedUnit.plotSize // Add unit area to emailData
+              unitArea: selectedUnit.plotSize, // Add unit area to emailData
+              ProjectName: selectedProject
             };
             console.log(emailData)
             const sendEmailResponse = await axios.post(`${process.env.REACT_APP_API_URL}/send-email`, emailData);

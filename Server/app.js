@@ -730,7 +730,7 @@ app.get("/paymentDetails/:customerId", async (req, res) => {
   }
 });
 
-const generatePdf = async (customerName, customerAddress, unitNo, area,customerfather) => {
+const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, area,customerfather) => {
   const fonts = {
     Roboto: {
       normal: 'node_modules/roboto-font/fonts/Roboto/roboto-regular-webfont.ttf',
@@ -751,9 +751,9 @@ const generatePdf = async (customerName, customerAddress, unitNo, area,customerf
       {text:  `${customerfather} ${customerAddress}`},
       { text: `Unit No. : ${unitNo}\nArea : ${area} sqyd (Approx)\n\n`, style: 'normal' },
       { text: 'RE: Thank you for your Patronage!\n', style: 'headersub' },
-      { text: 'On behalf of WOMEKI INVESTORS CLUB Private Limited, we truly appreciate your recent association with us for your booking of a unit in our project “SHRI SHYAM TOWNSHIP ,VILL. JALOON THEHSHIL DATARAMDARH DISTRICT SIKAR RAJASTHAN. ".\n\n', style: 'normal' },
+      { text: `On behalf of WOMEKI INVESTORS CLUB Private Limited, we truly appreciate your recent association with us for your booking of a unit in our project ${ProjectName}`, style: 'normal' },
       { text: 'We value your trust in our company, and we will do our best to meet your service expectations. Rest assured, with its location advantage and a truly low price at the moment, you will receive good appreciation on your purchase. My staff will always extend all its help to increase your customer experience and to make sure that you have a very good experience dealing with us.\n\n', style: 'normal' },
-      { text: 'Your association is absolutely valued and we definitely look forward to your patronage. Also, any references from you would be great support and will help us give you an amazingly good neighborhood at “SHRI SHYAM TOWNSHIP ”\n\n', style: 'normal' },
+      { text: `Your association is absolutely valued and we definitely look forward to your patronage. Also, any references from you would be great support and will help us give you an amazingly good neighborhood at “${ProjectName}”\n\n`, style: 'normal' },
       { text: 'Thank you once again, for your booking. If you have any queries, please don’t hesitate to call us on +91-9871127024\n\n', style: 'normal' },
       { text: 'Sincerely,\n\n', style: 'normal' },
       { text: 'WOMEKI INVESTORS CLUB Private Limited\n', style: 'normal' }
