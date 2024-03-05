@@ -5,6 +5,7 @@ import { faCaretDown, faLocationDot, faArrowDown, faArrowUp, faTimes   } from "@
 import '../../UpdateProjects/Projects.css'
 import '../AdminDashboard/Uploads/Coustmer'
 import { IoBagOutline } from "react-icons/io5";
+import { FaMoneyCheck } from "react-icons/fa6";
 const UploadedProjects = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
@@ -368,6 +369,46 @@ const UploadedProjects = () => {
               onClick={closeModal}
             />
             <div className="modal-container">
+              <div className='flexy'>
+               <div className="paymentmaindiv">
+          <div className="coloureddiv1">
+            <h3 className="colouredtext">Total Payment</h3>
+            <div className="d-flex justify-content-between">
+            <p className="colouredtext1"></p>
+            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+            </div>
+          </div>
+          <div className="coloureddiv">
+            <p className="descriptiondiv"> </p>
+          </div>
+          
+        </div>
+        <div className="paymentmaindiv">
+          <div className="coloureddiv1">
+            <h3 className="colouredtext">Received Payment</h3>
+            <div className="d-flex justify-content-between">
+            <p className="colouredtext1"></p>
+            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+            </div>
+          </div>
+          <div className="coloureddiv">
+            <p className="descriptiondiv"> </p>
+          </div>
+          
+        </div>
+        <div className="paymentmaindiv">
+          <div className="coloureddiv1">
+            <h3 className="colouredtext">Due Payment</h3>
+            <div className="d-flex justify-content-between">
+            <p className="colouredtext1"></p>
+            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+            </div>
+          </div>
+          <div className="coloureddiv">
+            <p className="descriptiondiv"> </p>
+          </div>
+          </div>
+        </div>
               <div className="d-flex justify-content-between mb-3">
                 <div className="totalunitsdiv mt-3">
                   <h2 className="textunits"> Total </h2>
