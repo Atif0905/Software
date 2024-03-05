@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AdminDashboard.css';
-import Receivedpayments from '../../Payments/Receivedpayments';
 
 const CustomerList = ({totalDue}) => {
   const [customers, setCustomers] = useState([]);
@@ -103,6 +102,21 @@ const CustomerList = ({totalDue}) => {
   const total = selectedCustomer ? 
   (parseFloat(selectedCustomer.rate) + parseFloat(selectedCustomer.plcCharges) + parseFloat(selectedCustomer.idcCharges)) * parseFloat(selectedCustomer.plotSize) 
   : 0;
+  const calculateTotalPriceOfProject = () => {
+    const totalPriceByProject = {};
+    customers.forEach((customer) => {
+      const project = customer.projectName;
+      const unitPrice = parseFloat(customer.unitPrice);
+      totalPriceByProject[project] = (totalPriceByProject[project] || 0) + unitPrice;
+    });
+
+    let total = 0;
+    for (const projectPrice of Object.values(totalPriceByProject)) {
+      total += projectPrice;
+    }
+
+    return total;
+  };  
   return (
     <div className='main-content'>
       <h2 className='Headtext'>Customer List</h2>
@@ -194,6 +208,7 @@ const CustomerList = ({totalDue}) => {
     </table>
   </div>
 )}
+
     </div>
   );
 };

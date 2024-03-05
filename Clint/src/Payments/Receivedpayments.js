@@ -378,27 +378,31 @@ const possessionCharges = unitData ? ((parseFloat(unitData.idcCharges) + parseFl
               <form onSubmit={handleSubmit}>
                 <label>Select Installments</label>
                 <select
-                className="select-buttons ps-1"
-                name="paymentType"
-                value={payment.paymentType}
-                onChange={handleChange}
-                >
-<option>Select</option>
-{selectedPlanInstallments.map((installment, index) => (
-  !submittedInstallments.includes(installment.installment) && installment.installment !== payment.paymentType && (
-    <option
-      key={index}
-      value={installment.installment}
-      disabled={disabledInstallments.includes(installment.installment)}
-    >
-      {index === 0 ? "Booking" : `${ordinalSuffix(index)} Installment`} - {((parseFloat(installment.amountRS) / 100) * (parseFloat(unitData.plotSize) * parseFloat(unitData.rate)))}
+  className="select-buttons ps-1"
+  name="paymentType"
+  value={payment.paymentType}
+  onChange={handleChange}
+>
+  <option>Select</option>
+  {selectedPlanInstallments.map((installment, index) => (
+    !submittedInstallments.includes(installment.installment) && installment.installment !== payment.paymentType && (
+      <option
+        key={index}
+        value={installment.installment}
+        disabled={disabledInstallments.includes(installment.installment) || installment.installment === payment.paymentType}
+      >
+        {index === 0 ? "Booking" : `${ordinalSuffix(index)} Installment`} - {((parseFloat(installment.amountRS) / 100) * (parseFloat(unitData.plotSize) * parseFloat(unitData.rate)))}
+      </option>
+    )
+  ))}
+  {!submittedInstallments.includes('Possession Charges') && (
+    <option disabled={payment.paymentType === 'Possession Charges'}>
+      Possession Charges - {possessionCharges}
     </option>
-  )
-))}
-  <option>
-    Possession Charges - {possessionCharges}
-  </option>
+  )}
 </select>
+
+
 <label>Select Payment Mode</label>
 <select
   className="select-buttons ps-1"
