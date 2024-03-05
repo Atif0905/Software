@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
 const AdditionUnit = () => {
   const [projects, setProjects] = useState([]);
   const [plotSize, setPlotSize] = useState("");
@@ -12,46 +11,41 @@ const AdditionUnit = () => {
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [newUnitName, setNewUnitName] = useState("");
   const [selectedBlockId, setSelectedBlockId] = useState("null");
-
   const handleAddUnit = async () => {
-    const isConfirmed = window.confirm("Are you sure you want to add this unit?");
-
-    if (isConfirmed) {
-      try {
-        const calculatedTotalPrice = calculatePerUnitPayment(rate, plcCharges, idcCharges, plotSize);
-        const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/addUnit/${selectedProjectId}/${selectedBlockId}`,
-          {
-            name: newUnitName,
-            plotSize,
-            sizeType,
-            rate,
-            idcCharges,
-            plcCharges,
-            totalPrice: calculatedTotalPrice // Pass the total price to the backend
-          }
-        );
-
-        const data = response.data;
-
-        if (response.status === 201 && data.status === "ok") {
-          fetchProjects();
-          setNewUnitName("");
-          setPlotSize("");
-          setSizeType("");
-          setRate("");
-          setIdcCharges("");
-          setPlcCharges("");
-          setTotalPrice(0); // Reset total price to 0
-        } else {
-          console.error("Failed to add unit:", data.error);
-        }
-      } catch (error) {
-        console.error("Error adding unit:", error);
+const isConfirmed = window.confirm("Are you sure you want to add this unit?");
+if (isConfirmed) {
+  try {
+    const calculatedTotalPrice = calculatePerUnitPayment(rate, plcCharges, idcCharges, plotSize);
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/addUnit/${selectedProjectId}/${selectedBlockId}`,
+      {
+        name: newUnitName,
+        plotSize,
+        sizeType,
+        rate,
+        idcCharges,
+        plcCharges,
+        totalPrice: calculatedTotalPrice 
       }
+    );
+    const data = response.data;
+    if (response.status === 201 && data.status === "ok") {
+      fetchProjects();
+      setNewUnitName("");
+      setPlotSize("");
+      setSizeType("");
+      setRate("");
+      setIdcCharges("");
+      setPlcCharges("");
+      setTotalPrice(0); 
+    } else {
+      console.error("Failed to add unit:", data.error);
     }
+  } catch (error) {
+    console.error("Error adding unit:", error);
+  }
+}
   };
-
   const fetchProjects = async () => {
     try {
       const response = await axios.get(
@@ -59,18 +53,17 @@ const AdditionUnit = () => {
       );
       const data = response.data;
       if (response.status === 200 && data.status === "ok") {
-        const projectsWithUnitCount = await Promise.all(
-          data.data.map(async (project) => {
-            const blocksWithUnitCount = await Promise.all(
-              project.blocks.map(async (block) => {
-                const unitCount = await getUnitCount(project._id, block._id);
-                return { ...block, unitCount };
-              })
-            );
+      const projectsWithUnitCount = await Promise.all(
+      data.data.map(async (project) => {
+      const blocksWithUnitCount = await Promise.all(
+      project.blocks.map(async (block) => {
+      const unitCount = await getUnitCount(project._id, block._id);
+      return { ...block, unitCount };
+      })
+      );
             return { ...project, blocks: blocksWithUnitCount };
           })
         );
-
         setProjects(projectsWithUnitCount);
       } else {
         console.error("Failed to fetch projects:", data.error);
@@ -79,7 +72,6 @@ const AdditionUnit = () => {
       console.error("Error fetching projects:", error);
     }
   };
-
   const getUnitCount = async (projectId, blockId) => {
     try {
       const response = await axios.get(
@@ -97,7 +89,6 @@ const AdditionUnit = () => {
       return 0;
     }
   };
-
   const handleDeleteProject = async (projectId) => {
     if (!projectId) {
       console.error("No project selected.");
@@ -121,25 +112,21 @@ const AdditionUnit = () => {
       }
     }
   };
-
   const handleClickBlock = (blockId) => {
     setSelectedBlockId((prevId) => (prevId === blockId ? null : blockId));
   };
-
   const handleClickProject = (projectId) => {
     setSelectedBlockId("null"); 
   };
-
   useEffect(() => {
     fetchProjects();
   }, []);
   useEffect(() => {
     if (rate && plcCharges && idcCharges && plotSize) {
       const calculatedTotalPrice = calculatePerUnitPayment(rate, plcCharges, idcCharges, plotSize);
-      setTotalPrice(calculatedTotalPrice.toFixed(2)); // Set total price with 2 decimal places
+      setTotalPrice(calculatedTotalPrice.toFixed(2));
     }
   }, [rate, plcCharges, idcCharges, plotSize]);
-
   const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize) => {
     const total = (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges)) * parseFloat(plotSize);
     return total;
@@ -207,6 +194,5 @@ const AdditionUnit = () => {
       </div>
     </div>
   );
-}
-
+}            
 export default AdditionUnit;

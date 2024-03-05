@@ -10,7 +10,6 @@ const ProjectsUpload = () => {
   const [error, setError] = useState(null);
   const [totalReceivedPayment, setTotalReceivedPayment] = useState(0);
   const [duePayment, setDuePayment] = useState(0);
-
   const fetchProjects = async () => {
     try {
       const response = await axios.get(
@@ -29,7 +28,6 @@ const ProjectsUpload = () => {
             return { ...project, blocks: blocksWithUnitCount };
           })
         );
-
         setProjects(projectsWithUnitCount);
       } else {
         console.error("Failed to fetch projects:", data.error);
@@ -38,26 +36,20 @@ const ProjectsUpload = () => {
       console.error("Error fetching projects:", error);
     }
   };  
-  
   useEffect(() => {
     fetchProjects();
   }, []);
-
   useEffect(() => {
     if (projects.length > 0) {
       const totalPriceOfAllUnits = calculateTotalPriceOfAllUnits();
       setTotalPrice(totalPriceOfAllUnits);
     }
   }, [projects]);
-
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-        console.log(response);
         setCustomers(response.data);
-        
-        // Calculate total received payment
         const totalReceived = response.data.reduce((acc, curr) => acc + parseFloat(curr.paymentReceived || 0), 0);
         setTotalReceivedPayment(totalReceived);
       } catch (error) {
@@ -67,12 +59,9 @@ const ProjectsUpload = () => {
         setLoading(false);
       }
     };
-  
     fetchCustomers();
   }, []);
-
   useEffect(() => {
-    // Calculate due payment
     const due = parseFloat(totalPrice) - parseFloat(totalReceivedPayment);
     setDuePayment(due.toFixed(2));
   }, [totalPrice, totalReceivedPayment]);
@@ -81,7 +70,6 @@ const ProjectsUpload = () => {
     const total = (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges)) * parseFloat(plotSize);
     return total;
   };
-
   const calculateTotalPriceOfAllUnits = () => {
     let totalPrice = 0;
     projects.forEach(project => {
@@ -93,7 +81,6 @@ const ProjectsUpload = () => {
     });
     return totalPrice.toFixed(2);
   };
-
   const getUnitCount = async (projectId, blockId) => {
     try {
       const response = await axios.get(
@@ -110,16 +97,13 @@ const ProjectsUpload = () => {
       console.error("Error getting unit count:", error);
       return 0;
     }
-  };
-  
+  };  
   if (loading) {
     return <div>Loading...</div>;
   }
-
   if (error) {
     return <div>{error}</div>;
   }
-
   return (
     <div className="container">
       <div className="  flexy ">
@@ -134,7 +118,6 @@ const ProjectsUpload = () => {
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
           </div>
-          
         </div>
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
@@ -147,7 +130,6 @@ const ProjectsUpload = () => {
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
           </div>
-          
         </div>
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
@@ -160,11 +142,9 @@ const ProjectsUpload = () => {
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
           </div>
-          
         </div>
       </div>
     </div>
   );
 };
-
 export default ProjectsUpload;

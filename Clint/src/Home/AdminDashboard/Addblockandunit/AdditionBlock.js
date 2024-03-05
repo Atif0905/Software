@@ -27,19 +27,13 @@ const AdditionBlock = () => {
     );
     const data = response.data;
     if (response.status === 201 && data.status === "ok") {
-      // Fetch projects to update the project list
       fetchProjects();
-
-      // Reset input field values
       setNewBlockName("");
       setTotalPlotInBlock("");
       setPlotSize("");
       setBasicRateOfBlock("");
       setIdcRateOfBlock("");
       setEdcRateOfBlock("");
-
-      // Log success message
-      console.log("Block added successfully");
     }
   };
 

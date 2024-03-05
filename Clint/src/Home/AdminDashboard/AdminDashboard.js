@@ -1,8 +1,6 @@
 import React from 'react'
 import AdminUploadProject from './Uploads/ProjectsUpload'
 import UploadedProjects from './ShowProjects'
-
-
 import './AdminDashboard.css'
 const AdminDashboard = () => {
   return (
@@ -15,5 +13,4 @@ const AdminDashboard = () => {
     </>
   )
 }
-
 export default AdminDashboard
