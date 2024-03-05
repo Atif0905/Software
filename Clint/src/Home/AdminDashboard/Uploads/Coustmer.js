@@ -147,6 +147,7 @@ const AddCustomerForm = () => {
               text: 'Body of the email',
               customerName:formData.name,
               customerAddress: formData.address,
+              customerfather:formData.fatherOrHusbandName,
               unitName: selectedUnit.name, // Add unit name to emailData
               unitArea: selectedUnit.plotSize // Add unit area to emailData
             };
