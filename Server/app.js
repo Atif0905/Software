@@ -730,7 +730,7 @@ app.get("/paymentDetails/:customerId", async (req, res) => {
   }
 });
 
-const generatePdf = async (customerName, customerAddress, unitNo, area) => {
+const generatePdf = async (customerName, customerAddress, unitNo, area,customerfather) => {
   const fonts = {
     Roboto: {
       normal: 'node_modules/roboto-font/fonts/Roboto/roboto-regular-webfont.ttf',
@@ -743,11 +743,14 @@ const generatePdf = async (customerName, customerAddress, unitNo, area) => {
   const printer = new pdfMakePrinter(fonts);
   const docDefinition = {
     content: [
+      { image: './logo.png', width: 160, height: 90 },
       { text: 'WELCOME LETTER', style: 'header' },
       { text: '\n' },
-      { text: `To,\nMr / Mrs : ${customerName}\tDate : ${new Date().toLocaleDateString()}\n${customerAddress}\n\n`, style: 'normal' },
+      { text: `To,\nMr / Mrs : ${customerName}` , style: 'normal' },
+      {text:  `Date : ${new Date().toLocaleDateString()}`,style: 'headerDate'},
+      {text:  `${customerfather} ${customerAddress}`},
       { text: `Unit No. : ${unitNo}\nArea : ${area} sqyd (Approx)\n\n`, style: 'normal' },
-      { text: 'RE: Thank you for your Patronage!\n', style: 'header' },
+      { text: 'RE: Thank you for your Patronage!\n', style: 'headersub' },
       { text: 'On behalf of WOMEKI INVESTORS CLUB Private Limited, we truly appreciate your recent association with us for your booking of a unit in our project “SHRI SHYAM TOWNSHIP ,VILL. JALOON THEHSHIL DATARAMDARH DISTRICT SIKAR RAJASTHAN. ".\n\n', style: 'normal' },
       { text: 'We value your trust in our company, and we will do our best to meet your service expectations. Rest assured, with its location advantage and a truly low price at the moment, you will receive good appreciation on your purchase. My staff will always extend all its help to increase your customer experience and to make sure that you have a very good experience dealing with us.\n\n', style: 'normal' },
       { text: 'Your association is absolutely valued and we definitely look forward to your patronage. Also, any references from you would be great support and will help us give you an amazingly good neighborhood at “SHRI SHYAM TOWNSHIP ”\n\n', style: 'normal' },
@@ -757,11 +760,30 @@ const generatePdf = async (customerName, customerAddress, unitNo, area) => {
     ],
     styles: {
       header: {
+        alignment: 'center',
         fontSize: 14,
-        bold: true
+        fonts:"Roboto",
+        bold: true,
+        decoration: 'underline',
+        margin: [0, 10, 0, 20] 
+      },
+      headerDate:{
+        alignment: 'right',
+        fontSize: 14,
+        fonts:"Roboto",
+        bold: true,
+      },
+      headersub:{
+        alignment: 'left',
+        fontSize: 14,
+        fonts:"Roboto",
+        bold: true,
+        margin: [0, 10, 0, 20] 
       },
       normal: {
-        fontSize: 12
+        fontSize: 12,
+        fonts:"Roboto",
+        margin: [0, 0, 0, 10]
       }
     }
   };
