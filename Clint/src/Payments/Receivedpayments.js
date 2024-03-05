@@ -81,7 +81,9 @@ const Receivedpayments = () => {
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
-      return response.data.data; // Assuming 'data' contains the array of payments
+      console.log("Main",response)
+      return response.data.data;
+     // Assuming 'data' contains the array of payments
     } catch (error) {
       console.error('Error fetching payment details:', error);
       throw new Error('Error fetching payment details. Please try again later.');

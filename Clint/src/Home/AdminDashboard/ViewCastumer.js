@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AdminDashboard.css';
 
-const CustomerList = ({totalDue}) => {
+const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [paymentDetails, setPaymentDetails] = useState(null);
+  
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -35,8 +37,17 @@ const CustomerList = ({totalDue}) => {
   
     fetchCustomers();
   }, []);
-  
 
+  const fetchPaymentDetailsByCustomerId = async (customerId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching payment details:', error);
+      throw new Error('Error fetching payment details. Please try again later.');
+    }
+  };
+  
   const fetchName = async (endpoint, ...ids) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join('/')}`);
@@ -50,7 +61,7 @@ const CustomerList = ({totalDue}) => {
   const fetchUnitPrice = async (projectId, blockId, unitId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
-      return response.data.data.totalPrice; // Assuming unitPrice is a property of the unit object
+      return response.data.data.totalPrice;
     } catch (error) {
       console.error('Error fetching unit price:', error);
       return 'Unknown';
@@ -61,14 +72,13 @@ const CustomerList = ({totalDue}) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
       const unitData = response.data.data;
-      console.log('Unit details:', unitData); // Log the unit data
       return {
         unitPrice: unitData.totalPrice.toUpperCase(),
         idcCharges: unitData.idcCharges.toUpperCase(),
         plcCharges: unitData.plcCharges.toUpperCase(),
         plotSize: unitData.plotSize.toUpperCase(),
         sizeType: unitData.sizeType.toUpperCase(),
-        rate: unitData.rate.toUpperCase() // Include rate in the returned object
+        rate: unitData.rate.toUpperCase()
       };
     } catch (error) {
       console.error('Error fetching unit details:', error);
@@ -83,8 +93,15 @@ const CustomerList = ({totalDue}) => {
     }
   };
   
-  const handleViewDetails = (customer) => {
+  const handleViewDetails = async (customer) => {
     setSelectedCustomer(customer);
+    try {
+      const paymentDetails = await fetchPaymentDetailsByCustomerId(customer.customerId);
+      console.log("Payment Details:", paymentDetails);
+      setPaymentDetails(paymentDetails.data);
+    } catch (error) {
+      console.error('Error fetching payment details:', error);
+    }
   };
 
   if (loading) {
@@ -94,14 +111,19 @@ const CustomerList = ({totalDue}) => {
   if (error) {
     return <div>{error}</div>;
   }
+
+  const totalAmount = paymentDetails ? paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0;
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     return date.toLocaleDateString('en-US', options);
   };
+
   const total = selectedCustomer ? 
   (parseFloat(selectedCustomer.rate) + parseFloat(selectedCustomer.plcCharges) + parseFloat(selectedCustomer.idcCharges)) * parseFloat(selectedCustomer.plotSize) 
   : 0;
+
   const calculateTotalPriceOfProject = () => {
     const totalPriceByProject = {};
     customers.forEach((customer) => {
@@ -117,13 +139,14 @@ const CustomerList = ({totalDue}) => {
 
     return total;
   };  
+
   return (
     <div className='main-content'>
       <h2 className='Headtext'>Customer List</h2>
       <div className="table-wrapper whiteback">
         <table id='viewcustomertable'>
           <thead>
-          <tr>
+            <tr>
               <th>CUSTOMER ID</th>
               <th>NAME</th>
               {/* <th>AADHAR NUMBER</th> */}
@@ -141,7 +164,7 @@ const CustomerList = ({totalDue}) => {
           <tbody>
             {customers.map((customer, index) => (
               <tr key={index}>
-                 <td>{customer.customerId ? customer.customerId.toUpperCase() : ''}</td>
+                <td>{customer.customerId ? customer.customerId.toUpperCase() : ''}</td>
                 <td>
                   <button className='anchorbutton' onClick={() => handleViewDetails(customer)}>{customer.name ? customer.name.toUpperCase() : ''}</button>
                 </td>
@@ -151,8 +174,8 @@ const CustomerList = ({totalDue}) => {
                 <td>{customer.projectName}</td>
                 <td>{customer.blockName}-{customer.unitName}</td>
                 <td>{customer.unitPrice}</td>
-                <td>{customer.paymentReceived}</td>
-                <td>{customer.unitPrice - customer.paymentReceived}</td> {/* Calculating balance */}
+                <td>{totalAmount}</td> {/* Display total payment received for this customer */}
+                <td>{customer.unitPrice - totalAmount}</td> {/* Calculating balance */}
                 {/* <td>{customer.sendEmail ? 'Yes' : 'No'}</td> */}
                 <td>{customer.paymentPlan}</td>
               </tr>
@@ -161,54 +184,82 @@ const CustomerList = ({totalDue}) => {
         </table>
       </div>
       {selectedCustomer && (
-  <div className='whiteback mt-5'>
-    <table id='firsttable'>
-      <thead>
-        <tr>
-          <th>NAME</th>
-          <th>ADDRESS</th>
-          <th>CONTACT NUMBER</th>
-        </tr>
-      </thead>
-      <tbody>
-      <tr>
-  <td>{selectedCustomer.name ? selectedCustomer.name.toUpperCase() : ''}</td>
-  <td>{selectedCustomer.address ? selectedCustomer.address.toUpperCase() : ''}</td>
-  <td>{selectedCustomer.mobileNumber ? selectedCustomer.mobileNumber.toUpperCase() : ''}</td>
-</tr>
-      </tbody>
-    </table>
-    <table id="customer-details-table">
-      <tbody>
-        <tr>
-          <td><strong>Plot Size:</strong></td>
-          <td>{selectedCustomer.plotSize} {selectedCustomer.sizeType}</td>
-          <td><strong>Plot No:</strong></td>
-          <td>{selectedCustomer.blockName}-{selectedCustomer.unitName}</td>
-          </tr>
-          <tr>
-          <td><strong>Booking Date:</strong></td>
-          <td>{formatDate(selectedCustomer.bookingDate)}</td>
-          <td><strong>Basic price :</strong></td>
-          <td> BSP RATE {selectedCustomer.rate} /-{selectedCustomer.sizeType} INR / {selectedCustomer.rate * selectedCustomer.plotSize}</td>
-          </tr>
-          <tr>
-            <td><strong>IDC Charges:</strong> </td>
-          <td>{selectedCustomer.idcCharges * selectedCustomer.plotSize} INR / {selectedCustomer.idcCharges}</td>
-          <td><strong>PLC Charges</strong></td>
-          <td>{selectedCustomer.plcCharges * selectedCustomer.plotSize} INR / {selectedCustomer.plcCharges}</td>
-          </tr>
-          <tr>
-            <td><strong>Total Price</strong></td>
-          <td>{total}</td>
-          <td><strong>Balance</strong></td>
-            <td>  {totalDue} </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-)}
-
+        <div className='whiteback mt-5'>
+          <table id='firsttable'>
+            <thead>
+              <tr>
+                <th>NAME</th>
+                <th>ADDRESS</th>
+                <th>CONTACT NUMBER</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{selectedCustomer.name ? selectedCustomer.name.toUpperCase() : ''}</td>
+                <td>{selectedCustomer.address ? selectedCustomer.address.toUpperCase() : ''}</td>
+                <td>{selectedCustomer.mobileNumber ? selectedCustomer.mobileNumber.toUpperCase() : ''}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table id="customer-details-table">
+            <tbody>
+              <tr>
+                <td><strong>Plot Size:</strong></td>
+                <td>{selectedCustomer.plotSize} {selectedCustomer.sizeType}</td>
+                <td><strong>Plot No:</strong></td>
+                <td>{selectedCustomer.blockName}-{selectedCustomer.unitName}</td>
+              </tr>
+              <tr>
+                <td><strong>Booking Date:</strong></td>
+                <td>{formatDate(selectedCustomer.bookingDate)}</td>
+                <td><strong>Basic price :</strong></td>
+                <td> BSP RATE {selectedCustomer.rate} /-{selectedCustomer.sizeType} INR / {selectedCustomer.rate * selectedCustomer.plotSize}</td>
+              </tr>
+              <tr>
+                <td><strong>IDC Charges:</strong> </td>
+                <td>{selectedCustomer.idcCharges * selectedCustomer.plotSize} INR / {selectedCustomer.idcCharges}</td>
+                <td><strong>PLC Charges</strong></td>
+                <td>{selectedCustomer.plcCharges * selectedCustomer.plotSize} INR / {selectedCustomer.plcCharges}</td>
+              </tr>
+              <tr>
+                <td><strong>Total Price</strong></td>
+                <td>{total}</td>
+                <td><strong>Total Payment Amount</strong></td>
+                <td>{totalAmount}</td>
+              </tr>
+            </tbody>
+          </table>
+          {paymentDetails && (
+            <div>
+              <h3>Payment Details</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Payment Date</th>
+                    <th>Amount</th>
+                    <th>Comment</th>
+                    <th>Payment Mode</th>
+                    <th>Payment Type</th>
+                    <th>Reference</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paymentDetails.map((payment, index) => (
+                    <tr key={index}>
+                      <td>{new Date(payment.PaymentDate).toLocaleDateString()}</td>
+                      <td>{payment.amount}</td>
+                      <td>{payment.comment}</td>
+                      <td>{payment.paymentMode}</td>
+                      <td>{payment.paymentType}</td>
+                      <td>{payment.reference}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
