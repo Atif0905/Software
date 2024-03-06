@@ -12,21 +12,12 @@ const UploadedProjects = () => {
   const [selectedBlockId, setSelectedBlockId] = useState("null");
   const [showBlocks, setShowBlocks] = useState(true);
   const [showUnits, setShowUnits] = useState(true);
-  // const [totalUnitsCount, setTotalUnitsCount] = useState(0);
   const [blockwiseUnitCounts, setBlockwiseUnitCounts] = useState({});
-  // const [totalHoldUnitsCount, setTotalHoldUnitsCount] = useState(0);
   const [blockwiseHoldUnitCounts, setBlockwiseHoldUnitCounts] = useState({});
-  // const [totalSoldUnitsCount, setTotalSoldUnitsCount] = useState(0);
   const [blockwiseSoldUnitCounts, setBlockwiseSoldUnitCounts] = useState({});
-  const [showModal, setShowModal] = useState(false);
-  // const [totalAvailableUnitsCount, setTotalAvailableUnitsCount] = useState(0);
   const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] = useState({});
   const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const [UnitDropdown, setUnitDropdown] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
-  const [showUserDropdown, setShowUserDropdown] = useState(false);
-
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -137,19 +128,6 @@ const UploadedProjects = () => {
     // setTotalAvailableUnitsCount(totalAvailableUnits);
     setBlockwiseAvailableUnitCounts(blockwiseAvailableCounts);
   };
-
-  const toggleProjectsDropdown = () => {
-    setDropdownOpen(null);
-    setShowUserDropdown(false);
-    setShowProjectsDropdown(!showProjectsDropdown);
-  };
-
-  const toggleUserDropdown = () => {
-    setDropdownOpen(null);
-    setShowProjectsDropdown(false);
-    setShowUserDropdown(!showUserDropdown);
-  }; // for dropdown to open one at a time
-
   const updateSoldUnitCounts = () => {
     let totalSoldUnits = 0;
     let blockwiseSoldCounts = {};
@@ -165,7 +143,7 @@ const UploadedProjects = () => {
     // setTotalSoldUnitsCount(totalSoldUnits);
     setBlockwiseSoldUnitCounts(blockwiseSoldCounts);
   };
-  const fetchProjects = useMemo(() => async () => {
+  const fetchProjects = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
       const data = response.data;
@@ -189,7 +167,8 @@ const UploadedProjects = () => {
     } catch (error) {
       console.error("Error fetching projects:", error);
     }
-  }, []);
+  };
+
 
   const getUnitCount = async (projectId, blockId) => {
     try {
@@ -206,10 +185,6 @@ const UploadedProjects = () => {
       return 0;
     }
   };
-
-
-  
-  
   const handleMarkUnitAvailable = async (projectId, blockId, unitId) => {
     const isConfirmed = window.confirm(
       "Are you sure you want to mark this unit as Available?"
@@ -293,9 +268,9 @@ const UploadedProjects = () => {
   };
   const handleClickProject = (projectId) => {
     setSelectedProjectId(projectId);
-    setSelectedBlockId("null"); // Reset selected block when project is clicked
-    setShowBlocks(!showBlocks); // Toggle showing blocks
-    setShowUnits(true); // Reset showing units
+    setSelectedBlockId("null"); 
+    setShowBlocks(!showBlocks); 
+    setShowUnits(true); 
   };
 
   const handleClickBlock = (blockId) => {
@@ -322,18 +297,30 @@ const UploadedProjects = () => {
       }
     }
   };
-  const handleModalToggle = () => {
-    const body = document.querySelector('body');
-    setShowModal(!showModal);
-    body.style.overflow = 'hidden';
-    
-  };
   const closeModal = () => {
     const body = document.querySelector('body');
     const modalWrapper = document.querySelector('.modal-wrapper');
     modalWrapper.style.display = 'none';
     body.style.overflow = 'auto';
   };
+  const calculateTotalPriceSum = () => {
+    let totalPriceSum = 0;
+
+    if (selectedProjectId) {
+      const selectedProject = projects.find(project => project._id === selectedProjectId);
+      if (selectedProject) {
+        selectedProject.blocks.forEach((block) => {
+          block.units.forEach((unit) => {
+            totalPriceSum += parseFloat(unit.totalPrice);
+          });
+        });
+      }
+    }
+
+    return totalPriceSum;
+  };
+  const totalPriceSum = calculateTotalPriceSum();
+
   
   return (
     <div className="container">  
@@ -374,7 +361,7 @@ const UploadedProjects = () => {
           <div className="coloureddiv1">
             <h3 className="colouredtext">Total Payment</h3>
             <div className="d-flex justify-content-between">
-            <p className="colouredtext1"></p>
+            <p className="colouredtext1">{totalPriceSum}</p>
             <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
           </div>

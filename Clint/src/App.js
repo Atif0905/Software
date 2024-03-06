@@ -31,8 +31,6 @@ import Addkhasra from "./Registry/Addkhasra";
 import ViewKhata from "./Registry/Viewkhata"
 import Viewkhasra from './Registry/Viewkhasra'
 import PaymentPage from "./Payments/Paymentpage";
-
-
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -43,7 +41,6 @@ function App() {
     })
     .then((response) => {
       const data = response.data;
-      // console.log(data, "userData");
       if (data.data && data.data.userType === "Admin") {
         setAdmin(true);
       }

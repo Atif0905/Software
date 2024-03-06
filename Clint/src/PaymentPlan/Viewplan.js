@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-
 const Viewplan = () => {
   const [paymentPlans, setPaymentPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
-
   useEffect(() => {
     const fetchPaymentPlans = async () => {
       try {
@@ -20,11 +17,9 @@ const Viewplan = () => {
     };
     fetchPaymentPlans();
   }, []);
-
   const handleViewDetails = (plan) => {
     setSelectedPlan(plan);
   };
-
   return (
     <div className='main-content d-flex justify-content-between'>
       <div className='col-5'>
@@ -81,9 +76,7 @@ const Viewplan = () => {
     </div>
   )}
 </div>
-
     </div>
   );
 }
-
 export default Viewplan;
