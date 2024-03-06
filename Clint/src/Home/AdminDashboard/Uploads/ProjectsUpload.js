@@ -10,7 +10,7 @@ const ProjectsUpload = () => {
   const [error, setError] = useState(null);
   const [totalReceivedPayment, setTotalReceivedPayment] = useState(0);
   const [duePayment, setDuePayment] = useState(0);
-
+  const [paymentDetails, setPaymentDetails] = useState({});
   const fetchProjects = async () => {
     try {
       const response = await axios.get(
@@ -29,7 +29,6 @@ const ProjectsUpload = () => {
             return { ...project, blocks: blocksWithUnitCount };
           })
         );
-
         setProjects(projectsWithUnitCount);
       } else {
         console.error("Failed to fetch projects:", data.error);
@@ -37,27 +36,21 @@ const ProjectsUpload = () => {
     } catch (error) {
       console.error("Error fetching projects:", error);
     }
-  };  
-  
+  };    
   useEffect(() => {
     fetchProjects();
   }, []);
-
   useEffect(() => {
     if (projects.length > 0) {
       const totalPriceOfAllUnits = calculateTotalPriceOfAllUnits();
       setTotalPrice(totalPriceOfAllUnits);
     }
   }, [projects]);
-
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-        console.log(response);
         setCustomers(response.data);
-        
-        // Calculate total received payment
         const totalReceived = response.data.reduce((acc, curr) => acc + parseFloat(curr.paymentReceived || 0), 0);
         setTotalReceivedPayment(totalReceived);
       } catch (error) {
@@ -66,22 +59,40 @@ const ProjectsUpload = () => {
       } finally {
         setLoading(false);
       }
-    };
-  
+    };  
     fetchCustomers();
   }, []);
-
   useEffect(() => {
-    // Calculate due payment
     const due = parseFloat(totalPrice) - parseFloat(totalReceivedPayment);
     setDuePayment(due.toFixed(2));
   }, [totalPrice, totalReceivedPayment]);
-
   const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize) => {
     const total = (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges)) * parseFloat(plotSize);
     return total;
   };
-
+  useEffect(() => {
+    const fetchPaymentDetails = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails`);
+        const data = response.data.data; 
+        if (response.status === 200) {
+          setPaymentDetails(data);
+        } else {
+          console.error("Failed to fetch payment details.");
+        }
+      } catch (error) {
+        console.error("Error fetching payment details:", error);
+      }
+    };
+    fetchPaymentDetails();
+  }, []);
+  const calculateTotalAmountReceived = () => {
+    if (!Array.isArray(paymentDetails) || paymentDetails.length === 0) {
+      return 0;
+    }  
+    const totalAmountReceived = paymentDetails.reduce((sum, payment) => sum + payment.amount, 0);
+      return parseFloat(totalAmountReceived).toFixed(2);
+  };
   const calculateTotalPriceOfAllUnits = () => {
     let totalPrice = 0;
     projects.forEach(project => {
@@ -93,7 +104,6 @@ const ProjectsUpload = () => {
     });
     return totalPrice.toFixed(2);
   };
-
   const getUnitCount = async (projectId, blockId) => {
     try {
       const response = await axios.get(
@@ -110,16 +120,13 @@ const ProjectsUpload = () => {
       console.error("Error getting unit count:", error);
       return 0;
     }
-  };
-  
+  };  
   if (loading) {
     return <div>Loading...</div>;
   }
-
   if (error) {
     return <div>{error}</div>;
-  }
-
+  }  
   return (
     <div className="container">
       <div className="  flexy ">
@@ -140,7 +147,7 @@ const ProjectsUpload = () => {
           <div className="coloureddiv1">
             <h3 className="colouredtext">Received Payment</h3>
             <div className="d-flex justify-content-between">
-            <p className="colouredtext1">{totalReceivedPayment}</p>
+            <p className="colouredtext1">{calculateTotalAmountReceived()}</p>
             <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
           </div>
@@ -153,7 +160,7 @@ const ProjectsUpload = () => {
           <div className="coloureddiv1">
             <h3 className="colouredtext">Due Payment</h3>
             <div className="d-flex justify-content-between">
-            <p className="colouredtext1">{duePayment}</p>
+            <p className="colouredtext1">{parseFloat(totalPrice) - parseFloat(calculateTotalAmountReceived())}</p>
             <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
           </div>
@@ -166,5 +173,4 @@ const ProjectsUpload = () => {
     </div>
   );
 };
-
 export default ProjectsUpload;

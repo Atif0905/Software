@@ -8,7 +8,7 @@ const CustomerList = () => {
   const [error, setError] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [paymentDetails, setPaymentDetails] = useState(null);
-  
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -18,15 +18,19 @@ const CustomerList = () => {
           const blockName = await fetchName('getBlock', customer.project, customer.block);
           const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
           const unitDetails = await fetchUnitDetails(customer.project, customer.block, customer.plotOrUnit);
+          const paymentDetails = await fetchPaymentDetailsByCustomerId(customer.customerId);
           return {
             ...customer,
             projectName: projectName.toUpperCase(),
             blockName: blockName.toUpperCase(),
             unitName: unitName.toUpperCase(),
             ...unitDetails,
+            paymentDetails: paymentDetails.data
           };
         }));
         setCustomers(customersWithDetails);
+        const totalAmounts = calculateTotalAmounts(customersWithDetails);
+        setPaymentDetails(totalAmounts);
       } catch (error) {
         console.error('Error fetching customers:', error);
         setError('Error fetching customers. Please try again later.');
@@ -34,7 +38,6 @@ const CustomerList = () => {
         setLoading(false);
       }
     };
-  
     fetchCustomers();
   }, []);
 
@@ -47,23 +50,13 @@ const CustomerList = () => {
       throw new Error('Error fetching payment details. Please try again later.');
     }
   };
-  
+
   const fetchName = async (endpoint, ...ids) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join('/')}`);
       return response.data.data.name;
     } catch (error) {
       console.error(`Error fetching ${endpoint} name:`, error);
-      return 'Unknown';
-    }
-  };
-
-  const fetchUnitPrice = async (projectId, blockId, unitId) => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
-      return response.data.data.totalPrice;
-    } catch (error) {
-      console.error('Error fetching unit price:', error);
       return 'Unknown';
     }
   };
@@ -92,27 +85,16 @@ const CustomerList = () => {
       };
     }
   };
-  
-  const handleViewDetails = async (customer) => {
-    setSelectedCustomer(customer);
-    try {
-      const paymentDetails = await fetchPaymentDetailsByCustomerId(customer.customerId);
-      console.log("Payment Details:", paymentDetails);
-      setPaymentDetails(paymentDetails.data);
-    } catch (error) {
-      console.error('Error fetching payment details:', error);
-    }
+
+  const calculateTotalAmounts = (customers) => {
+    const totalAmounts = {};
+    customers.forEach(customer => {
+      const customerId = customer.customerId;
+      const totalAmountReceived = customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0);
+      totalAmounts[customerId] = totalAmountReceived;
+    });
+    return totalAmounts;
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  const totalAmount = paymentDetails ? paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0;
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -120,25 +102,23 @@ const CustomerList = () => {
     return date.toLocaleDateString('en-US', options);
   };
 
-  const total = selectedCustomer ? 
-  (parseFloat(selectedCustomer.rate) + parseFloat(selectedCustomer.plcCharges) + parseFloat(selectedCustomer.idcCharges)) * parseFloat(selectedCustomer.plotSize) 
-  : 0;
+  const total = selectedCustomer ?
+    (parseFloat(selectedCustomer.rate) + parseFloat(selectedCustomer.plcCharges) + parseFloat(selectedCustomer.idcCharges)) * parseFloat(selectedCustomer.plotSize)
+    : 0;
 
-  const calculateTotalPriceOfProject = () => {
-    const totalPriceByProject = {};
-    customers.forEach((customer) => {
-      const project = customer.projectName;
-      const unitPrice = parseFloat(customer.unitPrice);
-      totalPriceByProject[project] = (totalPriceByProject[project] || 0) + unitPrice;
-    });
+  const totalAmount = paymentDetails ? Object.values(paymentDetails).reduce((sum, amount) => sum + amount, 0) : 0;
 
-    let total = 0;
-    for (const projectPrice of Object.values(totalPriceByProject)) {
-      total += projectPrice;
-    }
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>{error}</div>;
+  }
 
-    return total;
-  };  
+  const totalAmountsReceived = paymentDetails || {};
+  const handleViewDetails = async (customer) => {
+    setSelectedCustomer(customer);
+  };
 
   return (
     <div className='main-content'>
@@ -149,7 +129,6 @@ const CustomerList = () => {
             <tr>
               <th>CUSTOMER ID</th>
               <th>NAME</th>
-              {/* <th>AADHAR NUMBER</th> */}
               <th>CONTACT NUMBER</th>
               <th>EMAIL</th>
               <th>PROJECT</th>
@@ -157,7 +136,6 @@ const CustomerList = () => {
               <th>UNIT PRICE</th>
               <th>PAYMENT RECEIVED</th>
               <th>BALANCE</th>
-              {/* <th>SEND EMAIL</th> */}
               <th>PAYMENT PLAN</th>
             </tr>
           </thead>
@@ -168,15 +146,13 @@ const CustomerList = () => {
                 <td>
                   <button className='anchorbutton' onClick={() => handleViewDetails(customer)}>{customer.name ? customer.name.toUpperCase() : ''}</button>
                 </td>
-                {/* <td>{customer.aadharNumber}</td> */}
                 <td>{customer.mobileNumber}</td>
                 <td>{customer.email ? customer.email.toUpperCase() : ''}</td>
                 <td>{customer.projectName}</td>
                 <td>{customer.blockName}-{customer.unitName}</td>
                 <td>{customer.unitPrice}</td>
-                <td>{totalAmount}</td> {/* Display total payment received for this customer */}
-                <td>{customer.unitPrice - totalAmount}</td> {/* Calculating balance */}
-                {/* <td>{customer.sendEmail ? 'Yes' : 'No'}</td> */}
+                <td>{totalAmountsReceived[customer.customerId]}</td>
+                <td>{customer.unitPrice - totalAmountsReceived[customer.customerId]}</td>
                 <td>{customer.paymentPlan}</td>
               </tr>
             ))}
@@ -225,18 +201,22 @@ const CustomerList = () => {
                 <td><strong>Total Price</strong></td>
                 <td>{total}</td>
                 <td><strong>Total Payment Amount</strong></td>
-                <td>{totalAmount}</td>
+                <td>{totalAmountsReceived[selectedCustomer.customerId]}</td>
+              </tr>
+              <tr>
+                <td><strong>Balance</strong></td>
+                <td>{selectedCustomer.unitPrice - totalAmountsReceived[selectedCustomer.customerId]}</td>
               </tr>
             </tbody>
           </table>
-          {paymentDetails && (
+          {selectedCustomer.paymentDetails && (
             <div>
               <h3>Payment Details</h3>
               <table>
                 <thead>
                   <tr>
                     <th>Payment Date</th>
-                    <th>Amount</th>
+                    <th>Received Amount</th>
                     <th>Comment</th>
                     <th>Payment Mode</th>
                     <th>Payment Type</th>
@@ -244,7 +224,7 @@ const CustomerList = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {paymentDetails.map((payment, index) => (
+                  {selectedCustomer.paymentDetails.map((payment, index) => (
                     <tr key={index}>
                       <td>{new Date(payment.PaymentDate).toLocaleDateString()}</td>
                       <td>{payment.amount}</td>
