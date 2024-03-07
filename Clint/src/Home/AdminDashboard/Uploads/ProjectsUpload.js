@@ -141,8 +141,7 @@ const ProjectsUpload = () => {
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
           </div>
-          
-        </div>
+          </div>
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
             <h3 className="colouredtext">Received Payment</h3>
@@ -153,8 +152,7 @@ const ProjectsUpload = () => {
           </div>
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
-          </div>
-          
+          </div>          
         </div>
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
@@ -166,8 +164,7 @@ const ProjectsUpload = () => {
           </div>
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
-          </div>
-          
+          </div>          
         </div>
       </div>
     </div>

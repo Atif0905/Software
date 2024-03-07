@@ -2,27 +2,22 @@ import React, { useEffect, useState } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactPaginate from 'react-paginate';
-import axios from 'axios'; // Import Axios
+import axios from 'axios'; 
 import { useRef } from "react";
 import './User.css'
 const AdminUser = () => {
   const [data, setData] = useState([]);
   const [limit, setLimit] = useState(5);
   const [pageCount, setPageCount] = useState(1);
-  const currentPage = useRef();
-  
+  const currentPage = useRef();  
   useEffect(() => {
     currentPage.current = 1;
     getPaginatedUsers();
   }, []);
-
-  // Logout
   const logOut = () => {
     window.localStorage.clear();
     window.location.href = "./sign-in";
   };
-
-  // Deleting user
   const deleteUser = (id, name) => {
     if (window.confirm(`Are you sure you want to delete ${name}`)) {
       axios.post(`${process.env.REACT_APP_API_URL}/deleteUser`, { userid: id })
@@ -35,18 +30,14 @@ const AdminUser = () => {
         });
     }
   };
-
-  // Pagination
   function handlePageClick(e) {
     currentPage.current = e.selected + 1;
     getPaginatedUsers();
   }
-
   function changeLimit() {
     currentPage.current = 1;
     getPaginatedUsers();
   }
-
   function getPaginatedUsers() {
     axios.get(`${process.env.REACT_APP_API_URL}/paginatedUsers?page=${currentPage.current}&limit=${limit}`)
       .then(response => {
@@ -60,8 +51,7 @@ const AdminUser = () => {
   return (
     <div className=" back main-content" >
       <h3 className="Headtext">Welcome Admin</h3>
-      <div className="whiteback table-container"  >
-        
+      <div className="whiteback table-container"  >        
         <table  className="fixed-table" >
           <thead>
             <tr>

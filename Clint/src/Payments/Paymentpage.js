@@ -1,6 +1,5 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-
 const PaymentPage = () => {
   const { showPaymentFormParam  } = useParams();
     console.log(showPaymentFormParam)
@@ -11,5 +10,4 @@ const PaymentPage = () => {
     </div>
   );
 };
-
 export default PaymentPage;

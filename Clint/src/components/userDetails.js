@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios'; // Import Axios
+import axios from 'axios';
 import AdminDashboard from "../Home/AdminDashboard/AdminDashboard";
 import UserDashBoard from "../Home/UserDashboard/UserDashBoard";
-// import User from "../User/User";
 export default function UserDetails() {
   const [userData, setUserData] = useState({});
   const [admin, setAdmin] = useState(false);
-
   useEffect(() => {
     axios.post(`${process.env.REACT_APP_API_URL}/userData`, {
       token: window.localStorage.getItem("token"),
@@ -19,13 +17,10 @@ export default function UserDetails() {
     })
     .then((response) => {
       const data = response.data;
-      // console.log(data, "userData");
       if (data.data && data.data.userType === "Admin") {
         setAdmin(true);
       }
-
       setUserData(data.data);
-
       if (data.data === "token expired") {
         alert("Token expired, please log in again");
         window.localStorage.clear();
@@ -36,12 +31,8 @@ export default function UserDetails() {
       console.error('Error fetching user data:', error);
     });
   }, [userData]);
-
-
   if (!userData) {
     return null; 
   }
-
-  return admin ? <AdminDashboard /> : <UserDashBoard userData={userData} />;
-  
+  return admin ? <AdminDashboard /> : <UserDashBoard userData={userData} />;  
 }

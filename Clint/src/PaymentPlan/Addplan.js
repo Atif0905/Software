@@ -1,67 +1,48 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Plan.css';
-
 const AddPlan = () => {
-  // Define state variables for each input field
   const [selectedOption, setSelectedOption] = useState('');
   const [planName, setPlanName] = useState('');
   const [numInstallments, setNumInstallments] = useState('');
   const [installments, setInstallments] = useState([]);
-
-  // Event handler for select input change
   const handleSelectChange = (event) => {
     setSelectedOption(event.target.value);
   };
-
-  // Event handler for plan name input change
   const handlePlanNameChange = (event) => {
     setPlanName(event.target.value);
   };
-
-  // Event handler for number of installments input change
   const handleNumInstallmentsChange = (event) => {
     const num = parseInt(event.target.value);
     setNumInstallments(num);
     const updatedInstallments = Array.from({ length: num }, (_, index) => ({
-      daysFromBooking: '', // Add daysFromBooking field
-      amountRS: '', // Add amountRS field
+      daysFromBooking: '', 
+      amountRS: '', 
     }));
     setInstallments(updatedInstallments);
   };
-
-  // Event handler for installment input change
   const handleInstallmentChange = (index, key, value) => {
     const updatedInstallments = [...installments];
     updatedInstallments[index][key] = value;
     updatedInstallments[index].installment = index + 1;
     setInstallments(updatedInstallments);
   };
-
-  // Event handler for adding a new installment
   const handleAddInstallment = () => {
     setInstallments([...installments, { daysFromBooking: '', amountRS: '' }]);
   };
-
-  // Event handler for removing an installment
   const handleRemoveInstallment = (index) => {
     const updatedInstallments = [...installments];
     updatedInstallments.splice(index, 1);
     setInstallments(updatedInstallments);
   };
-
-  // Event handler for form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-  
-    // Ensure all installments have amountRS and daysFromBooking fields
     const validInstallments = installments.every(installment => installment.amountRS && installment.daysFromBooking );
   
     if (!validInstallments) {
       console.error('Error: All installments must have amountRS and daysFromBooking');
       return;
-    }
-  
+    }  
     axios.post(`${process.env.REACT_APP_API_URL}/createPaymentPlan`, {
       type: selectedOption,
       planName: planName,
@@ -70,7 +51,6 @@ const AddPlan = () => {
     })
       .then((response) => {
         console.log('Success:', response.data);
-        // Reset the form fields
         setSelectedOption('');
         setPlanName('');
         setNumInstallments('');
@@ -80,8 +60,6 @@ const AddPlan = () => {
         console.error('Error:', error);
       });
   };
-  
-
   return (
     <div className='main-content'>
       <div className='col-5'>
@@ -103,7 +81,6 @@ const AddPlan = () => {
               <input type="number" className="form-input-field" placeholder="Enter No of Installments" value={numInstallments} onChange={handleNumInstallmentsChange} required />
             </div>
             <div className='mt-2'>
-              {/* <label>Installments</label> */}
               {installments.map((installment, index) => (
                 <div key={index} className='installment '>
                   <input type="number" className='form-input-field ' placeholder="Days from Booking" value={installment.daysFromBooking} onChange={(e) => handleInstallmentChange(index, 'daysFromBooking', e.target.value)} />
@@ -119,5 +96,4 @@ const AddPlan = () => {
     </div>
   );
 };
-
 export default AddPlan;

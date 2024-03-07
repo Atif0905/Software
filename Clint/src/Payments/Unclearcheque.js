@@ -1,5 +1,4 @@
 import React from 'react'
-
 const Unclearcheque = () => {
   return (
     <div className='main-content'>
@@ -32,9 +31,7 @@ const Unclearcheque = () => {
             </tbody>
         </table>
         </div>
-
     </div>
   )
 }
-
 export default Unclearcheque

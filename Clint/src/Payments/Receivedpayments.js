@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Payments.css";
-
 const Receivedpayments = () => {
   const [customerId, setCustomerId] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
@@ -20,8 +19,6 @@ const Receivedpayments = () => {
   const [loading, setLoading] = useState(true);
   const [isPaymentClicked, setIsPaymentClicked] = useState(false);
   const [unitData, setUnitData] = useState(null);
-    const [selectedInstallment, setSelectedInstallment] = useState(null);
-  const [selectedInstallmentAmount, setSelectedInstallmentAmount] = useState(null);
   const [payment, setPayment] = useState({
     paymentType: '',
     paymentMode: '',
@@ -30,12 +27,10 @@ const Receivedpayments = () => {
     comment: '',
     PaymentDate: '',
   });
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setPayment({ ...payment, [name]: value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('form submit successfully');
@@ -83,18 +78,16 @@ const Receivedpayments = () => {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
       console.log("Main",response)
       return response.data.data;
-     // Assuming 'data' contains the array of payments
     } catch (error) {
       console.error('Error fetching payment details:', error);
       throw new Error('Error fetching payment details. Please try again later.');
     }
   };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const paymentDetails = await fetchPaymentDetailsByCustomerId(customerId);
-        setMatchedPayments(paymentDetails); // Set matched payments in state
+        setMatchedPayments(paymentDetails); 
       } catch (error) {
         setError(error.message);
       }
@@ -102,7 +95,6 @@ const Receivedpayments = () => {
 
     fetchData();
   }, [customerId]);
-
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -129,27 +121,22 @@ const Receivedpayments = () => {
       }
     };
     fetchCustomers();
-  }, []);
-  
+  }, []);  
   const fetchUnitDetails = async (projectId, blockId, unitId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
       const unitData = response.data.data;
-      // console.log('Fetched Unit Data:', unitData);
       return unitData; 
     } catch (error) {
-      // console.error('Error fetching unit details:', error);
+      console.error('Error fetching unit details:', error);
       return null;
     }
   };
-  
-
   useEffect(() => {
     const fetchPaymentPlans = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
         if (Array.isArray(response.data.paymentPlans)) {
-          console.log(response)
           const modifiedPlans = response.data.paymentPlans.map(async plan => {
             const modifiedInstallments = await Promise.all(plan.installments.map(async installment => {
               try {
@@ -175,8 +162,7 @@ const Receivedpayments = () => {
       }
     };
     fetchPaymentPlans();
-  }, []);
-  
+  }, []);  
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!customerId) {
@@ -187,17 +173,10 @@ const Receivedpayments = () => {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/viewcustomer/${customerId}`);
       console.log('Fetched customer details:', response.data);
       const customerDetails = response.data;
-  
-      // Fetch unit details based on customer data
       const unitDetails = await fetchUnitDetails(customerDetails.project, customerDetails.block, customerDetails.plotOrUnit);
-  
-      // Check if unitDetails is an array and has data
-      if (Array.isArray(unitDetails) && unitDetails.length > 0) {
-        // Check if any unit details match the customer's plotOrUnit ID
+        if (Array.isArray(unitDetails) && unitDetails.length > 0) {
         const matchedUnit = unitDetails.find(unit => unit.id === customerDetails.plotOrUnit);
         if (matchedUnit) {
-          console.log('Matched unit details:', matchedUnit); // Log the matched unit details
-          // Set the matched unit details into a separate constant
           const customerUnitDetails = {
             unitPrice: matchedUnit.unitPrice,
             idcCharges: matchedUnit.idcCharges,
@@ -205,19 +184,16 @@ const Receivedpayments = () => {
             plotSize: matchedUnit.plotSize,
             sizeType: matchedUnit.sizeType,
             rate: matchedUnit.rate,
-            // Include any other unit details you need
           };
           setCustomerDetails({ ...customerDetails, unitDetails: customerUnitDetails });
-          setUnitData(matchedUnit); // Set the unitData state here
-          // Additional code if needed
-          return; // Stop the function execution here
+          setUnitData(matchedUnit); 
+          return; 
         } else {
           console.log('No matching unit found');
         }
       } 
-      // If no unit is matched, continue with the rest of the code
       setCustomerDetails(customerDetails);
-      setUnitData(null); // Set unitData to null if no unit is matched
+      setUnitData(null); 
   
       if (response.data.paymentPlan) {
         const matchedPlan = paymentPlans.find(plan => plan.planName === response.data.paymentPlan);
@@ -232,25 +208,23 @@ const Receivedpayments = () => {
         }
       }
       setError(null);
-      setShowCustomerDetails(true); // Show customer details after search
-      setSelectedCustomerId(customerId); // Set selected customer ID
+      setShowCustomerDetails(true);
+      setSelectedCustomerId(customerId); 
     } catch (error) {
       console.error('Error fetching customer details:', error);
       setError('Customer not found');
       setCustomerDetails(null);
     }
   };
-  
   const handleMakePayment = async () => {
     setIsPaymentClicked(true);
     try {
       const response = await fetchUnitDetails(customerDetails.project, customerDetails.block, customerDetails.plotOrUnit);
-      setUnitData(response); // Set the fetched unit data in state
-      console.log('Fetched Unit Data:', response); // Log the fetched unit data
+      setUnitData(response); 
+      console.log('Fetched Unit Data:', response); 
     } catch (error) {
     }
   };
-  
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -265,7 +239,6 @@ const Receivedpayments = () => {
       return 'Unknown';
     }
   };
-
   const handleViewDetails = (customerDetails) => {
     setSelectedCustomer(customerDetails);
   };
@@ -275,10 +248,10 @@ const Receivedpayments = () => {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
         const unitData = response.data.data;
         console.log('Unit Data:', unitData);
-        return unitData; // Return unit data
+        return unitData; 
       } catch (error) {
         console.error('Error fetching unit details:', error);
-        return null; // Return null in case of error
+        return null; 
       }
     };
   
@@ -296,8 +269,6 @@ function ordinalSuffix(number) {
   return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 }
 const possessionCharges = unitData ? ((parseFloat(unitData.idcCharges) + parseFloat(unitData.plcCharges)) * parseFloat(unitData.plotSize)).toFixed(2) : '';
-
-
   return (
  <div className="main-content">
  <h4 className="Headtext">Receive Payment from Customer</h4>

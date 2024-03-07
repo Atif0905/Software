@@ -1,5 +1,4 @@
 import React from 'react'
-
 const Incentiveplan = () => {
   return (
     <div className='main-content'>
@@ -15,7 +14,6 @@ const Incentiveplan = () => {
                         </tr>
                     </thead>
                     <tbody>
-
                     </tbody>
                 </table>
             </div>
@@ -23,5 +21,4 @@ const Incentiveplan = () => {
     </div>
   )
 }
-
 export default Incentiveplan

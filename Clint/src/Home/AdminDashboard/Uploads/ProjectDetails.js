@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-
 const ProjectDetails = () => {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
-
   useEffect(() => {
     fetchProject(projectId);
   }, [projectId]);
-
   const fetchProject = async (projectId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getProject/${projectId}`);
@@ -23,14 +20,12 @@ const ProjectDetails = () => {
       console.error("Error fetching project:", error);
     }
   };
-
   return (
     <div>
       {project && (
         <>
           <h3>{project.name}</h3>
           <p>{project.description}</p>
-          {/* Display blocks and units here */}
           <div>
             <h4>Blocks:</h4>
             <ul>
@@ -53,5 +48,4 @@ const ProjectDetails = () => {
     </div>
   );
 };
-
 export default ProjectDetails;

@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AdminDashboard.css';
-
 const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [paymentDetails, setPaymentDetails] = useState(null);
-
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+        console.log(response)
         const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
           const projectName = await fetchName('getProject', customer.project);
           const blockName = await fetchName('getBlock', customer.project, customer.block);
@@ -40,7 +39,6 @@ const CustomerList = () => {
     };
     fetchCustomers();
   }, []);
-
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
@@ -50,7 +48,6 @@ const CustomerList = () => {
       throw new Error('Error fetching payment details. Please try again later.');
     }
   };
-
   const fetchName = async (endpoint, ...ids) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join('/')}`);
@@ -60,7 +57,6 @@ const CustomerList = () => {
       return 'Unknown';
     }
   };
-
   const fetchUnitDetails = async (projectId, blockId, unitId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
@@ -85,7 +81,6 @@ const CustomerList = () => {
       };
     }
   };
-
   const calculateTotalAmounts = (customers) => {
     const totalAmounts = {};
     customers.forEach(customer => {
@@ -95,17 +90,14 @@ const CustomerList = () => {
     });
     return totalAmounts;
   };
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     return date.toLocaleDateString('en-US', options);
   };
-
   const total = selectedCustomer ?
     (parseFloat(selectedCustomer.rate) + parseFloat(selectedCustomer.plcCharges) + parseFloat(selectedCustomer.idcCharges)) * parseFloat(selectedCustomer.plotSize)
     : 0;
-
   const totalAmount = paymentDetails ? Object.values(paymentDetails).reduce((sum, amount) => sum + amount, 0) : 0;
 
   if (loading) {
@@ -114,12 +106,14 @@ const CustomerList = () => {
   if (error) {
     return <div>{error}</div>;
   }
-
   const totalAmountsReceived = paymentDetails || {};
   const handleViewDetails = async (customer) => {
-    setSelectedCustomer(customer);
+    if (selectedCustomer && selectedCustomer.customerId === customer.customerId) {
+      setSelectedCustomer(null);
+    } else {
+      setSelectedCustomer(customer);
+    }
   };
-
   return (
     <div className='main-content'>
       <h2 className='Headtext'>Customer List</h2>
@@ -243,5 +237,4 @@ const CustomerList = () => {
     </div>
   );
 };
-
 export default CustomerList;

@@ -10,7 +10,6 @@ import AdminDashboard from "./Home/AdminDashboard/AdminDashboard";
 import UploadedProjects from "./Home/AdminDashboard/ShowProjects";
 import ProjectDetails from "./Home/AdminDashboard/Uploads/ProjectDetails";
 import Sidebar from "./Sidebar/Sidebar";
-import User from "./User/AdminUser";
 import Projects from "./UpdateProjects/Projects";
 import Reports from "./components/Reports/Reports";
 import UserSidebar from './Sidebar/UserSidebar'
@@ -44,7 +43,6 @@ function App() {
       if (data.data && data.data.userType === "Admin") {
         setAdmin(true);
       }
-
       setUserData(data.data);
     })
     .catch((error) => {
@@ -113,5 +111,4 @@ function App() {
     </Router>
   );
 }
-
 export default App;
