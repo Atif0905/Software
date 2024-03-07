@@ -6,26 +6,21 @@ const Projects = () => {
   const [description, setDescription] = useState('');
   const [blocks, setBlocks] = useState([{ name: '', units: [{ name: '' }] }]);
   const [totalLand, settotalLand] = useState('');
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const token = localStorage.getItem('token');
-
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/uploadProject`, {
         name,
         description,
         totalLand,
-        blocks // Pass blocks data to the backend
-
+        blocks 
       }, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         }
       });
-
       const data = response.data;
       if (response.status === 201 && data.status === 'ok') {
         alert('Project uploaded successfully!');
@@ -59,27 +54,6 @@ const Projects = () => {
               <label htmlFor="name" className="ml">Total land</label>
               <input type="text" className='form-input-field' id="name" value={totalLand} placeholder="Total Land" onChange={(e) => settotalLand(e.target.value)} required />
             </div>
-            {/* {blocks.map((block, blockIndex) => (
-              <div key={blockIndex}>
-                <div className="form-group mt-2">
-                  <label htmlFor={`blockName${blockIndex}`} className='ml'>Block Name</label>
-                  <input type="text" className='form-input-field' id={`blockName${blockIndex}`} name="name" placeholder='Block Name' value={block.name} onChange={(e) => handleBlockChange(blockIndex, e)} required />
-                </div>
-                {block.units.map((unit, unitIndex) => (
-                  <div key={unitIndex}>
-                    <div className="form-group mt-3">
-                      <label htmlFor={`unitName${blockIndex}_${unitIndex}`} className='ml'>Unit Name</label>
-                      <input
-                        type="text" className='form-input-field' id={`unitName${blockIndex}_${unitIndex}`} name="name" placeholder='Unit Name' value={unit.name} onChange={(e) => handleUnitChange(blockIndex, unitIndex, e)} required />
-                    </div>
-                  </div>
-                ))}
-
-                <button className='add-buttons mt-3' type="button" onClick={() => addUnit(blockIndex)}>Add Unit</button>
-              </div>
-            ))} */}
-            {/* <button className='add-buttons mt-3' type="button" onClick={addBlock}>Add Block</button> */}
-
             <div className="form-group mt-3 mb-3">
               <button type="submit" className='uploadbutt'>Upload Project</button>
             </div>
@@ -89,5 +63,4 @@ const Projects = () => {
     </div>
   );
 };
-
 export default Projects;

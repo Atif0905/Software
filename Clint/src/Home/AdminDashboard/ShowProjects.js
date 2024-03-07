@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect} from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretDown, faLocationDot, faArrowDown, faArrowUp, faTimes   } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown, faLocationDot, faTimes } from "@fortawesome/free-solid-svg-icons";
 import '../../UpdateProjects/Projects.css'
 import '../AdminDashboard/Uploads/Coustmer'
 import { IoBagOutline } from "react-icons/io5";
@@ -18,6 +18,10 @@ const UploadedProjects = () => {
   const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] = useState({});
   const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const [UnitDropdown, setUnitDropdown] = useState(null);
+  const [paymentDetails, setPaymentDetails] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [customers, setCustomers] = useState([]);
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -26,31 +30,25 @@ const UploadedProjects = () => {
       prevIndex === unitIndex ? null : unitIndex
     );
   };
-
   const updateUnitCounts = () => {
     let totalUnits = 0;
     let blockCounts = {};
-
     projects.forEach((project) => {
       project.blocks.forEach((block) => {
         totalUnits += block.units.length;
         blockCounts[block._id] = block.units.length;
       });
     });
-
-    // setTotalUnitsCount(totalUnits);
     setBlockwiseUnitCounts(blockCounts);
-  };
-  
+  };  
   const handleMarkUnitSold = async (projectId, blockId, unitId) => {
-    // Confirmation dialog
     const isConfirmed = window.confirm("Are you sure you want to mark this unit as Sold?");
     if (isConfirmed) {
       try {
         const response = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${projectId}/${blockId}/${unitId}`);
         const data = response.data;
         if (response.status === 200 && data.status === "ok") {
-          fetchProjects(); // Update projects after successfully marking unit as sold
+          fetchProjects();
           alert("Unit marked as sold successfully");
         } else {
           console.error("Failed to mark unit as sold:", data.error);
@@ -63,7 +61,6 @@ const UploadedProjects = () => {
   const updateHoldUnitCounts = () => {
     let totalHoldUnits = 0;
     let blockwiseHoldCounts = {};
-
     projects.forEach((project) => {
       project.blocks.forEach((block) => {
         const holdUnits = block.units.filter((unit) => unit.status === "hold");
@@ -71,12 +68,8 @@ const UploadedProjects = () => {
         blockwiseHoldCounts[block._id] = holdUnits.length;
       });
     });
-
-    // setTotalHoldUnitsCount(totalHoldUnits);
     setBlockwiseHoldUnitCounts(blockwiseHoldCounts);
   };
-  
-
   useEffect(() => {
     updateUnitCounts();
     updateTotalUnitsCount();
@@ -84,11 +77,109 @@ const UploadedProjects = () => {
     updateSoldUnitCounts();
     updateProjectUnitCounts();
   }, [projects]);
+  useEffect(() => {
+    const fetchPaymentDetails = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails`);
+        const data = response.data.data; 
+        if (response.status === 200) {
+          setPaymentDetails(data);
+        } else {
+          console.error("Failed to fetch payment details.");
+        }
+      } catch (error) {
+        console.error("Error fetching payment details:", error);
+      }
+    };
+    fetchPaymentDetails();
+  }, []);
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const viewCustomerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+        const viewCustomerData = viewCustomerResponse.data;
+  
+        const allProjectsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
+        const allProjectsData = allProjectsResponse.data.data;
+  
+        const customersWithDetails = await Promise.all(viewCustomerData.map(async (customer) => {
+          // Find the project in getAllProjects corresponding to the project ID from Viewcustomer
+          const project = allProjectsData.find(proj => proj._id === customer.project);
+  
+          // If project is found, fetch names for block and unit
+          if (project) {
+            const blockName = await fetchName('getBlock', customer.project, customer.block);
+            const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
+            const paymentDetails = await fetchPaymentDetailsByCustomerId(customer.customerId);
+            return {
+              ...customer,
+              projectName: project.name.toUpperCase(),
+              blockName: blockName.toUpperCase(),
+              unitName: unitName.toUpperCase(),
+              paymentDetails: paymentDetails.data
+            };
+          } else {
+            console.error(`Project not found for customer with ID ${customer.customerId}`);
+            return null;
+          }
+        }));
+  
+        // Filter out null values (customers without matching projects)
+        const filteredCustomers = customersWithDetails.filter(customer => customer !== null);
+  
+        setCustomers(filteredCustomers);
+        const totalAmountsByProject = calculateTotalAmountsByProject(filteredCustomers);
+        setPaymentDetails(totalAmountsByProject);
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+        setError('Error fetching customers. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCustomers();
+  }, []);
+  
+  
+  const calculateTotalAmountsByProject = (customers) => {
+    const totalAmountsByProject = {};
+  
+    customers.forEach(customer => {
+      const projectId = customer.project;
+      const totalAmountReceived = customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0);
+  
+      if (!totalAmountsByProject[projectId]) {
+        totalAmountsByProject[projectId] = 0;
+      }
+  
+      totalAmountsByProject[projectId] += totalAmountReceived;
+    });
+  
+    return totalAmountsByProject;
+  };
+
+  const fetchPaymentDetailsByCustomerId = async (customerId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching payment details:', error);
+      throw new Error('Error fetching payment details. Please try again later.');
+    }
+  };
+  const fetchName = async (endpoint, ...ids) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join('/')}`);
+      return response.data.data.name;
+    } catch (error) {
+      console.error(`Error fetching ${endpoint} name:`, error);
+      return 'Unknown';
+    }
+  };
   const handleMarkUnitHold = async (projectId, blockId, unitId) => {
     const isConfirmed = window.confirm(
       "Are you sure you want to mark this unit as Hold?"
     );
-
     if (isConfirmed) {
       try {
         const response = await axios.put(
@@ -96,7 +187,7 @@ const UploadedProjects = () => {
         );
         const data = response.data;
         if (response.status === 200 && data.status === "ok") {
-          fetchProjects(); // Update projects after successfully marking unit as hold
+          fetchProjects();
           alert("Unit marked as hold successfully");
         } else {
           console.error("Failed to mark unit as hold:", data.error);
@@ -106,12 +197,10 @@ const UploadedProjects = () => {
       }
     }
   };
-
   const updateTotalUnitsCount = () => {
     let totalUnits = 0;
     let totalAvailableUnits = 0;
     let blockwiseAvailableCounts = {};
-
     projects.forEach((project) => {
       project.blocks.forEach((block) => {
         const availableUnits = block.units.filter(
@@ -123,15 +212,11 @@ const UploadedProjects = () => {
         totalUnits += block.units.length;
       });
     });
-
-    // setTotalUnitsCount(totalUnits);
-    // setTotalAvailableUnitsCount(totalAvailableUnits);
     setBlockwiseAvailableUnitCounts(blockwiseAvailableCounts);
   };
   const updateSoldUnitCounts = () => {
     let totalSoldUnits = 0;
     let blockwiseSoldCounts = {};
-
     projects.forEach((project) => {
       project.blocks.forEach((block) => {
         const soldUnits = block.units.filter((unit) => unit.status === "sold");
@@ -139,8 +224,6 @@ const UploadedProjects = () => {
         blockwiseSoldCounts[block._id] = soldUnits.length;
       });
     });
-
-    // setTotalSoldUnitsCount(totalSoldUnits);
     setBlockwiseSoldUnitCounts(blockwiseSoldCounts);
   };
   const fetchProjects = async () => {
@@ -168,8 +251,6 @@ const UploadedProjects = () => {
       console.error("Error fetching projects:", error);
     }
   };
-
-
   const getUnitCount = async (projectId, blockId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnitCount/${projectId}/${blockId}`);
@@ -196,7 +277,7 @@ const UploadedProjects = () => {
         );
         const data = response.data;
         if (response.status === 200 && data.status === "ok") {
-          fetchProjects(); // Update projects after successfully marking unit as available
+          fetchProjects();
           alert("Unit marked as available successfully");
         } else {
           console.error("Failed to mark unit as available:", data.error);
@@ -206,7 +287,6 @@ const UploadedProjects = () => {
       }
     }
   };
-
   const updateProjectUnitCounts = () => {
     const counts = {};
 
@@ -272,11 +352,9 @@ const UploadedProjects = () => {
     setShowBlocks(!showBlocks); 
     setShowUnits(true); 
   };
-
   const handleClickBlock = (blockId) => {
     setSelectedBlockId((prevId) => (prevId === blockId ? null : blockId));
   };
-
   const handleDeleteUnit = async (projectId, blockId, unitId) => {
     const isConfirmed = window.confirm(
       "Are you sure you want to delete this unit?"
@@ -320,8 +398,6 @@ const UploadedProjects = () => {
     return totalPriceSum;
   };
   const totalPriceSum = calculateTotalPriceSum();
-
-  
   return (
     <div className="container">  
   <div className="projects-grid mt-3">
@@ -364,35 +440,24 @@ const UploadedProjects = () => {
             <p className="colouredtext1">{totalPriceSum}</p>
             <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
-          </div>
-          <div className="coloureddiv">
-            <p className="descriptiondiv"> </p>
-          </div>
-          
+          </div>         
         </div>
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
             <h3 className="colouredtext">Received Payment</h3>
             <div className="d-flex justify-content-between">
-            <p className="colouredtext1"></p>
+            <p className="colouredtext1">{(paymentDetails[selectedProjectId] || 0).toFixed(2)}</p>
             <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
-          </div>
-          <div className="coloureddiv">
-            <p className="descriptiondiv"> </p>
-          </div>
-          
+          </div>         
         </div>
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
             <h3 className="colouredtext">Due Payment</h3>
             <div className="d-flex justify-content-between">
-            <p className="colouredtext1"></p>
+            <p className="colouredtext1">{(totalPriceSum - (paymentDetails[selectedProjectId] || 0)).toFixed(2)}</p>
             <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
-          </div>
-          <div className="coloureddiv">
-            <p className="descriptiondiv"> </p>
           </div>
           </div>
         </div>
@@ -466,124 +531,33 @@ const UploadedProjects = () => {
                           <div className="row">
                             {block.units.map((unit, unitIndex) => (
                               <div className="col-1" key={unitIndex}>
-                                <div
-                                  className="units-div"
-                                  style={{
-                                    backgroundColor:
-                                      unit.status === "hold"
-                                        ? "#FEE69F"
-                                        : unit.status === "sold"
-                                        ? "#FE8B8B"
-                                        : unit.status === "available"
-                                        ? "#A6FFBF"
-                                        : "#A6FFBF",
-                                  }}
-                                  onClick={() => DropdownToggle(unitIndex)}
-                                >
-                                  <p className="unit-div">{unit.name}</p>
-                                </div>
-                                {UnitDropdown === unitIndex && (
-                                  <div className="unit-div-dropdown">
-                                    {unit.status === "available" && <></>}
-                                    {unit.status === "sold" && (
-                                      <>
-                                        <button
-                                          className="hold-unit"
-                                          onClick={() =>
-                                            handleMarkUnitHold(
-                                              project._id,
-                                              block._id,
-                                              unit._id
-                                            )
-                                          }
-                                        >
-                                          Hold
-                                        </button>
-                                        <button
-                                          className="available-unit"
-                                          style={{ backgroundColor: "#A6FFBF" }}
-                                          onClick={() =>
-                                            handleMarkUnitAvailable(
-                                              project._id,
-                                              block._id,
-                                              unit._id
-                                            )
-                                          }
-                                        >
-                                          Available
-                                        </button>
-                                      </>
-                                    )}
-                                    {unit.status === "hold" && (
-                                      <>
-                                        <button
-                                          className="available-unit"
-                                          style={{ backgroundColor: "#A6FFBF" }}
-                                          onClick={() =>
-                                            handleMarkUnitAvailable(
-                                              project._id,
-                                              block._id,
-                                              unit._id
-                                            )
-                                          }
-                                        >
-                                          Available
-                                        </button>
-                                        <button
-                                          className="sold-unit"
-                                          onClick={() =>
-                                            handleMarkUnitSold(
-                                              project._id,
-                                              block._id,
-                                              unit._id
-                                            )
-                                          }
-                                        >
-                                          Sold
-                                        </button>
-                                      </>
-                                    )}
-                                    {unit.status === "available" && (
-                                      <>
-                                        <button
-                                          className="hold-unit"
-                                          onClick={() =>
-                                            handleMarkUnitHold(
-                                              project._id,
-                                              block._id,
-                                              unit._id
-                                            )
-                                          }
-                                        >
-                                          Hold
-                                        </button>
-                                        <button
-                                          className="sold-unit"
-                                          onClick={() =>
-                                            handleMarkUnitSold(
-                                              project._id,
-                                              block._id,
-                                              unit._id
-                                            )
-                                          }
-                                        >
-                                          Sold
-                                        </button>
-                                      </>
-                                    )}
-                                    <button
-                                      className="delete-unit"
-                                      onClick={() =>
-                                        handleDeleteUnit(
-                                          project._id,
-                                          block._id,
-                                          unit._id
-                                        )
-                                      }
-                                    >
-                                      Delete
-                                    </button>
-                                  </div>
+<div className="units-div" style={{backgroundColor: unit.status === "hold"? "#FEE69F": unit.status === "sold"? "#FE8B8B": unit.status === "available"? "#A6FFBF": "#A6FFBF", }} onClick={() => DropdownToggle(unitIndex)}>
+  <p className="unit-div">{unit.name}</p>
+</div>
+{UnitDropdown === unitIndex && (
+<div className="unit-div-dropdown">
+  {unit.status === "available" && <></>}
+  {unit.status === "sold" && (
+    <>
+      <button className="hold-unit" onClick={() => handleMarkUnitHold(project._id,block._id,unit._id)}>Hold</button>
+      <button className="available-unit" style={{ backgroundColor: "#A6FFBF" }} onClick={() => handleMarkUnitAvailable( project._id,block._id,unit._id )} > Available</button>
+    </>
+  )}
+  {unit.status === "hold" && (
+    <>
+      <button className="available-unit" style={{ backgroundColor: "#A6FFBF" }} onClick={() =>   handleMarkUnitAvailable(project._id,block._id,unit._id   ) }>  Available</button>
+      <button className="sold-unit" onClick={() => handleMarkUnitSold(project._id,block._id,unit._id)}> Sold</button>
+    </>
+  )}
+  {unit.status === "available" && (
+    <>
+      <button className="hold-unit" onClick={() => handleMarkUnitHold(project._id,block._id,unit._id)}  >Hold</button>
+      <button className="sold-unit" onClick={() => handleMarkUnitSold( project._id, block._id, unit._id)}>  Sold</button>
+    </>
+  )}
+  <button
+    className="delete-unit"onClick={() =>handleDeleteUnit(project._id,block._id,unit._id)}> Delete</button>
+</div>
                                 )}
                               </div>
                             ))}

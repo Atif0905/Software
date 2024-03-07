@@ -169,7 +169,6 @@ const Sidebar = () => {
       navigate("/sign-in");
     }
   };
-
   return (
     <div>
       <div className='nav1'> </div>
@@ -235,7 +234,6 @@ const Sidebar = () => {
         <li className=" dropdown-item"><Link to='/Viewkhata'><MdOutlineCircle /> view khata</Link></li>
         <li className=" dropdown-item"><Link to='/Addkhasra'><MdOutlineCircle /> Add khasra</Link></li>
         <li className=" dropdown-item"><Link to='/Viewkhasra'><MdOutlineCircle /> Add khasra</Link></li>
-
       </div>
     </div>
     <div className="dropdown">
@@ -259,11 +257,9 @@ const Sidebar = () => {
       </div>
     </div>
       <li className='Links' onClick={logOut}><Link ><MdLogout />Logout</Link></li>
-        
         </div>
       </ul>
     </div>
   );
 };
-
 export default Sidebar;

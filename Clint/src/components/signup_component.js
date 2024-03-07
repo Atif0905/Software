@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import axios from 'axios'; // Import Axios
+import axios from 'axios';
 import { Link } from "react-router-dom";
-
 export default function SignUp() {
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
@@ -9,11 +8,8 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("");
   const [secretKey, setSecretKey] = useState("");
-  
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (userType === "Admin" && secretKey !== "Womeki") {
       alert("Invalid Admin");
     } else {
@@ -44,7 +40,6 @@ export default function SignUp() {
       });
     }
   };
-
   return (
     <div className="auth-wrapper">
       <div className="auth-inner">
@@ -78,7 +73,6 @@ export default function SignUp() {
               />
             </div>
           )}
-
           <div className="mb-3">
             <label>First name</label>
             <input
@@ -88,7 +82,6 @@ export default function SignUp() {
               onChange={(e) => setFname(e.target.value)}
             />
           </div>
-
           <div className="mb-3">
             <label>Last name</label>
             <input
@@ -98,7 +91,6 @@ export default function SignUp() {
               onChange={(e) => setLname(e.target.value)}
             />
           </div>
-
           <div className="mb-3">
             <label>Email address</label>
             <input
@@ -108,7 +100,6 @@ export default function SignUp() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-
           <div className="mb-3">
             <label>Password</label>
             <input
@@ -118,7 +109,6 @@ export default function SignUp() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-
           <div className="d-grid">
             <button type="submit" className="btn btn-primary">
               Sign Up
