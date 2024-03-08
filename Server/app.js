@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.set("view engine", "ejs");
 
-mongoose.set('strictQuery', false); 
+mongoose.set('strictQuery', false);
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
     console.log("DB Connected")
@@ -149,13 +149,13 @@ app.post("/uploadProject", async (req, res) => {
   const { name, description, totalLand } = req.body;
 
   try {
-      // Create a new project using the Project model without blocks
-      const project = await Project.create({ name, description, totalLand });
-      res.status(201).json({ status: "ok", data: project });
+    // Create a new project using the Project model without blocks
+    const project = await Project.create({ name, description, totalLand });
+    res.status(201).json({ status: "ok", data: project });
   } catch (error) {
-      console.error("Error uploading project:", error);
-      res.status(500).json({ error: "Internal server error" });
-  }
+    console.error("Error uploading project:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 app.get("/getAllProjects", async (req, res) => {
@@ -171,7 +171,7 @@ app.get("/getAllProjects", async (req, res) => {
 // Endpoint to fetch project by ID
 app.get("/getProject/:projectId", async (req, res) => {
   const { projectId } = req.params;
-  
+
   try {
     const project = await Project.findById(projectId);
     if (!project) {
@@ -187,7 +187,7 @@ app.get("/getProject/:projectId", async (req, res) => {
 // Endpoint to fetch block by ID
 app.get("/getBlock/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
-  
+
   try {
     const project = await Project.findById(projectId);
     if (!project) {
@@ -207,7 +207,7 @@ app.get("/getBlock/:projectId/:blockId", async (req, res) => {
 // Endpoint to fetch unit by ID
 app.get("/getUnit/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
-  
+
   try {
     const project = await Project.findById(projectId);
     if (!project) {
@@ -292,7 +292,7 @@ app.post("/addBlock/:projectId", async (req, res) => {
 // Endpoint to add a unit to a block
 app.post("/addUnit/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
-  const { name, plotSize, sizeType, rate, idcCharges, plcCharges,totalPrice } = req.body;
+  const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice } = req.body;
 
   try {
     const project = await Project.findById(projectId);
@@ -326,8 +326,8 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
     res.status(201).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error adding unit:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 app.put("/markUnitHold/:projectId/:blockId/:unitId", async (req, res) => {
@@ -633,7 +633,7 @@ app.post('/createPaymentPlan', async (req, res) => {
   try {
     const { type, planName, numInstallments, installments } = req.body;
 
-    if (!type || !planName || !numInstallments  || !installments) {
+    if (!type || !planName || !numInstallments || !installments) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -664,8 +664,8 @@ app.get('/paymentPlans', async (req, res) => {
     res.status(200).json({ paymentPlans });
   } catch (error) {
     console.error('Error fetching payment plans:', error);
-    res.status(500).json({ error: 'An error occurred while fetching payment plans' });
-  }
+    res.status(500).json({ error: 'An error occurred while fetching payment plans' });
+  }
 });
 
 // Endpoint to handle payment details
@@ -694,8 +694,8 @@ app.post("/paymentDetails", async (req, res) => {
     res.status(201).json({ status: "ok", message: "Payment details added successfully", data: payment });
   } catch (error) {
     console.error("Error adding payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 
@@ -725,12 +725,12 @@ app.get("/paymentDetails/:customerId", async (req, res) => {
 
     res.status(200).json({ status: "ok", data: payments });
   } catch (error) {
-    console.error("Error fetching payment details:", error);  
+    console.error("Error fetching payment details:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, area,customerfather) => {
+const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, area, customerfather) => {
   const fonts = {
     Roboto: {
       normal: 'node_modules/roboto-font/fonts/Roboto/roboto-regular-webfont.ttf',
@@ -746,9 +746,9 @@ const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, a
       { image: './logo.png', width: 160, height: 90 },
       { text: 'WELCOME LETTER', style: 'header' },
       { text: '\n' },
-      { text: `To,\nMr / Mrs : ${customerName}` , style: 'normal' },
-      {text:  `Date : ${new Date().toLocaleDateString()}`,style: 'headerDate'},
-      {text:  `${customerfather} ${customerAddress}`},
+      { text: `To,\nMr / Mrs : ${customerName}`, style: 'normal' },
+      { text: `Date : ${new Date().toLocaleDateString()}`, style: 'headerDate' },
+      { text: `${customerfather} ${customerAddress}` },
       { text: `Unit No. : ${unitNo}\nArea : ${area} sqyd (Approx)\n\n`, style: 'normal' },
       { text: 'RE: Thank you for your Patronage!\n', style: 'headersub' },
       { text: `On behalf of WOMEKI INVESTORS CLUB Private Limited, we truly appreciate your recent association with us for your booking of a unit in our project ${ProjectName}`, style: 'normal' },
@@ -762,27 +762,27 @@ const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, a
       header: {
         alignment: 'center',
         fontSize: 14,
-        fonts:"Roboto",
+        fonts: "Roboto",
         bold: true,
         decoration: 'underline',
-        margin: [0, 10, 0, 20] 
+        margin: [0, 10, 0, 20]
       },
-      headerDate:{
+      headerDate: {
         alignment: 'right',
         fontSize: 14,
-        fonts:"Roboto",
+        fonts: "Roboto",
         bold: true,
       },
-      headersub:{
+      headersub: {
         alignment: 'left',
         fontSize: 14,
-        fonts:"Roboto",
+        fonts: "Roboto",
         bold: true,
-        margin: [0, 10, 0, 20] 
+        margin: [0, 10, 0, 20]
       },
       normal: {
         fontSize: 12,
-        fonts:"Roboto",
+        fonts: "Roboto",
         margin: [0, 0, 0, 10]
       }
     }
@@ -820,14 +820,14 @@ app.post('/send-email', async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'atif123n@gmail.com', // your Gmail address
-        pass: 'fhff biym mbow yuhd' // your Gmail password
+        user: 'crm@wic.org.in', // your Gmail address
+        pass: 'ipfa mswk livv ibpz' // your Gmail password
       }
     });
 
     // Define email content with PDF attachment
     const mailOptions = {
-      from: 'atif123n@gmail.com',
+      from: 'crm@wic.org.in',
       to,
       subject,
       text: 'Please find attached the welcome letter.',
@@ -839,6 +839,7 @@ app.post('/send-email', async (req, res) => {
         }
       ]
     };
+
 
     // Send email
     const info = await transporter.sendMail(mailOptions);
