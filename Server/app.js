@@ -810,7 +810,7 @@ const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, a
 // Assuming you already have the route for sending emails
 app.post('/send-email', async (req, res) => {
   try {
-    const { to, subject, customerName, customerAddress, unitName, unitArea } = req.body;
+    const { to, subject, customerName, customerAddress, unitName, unitArea,ProjectName } = req.body;
     console.log(customerName)
 
     // Generate PDF document
@@ -821,7 +821,7 @@ app.post('/send-email', async (req, res) => {
       service: 'gmail',
       auth: {
         user: 'crm@wic.org.in', // your Gmail address
-        pass: 'ipfa mswk livv ibpz' // your Gmail password
+        pass: 'bpda usjb jbiz qrkb ' // your Gmail password
       }
     });
 
@@ -830,7 +830,38 @@ app.post('/send-email', async (req, res) => {
       from: 'crm@wic.org.in',
       to,
       subject,
-      text: 'Please find attached the welcome letter.',
+      text: `Dear ${customerName},
+
+      We are delighted to welcome you to our Project ${ProjectName} ! Thank you for
+      booking a plot in our project and trusting us with your dream of owning a
+      property in our township. We promise to make your experience with us a
+      delightful one.
+      
+      We take pride in delivering the best-in-class services and amenities to our
+      customers. As part of our commitment to providing exceptional customer
+      service, we will ensure that you are updated with the latest developments of
+      the project, and we will be there for you every step of the way.
+      
+      Our team of experts is dedicated to delivering a hassle-free and seamless
+      experience throughout the project's journey. We understand that investing in
+      a property is a significant decision, and we aim to make it a memorable one
+      for you.
+      
+      
+      Once again, thank you for choosing us as your partner in this journey. We
+      look forward to creating a beautiful and fulfilling experience for you and
+      your family.
+      
+      
+      Best regards,
+      
+      
+      
+      WOMEKI INVESTORS CLUB Pvt Ltd
+      CRM HEAD
+      Anjali Bhardwaj
+      +91-9911140024
+      `,
       attachments: [
         {
           filename: 'welcome_letter.pdf', // Name of the attachment

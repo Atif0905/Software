@@ -475,7 +475,6 @@ const AddCustomerForm = () => {
               checked={formData.sendEmail}
               onChange={handleCheckboxChange}
               style={{ display: 'none' }}
-              required
             />
             <label htmlFor="cbx2" className="check">
               <svg width="18px" height="18px" viewBox="0 0 18 18">
