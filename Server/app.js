@@ -292,7 +292,7 @@ app.post("/addBlock/:projectId", async (req, res) => {
 // Endpoint to add a unit to a block
 app.post("/addUnit/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
-  const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice } = req.body;
+  const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice,edcPrice } = req.body;
 
   try {
     const project = await Project.findById(projectId);
@@ -316,6 +316,7 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
       idcCharges,
       plcCharges,
       totalPrice,
+      edcPrice,
       status: 'available', // Assuming default status is available
     };
 
@@ -326,6 +327,51 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
     res.status(201).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error adding unit:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+// Endpoint to edit unit including its charges
+app.put("/editUnit/:projectId/:blockId/:unitId", async (req, res) => {
+  const { projectId, blockId, unitId } = req.params;
+  const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice } = req.body;
+
+  try {
+    // Validate ObjectIDs
+    if (!mongoose.Types.ObjectId.isValid(projectId) ||
+        !mongoose.Types.ObjectId.isValid(blockId) ||
+        !mongoose.Types.ObjectId.isValid(unitId)) {
+      return res.status(400).json({ error: "Invalid project, block, or unit ID" });
+    }
+
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    const block = project.blocks.id(blockId);
+    if (!block) {
+      return res.status(404).json({ error: "Block not found" });
+    }
+
+    const unit = block.units.id(unitId);
+    if (!unit) {
+      return res.status(404).json({ error: "Unit not found" });
+    }
+
+    // Update unit details including charges
+    unit.name = name;
+    unit.plotSize = plotSize;
+    unit.sizeType = sizeType;
+    unit.rate = rate;
+    unit.idcCharges = idcCharges;
+    unit.plcCharges = plcCharges;
+    unit.totalPrice = totalPrice;
+
+    await project.save();
+
+    res.status(200).json({ status: "ok", message: "Unit updated successfully", data: project });
+  } catch (error) {
+    console.error("Error editing unit:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

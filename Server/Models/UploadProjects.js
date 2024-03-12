@@ -9,7 +9,8 @@ const unitSchema = new mongoose.Schema({
   rate: String,
   idcCharges: String,
   plcCharges: String,
-  totalPrice: String
+  totalPrice: String,
+  edcPrice: String,
 });
 
 // Define the schema for the Block model
