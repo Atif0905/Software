@@ -72,11 +72,15 @@
   position: relative;
   list-style-type: none; 
   padding: 0;
-  transition: opacity 3s ease-in;
+  margin-top: -10px;
+  opacity: 0;
+  transition: opacity 1.3s ease !important;
 }
+
 .dropdown .dropdown-menu.active {
   display: block;
   color: #fff;
+  opacity: 1 !important;
 }
 
 .dropdown .dropdown-item {
@@ -84,6 +88,10 @@
   line-height: 0px;
   text-decoration: none;
   background-color: rgb(44,59,65);
+}
+.dropdown-item:hover{
+  background-color: rgb(30,40,44);
+  color: #fff;
 }
 
 @media (max-width:1205px) {

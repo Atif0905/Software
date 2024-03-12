@@ -26,8 +26,15 @@
     padding: 8px;
     border-bottom: none !important;
 }
-
 .fl-table td {
     border-right: 1px solid #f8f8f8;
     font-size: 14px;
+}
+.butt{
+    color: rgb(137, 204, 241);
+    text-decoration: underline 1px rgb(200,230,246);
+}
+.butt:hover{
+    color: rgb(165, 214, 240);
+    cursor: pointer;
 }

@@ -96,6 +96,13 @@ const AddCustomerForm = () => {
     const { name, checked } = e.target;
     setFormData({ ...formData, [name]: checked });
   };
+  const numberInputOnWheelPreventChange = (e) => {
+    e.target.blur()
+    e.stopPropagation()
+    setTimeout(() => {
+      e.target.focus()
+    }, 0)
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -250,6 +257,7 @@ const AddCustomerForm = () => {
               id="input"
               placeholder="Enter Aadhar Number"
               type="number"
+              onWheel={numberInputOnWheelPreventChange}
               name="aadharNumber"
               value={formData.aadharNumber}
               onChange={handleInputChange}
@@ -276,6 +284,7 @@ const AddCustomerForm = () => {
               id="input"
               placeholder="Enter Mobile Number"
               type="number"
+              onWheel={numberInputOnWheelPreventChange}
               name="mobileNumber"
               value={formData.mobileNumber}
               onChange={handleInputChange}
@@ -422,6 +431,7 @@ const AddCustomerForm = () => {
           <div className=' grid-item'>
             <input
               type="number"
+              onWheel={numberInputOnWheelPreventChange}
               className="input-cal input-base"
               id="input"
               placeholder="Enter Plot Size"
@@ -434,6 +444,7 @@ const AddCustomerForm = () => {
           <div className=' grid-item'>
             <input
               type="number"
+              onWheel={numberInputOnWheelPreventChange}
               className="input-cal input-base"
               id="input"
               placeholder="Enter Base Price"
@@ -446,6 +457,7 @@ const AddCustomerForm = () => {
           <div className=' grid-item'>
             <input
               type="number"
+              onWheel={numberInputOnWheelPreventChange}
               className="input-cal input-base"
               id="input"
               placeholder="Enter IDC Charges"
@@ -458,6 +470,7 @@ const AddCustomerForm = () => {
           <div className=' grid-item'>
             <input
               type="number"
+              onWheel={numberInputOnWheelPreventChange}
               className="input-cal input-base"
               id="input"
               placeholder="Enter Plc Charges"
@@ -465,7 +478,7 @@ const AddCustomerForm = () => {
               onChange={(e) => setPlcCharges(e.target.value)}
               required
             />
-            <label id="label-input">PLC Charges</label>
+            <label id="label-input">EDC Charges</label>
           </div>
           <div className="container mt-2 grid-item">
             <input
