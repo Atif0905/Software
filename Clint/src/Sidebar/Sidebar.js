@@ -243,13 +243,13 @@ const Sidebar = () => {
         <li className=" dropdown-item"><Link ><MdOutlineCircle /> Wishes</Link></li>
       </div>
     </div>
-    <div className="dropdown">
+    {/* <div className="dropdown">
       <li className="dropdown-toggle" onClick={toggleDropdown8}> <FaRegFolder /> Accounts</li>
       <div className={"dropdown-menu" + (isopen8 ? " active" : "")} aria-labelledby="dropdownMenuButton">
         <li className=" dropdown-item"><Link ><MdOutlineCircle /> Agents</Link></li>
         <li className=" dropdown-item"><Link ><MdOutlineCircle /> Release Incentive</Link></li>
       </div>
-    </div>
+    </div> */}
     <div className="dropdown">
       <li className="dropdown-toggle" onClick={toggleDropdown9}> <FaRegFolder /> Password</li>
       <div className={"dropdown-menu" + (isopen9 ? " active" : "")} aria-labelledby="dropdownMenuButton">

@@ -11,20 +11,24 @@ const CustomerList = () => {
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-        console.log(response)
+        console.log(response);
         const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
           const projectName = await fetchName('getProject', customer.project);
           const blockName = await fetchName('getBlock', customer.project, customer.block);
           const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
           const unitDetails = await fetchUnitDetails(customer.project, customer.block, customer.plotOrUnit);
           const paymentDetails = await fetchPaymentDetailsByCustomerId(customer.customerId);
+          
+          // Filter payment details by payment mode "cheque"
+          const chequePaymentDetails = paymentDetails.data.filter(detail => detail.paymentMode === 'cheque');
+  
           return {
             ...customer,
             projectName: projectName.toUpperCase(),
             blockName: blockName.toUpperCase(),
             unitName: unitName.toUpperCase(),
             ...unitDetails,
-            paymentDetails: paymentDetails.data
+            paymentDetails: chequePaymentDetails // Assigning filtered payment details
           };
         }));
         setCustomers(customersWithDetails);
@@ -39,6 +43,7 @@ const CustomerList = () => {
     };
     fetchCustomers();
   }, []);
+  
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
@@ -188,7 +193,7 @@ const CustomerList = () => {
               <tr>
                 <td><strong>IDC Charges:</strong> </td>
                 <td>{selectedCustomer.idcCharges * selectedCustomer.plotSize} INR / {selectedCustomer.idcCharges}</td>
-                <td><strong>PLC Charges</strong></td>
+                <td><strong>EDC Charges</strong></td>
                 <td>{selectedCustomer.plcCharges * selectedCustomer.plotSize} INR / {selectedCustomer.plcCharges}</td>
               </tr>
               <tr>
@@ -226,7 +231,7 @@ const CustomerList = () => {
                       <td>{payment.paymentMode}</td>
                       <td>{payment.paymentType}</td>
                       <td>{payment.reference}</td>
-                    </tr>
+                    </tr> 
                   ))}
                 </tbody>
               </table>

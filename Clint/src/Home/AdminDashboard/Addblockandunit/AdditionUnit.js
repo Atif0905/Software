@@ -121,6 +121,13 @@ const AdditionUnit = () => {
     const total = (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges)) * parseFloat(plotSize);
     return total;
   };
+  const numberInputOnWheelPreventChange = (e) => {
+    e.target.blur()
+    e.stopPropagation()
+    setTimeout(() => {
+      e.target.focus()
+    }, 0)
+  }
   return (
     <div className="main-content back"> 
       <h4 className='Headtext'> Add Unit</h4>
@@ -131,23 +138,23 @@ const AdditionUnit = () => {
         </div>
         <div className='mt-2'>
           <label className=''>Plot size</label>
-          <input type="number" className="form-input-field" placeholder="Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required/>
         </div>
         <div className='mt-2'>
           <label className=''>Rate</label>
-          <input type="number" className="form-input-field"  placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} required/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field"  placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} required/>
         </div>
         <div className='mt-2'>
           <label className=''>IDC charges</label>
-          <input type="number" className="form-input-field" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} required/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} required/>
         </div>
         <div className='mt-2'>
-          <label className=''>PLC charges</label>
-          <input type="number" className="form-input-field " placeholder="PLC Charges" value={plcCharges} onChange={(e) => setPlcCharges(e.target.value)}  required/>
+          <label className=''>EDC charges</label>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="EDC Charges" value={plcCharges} onChange={(e) => setPlcCharges(e.target.value)}  required/>
         </div>
         <div className='mt-2'>
           <label className=''>Total Price</label>
-          <input type="number" className="form-input-field " placeholder="Total Price" value={totalPrice} onChange={(e) => setTotalPrice(e.target.value)}  required/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="Total Price" value={totalPrice} onChange={(e) => setTotalPrice(e.target.value)}  required/>
         </div>
         <div className="mt-2">
           <label>Select Project</label>

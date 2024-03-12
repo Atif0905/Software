@@ -97,16 +97,11 @@ const UploadedProjects = () => {
     const fetchCustomers = async () => {
       try {
         const viewCustomerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-        const viewCustomerData = viewCustomerResponse.data;
-  
+        const viewCustomerData = viewCustomerResponse.data;  
         const allProjectsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
-        const allProjectsData = allProjectsResponse.data.data;
-  
+        const allProjectsData = allProjectsResponse.data.data;  
         const customersWithDetails = await Promise.all(viewCustomerData.map(async (customer) => {
-          // Find the project in getAllProjects corresponding to the project ID from Viewcustomer
           const project = allProjectsData.find(proj => proj._id === customer.project);
-  
-          // If project is found, fetch names for block and unit
           if (project) {
             const blockName = await fetchName('getBlock', customer.project, customer.block);
             const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
@@ -123,10 +118,7 @@ const UploadedProjects = () => {
             return null;
           }
         }));
-  
-        // Filter out null values (customers without matching projects)
-        const filteredCustomers = customersWithDetails.filter(customer => customer !== null);
-  
+        const filteredCustomers = customersWithDetails.filter(customer => customer !== null);  
         setCustomers(filteredCustomers);
         const totalAmountsByProject = calculateTotalAmountsByProject(filteredCustomers);
         setPaymentDetails(totalAmountsByProject);
@@ -138,26 +130,19 @@ const UploadedProjects = () => {
       }
     };
     fetchCustomers();
-  }, []);
-  
-  
+  }, []);  
   const calculateTotalAmountsByProject = (customers) => {
-    const totalAmountsByProject = {};
-  
+    const totalAmountsByProject = {};  
     customers.forEach(customer => {
       const projectId = customer.project;
-      const totalAmountReceived = customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0);
-  
+      const totalAmountReceived = customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0);  
       if (!totalAmountsByProject[projectId]) {
         totalAmountsByProject[projectId] = 0;
-      }
-  
+      }  
       totalAmountsByProject[projectId] += totalAmountReceived;
-    });
-  
+    });  
     return totalAmountsByProject;
   };
-
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
@@ -242,7 +227,6 @@ const UploadedProjects = () => {
             return { ...project, blocks: blocksWithUnitCount };
           })
         );
-
         setProjects(projectsWithUnitCount);
       } else {
         console.error("Failed to fetch projects:", data.error);
@@ -289,7 +273,6 @@ const UploadedProjects = () => {
   };
   const updateProjectUnitCounts = () => {
     const counts = {};
-
     projects.forEach((project) => {
       const {
         totalUnits,
@@ -297,7 +280,6 @@ const UploadedProjects = () => {
         totalHoldUnits,
         totalSoldUnits,
       } = calculateUnitCountsByProjectId(project._id);
-
       counts[project._id] = {
         totalUnits,
         totalAvailableUnits,
@@ -305,12 +287,10 @@ const UploadedProjects = () => {
         totalSoldUnits,
       };
     });
-
     setProjectUnitCounts(counts);
   };
   const calculateUnitCountsByProjectId = (projectId) => {
     const project = projects.find((project) => project._id === projectId);
-
     if (!project) {
       return {
         totalUnits: 0,
@@ -319,16 +299,13 @@ const UploadedProjects = () => {
         totalSoldUnits: 0,
       };
     }
-
     let totalUnits = 0;
     let totalAvailableUnits = 0;
     let totalHoldUnits = 0;
     let totalSoldUnits = 0;
-
     project.blocks.forEach((block) => {
       block.units.forEach((unit) => {
         totalUnits += 1;
-
         if (unit.status === "hold") {
           totalHoldUnits += 1;
         } else if (unit.status === "sold") {
@@ -338,7 +315,6 @@ const UploadedProjects = () => {
         }
       });
     });
-
     return {
       totalUnits,
       totalAvailableUnits,
@@ -383,7 +359,6 @@ const UploadedProjects = () => {
   };
   const calculateTotalPriceSum = () => {
     let totalPriceSum = 0;
-
     if (selectedProjectId) {
       const selectedProject = projects.find(project => project._id === selectedProjectId);
       if (selectedProject) {
@@ -394,7 +369,6 @@ const UploadedProjects = () => {
         });
       }
     }
-
     return totalPriceSum;
   };
   const totalPriceSum = calculateTotalPriceSum();
@@ -404,133 +378,127 @@ const UploadedProjects = () => {
     {projects.map((project, index) => (
       <div key={index} className=" position-relative">
         <div className="projectdiv">
-          <div className="coloureddiv1">
-            <h3 className="colouredtext">{project.name}</h3>
-          </div>
-          <div className="coloureddiv d-flex justify-content-between">
-            <p className="descriptiondiv">
-              {project.description} <FontAwesomeIcon icon={faLocationDot} />
-            </p>
-            <p className='react-icon'><IoBagOutline /></p>
-          </div>
-          <div
-            className="viewdetail-div"
-            onClick={() => handleClickProject(project._id)}
-          >
-            <div className="viewbutton-div">
-              <p className="moredetail-text mt-3">View More Details</p>
-              <FontAwesomeIcon icon={faCaretDown} className="moredetail" />
-            </div>
-          </div>
+  <div className="coloureddiv1">
+    <h3 className="colouredtext">{project.name}</h3>
+  </div>
+  <div className="coloureddiv d-flex justify-content-between">
+    <p className="descriptiondiv">
+      {project.description} <FontAwesomeIcon icon={faLocationDot} />
+    </p>
+    <p className='react-icon'><IoBagOutline /></p>
+  </div>
+  <div
+    className="viewdetail-div"
+    onClick={() => handleClickProject(project._id)}>
+    <div className="viewbutton-div">
+      <p className="moredetail-text mt-3">View More Details</p>
+      <FontAwesomeIcon icon={faCaretDown} className="moredetail" />
+    </div>
+  </div>
+</div>
+{selectedProjectId === project._id && showBlocks && (
+  <div className="modal-wrapper">
+    <FontAwesomeIcon icon={faTimes} size="2x" className="closeicon" onClick={closeModal}/>
+    <div className="modal-container">
+      <div className='flexy'>
+       <div className="paymentmaindiv">
+  <div className="coloureddiv1">
+    <h3 className="colouredtext">Total Payment</h3>
+    <div className="d-flex justify-content-between">
+    <p className="colouredtext1">{totalPriceSum}</p>
+    <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+    </div>
+  </div>         
+</div>
+<div className="paymentmaindiv">
+  <div className="coloureddiv1">
+    <h3 className="colouredtext">Received Payment</h3>
+    <div className="d-flex justify-content-between">
+    <p className="colouredtext1">{(paymentDetails[selectedProjectId] || 0).toFixed(2)}</p>
+    <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+    </div>
+  </div>         
+</div>
+<div className="paymentmaindiv">
+  <div className="coloureddiv1">
+    <h3 className="colouredtext">Due Payment</h3>
+    <div className="d-flex justify-content-between">
+    <p className="colouredtext1">{(totalPriceSum - (paymentDetails[selectedProjectId] || 0)).toFixed(2)}</p>
+    <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+    </div>
+  </div>
+  </div>
+</div>
+      <div className="d-flex justify-content-between mb-3">
+        <div className="totalunitsdiv mt-3">
+          <h2 className="textunits"> Total </h2>
+          <p className="unitsnum">
+            {projectUnitCounts[project._id]?.totalUnits || 0}
+          </p>
         </div>
-        {selectedProjectId === project._id && showBlocks && (
-          <div className="modal-wrapper">
-            <FontAwesomeIcon
-              icon={faTimes}
-              size="2x"
-              className="closeicon"
-              onClick={closeModal}
-            />
-            <div className="modal-container">
-              <div className='flexy'>
-               <div className="paymentmaindiv">
-          <div className="coloureddiv1">
-            <h3 className="colouredtext">Total Payment</h3>
-            <div className="d-flex justify-content-between">
-            <p className="colouredtext1">{totalPriceSum}</p>
-            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
-            </div>
-          </div>         
+        <div className="availableunitsdiv mt-3">
+          <h2 className="textunits"> Available </h2>
+          <p className="unitsnum">
+            {projectUnitCounts[project._id]?.totalAvailableUnits || 0}
+          </p>
         </div>
-        <div className="paymentmaindiv">
-          <div className="coloureddiv1">
-            <h3 className="colouredtext">Received Payment</h3>
-            <div className="d-flex justify-content-between">
-            <p className="colouredtext1">{(paymentDetails[selectedProjectId] || 0).toFixed(2)}</p>
-            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
-            </div>
-          </div>         
+        <div className="holunitsdiv mt-3">
+          <h2 className="textunits"> Hold </h2>
+          <p className="unitsnum">
+            {projectUnitCounts[project._id]?.totalHoldUnits || 0}
+          </p>
         </div>
-        <div className="paymentmaindiv">
-          <div className="coloureddiv1">
-            <h3 className="colouredtext">Due Payment</h3>
-            <div className="d-flex justify-content-between">
-            <p className="colouredtext1">{(totalPriceSum - (paymentDetails[selectedProjectId] || 0)).toFixed(2)}</p>
-            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
-            </div>
-          </div>
-          </div>
+        <div className="solunitsdiv mt-3">
+          <h2 className="textunits"> Sold </h2>
+          <p className="unitsnum">
+            {projectUnitCounts[project._id]?.totalSoldUnits || 0}
+          </p>
         </div>
-              <div className="d-flex justify-content-between mb-3">
-                <div className="totalunitsdiv mt-3">
-                  <h2 className="textunits"> Total </h2>
-                  <p className="unitsnum">
-                    {projectUnitCounts[project._id]?.totalUnits || 0}
-                  </p>
-                </div>
-                <div className="availableunitsdiv mt-3">
-                  <h2 className="textunits"> Available </h2>
-                  <p className="unitsnum">
-                    {projectUnitCounts[project._id]?.totalAvailableUnits || 0}
-                  </p>
-                </div>
-                <div className="holunitsdiv mt-3">
-                  <h2 className="textunits"> Hold </h2>
-                  <p className="unitsnum">
-                    {projectUnitCounts[project._id]?.totalHoldUnits || 0}
-                  </p>
-                </div>
-                <div className="solunitsdiv mt-3">
-                  <h2 className="textunits"> Sold </h2>
-                  <p className="unitsnum">
-                    {projectUnitCounts[project._id]?.totalSoldUnits || 0}
-                  </p>
-                </div>
-              </div>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th className="blockdivstart">ID</th>
-                    <th className="blockdiv">Blocks</th>
-                    <th className="blockdiv">Total Units</th>
-                    <th className="blockdiv">Available Units</th>
-                    <th className="blockdiv">Hold Units</th>
-                    <th className="blockdiv">Sold Units</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {project.blocks.map((block, blockIndex) => (
-                    <tr
-                      key={blockIndex}
-                      onClick={() => handleClickBlock(block._id)}
-                    >
-                      <td>{blockIndex + 1}</td>
-                      <td className="tablecursor">{block.name}</td>
-                      <td className="tablecursor">
-                        {blockwiseUnitCounts[block._id]}
-                      </td>
-                      <td className="tablecursor">
-                        {blockwiseAvailableUnitCounts[block._id]}
-                      </td>
-                      <td className="tablecursor">
-                        {blockwiseHoldUnitCounts[block._id] || 0}
-                      </td>
-                      <td className="tablecursor">
-                        {blockwiseSoldUnitCounts[block._id] || 0}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <ul>
-                {project.blocks.map((block, blockIndex) => (
-                  <div className="" key={blockIndex}>
-                    {selectedBlockId === block._id && showUnits && (
-                      <>
-                        <ul>
-                          <div className="row">
-                            {block.units.map((unit, unitIndex) => (
-                              <div className="col-1" key={unitIndex}>
+      </div>
+      <table className="table">
+        <thead>
+          <tr>
+            <th className="blockdivstart">ID</th>
+            <th className="blockdiv">Blocks</th>
+            <th className="blockdiv">Total Units</th>
+            <th className="blockdiv">Available Units</th>
+            <th className="blockdiv">Hold Units</th>
+            <th className="blockdiv">Sold Units</th>
+          </tr>
+        </thead>
+        <tbody>
+          {project.blocks.map((block, blockIndex) => (
+            <tr
+              key={blockIndex}
+              onClick={() => handleClickBlock(block._id)}
+            >
+              <td>{blockIndex + 1}</td>
+              <td className="tablecursor">{block.name}</td>
+              <td className="tablecursor">
+                {blockwiseUnitCounts[block._id]}
+              </td>
+              <td className="tablecursor">
+                {blockwiseAvailableUnitCounts[block._id]}
+              </td>
+              <td className="tablecursor">
+                {blockwiseHoldUnitCounts[block._id] || 0}
+              </td>
+              <td className="tablecursor">
+                {blockwiseSoldUnitCounts[block._id] || 0}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <ul>
+        {project.blocks.map((block, blockIndex) => (
+          <div className="" key={blockIndex}>
+            {selectedBlockId === block._id && showUnits && (
+              <>
+                <ul>
+                  <div className="row">
+                    {block.units.map((unit, unitIndex) => (
+                      <div className="col-1" key={unitIndex}>
 <div className="units-div" style={{backgroundColor: unit.status === "hold"? "#FEE69F": unit.status === "sold"? "#FE8B8B": unit.status === "available"? "#A6FFBF": "#A6FFBF", }} onClick={() => DropdownToggle(unitIndex)}>
   <p className="unit-div">{unit.name}</p>
 </div>
@@ -555,26 +523,25 @@ const UploadedProjects = () => {
       <button className="sold-unit" onClick={() => handleMarkUnitSold( project._id, block._id, unit._id)}>  Sold</button>
     </>
   )}
-  <button
-    className="delete-unit"onClick={() =>handleDeleteUnit(project._id,block._id,unit._id)}> Delete</button>
+      <button className="delete-unit"onClick={() =>handleDeleteUnit(project._id,block._id,unit._id)}> Delete</button>
 </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </ul>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-      </div>
-    ))}
-  </div>
+ )}
 </div>
-  );
+))}
+ </div>
+</ul>
+</>
+)}
+</div>
+))}
+</ul>
+</div>
+</div>
+)}
+</div>
+))}
+</div>
+</div>
+);
 };
 export default UploadedProjects;
