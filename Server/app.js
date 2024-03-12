@@ -333,7 +333,7 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
 // Endpoint to edit unit including its charges
 app.put("/editUnit/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
-  const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice } = req.body;
+  const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice, edcPrice } = req.body;
 
   try {
     // Validate ObjectIDs
@@ -366,6 +366,7 @@ app.put("/editUnit/:projectId/:blockId/:unitId", async (req, res) => {
     unit.idcCharges = idcCharges;
     unit.plcCharges = plcCharges;
     unit.totalPrice = totalPrice;
+    unit.edcPrice = edcPrice;
 
     await project.save();
 
