@@ -9,7 +9,7 @@ const AddCustomerForm = () => {
     aadharNumber: '',
     panNumber: '',
     mobileNumber: '',
-    income: '',
+    income: '', 
     email: '',
     propertyType: '',
     selectedProjectId: '',
@@ -30,6 +30,13 @@ const AddCustomerForm = () => {
   const [plcCharges, setPlcCharges] = useState('');
   const [selectedBlockUnits, setSelectedBlockUnits] = useState([]);
   const [paymentPlans, setPaymentPlans] = useState([]);
+  const [edcPrice , setEdcPrice] = useState('')
+  const [editedRate, setEditedRate] = useState('');
+  const [editedPlcCharges, setEditedPlcCharges] = useState('');
+  const [editedIdcCharges, setEditedIdcCharges] = useState('');
+  const [editedEdcPrice, setEditedEdcPrice] = useState('');
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [editedtotalPrice, setEditedTotalPrice] = useState();
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -137,11 +144,9 @@ const AddCustomerForm = () => {
               unitArea: selectedUnit.plotSize, 
               ProjectName: selectedProject
             };
-            console.log(emailData)
             const sendEmailResponse = await axios.post(`${process.env.REACT_APP_API_URL}/send-email`, emailData);
 
             if (sendEmailResponse.status === 200) {
-              console.log('Email sent successfully');
             } else {
               console.error('Failed to send email:', sendEmailResponse.statusText);
             }
@@ -167,8 +172,11 @@ const AddCustomerForm = () => {
             plotSize: '',
             rate: '',
             idcCharges: '',
-            plcCharges: ''
+            plcCharges: '',
+            edcPrice: '',
+            totalPrice: ''
           });
+          await handleEditUnit();
         } else {
           console.error('Failed to add customer:', addCustomerResponse.statusText);
         }
@@ -197,15 +205,58 @@ const AddCustomerForm = () => {
   };
   const handleClickUnit = (unitId) => {
     setFormData({ ...formData, selectedUnitId: unitId });
+  
     const selectedUnit = projects
       .flatMap(project => project.blocks)
       .flatMap(block => block.units)
       .find(unit => unit._id === unitId);
-    setPlotSize(selectedUnit?.plotSize || '');
-    setRate(selectedUnit?.rate || '');
-    setIdcCharges(selectedUnit?.idcCharges || '');
-    setPlcCharges(selectedUnit?.plcCharges || '');
+  
+    if (selectedUnit) {
+      // Automatically fill input fields with old data
+      setPlotSize(selectedUnit?.plotSize || '');
+      setEditedRate(selectedUnit.rate || '');
+      setEditedPlcCharges(selectedUnit.plcCharges || '');
+      setEditedIdcCharges(selectedUnit.idcCharges || '');
+      setEditedEdcPrice(selectedUnit.edcPrice || '');
+      // Calculate the total price based on the new edited values
+      const editedTotal =
+        (parseFloat(selectedUnit.rate || 0) + parseFloat(selectedUnit.plcCharges || 0) + parseFloat(selectedUnit.idcCharges || 0) + parseFloat(selectedUnit.edcPrice || 0)) * parseFloat(plotSize);
+      setEditedTotalPrice(editedTotal);
+    }
   };
+  
+  const handleEditUnit = async () => {
+    try {
+      const { selectedProjectId, selectedBlockId, selectedUnitId } = formData;
+
+      const editedUnitData = {
+        rate: editedRate,
+        plcCharges: editedPlcCharges,
+        idcCharges: editedIdcCharges,
+        edcPrice: editedEdcPrice,
+        totalPrice : editedtotalPrice,
+      };
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/editUnit/${selectedProjectId}/${selectedBlockId}/${selectedUnitId}`, editedUnitData);
+
+      if (response.status === 200) {
+      } else {
+        console.error('Failed to update unit:', response.data.error);
+      }
+    } catch (error) {
+      console.error('Error updating unit:', error);
+    }
+  };
+
+
+  const calculateEditedTotalPrice = () => {
+    const editedTotal =
+      (parseFloat(editedRate) + parseFloat(editedPlcCharges) + parseFloat(editedIdcCharges) + parseFloat(editedEdcPrice)) * parseFloat(plotSize);
+    setEditedTotalPrice(editedTotal);
+  };
+  
+  useEffect(() => {
+    calculateEditedTotalPrice();
+  }, [editedRate, editedPlcCharges, editedIdcCharges, editedEdcPrice, plotSize]);
   return (
     <div className='main-content back'>
       <h3 className='Headtext'>Add a New Customer </h3>
@@ -448,8 +499,8 @@ const AddCustomerForm = () => {
               className="input-cal input-base"
               id="input"
               placeholder="Enter Base Price"
-              value={rate}
-              onChange={(e) => setRate(e.target.value)}
+              value={editedRate}
+              onChange={(e) => setEditedRate(e.target.value)}
               required
             />
             <label id="label-input">Base Price</label>
@@ -461,8 +512,8 @@ const AddCustomerForm = () => {
               className="input-cal input-base"
               id="input"
               placeholder="Enter IDC Charges"
-              value={idcCharges}
-              onChange={(e) => setIdcCharges(e.target.value)}
+              value={editedIdcCharges}
+              onChange={(e) => setEditedIdcCharges(e.target.value)}
               required
             />
             <label id="label-input">IDC Charges</label>
@@ -474,12 +525,29 @@ const AddCustomerForm = () => {
               className="input-cal input-base"
               id="input"
               placeholder="Enter Plc Charges"
-              value={plcCharges}
-              onChange={(e) => setPlcCharges(e.target.value)}
+              value={editedPlcCharges}
+              onChange={(e) => setEditedPlcCharges(e.target.value)}
+              required
+            />
+            <label id="label-input">PlC Charges</label>
+          </div>
+          <div className=' grid-item'>
+            <input
+              type="number"
+              onWheel={numberInputOnWheelPreventChange}
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter EDC Charges"
+              value={editedEdcPrice}
+              onChange={(e) => setEditedEdcPrice(e.target.value)}
               required
             />
             <label id="label-input">EDC Charges</label>
           </div>
+          <div className='grid-item'>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id='input' placeholder="Total Price" value={editedtotalPrice} onChange={(e) => setEditedTotalPrice(e.target.value)}  />
+          <label id="label-input">Total Price</label>
+        </div>
           <div className="container mt-2 grid-item">
             <input
               type="checkbox"
@@ -499,7 +567,7 @@ const AddCustomerForm = () => {
           </div>
         </div>
         <div className='mt-4'>
-          <button type="submit" className="btn btn-primary ">Submit</button>
+          <button type="submit" className="btn btn-primary " >Submit</button>
         </div>
       </form>
     </div>

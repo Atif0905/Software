@@ -7,6 +7,7 @@ const AdditionUnit = () => {
   const [rate, setRate] = useState("");
   const [idcCharges, setIdcCharges] = useState("");
   const [plcCharges, setPlcCharges] = useState("");
+  const [edcPrice, setEdcPrice] = useState("")
   const [totalPrice, setTotalPrice] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [newUnitName, setNewUnitName] = useState("");
@@ -25,7 +26,8 @@ const AdditionUnit = () => {
             rate,
             idcCharges,
             plcCharges,
-            totalPrice: calculatedTotalPrice 
+            totalPrice: calculatedTotalPrice,
+            edcPrice 
           }
         );
         const data = response.data;
@@ -37,6 +39,7 @@ const AdditionUnit = () => {
           setRate("");
           setIdcCharges("");
           setPlcCharges("");
+          setEdcPrice("")
           setTotalPrice(0);         } else {
           console.error("Failed to add unit:", data.error);
         }
@@ -114,11 +117,11 @@ const AdditionUnit = () => {
   }, []);
   useEffect(() => {
     if (rate && plcCharges && idcCharges && plotSize) {
-      const calculatedTotalPrice = calculatePerUnitPayment(rate, plcCharges, idcCharges, plotSize);
+      const calculatedTotalPrice = calculatePerUnitPayment(rate, plcCharges, idcCharges, plotSize, edcPrice);
       setTotalPrice(calculatedTotalPrice.toFixed(2));    }
-  }, [rate, plcCharges, idcCharges, plotSize]);
+  }, [rate, plcCharges, idcCharges, plotSize, edcPrice]);
   const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize) => {
-    const total = (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges)) * parseFloat(plotSize);
+    const total = (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges) + parseFloat(edcPrice)) * parseFloat(plotSize);
     return total;
   };
   const numberInputOnWheelPreventChange = (e) => {
@@ -142,23 +145,27 @@ const AdditionUnit = () => {
         </div>
         <div className='mt-2'>
           <label className=''>Rate</label>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field"  placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} required/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field"  placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} />
         </div>
         <div className='mt-2'>
           <label className=''>IDC charges</label>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} required/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} />
+        </div>
+        <div className='mt-2'>
+          <label className=''>PLC charges</label>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="PLC Charges" value={plcCharges} onChange={(e) => setPlcCharges(e.target.value)}  />
         </div>
         <div className='mt-2'>
           <label className=''>EDC charges</label>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="EDC Charges" value={plcCharges} onChange={(e) => setPlcCharges(e.target.value)}  required/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="PLC Charges" value={edcPrice} onChange={(e) => setEdcPrice(e.target.value)}  />
         </div>
         <div className='mt-2'>
           <label className=''>Total Price</label>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="Total Price" value={totalPrice} onChange={(e) => setTotalPrice(e.target.value)}  required/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="Total Price" value={totalPrice} onChange={(e) => setTotalPrice(e.target.value)}  />
         </div>
         <div className="mt-2">
           <label>Select Project</label>
-          <select className="select-buttons ps-1" onChange={(e) => setSelectedProjectId(e.target.value)} >
+          <select className="select-buttons ps-1" onChange={(e) => setSelectedProjectId(e.target.value)} required>
             <option value="">Select Project</option>
             {projects.map((project, index) => ( 
               <option key={index} value={project._id}> {project.name} </option>
@@ -167,7 +174,7 @@ const AdditionUnit = () => {
         </div>
         <div className="mt-2">
           <label>Select Size Type</label>
-          <select className="select-buttons ps-1" value={sizeType} onChange={(e) => setSizeType(e.target.value)}>
+          <select className="select-buttons ps-1" value={sizeType} onChange={(e) => setSizeType(e.target.value)} required>
             <option value="">Select Size Type</option>
             <option value="sqft">sqft</option>
             <option value="sqyd">sqyd</option>
@@ -175,11 +182,12 @@ const AdditionUnit = () => {
         </div>
         <div className="mt-2">
           <label>Select Block</label>
-          <select className="select-buttons  ps-1" onChange={(e) => setSelectedBlockId(e.target.value)}>
+          <select className="select-buttons  ps-1" onChange={(e) => setSelectedBlockId(e.target.value)} required>
             <option value="">Select Block</option>
             {selectedProjectId && projects.find((project) => project._id === selectedProjectId)?.blocks.map((block, index) => ( 
               <option key={index} value={block._id}> {block.name} </option>
             ))}
+            
           </select>
         </div>
         <div className="mt-3">

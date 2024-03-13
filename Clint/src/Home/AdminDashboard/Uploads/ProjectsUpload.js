@@ -66,8 +66,8 @@ const ProjectsUpload = () => {
     const due = parseFloat(totalPrice) - parseFloat(totalReceivedPayment);
     setDuePayment(due.toFixed(2));
   }, [totalPrice, totalReceivedPayment]);
-  const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize) => {
-    const total = (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges)) * parseFloat(plotSize);
+  const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize, edcPrice) => {
+    const total = (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges) + parseFloat(edcPrice)) * parseFloat(plotSize);
     return total;
   };
   useEffect(() => {
@@ -98,7 +98,7 @@ const ProjectsUpload = () => {
     projects.forEach(project => {
       project.blocks.forEach(block => {
         block.units.forEach(unit => {
-          totalPrice += calculatePerUnitPayment(unit.rate, unit.plcCharges, unit.idcCharges, unit.plotSize);
+          totalPrice += calculatePerUnitPayment(unit.rate, unit.plcCharges, unit.idcCharges, unit.plotSize , unit.edcPrice);
         });
       });
     });
