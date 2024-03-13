@@ -184,6 +184,7 @@ const Receivedpayments = () => {
             plotSize: matchedUnit.plotSize,
             sizeType: matchedUnit.sizeType,
             rate: matchedUnit.rate,
+            edcPrice : matchedUnit.edcPrice
           };
           setCustomerDetails({ ...customerDetails, unitDetails: customerUnitDetails });
           setUnitData(matchedUnit); 
@@ -260,15 +261,15 @@ const Receivedpayments = () => {
   
   const filteredPayments = matchedPayments.filter(payment => payment.customerId === selectedCustomerId);
   let totalDue = unitData && unitData.totalPrice ? unitData.totalPrice : 0;
-filteredPayments.forEach(payment => {
-  totalDue -= parseFloat(payment.amount);
-});
+  filteredPayments.forEach(payment => {
+    totalDue -= parseFloat(payment.amount);
+  });
 function ordinalSuffix(number) {
   const suffixes = ["th", "st", "nd", "rd"];
   const v = number % 100;
   return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 }
-const possessionCharges = unitData ? ((parseFloat(unitData.idcCharges) + parseFloat(unitData.plcCharges)) * parseFloat(unitData.plotSize)).toFixed(2) : '';
+const possessionCharges = unitData ? ((parseFloat(unitData.idcCharges) + parseFloat(unitData.plcCharges) + parseFloat(unitData.edcPrice)) * parseFloat(unitData.plotSize)).toFixed(2) : '';
   return (
  <div className="main-content">
  <h4 className="Headtext">Receive Payment from Customer</h4>

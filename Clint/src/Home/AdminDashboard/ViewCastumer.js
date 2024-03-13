@@ -7,50 +7,50 @@ const CustomerList = () => {
   const [error, setError] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [paymentDetails, setPaymentDetails] = useState(null);
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-        console.log(response);
-        const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
-          const projectName = await fetchName('getProject', customer.project);
-          const blockName = await fetchName('getBlock', customer.project, customer.block);
-          const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
-          const unitDetails = await fetchUnitDetails(customer.project, customer.block, customer.plotOrUnit);
-          const paymentDetails = await fetchPaymentDetailsByCustomerId(customer.customerId);
-          
-          // Filter payment details by payment mode "cheque"
-          const chequePaymentDetails = paymentDetails.data.filter(detail => detail.paymentMode === 'cheque');
-  
-          return {
-            ...customer,
-            projectName: projectName.toUpperCase(),
-            blockName: blockName.toUpperCase(),
-            unitName: unitName.toUpperCase(),
-            ...unitDetails,
-            paymentDetails: chequePaymentDetails // Assigning filtered payment details
-          };
-        }));
-        setCustomers(customersWithDetails);
-        const totalAmounts = calculateTotalAmounts(customersWithDetails);
-        setPaymentDetails(totalAmounts);
-      } catch (error) {
-        console.error('Error fetching customers:', error);
-        setError('Error fetching customers. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCustomers();
-  }, []);
+useEffect(() => {
+  const fetchCustomers = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+      console.log(response);
+      const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
+        const projectName = await fetchName('getProject', customer.project);
+        const blockName = await fetchName('getBlock', customer.project, customer.block);
+        const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
+        const unitDetails = await fetchUnitDetails(customer.project, customer.block, customer.plotOrUnit);
+        const paymentDetails = await fetchPaymentDetailsByCustomerId(customer.customerId);
+        
+        return {
+          ...customer,
+          projectName: projectName.toUpperCase(),
+          blockName: blockName.toUpperCase(),
+          unitName: unitName.toUpperCase(),
+          ...unitDetails,
+          paymentDetails: paymentDetails.data // Assigning all payment details
+        };
+      }));
+      setCustomers(customersWithDetails);
+      const totalAmounts = calculateTotalAmounts(customersWithDetails);
+      setPaymentDetails(totalAmounts);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      setError('Error fetching customers. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchCustomers();
+}, []);
+
   
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
+      console.log(response)
       return response.data;
     } catch (error) {
       console.error('Error fetching payment details:', error);
-      throw new Error('Error fetching payment details. Please try again later.');
+      // If payment details cannot be fetched, return an empty array to prevent errors
+      return { data: [] };
     }
   };
   const fetchName = async (endpoint, ...ids) => {
@@ -65,14 +65,16 @@ const CustomerList = () => {
   const fetchUnitDetails = async (projectId, blockId, unitId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
+      console.log(response)
       const unitData = response.data.data;
       return {
-        unitPrice: unitData.totalPrice.toUpperCase(),
-        idcCharges: unitData.idcCharges.toUpperCase(),
-        plcCharges: unitData.plcCharges.toUpperCase(),
-        plotSize: unitData.plotSize.toUpperCase(),
-        sizeType: unitData.sizeType.toUpperCase(),
-        rate: unitData.rate.toUpperCase()
+        unitPrice: unitData.totalPrice,
+        idcCharges: unitData.idcCharges,
+        plcCharges: unitData.plcCharges,
+        plotSize: unitData.plotSize,
+        sizeType: unitData.sizeType,
+        rate: unitData.rate,
+        edcPrice: unitData.edcPrice
       };
     } catch (error) {
       console.error('Error fetching unit details:', error);
@@ -83,6 +85,7 @@ const CustomerList = () => {
         plotSize: 'Unknown',
         sizeType: 'Unknown',
         rate: 'unknown',
+        edcPrice: 'unknown'
       };
     }
   };
@@ -101,7 +104,7 @@ const CustomerList = () => {
     return date.toLocaleDateString('en-US', options);
   };
   const total = selectedCustomer ?
-    (parseFloat(selectedCustomer.rate) + parseFloat(selectedCustomer.plcCharges) + parseFloat(selectedCustomer.idcCharges)) * parseFloat(selectedCustomer.plotSize)
+    (parseFloat(selectedCustomer.rate) + parseFloat(selectedCustomer.plcCharges) + parseFloat(selectedCustomer.idcCharges) + parseFloat(selectedCustomer.edcPrice)) * parseFloat(selectedCustomer.plotSize)
     : 0;
   const totalAmount = paymentDetails ? Object.values(paymentDetails).reduce((sum, amount) => sum + amount, 0) : 0;
 
@@ -193,22 +196,24 @@ const CustomerList = () => {
               <tr>
                 <td><strong>IDC Charges:</strong> </td>
                 <td>{selectedCustomer.idcCharges * selectedCustomer.plotSize} INR / {selectedCustomer.idcCharges}</td>
-                <td><strong>EDC Charges</strong></td>
+                <td><strong>PLC Charges</strong></td>
                 <td>{selectedCustomer.plcCharges * selectedCustomer.plotSize} INR / {selectedCustomer.plcCharges}</td>
               </tr>
               <tr>
+              <td><strong>EDC Charges</strong></td>
+                <td>{selectedCustomer.edcPrice * selectedCustomer.plotSize} INR / {selectedCustomer.edcPrice}</td>
                 <td><strong>Total Price</strong></td>
                 <td>{total}</td>
-                <td><strong>Total Payment Amount</strong></td>
-                <td>{totalAmountsReceived[selectedCustomer.customerId]}</td>
               </tr>
               <tr>
+              <td><strong>Total Payment Amount</strong></td>
+                <td>{totalAmountsReceived[selectedCustomer.customerId]}</td>
                 <td><strong>Balance</strong></td>
                 <td>{selectedCustomer.unitPrice - totalAmountsReceived[selectedCustomer.customerId]}</td>
               </tr>
             </tbody>
           </table>
-          {selectedCustomer.paymentDetails && (
+          {selectedCustomer.paymentDetails && selectedCustomer.paymentDetails.length > 0 && ( 
             <div>
               <h3>Payment Details</h3>
               <table>
@@ -223,7 +228,7 @@ const CustomerList = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {selectedCustomer.paymentDetails.map((payment, index) => (
+                {selectedCustomer.paymentDetails.map((payment, index) => (
                     <tr key={index}>
                       <td>{new Date(payment.PaymentDate).toLocaleDateString()}</td>
                       <td>{payment.amount}</td>
