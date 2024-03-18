@@ -15,21 +15,21 @@ const AdminPanel = () => {
   const [type, setType] = useState('');
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/createpost`);
-        console.log(response);
-        if (response.status === 200) {
-          setPosts(response.data); // Assuming the response data is an array of posts
-        }
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      }
-    };
+  // useEffect(() => {
+  //   // const fetchData = async () => {
+  //   //   try {
+  //   //     const response = await axios.get(`${process.env.REACT_APP_API_URL}/createpost`);
+  //   //     console.log(response);
+  //   //     if (response.status === 200) {
+  //   //       setPosts(response.data); // Assuming the response data is an array of posts
+  //   //     }
+  //   //   } catch (error) {
+  //   //     console.error('Error fetching posts:', error);
+  //   //   }
+  //   // };
 
-    fetchData();
-  }, []);
+  //   // fetchData();
+  // }, []);
 
   async function createNewPost(ev) {
     ev.preventDefault();
