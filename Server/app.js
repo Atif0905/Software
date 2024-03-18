@@ -11,6 +11,16 @@ const PaymentPlan = require('./Models/PaymentPlan');
 const Payment = require('./Models/PaymentRecive')
 const pdfMakePrinter = require('pdfmake/src/printer');
 const nodemailer = require('nodemailer');
+const multer = require('multer');
+const uploadMiddleware = multer({dest: 'uploads/'});
+const fs = require('fs');
+const Post = require('./Models/CreatePost')
+const Blog = require('./Models/Createblog');
+app.use(cors());
+app.use(express.json());
+app.use('/uploads', express.static(__dirname + '/uploads'));
+
+
 
 const { PORT, MONGODB_URI, JWT_SECRET } = process.env; // Access environment variables
 
@@ -30,6 +40,29 @@ require("./userDetails");
 
 const User = mongoose.model("UserInfo");
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/webp') {
+    cb(null, true);
+  } else {
+    cb(new Error('Only .webp files are allowed'));
+  }
+};
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: fileFilter
+});
+
+module.exports = upload;
 app.post("/register", async (req, res) => {
   const { fname, lname, email, password, userType } = req.body;
 
@@ -924,5 +957,89 @@ app.post('/send-email', async (req, res) => {
   } catch (error) {
     console.error('Error sending email:', error);
     res.status(500).send('Failed to send email');
+  }
+});
+
+app.post('/createpost', upload.array('files', 5), async (req, res) => {
+  const files = req.files.map(file => file.path);
+  const { projectname, address, content, category, subcategory, price, type } = req.body;
+
+  // Assuming Post is your Mongoose model or ORM model
+  const postDoc = await Post.create({
+    projectname,
+    address,
+    content,
+    category,
+    subcategory,
+    price,
+    type,
+    files: files, // Assuming you have a field in your model to store file paths
+  });
+
+  res.json(postDoc);
+});
+app.get('/createpost', async(req, res) => {
+  res.json(await Post.find());
+});
+
+app.put('/editpost/:postId', uploadMiddleware.single('cover'), async (req, res) => {
+  try {
+      const postId = req.params.postId;
+      const { title, summary, content, category } = req.body;
+      let cover = req.file ? req.file.path : undefined;
+
+      const updatedPost = await Post.findByIdAndUpdate(
+          postId,
+          { title, summary, content, category, cover },
+          { new: true }
+      );
+
+      res.json(updatedPost);
+  } catch (error) {
+      console.error('Error editing post:', error);
+      res.status(500).send('Error editing post');
+  }
+});
+
+app.delete('/deletepost/:postId', async (req, res) => {
+  try {
+      const postId = req.params.postId;
+
+      await Post.findByIdAndDelete(postId);
+
+      res.send('Post deleted successfully');
+  } catch (error) {
+      console.error('Error deleting post:', error);
+      res.status(500).send('Error deleting post');
+  }
+});
+app.post('/createblog', upload.array('files', 5), async (req, res) => {
+  try {
+    const files = req.files.map(file => file.path);
+    const { name, description, content, category } = req.body;
+
+    const blogDoc = await Blog.create({
+      name,
+      description,
+      content,
+      category,
+      files: files,
+    });
+
+    res.json(blogDoc);
+  } catch (error) {
+    console.error('Error creating blog:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint to fetch existing blogs
+app.get('/createblog', async (req, res) => {
+  try {
+    const blogs = await Blog.find();
+    res.json(blogs);
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });

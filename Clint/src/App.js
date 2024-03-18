@@ -142,6 +142,9 @@ import Addkhasra from "./Registry/Addkhasra";
 import ViewKhata from "./Registry/Viewkhata"
 import Viewkhasra from './Registry/Viewkhasra'
 import PaymentPage from "./Payments/Paymentpage";
+import AdminPanel from "./AdminPanel/AdminPanel";
+import BlogPanel from "./AdminPanel/BlogPanel";
+import MasterAdmin from "./AdminPanel/MasterAdmin";
 
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
@@ -223,6 +226,9 @@ function App() {
           <Route path="/Viewkhata" element={<ViewKhata/>} />
           <Route path="/PaymentPage/:id" element={<PaymentPage/>}/>
           <Route path="/Viewkhasra" element={<Viewkhasra/>}/>
+          <Route path="/AdminPanel" element={<AdminPanel/>}/>
+          <Route path="/BlogPanel" element={<BlogPanel/>}/>
+          <Route path='/MasterAdmin' element={<MasterAdmin/>}/>
         </Routes>
       </div>
     </Router>
