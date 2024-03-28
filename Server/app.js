@@ -960,86 +960,86 @@ app.post('/send-email', async (req, res) => {
   }
 });
 
-// app.post('/createpost', upload.array('files', 5), async (req, res) => {
-//   const files = req.files.map(file => file.path);
-//   const { projectname, address, content, category, subcategory, price, type } = req.body;
+app.post('/createpost', upload.array('files', 5), async (req, res) => {
+  const files = req.files.map(file => file.path);
+  const { projectname, address, content, category, subcategory, price, type } = req.body;
 
-//   // Assuming Post is your Mongoose model or ORM model
-//   const postDoc = await Post.create({
-//     projectname,
-//     address,
-//     content,
-//     category,
-//     subcategory,
-//     price,
-//     type,
-//     files: files, // Assuming you have a field in your model to store file paths
-//   });
+  // Assuming Post is your Mongoose model or ORM model
+  const postDoc = await Post.create({
+    projectname,
+    address,
+    content,
+    category,
+    subcategory,
+    price,
+    type,
+    files: files, // Assuming you have a field in your model to store file paths
+  });
 
-//   res.json(postDoc);
-// });
-// app.get('/createpost', async(req, res) => {
-//   res.json(await Post.find());
-// });
+  res.json(postDoc);
+});
+app.get('/createpost', async(req, res) => {
+  res.json(await Post.find());
+});
 
-// app.put('/editpost/:postId', uploadMiddleware.single('cover'), async (req, res) => {
-//   try {
-//       const postId = req.params.postId;
-//       const { title, summary, content, category } = req.body;
-//       let cover = req.file ? req.file.path : undefined;
+app.put('/editpost/:postId', uploadMiddleware.single('cover'), async (req, res) => {
+  try {
+      const postId = req.params.postId;
+      const { title, summary, content, category } = req.body;
+      let cover = req.file ? req.file.path : undefined;
 
-//       const updatedPost = await Post.findByIdAndUpdate(
-//           postId,
-//           { title, summary, content, category, cover },
-//           { new: true }
-//       );
+      const updatedPost = await Post.findByIdAndUpdate(
+          postId,
+          { title, summary, content, category, cover },
+          { new: true }
+      );
 
-//       res.json(updatedPost);
-//   } catch (error) {
-//       console.error('Error editing post:', error);
-//       res.status(500).send('Error editing post');
-//   }
-// });
+      res.json(updatedPost);
+  } catch (error) {
+      console.error('Error editing post:', error);
+      res.status(500).send('Error editing post');
+  }
+});
 
-// app.delete('/deletepost/:postId', async (req, res) => {
-//   try {
-//       const postId = req.params.postId;
+app.delete('/deletepost/:postId', async (req, res) => {
+  try {
+      const postId = req.params.postId;
 
-//       await Post.findByIdAndDelete(postId);
+      await Post.findByIdAndDelete(postId);
 
-//       res.send('Post deleted successfully');
-//   } catch (error) {
-//       console.error('Error deleting post:', error);
-//       res.status(500).send('Error deleting post');
-//   }
-// });
-// app.post('/createblog', upload.array('files', 5), async (req, res) => {
-//   try {
-//     const files = req.files.map(file => file.path);
-//     const { name, description, content, category } = req.body;
+      res.send('Post deleted successfully');
+  } catch (error) {
+      console.error('Error deleting post:', error);
+      res.status(500).send('Error deleting post');
+  }
+});
+app.post('/createblog', upload.array('files', 5), async (req, res) => {
+  try {
+    const files = req.files.map(file => file.path);
+    const { name, description, content, category } = req.body;
 
-//     const blogDoc = await Blog.create({
-//       name,
-//       description,
-//       content,
-//       category,
-//       files: files,
-//     });
+    const blogDoc = await Blog.create({
+      name,
+      description,
+      content,
+      category,
+      files: files,
+    });
 
-//     res.json(blogDoc);
-//   } catch (error) {
-//     console.error('Error creating blog:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
+    res.json(blogDoc);
+  } catch (error) {
+    console.error('Error creating blog:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
-// // Endpoint to fetch existing blogs
-// app.get('/createblog', async (req, res) => {
-//   try {
-//     const blogs = await Blog.find();
-//     res.json(blogs);
-//   } catch (error) {
-//     console.error('Error fetching blogs:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
+// Endpoint to fetch existing blogs
+app.get('/createblog', async (req, res) => {
+  try {
+    const blogs = await Blog.find();
+    res.json(blogs);
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
