@@ -226,9 +226,9 @@ function App() {
           <Route path="/Viewkhata" element={<ViewKhata/>} />
           <Route path="/PaymentPage/:id" element={<PaymentPage/>}/>
           <Route path="/Viewkhasra" element={<Viewkhasra/>}/>
-          <Route path="/AdminPanel" element={<AdminPanel/>}/>
+          {/* <Route path="/AdminPanel" element={<AdminPanel/>}/> */}
           <Route path="/BlogPanel" element={<BlogPanel/>}/>
-          <Route path='/MasterAdmin' element={<MasterAdmin/>}/>
+          {/* <Route path='/MasterAdmin' element={<MasterAdmin/>}/> */}
         </Routes>
       </div>
     </Router>
