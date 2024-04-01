@@ -76,6 +76,7 @@ const AdminPanel = () => {
         <label className='mt-3'>Category</label><br />
         <select value={category} onChange={ev => setCategory(ev.target.value)} >
           <option>Select Option</option>
+          <option>Womeki Group</option>
           <option>WIC</option>
           <option>Womeki Infra</option>
           <option>Womeki Tech</option>
@@ -86,6 +87,8 @@ const AdminPanel = () => {
           <option>Select Option</option>
           <option>Recent</option>
           <option>Upcoming</option>
+          <option>Exclusive</option>
+          <option>Featured</option>
           <option>Commercial</option>
           <option>Invest In</option>
           <option>Studio</option>

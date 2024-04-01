@@ -61,6 +61,7 @@ const BlogPanel = () => {
       <input className='mt-3' type='file' onChange={ev => setFiles([...ev.target.files])} accept='.webp' multiple /><br />
       <select className='mb-3'  value={category} onChange={ev => setCategory(ev.target.value)}>
       <option>Select Option</option>
+      <option>Womeki Group</option>
       <option>WIC</option>
       <option>Womeki Infra</option>
       <option>Womeki Tech</option>
