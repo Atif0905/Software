@@ -1016,12 +1016,16 @@ app.delete('/deletepost/:postId', async (req, res) => {
 app.post('/createblog', upload.array('files', 5), async (req, res) => {
   try {
     const files = req.files.map(file => file.path);
-    const { name, description, content, category } = req.body;
+    const { name, description, content1, content2, content3, content4, content5, category } = req.body;
 
     const blogDoc = await Blog.create({
       name,
       description,
-      content,
+      content1,
+      content2,
+      content3,
+      content4,
+      content5,
       category,
       files: files,
     });

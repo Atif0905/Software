@@ -6,7 +6,11 @@ import axios from 'axios';
 const BlogPanel = () => {
   const[name, setName] = useState('');
   const[description, setDescription] = useState('');
-  const[content, setContent] = useState('');
+  const[content1, setContent1] = useState('');
+  const[content2, setContent2] = useState('');
+  const[content3, setContent3] = useState('');
+  const[content4, setContent4] = useState('');
+  const[content5, setContent5] = useState('');
   const[files, setFiles] = useState('');
  const[direct, setDirect] = useState(false); 
  const [blogs, setBlogs] = useState([]);
@@ -32,7 +36,11 @@ const BlogPanel = () => {
   const data = new FormData();
   data.set('name', name);
   data.set('description', description);
-  data.set('content', content);
+  data.set('content1', content1);
+  data.set('content2', content2);
+  data.set('content3', content3);
+  data.set('content4', content4);
+  data.set('content5', content5);
   for (let i = 0; i < files.length; i++) {
     data.append('files', files[i]);
   }
@@ -43,7 +51,11 @@ const BlogPanel = () => {
       setDirect(true);
       setName('');
       setDescription('');
-      setContent('');
+      setContent1('');
+      setContent2('');
+      setContent3('');
+      setContent4('');
+      setContent5('');
       setFiles('');
     }
   } catch (error) {
@@ -67,7 +79,11 @@ const BlogPanel = () => {
       <option>Womeki Tech</option>
       <option>Womeki holiday club</option>
       </select>
-     <ReactQuill value={content} onChange={newValue => setContent(newValue)}/><br/>
+     <ReactQuill value={content1} onChange={newValue => setContent1(newValue)}/><br/>
+     <ReactQuill value={content2} onChange={newValue => setContent2(newValue)}/><br/>
+     <ReactQuill value={content3} onChange={newValue => setContent3(newValue)}/><br/>
+     <ReactQuill value={content4} onChange={newValue => setContent4(newValue)}/><br/>
+     <ReactQuill value={content5} onChange={newValue => setContent5(newValue)}/><br/>
      <button className='mt-3'>Create Post</button>
     </form>
   </div>
