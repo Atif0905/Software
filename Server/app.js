@@ -640,6 +640,20 @@ app.post("/addCustomer", async (req, res) => {
     bookingDate,
     bookingType,
     sendEmail,
+    name2,
+    fatherOrHusbandName2,
+    address2,
+    aadharNumber2,
+    panNumber2,
+    mobileNumber2,
+    email2,
+    name3,
+    fatherOrHusbandName3,
+    address3,
+    aadharNumber3,
+    panNumber3,
+    mobileNumber3,
+    email3,
   } = req.body;
 
   try {
@@ -669,6 +683,20 @@ app.post("/addCustomer", async (req, res) => {
       bookingDate,
       bookingType,
       sendEmail,
+      name2,
+      fatherOrHusbandName2,
+      address2,
+      aadharNumber2,
+      panNumber2,
+      mobileNumber2,
+      email2,
+      name3,
+      fatherOrHusbandName3,
+      address3,
+      aadharNumber3,
+      panNumber3,
+      mobileNumber3,
+      email3,
     });
 
     res.status(201).json({ status: "ok", data: newCustomer });

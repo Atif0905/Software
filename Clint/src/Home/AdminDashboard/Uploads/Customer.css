@@ -8,7 +8,13 @@
   opacity: 1;
   pointer-events: none;
 }
-
+.Addcustomerbutt{
+  /* width: 200px; */
+  border: none;
+  background-color: rgb(60,141,188);
+  color: white;
+  border-radius: 2px;
+}
 .input-base {
   border-radius: 10px;
 }

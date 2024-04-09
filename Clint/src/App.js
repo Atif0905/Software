@@ -145,6 +145,7 @@ import PaymentPage from "./Payments/Paymentpage";
 import AdminPanel from "./AdminPanel/AdminPanel";
 import BlogPanel from "./AdminPanel/BlogPanel";
 import MasterAdmin from "./AdminPanel/MasterAdmin";
+import CustomerDetails from "./components/Customer/CustomerDetails";
 
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
@@ -196,10 +197,10 @@ function App() {
           <Route path="/Viewkhata" element={<Sidebar/>} />
           <Route path="/Viewkhasra" element={<Sidebar/>} />
           <Route path="/PaymentPage/:id" element={<Sidebar/>}/>
+          <Route path="/Customer_Details/:_id" element={<Sidebar/>}/>
         </Routes>
 
         <Routes>
-          {/* Main content routes */}
           <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
           <Route path="/sign-in" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
@@ -229,6 +230,7 @@ function App() {
           <Route path="/AdminPanel" element={<AdminPanel/>}/>
           <Route path="/BlogPanel" element={<BlogPanel/>}/>
           <Route path='/MasterAdmin' element={<MasterAdmin/>}/>
+          <Route path="/Customer_Details/:_id" element={<CustomerDetails/>}/>
         </Routes>
       </div>
     </Router>

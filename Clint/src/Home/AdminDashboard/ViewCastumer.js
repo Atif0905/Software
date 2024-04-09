@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AdminDashboard.css';
+import {  Link } from 'react-router-dom';
 const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,11 +46,10 @@ useEffect(() => {
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
-      console.log(response)
+      // console.log(response)
       return response.data;
     } catch (error) {
       console.error('Error fetching payment details:', error);
-      // If payment details cannot be fetched, return an empty array to prevent errors
       return { data: [] };
     }
   };
@@ -65,7 +65,7 @@ useEffect(() => {
   const fetchUnitDetails = async (projectId, blockId, unitId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
-      console.log(response)
+      // console.log(response)
       const unitData = response.data.data;
       return {
         unitPrice: unitData.totalPrice,
@@ -115,13 +115,6 @@ useEffect(() => {
     return <div>{error}</div>;
   }
   const totalAmountsReceived = paymentDetails || {};
-  const handleViewDetails = async (customer) => {
-    if (selectedCustomer && selectedCustomer.customerId === customer.customerId) {
-      setSelectedCustomer(null);
-    } else {
-      setSelectedCustomer(customer);
-    }
-  };
   return (
     <div className='main-content'>
       <h2 className='Headtext'>Customer List</h2>
@@ -146,7 +139,7 @@ useEffect(() => {
               <tr key={index}>
                 <td>{customer.customerId ? customer.customerId.toUpperCase() : ''}</td>
                 <td>
-                  <button className='anchorbutton' onClick={() => handleViewDetails(customer)}>{customer.name ? customer.name.toUpperCase() : ''}</button>
+                  <Link to={`/Customer_Details/${customer._id}`}>{customer.name ? customer.name.toUpperCase() : ''}</Link>
                 </td>
                 <td>{customer.mobileNumber}</td>
                 <td>{customer.email ? customer.email.toUpperCase() : ''}</td>
@@ -161,89 +154,6 @@ useEffect(() => {
           </tbody>
         </table>
       </div>
-      {selectedCustomer && (
-        <div className='whiteback mt-5'>
-          <table id='firsttable'>
-            <thead>
-              <tr>
-                <th>NAME</th>
-                <th>ADDRESS</th>
-                <th>CONTACT NUMBER</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{selectedCustomer.name ? selectedCustomer.name.toUpperCase() : ''}</td>
-                <td>{selectedCustomer.address ? selectedCustomer.address.toUpperCase() : ''}</td>
-                <td>{selectedCustomer.mobileNumber ? selectedCustomer.mobileNumber.toUpperCase() : ''}</td>
-              </tr>
-            </tbody>
-          </table>
-          <table id="customer-details-table">
-            <tbody>
-              <tr>
-                <td><strong>Plot Size:</strong></td>
-                <td>{selectedCustomer.plotSize} {selectedCustomer.sizeType}</td>
-                <td><strong>Plot No:</strong></td>
-                <td>{selectedCustomer.blockName}-{selectedCustomer.unitName}</td>
-              </tr>
-              <tr>
-                <td><strong>Booking Date:</strong></td>
-                <td>{formatDate(selectedCustomer.bookingDate)}</td>
-                <td><strong>Basic price :</strong></td>
-                <td> BSP RATE {selectedCustomer.rate} /-{selectedCustomer.sizeType} INR / {selectedCustomer.rate * selectedCustomer.plotSize}</td>
-              </tr>
-              <tr>
-                <td><strong>IDC Charges:</strong> </td>
-                <td>{selectedCustomer.idcCharges * selectedCustomer.plotSize} INR / {selectedCustomer.idcCharges}</td>
-                <td><strong>PLC Charges</strong></td>
-                <td>{selectedCustomer.plcCharges * selectedCustomer.plotSize} INR / {selectedCustomer.plcCharges}</td>
-              </tr>
-              <tr>
-              <td><strong>EDC Charges</strong></td>
-                <td>{selectedCustomer.edcPrice * selectedCustomer.plotSize} INR / {selectedCustomer.edcPrice}</td>
-                <td><strong>Total Price</strong></td>
-                <td>{total}</td>
-              </tr>
-              <tr>
-              <td><strong>Total Payment Amount</strong></td>
-                <td>{totalAmountsReceived[selectedCustomer.customerId]}</td>
-                <td><strong>Balance</strong></td>
-                <td>{selectedCustomer.unitPrice - totalAmountsReceived[selectedCustomer.customerId]}</td>
-              </tr>
-            </tbody>
-          </table>
-          {selectedCustomer.paymentDetails && selectedCustomer.paymentDetails.length > 0 && ( 
-            <div>
-              <h3>Payment Details</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Payment Date</th>
-                    <th>Received Amount</th>
-                    <th>Comment</th>
-                    <th>Payment Mode</th>
-                    <th>Payment Type</th>
-                    <th>Reference</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {selectedCustomer.paymentDetails.map((payment, index) => (
-                    <tr key={index}>
-                      <td>{new Date(payment.PaymentDate).toLocaleDateString()}</td>
-                      <td>{payment.amount}</td>
-                      <td>{payment.comment}</td>
-                      <td>{payment.paymentMode}</td>
-                      <td>{payment.paymentType}</td>
-                      <td>{payment.reference}</td>
-                    </tr> 
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 };
