@@ -130,16 +130,21 @@ const customerSchema = new mongoose.Schema({
 
 // Pre-save middleware to generate and set the customer ID
 customerSchema.pre('save', async function(next) {
-  try {
-    // Generate a scenario number
-    const scenarioNumber = await mongoose.models.Customer.countDocuments() + 1;
-    // Construct the customer ID
-    this.customerId = `WI0${scenarioNumber}`;
+  if (this.isNew) {
+    try {
+      // Generate a scenario number
+      const scenarioNumber = await mongoose.models.Customer.countDocuments() + 1;
+      // Construct the customer ID
+      this.customerId = `WI0${scenarioNumber}`;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
     next();
-  } catch (error) {
-    next(error);
   }
 });
+
 
 const Customer = mongoose.model("Customer", customerSchema);
 

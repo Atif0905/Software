@@ -127,8 +127,26 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
     try {
       const parsedFormData = {
         ...formData,
-        income: parseFloat(formData.income),
-        discount: parseFloat(formData.discount)
+        income: formData.income ? parseFloat(formData.income) : 'NA',
+        discount: formData.discount ? parseFloat(formData.discount) : 'NA',
+        aadharNumber: formData.aadharNumber || 'NA',
+        panNumber: formData.panNumber || 'NA',
+        mobileNumber: formData.mobileNumber || 'NA',
+        email: formData.email || 'NA',
+        name2: formData.name2 || 'NA',
+        fatherOrHusbandName2: formData.fatherOrHusbandName2 || 'NA',
+        address2: formData.address2 || 'NA',
+        aadharNumber2: formData.aadharNumber2 || 'NA',
+        panNumber2: formData.panNumber2 || 'NA',
+        mobileNumber2: formData.mobileNumber2 || 'NA',
+        email2: formData.email2 || 'NA',
+        name3: formData.name3 || 'NA',
+        fatherOrHusbandName3: formData.fatherOrHusbandName3 || 'NA',
+        address3: formData.address3 || 'NA',
+        aadharNumber3: formData.aadharNumber3 || 'NA',
+        panNumber3: formData.panNumber3 || 'NA',
+        mobileNumber3: formData.mobileNumber3 || 'NA',
+        email3: formData.email3 || 'NA',
       };
       const selectedProject = projects.find(project => project._id === formData.selectedProjectId);
       const selectedBlock = selectedProject?.blocks.find(block => block._id === formData.selectedBlockId);
@@ -204,6 +222,7 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
           });
           await handleEditUnit();
         } else {
+          alert("Failed To Add Customer")
           console.error('Failed to add customer:', addCustomerResponse.statusText);
         }
       } else {

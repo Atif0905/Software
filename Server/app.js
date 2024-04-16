@@ -731,8 +731,89 @@ app.get("/viewcustomer/:customerId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+// Update customer details based on customer ID
+app.put("/editCustomer/:customerId", async (req, res) => {
+  const { customerId } = req.params;
 
-// payment plan 
+  try {
+    const existingCustomer = await Customer.findOne({ _id: customerId });
+
+    if (!existingCustomer) {
+      return res.status(404).json({ error: "Customer not found" });
+    }
+    const {
+      customerId: updatedCustomerId,
+      name,
+      fatherOrHusbandName,
+      address,
+      aadharNumber,
+      panNumber,
+      mobileNumber,
+      email,
+      propertyType,
+      discount,
+      paymentPlan,
+      bookingDate,
+      bookingType,
+      sendEmail,
+      name2,
+      fatherOrHusbandName2,
+      address2,
+      aadharNumber2,
+      panNumber2,
+      mobileNumber2,
+      email2,
+      name3,
+      fatherOrHusbandName3,
+      address3,
+      aadharNumber3,
+      panNumber3,
+      mobileNumber3,
+      email3,
+    } = req.body;
+
+    // Update customer details excluding customerId
+    Object.assign(existingCustomer, {
+      name,
+      fatherOrHusbandName,
+      address,
+      aadharNumber,
+      panNumber,
+      mobileNumber,
+      email,
+      propertyType,
+      discount,
+      paymentPlan,
+      bookingDate,
+      bookingType,
+      sendEmail,
+      name2,
+      fatherOrHusbandName2,
+      address2,
+      aadharNumber2,
+      panNumber2,
+      mobileNumber2,
+      email2,
+      name3,
+      fatherOrHusbandName3,
+      address3,
+      aadharNumber3,
+      panNumber3,
+      mobileNumber3,
+      email3,
+    });
+
+    const updatedCustomer = await existingCustomer.save();
+
+    res.json({ status: "ok", data: updatedCustomer });
+  } catch (error) {
+    console.error("Error updating customer:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
 // Assuming you have a route handler for creating payment plans
 app.post('/createPaymentPlan', async (req, res) => {
   try {

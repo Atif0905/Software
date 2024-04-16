@@ -146,6 +146,7 @@ import AdminPanel from "./AdminPanel/AdminPanel";
 import BlogPanel from "./AdminPanel/BlogPanel";
 import MasterAdmin from "./AdminPanel/MasterAdmin";
 import CustomerDetails from "./components/Customer/CustomerDetails";
+import Editcustomerdetails from "./components/Customer/Editcustomerdetails";
 
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
@@ -198,6 +199,7 @@ function App() {
           <Route path="/Viewkhasra" element={<Sidebar/>} />
           <Route path="/PaymentPage/:id" element={<Sidebar/>}/>
           <Route path="/Customer_Details/:_id" element={<Sidebar/>}/>
+          <Route path="/Edit_Customer_Details/:_id" element={<Sidebar/>}/>
         </Routes>
 
         <Routes>
@@ -231,6 +233,7 @@ function App() {
           <Route path="/BlogPanel" element={<BlogPanel/>}/>
           <Route path='/MasterAdmin' element={<MasterAdmin/>}/>
           <Route path="/Customer_Details/:_id" element={<CustomerDetails/>}/>
+          <Route path="/Edit_Customer_Details/:_id" element={<Editcustomerdetails/>}/>
         </Routes>
       </div>
     </Router>
