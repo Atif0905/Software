@@ -333,7 +333,7 @@ const possessionCharges = unitData ? ((parseFloat(unitData.idcCharges) + parseFl
       </table>
     </div>
     <h4 className="Headtext1" onClick={handleMakePayment}>
-      <span className="makepayment">Make a Payment</span>
+      <span className="makepayment">Add  Payment</span>
     </h4>
   </div>
         )}

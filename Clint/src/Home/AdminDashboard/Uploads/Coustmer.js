@@ -19,24 +19,36 @@ const AddCustomerForm = () => {
     paymentPlan: '',
     bookingDate: '',
     bookingType: '',
+    name2: '',
+    fatherOrHusbandName2: '',
+    address2: '',
+    aadharNumber2: '',
+    panNumber2 : '',
+    mobileNumber2: '',
+    email2: '',
+    name3: '',
+    fatherOrHusbandName3: '',
+    address3: '',
+    aadharNumber3: '',
+    panNumber3: '',
+    mobileNumber3: '',
+    email3: '',
     sendEmail: false
   });
   const [projects, setProjects] = useState([]);
   const [showBlocks, setShowBlocks] = useState(false);
   const [showUnits, setShowUnits] = useState(false);
   const [plotSize, setPlotSize] = useState('');
-  const [rate, setRate] = useState('');
-  const [idcCharges, setIdcCharges] = useState('');
-  const [plcCharges, setPlcCharges] = useState('');
   const [selectedBlockUnits, setSelectedBlockUnits] = useState([]);
   const [paymentPlans, setPaymentPlans] = useState([]);
-  const [edcPrice , setEdcPrice] = useState('')
   const [editedRate, setEditedRate] = useState('');
   const [editedPlcCharges, setEditedPlcCharges] = useState('');
   const [editedIdcCharges, setEditedIdcCharges] = useState('');
   const [editedEdcPrice, setEditedEdcPrice] = useState('');
-  const [totalPrice, setTotalPrice] = useState(0);
   const [editedtotalPrice, setEditedTotalPrice] = useState();
+  const [showSecondCustomer, setShowSecondCustomer] = useState(false);
+const [showThirdCustomer, setShowThirdCustomer] = useState(false);
+
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -115,8 +127,26 @@ const AddCustomerForm = () => {
     try {
       const parsedFormData = {
         ...formData,
-        income: parseFloat(formData.income),
-        discount: parseFloat(formData.discount)
+        income: formData.income ? parseFloat(formData.income) : 'NA',
+        discount: formData.discount ? parseFloat(formData.discount) : 'NA',
+        aadharNumber: formData.aadharNumber || 'NA',
+        panNumber: formData.panNumber || 'NA',
+        mobileNumber: formData.mobileNumber || 'NA',
+        email: formData.email || 'NA',
+        name2: formData.name2 || 'NA',
+        fatherOrHusbandName2: formData.fatherOrHusbandName2 || 'NA',
+        address2: formData.address2 || 'NA',
+        aadharNumber2: formData.aadharNumber2 || 'NA',
+        panNumber2: formData.panNumber2 || 'NA',
+        mobileNumber2: formData.mobileNumber2 || 'NA',
+        email2: formData.email2 || 'NA',
+        name3: formData.name3 || 'NA',
+        fatherOrHusbandName3: formData.fatherOrHusbandName3 || 'NA',
+        address3: formData.address3 || 'NA',
+        aadharNumber3: formData.aadharNumber3 || 'NA',
+        panNumber3: formData.panNumber3 || 'NA',
+        mobileNumber3: formData.mobileNumber3 || 'NA',
+        email3: formData.email3 || 'NA',
       };
       const selectedProject = projects.find(project => project._id === formData.selectedProjectId);
       const selectedBlock = selectedProject?.blocks.find(block => block._id === formData.selectedBlockId);
@@ -174,10 +204,25 @@ const AddCustomerForm = () => {
             idcCharges: '',
             plcCharges: '',
             edcPrice: '',
-            totalPrice: ''
+            totalPrice: '',
+            name2: '',
+            fatherOrHusbandName2: '',
+            address2: '',
+            aadharNumber2: '',
+            panNumber2: '',
+            mobileNumber2: '',
+            email2: '',
+            name3: '',
+            fatherOrHusbandName3: '',
+            address3: '',
+            aadharNumber3: '',
+            panNumber3: '',
+            mobileNumber3: '',
+            email3: '',
           });
           await handleEditUnit();
         } else {
+          alert("Failed To Add Customer")
           console.error('Failed to add customer:', addCustomerResponse.statusText);
         }
       } else {
@@ -257,6 +302,15 @@ const AddCustomerForm = () => {
   useEffect(() => {
     calculateEditedTotalPrice();
   }, [editedRate, editedPlcCharges, editedIdcCharges, editedEdcPrice, plotSize]);
+
+  const handleToggleSecondCustomer = () => {
+    setShowSecondCustomer(!showSecondCustomer);
+  };
+  
+  const handleToggleThirdCustomer = () => {
+    setShowThirdCustomer(!showThirdCustomer);
+  };
+  
   return (
     <div className='main-content back'>
       <h3 className='Headtext'>Add a New Customer </h3>
@@ -370,6 +424,212 @@ const AddCustomerForm = () => {
             <label id="label-input">Email</label>
           </div>
         </div>
+        <div>
+        <button type="button" className="Addcustomerbutt mt-4" onClick={handleToggleSecondCustomer}>Add Second Customer Details
+</button></div>
+{showSecondCustomer && (
+        <>
+        <h3 className='Headtext'> Second Customer </h3>
+        <div className='gridcontainer mt-2'>
+        <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder=" Enter Name"
+              type="text"
+              name="name2"
+              value={formData.name2.toUpperCase()}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Name</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Father/HusbandName"
+              type="text"
+              name="fatherOrHusbandName2"
+              value={formData.fatherOrHusbandName2.toUpperCase()}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Father/Husband Name</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Address"
+              type="text"
+              name="address2"
+              value={formData.address2.toUpperCase()}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Address</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Aadhar Number"
+              type="number"
+              onWheel={numberInputOnWheelPreventChange}
+              name="aadharNumber2"
+              value={formData.aadharNumber2}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Aadhar Number</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Pan Number"
+              type="text"
+              name="panNumber2"
+              value={formData.panNumber2}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">PAN Number</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Mobile Number"
+              type="number"
+              onWheel={numberInputOnWheelPreventChange}
+              name="mobileNumber2"
+              value={formData.mobileNumber2}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Mobile Number</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Email"
+              type="text"
+              name="email2"
+              value={formData.email2}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Email</label>
+          </div>
+            </div>
+            </>
+            )}
+<button type="button" className="Addcustomerbutt mt-4" onClick={handleToggleThirdCustomer}>Add Third Customer Details
+</button>
+{showThirdCustomer && (
+  <>
+            <h3 className='Headtext'>Third Customer</h3>
+            <div className='gridcontainer mt-2'>
+            <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder=" Enter Name"
+              type="text"
+              name="name3"
+              value={formData.name3.toUpperCase()}
+              onChange={handleInputChange}
+              
+            />
+            </div>
+            <label id="label-input">Name</label>  
+
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Father/HusbandName"
+              type="text"
+              name="fatherOrHusbandName3"
+              value={formData.fatherOrHusbandName3.toUpperCase()}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Father/Husband Name</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Address"
+              type="text"
+              name="address3"
+              value={formData.address3.toUpperCase()}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Address</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Aadhar Number"
+              type="number"
+              onWheel={numberInputOnWheelPreventChange}
+              name="aadharNumber3"
+              value={formData.aadharNumber3}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Aadhar Number</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Pan Number"
+              type="text"
+              name="panNumber3"
+              value={formData.panNumber3}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">PAN Number</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Mobile Number"
+              type="number"
+              onWheel={numberInputOnWheelPreventChange}
+              name="mobileNumber3"
+              value={formData.mobileNumber3}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Mobile Number</label>
+          </div>
+          <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Enter Email"
+              type="text"
+              name="email3"
+              value={formData.email3}
+              onChange={handleInputChange}
+              
+            />
+            <label id="label-input">Email</label>
+          </div>
+          </div>
+          </>
+)}
         <h4 className='Headtext mt-5'>Property Details</h4>
         <div className='gridcontainer'>
           <div className=" grid-item">
@@ -566,6 +826,8 @@ const AddCustomerForm = () => {
             Send Email
           </div>
         </div>
+
+
         <div className='mt-4'>
           <button type="submit" className="btn btn-primary " >Submit</button>
         </div>
