@@ -16,7 +16,8 @@
   border-radius: 2px;
 }
 .input-base {
-  border-radius: 10px;
+  width: 100%;
+  height: 40px;
 }
 .anchorbutton{
   border: none;

@@ -112,7 +112,6 @@
 //   );
 // }
 // export default App;
-
 import React, { useState, useEffect} from "react";
 import axios from "axios";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
@@ -147,7 +146,10 @@ import BlogPanel from "./AdminPanel/BlogPanel";
 import MasterAdmin from "./AdminPanel/MasterAdmin";
 import CustomerDetails from "./components/Customer/CustomerDetails";
 import Editcustomerdetails from "./components/Customer/Editcustomerdetails";
-
+import Print_reciept from "./Print/Print_Reciept";
+import Edit_Payment from "./Print/Edit_Payment";
+import DemandDraft from "./Print/DemandDraft";
+import Welcomeletter from "./Print/Welcomeletter";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -168,7 +170,6 @@ function App() {
       console.error('Error fetching user data:', error);
     });
   }, [userData]);
-
   return (
     <Router>
       <div className="App">        
@@ -200,6 +201,7 @@ function App() {
           <Route path="/PaymentPage/:id" element={<Sidebar/>}/>
           <Route path="/Customer_Details/:_id" element={<Sidebar/>}/>
           <Route path="/Edit_Customer_Details/:_id" element={<Sidebar/>}/>
+          <Route path="/edit_payment/:_id" element={<Sidebar/>}/> 
         </Routes>
 
         <Routes>
@@ -234,10 +236,13 @@ function App() {
           <Route path='/MasterAdmin' element={<MasterAdmin/>}/>
           <Route path="/Customer_Details/:_id" element={<CustomerDetails/>}/>
           <Route path="/Edit_Customer_Details/:_id" element={<Editcustomerdetails/>}/>
+          <Route path="/print_reciept/:_id" element={<Print_reciept/>}/>
+          <Route path="/edit_payment/:_id" element={<Edit_Payment/>}/>
+          <Route path="/print_demand_datewise/:_id" element={<DemandDraft/>}/>
+          <Route path="/welcomeletter/:_id" element={<Welcomeletter/>}/>
         </Routes>
       </div>
     </Router>
   );
 }
-
 export default App;

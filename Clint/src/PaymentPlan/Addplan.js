@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Plan.css';
+import ConfirmationModal from '../Confirmation/ConfirmationModal';
 const AddPlan = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [planName, setPlanName] = useState('');
   const [numInstallments, setNumInstallments] = useState('');
   const [installments, setInstallments] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
   const handleSelectChange = (event) => {
     setSelectedOption(event.target.value);
   };
@@ -27,22 +29,17 @@ const AddPlan = () => {
     updatedInstallments[index].installment = index + 1;
     setInstallments(updatedInstallments);
   };
-  const handleAddInstallment = () => {
-    setInstallments([...installments, { daysFromBooking: '', amountRS: '' }]);
-  };
   const handleRemoveInstallment = (index) => {
     const updatedInstallments = [...installments];
     updatedInstallments.splice(index, 1);
     setInstallments(updatedInstallments);
   };
   const handleSubmit = (event) => {
-    event.preventDefault();
     const validInstallments = installments.every(installment => installment.amountRS && installment.daysFromBooking );
-  
     if (!validInstallments) {
       console.error('Error: All installments must have amountRS and daysFromBooking');
       return;
-    }  
+    }
     axios.post(`${process.env.REACT_APP_API_URL}/createPaymentPlan`, {
       type: selectedOption,
       planName: planName,
@@ -50,7 +47,6 @@ const AddPlan = () => {
       installments: installments,
     })
       .then((response) => {
-        console.log('Success:', response.data);
         setSelectedOption('');
         setPlanName('');
         setNumInstallments('');
@@ -60,17 +56,20 @@ const AddPlan = () => {
         console.error('Error:', error);
       });
   };
+  const handleSubmit1 = (e) => {
+    e.preventDefault();
+    setShowConfirm(true);
+  };
   return (
     <div className='main-content'>
       <div className='col-5'>
         <h4 className='Headtext'>Add a New Payment Plan</h4>
         <div className='whiteback'>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit1}>
             <label>Choose an option:</label>
             <select className="select-buttons ps-1" value={selectedOption} onChange={handleSelectChange}>
               <option value="">Select an option</option>
               <option value="percentage">Percentage</option>
-              <option value="amount">Amount</option>
             </select>
             <div className='mt-2'>
               <label>Plan Name</label>
@@ -90,6 +89,14 @@ const AddPlan = () => {
               ))}
             </div>
             <button type="submit" className="btn btn-primary mt-3">Submit</button>
+            <ConfirmationModal
+            show={showConfirm}
+            onClose={() => setShowConfirm(false)}
+            onConfirm={() => {
+              setShowConfirm(false);
+              handleSubmit();
+            }}
+            message="Are you sure you want to add this payment plan?"/>
           </form>
         </div>
       </div>

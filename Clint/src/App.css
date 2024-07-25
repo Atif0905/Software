@@ -1,95 +1,169 @@
- body {
-    margin: 0;
-    overflow-x: hidden;
-  }
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
 .main-content {
-    margin-left: 15%;
-    padding: 16px;
-    background-size: contain;
-    background-attachment: fixed ;
-    background-color: #f6f6f6 !important;
-    min-height: 100%;
-  }
+  margin-left: 15%;
+  padding: 16px;
+  background-size: contain;
+  background-attachment: fixed ;
+  background-color: #f6f6f6 !important;
+  min-height: 100%;
+}
 .user-profile{
-  text-align: right;
-  font-size: 30px;
-  font-weight: 600;
-  margin-right: 1%;
-  padding-top: 1%; 
-  margin-top: 40px;
+text-align: right;
+font-size: 30px;
+font-weight: 600;
+margin-right: 1%;
+padding-top: 1%; 
+margin-top: 40px;
 }
 .mainico{
-  margin-right: 10px;
+margin-right: 10px;
 }
 .back{
-  background-color: #ebf0f5;
-  min-height: 100vh; 
+background-color: #ebf0f5;
+min-height: 100vh; 
 }
 .whiteback{
-  border-top: 3px solid rgb(60,141,188);
-  background-color: white;
-  padding: 10px;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+border-top: 3px solid rgb(60,141,188);
+background-color: white;
+padding: 10px;
+border-top-left-radius: 5px;
+border-top-right-radius: 5px;
 }
 .gridcontainer{
-  display: grid;
-  grid-template-columns: repeat(4,23%);
-  grid-gap: 20px;
+display: grid;
+grid-template-columns: repeat(4,23%);
+grid-gap: 20px;
+}
+.delete{
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
 }
 .grid-item{
-  border-top: 3px solid rgb(98, 174, 255);
-  background-color: white;
-  padding: 10px;
+border-top: 3px solid rgb(98, 174, 255);
+background-color: white;
+padding: 10px;
 }
 .Headtext1{
-  font-size: 18px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  font-weight: 300;
-    line-height: 1.1;
-    color: inherit;
+font-size: 18px;
+margin-top: 10px;
+margin-bottom: 10px;
+font-weight: 300;
+  line-height: 1.1;
+  color: inherit;
 }
 table {
-  width: 100%;
-  border: none !important;
+width: 100%;
+border: none !important;
 }
 
 th, td {
-  padding: 8px;
-  text-align: left;
-  border: none !important;
-  font-size: 14px;
+padding: 8px;
+text-align: left;
+border: none !important;
+font-size: 14px;
 }
 
 table th {
-  border-top: none !important;
-  border-bottom: 1px solid black !important ;
+border-top: none !important;
+border-bottom: 1px solid black !important ;
 }
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    margin: 0; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0; 
+}
+.Printcontainer{
+padding: 50px;
+position: relative;
+}
+.printarea1{
+border: 1px solid black;
+width: 100%;
+height: 100%;
+padding: 5px;
+position: relative;
+}
+.printarea2{
+border: 1px solid black;
+width: 100%;
+height: 40px;
+position: relative;
+}
+.confirm-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.confirm-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.confirm-modal-content h3 {
+  margin-top: 0;
+}
+
+.yesbutton {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: green;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.successbutton {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: green;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.nobutton {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
 }
 @media (max-width:1205px) {
-  .gridcontainer{
-    display: grid;
-    grid-template-columns: repeat(3,30%);
-    grid-gap: 20px;
-  }
-}
-@media (max-width:992px) {
-  .main-content {
-    margin-left: 25%;
-    padding: 16px;
-    background-size: contain;
-    background-attachment: fixed;
-}
 .gridcontainer{
   display: grid;
-  grid-template-columns: repeat(2,48%);
+  grid-template-columns: repeat(3,30%);
   grid-gap: 20px;
+}
+}
+@media (max-width:992px) {
+.main-content {
+  margin-left: 25%;
+  padding: 16px;
+  background-size: contain;
+  background-attachment: fixed;
+}
+.gridcontainer{
+display: grid;
+grid-template-columns: repeat(2,48%);
+grid-gap: 20px;
 }
 }

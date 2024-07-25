@@ -11,6 +11,7 @@ import { AiOutlineDashboard } from "react-icons/ai";
 import { CgCalendarDates } from "react-icons/cg";
 import { FaRegFolder } from "react-icons/fa";
 import { FaPenToSquare } from "react-icons/fa6";
+import ConfirmationModal from '../Confirmation/ConfirmationModal';
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isopen1, setIsopen1] = useState(false);
@@ -23,6 +24,7 @@ const Sidebar = () => {
   const [isopen8, setIsopen8] = useState(false);
   const [isopen9, setIsopen9] = useState(false);
   const [isopen10, setIsopen10] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
   const toggleDropdown = () => {
     setIsOpen(!isOpen); 
@@ -163,12 +165,13 @@ const Sidebar = () => {
     setIsopen9(false)
   };
   const logOut = () => {
-    const isConfirmed = window.confirm("Are you sure you want to log out?");
-    if (isConfirmed) {
       window.localStorage.clear();
       navigate("/sign-in");
-    }
   };
+  const handleSubmit =() => {
+    
+    setShowConfirm(true);
+  }
   return (
     <div>
       <div className='nav1'> </div>
@@ -179,7 +182,7 @@ const Sidebar = () => {
         <div className=''>
           <li className='Links'><Link to="/"><AiOutlineDashboard/>Dashboard</Link></li>
           <li className='Links'><Link to="/Adminuser"><AiOutlineDashboard/>User</Link></li>
-          <div className="dropdown">
+    <div className="dropdown">
       <li className="dropdown-toggle" onClick={toggleDropdown}> <PiFolders /> Project Master</li>
       <div className={"dropdown-menu" + (isOpen ? " active" : "")} aria-labelledby="dropdownMenuButton">
         <li className=" dropdown-item"><Link to='/Projects'><MdOutlineCircle /> Upload Project</Link></li>
@@ -256,7 +259,9 @@ const Sidebar = () => {
         <li className=" dropdown-item"><Link ><MdOutlineCircle /> Change Password</Link></li>
       </div>
     </div>
-      <li className='Links' onClick={logOut}><Link ><MdLogout />Logout</Link></li>
+      <li className='Links' onClick={handleSubmit}><Link ><MdLogout />Logout</Link></li>
+      <ConfirmationModal  show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => { setShowConfirm(false); logOut(); }}
+        message="Are you sure you want to Logout?"/>
         </div>
       </ul>
     </div>

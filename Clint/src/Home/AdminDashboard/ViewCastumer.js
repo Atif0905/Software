@@ -7,8 +7,6 @@ import { setLoading } from '../../Actions/Actions';
 const CustomerList = () => {
   const { customers, loading, error } = useSelector(state => state.customer);
   const dispatch = useDispatch();
-  
-  
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -41,7 +39,6 @@ const CustomerList = () => {
     };
     fetchCustomers();
   }, [dispatch]);
-
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
@@ -51,7 +48,6 @@ const CustomerList = () => {
       return { data: [] };
     }
   };
-
   const fetchName = async (endpoint, ...ids) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join('/')}`);
@@ -61,7 +57,6 @@ const CustomerList = () => {
       return 'Unknown';
     }
   };
-
   const fetchUnitDetails = async (projectId, blockId, unitId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
@@ -88,7 +83,6 @@ const CustomerList = () => {
       };
     }
   };
-
   const calculateTotalAmounts = (customers) => {
     const totalAmounts = {};
     customers.forEach(customer => {
@@ -98,15 +92,9 @@ const CustomerList = () => {
     });
     return totalAmounts;
   };
-
-
   if (loading) {
     return <div>Loading...</div>;
   }
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
     <div className='main-content'>
       <h2 className='Headtext'>Customer List</h2>
@@ -132,13 +120,13 @@ const CustomerList = () => {
                 <td>{customer.customerId ? customer.customerId.toUpperCase() : ''}</td>
                 <td><Link to={`/Customer_Details/${customer._id}`}>{customer.name ? customer.name.toUpperCase() : ''}</Link></td>
                 <td>{customer.mobileNumber}</td>
-                <td>{customer.email ? customer.email.toUpperCase() : ''}</td>
+                <td>{customer.email ? customer.email : ''}</td>
                 <td>{customer.projectName}</td>
                 <td>{customer.blockName}-{customer.unitName}</td>
                 <td>{customer.unitPrice}</td>
                 <td>{customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0}</td>
                 <td>{customer.unitPrice - (customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0)}</td>
-                <td><Link to={`/Edit_Customer_Details/${customer._id}`}>Action</Link></td>
+                <td><Link to={`/Edit_Customer_Details/${customer._id}`}>Edit Details</Link></td>
               </tr>
             ))}
           </tbody>
@@ -147,5 +135,4 @@ const CustomerList = () => {
     </div>
   );
 };
-
 export default CustomerList;

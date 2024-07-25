@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-
+import ConfirmationModal from '../../Confirmation/ConfirmationModal';
 const Editcustomerdetails = () => {
     const { _id } = useParams();
     const [customer, setCustomer] = useState(null);
@@ -29,6 +29,7 @@ const Editcustomerdetails = () => {
         mobileNumber3: '',
         email3: ''
     });
+    const [showConfirm, setShowConfirm] = useState(false);
     useEffect(() => {
         const fetchCustomerData = async () => {
             try {
@@ -60,9 +61,6 @@ const Editcustomerdetails = () => {
         }));
     };
     const handleSubmit = async (e) => {
-        e.preventDefault();
-    
-        // Replace blank values with "NA"
         const updatedCustomerNA = { ...editedCustomer };
         Object.keys(updatedCustomerNA).forEach((key) => {
             if (updatedCustomerNA[key] === '') {
@@ -82,13 +80,14 @@ const Editcustomerdetails = () => {
             setUpdateStatus('error');
         }
     };
-    
-    
-    
+    const handleSubmit1 = (e) => {
+        e.preventDefault();
+        setShowConfirm(true);
+      };  
     return (
         <div className='main-content'>
             {customer && (
-                 <form onSubmit={handleSubmit}>
+                 <form onSubmit={handleSubmit1}>
                 <div>
                 <h3 className='Headtext'>Update Customer {customer && customer.name && customer.name.toUpperCase()}- {customer && customer.customerId}</h3>
                     <div className='gridcontainer'>
@@ -170,6 +169,15 @@ const Editcustomerdetails = () => {
                     {updateStatus === 'success' && <p>Customer updated successfully!</p>}
                 </div>
                 <button type="submit" className='btn btn-primary mt-4'>Update Customer</button>
+                <ConfirmationModal
+            show={showConfirm}
+            onClose={() => setShowConfirm(false)}
+            onConfirm={() => {
+              setShowConfirm(false);
+              handleSubmit();
+            }}
+            message="Are you sure you Update These details"
+          />
                 </form>
             )}
         </div>

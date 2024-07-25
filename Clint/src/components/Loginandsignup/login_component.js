@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios'; 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate(); 
   function handleSubmit(e) {
     e.preventDefault();
@@ -22,17 +23,22 @@ export default function Login() {
       const data = response.data;
       console.log(data, "userRegister");
       if (data.status === "ok") {
-        alert("login successful");
+        setSuccess("Login successful");
+        setError("");
         window.localStorage.setItem("token", data.data);
         window.localStorage.setItem("loggedIn", true);
-        navigate("/userDetails");
-      }
-      else {
+        setTimeout(() => {
+          navigate("/userDetails");
+        }, 2000);
+      } else {
         setError(data.error || "Login failed");
+        setSuccess("");
       }
     })
     .catch((error) => {
       console.error('Error logging in:', error);
+      setError("An error occurred. Please try again later.");
+      setSuccess("");
     });
   }
   return (
@@ -75,12 +81,20 @@ export default function Login() {
               Submit
             </button>
           </div>
-          <p className="forgot-password text-right">
-            </p>
         </form>
         {error && (
           <div className="alert alert-danger mt-3" role="alert">
             {error}
+          </div>
+        )}
+        {success && (
+              <div className="confirm-modal">
+      <div className="confirm-modal-content">
+      <h3>You have loggedIn successfully</h3>
+          <div className="alert successbutton mt-3" role="alert">
+            {success}
+          </div>
+          </div>
           </div>
         )}
       </div>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Customer.css';
+import ConfirmationModal from '../../../Confirmation/ConfirmationModal';
 const AddCustomerForm = () => {
   const [formData, setFormData] = useState({
     name: '',
+    title: '',
     fatherOrHusbandName: '',
     address: '',
     aadharNumber: '',
@@ -48,7 +50,7 @@ const AddCustomerForm = () => {
   const [editedtotalPrice, setEditedTotalPrice] = useState();
   const [showSecondCustomer, setShowSecondCustomer] = useState(false);
 const [showThirdCustomer, setShowThirdCustomer] = useState(false);
-
+const [showConfirm, setShowConfirm] = useState(false);
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -123,8 +125,13 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
     }, 0)
   }
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    
     try {
+      const generateUniqueEmail = (prefix = "random", domain = "example.com") => {
+        const timestamp = Date.now();
+        const randomNum = Math.floor(Math.random() * 1000);
+        return `${prefix}${timestamp}${randomNum}@${domain}`;
+      };
       const parsedFormData = {
         ...formData,
         income: formData.income ? parseFloat(formData.income) : 'NA',
@@ -132,21 +139,21 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
         aadharNumber: formData.aadharNumber || 'NA',
         panNumber: formData.panNumber || 'NA',
         mobileNumber: formData.mobileNumber || 'NA',
-        email: formData.email || 'NA',
+        email: formData.email || generateUniqueEmail(),
         name2: formData.name2 || 'NA',
         fatherOrHusbandName2: formData.fatherOrHusbandName2 || 'NA',
         address2: formData.address2 || 'NA',
         aadharNumber2: formData.aadharNumber2 || 'NA',
         panNumber2: formData.panNumber2 || 'NA',
         mobileNumber2: formData.mobileNumber2 || 'NA',
-        email2: formData.email2 || 'NA',
+        email2: formData.email2 || generateUniqueEmail(),
         name3: formData.name3 || 'NA',
         fatherOrHusbandName3: formData.fatherOrHusbandName3 || 'NA',
         address3: formData.address3 || 'NA',
         aadharNumber3: formData.aadharNumber3 || 'NA',
         panNumber3: formData.panNumber3 || 'NA',
         mobileNumber3: formData.mobileNumber3 || 'NA',
-        email3: formData.email3 || 'NA',
+        email3: formData.email3 || generateUniqueEmail(),
       };
       const selectedProject = projects.find(project => project._id === formData.selectedProjectId);
       const selectedBlock = selectedProject?.blocks.find(block => block._id === formData.selectedBlockId);
@@ -161,7 +168,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
       if (markUnitSoldResponse.status === 200 && markUnitSoldResponse.data.status === 'ok') {
         const addCustomerResponse = await axios.post(`${process.env.REACT_APP_API_URL}/addCustomer`, dataToSend);
         if (addCustomerResponse.status === 201) {
-          alert('Customer Added Successfully');
           if (formData.sendEmail) {
             const emailData = {
               to: formData.email,
@@ -183,6 +189,7 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
           }
           setFormData({
             name: '',
+            title: '',
             fatherOrHusbandName: '',
             address: '',
             aadharNumber: '',
@@ -257,13 +264,11 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
       .find(unit => unit._id === unitId);
   
     if (selectedUnit) {
-      // Automatically fill input fields with old data
       setPlotSize(selectedUnit?.plotSize || '');
       setEditedRate(selectedUnit.rate || '');
       setEditedPlcCharges(selectedUnit.plcCharges || '');
       setEditedIdcCharges(selectedUnit.idcCharges || '');
       setEditedEdcPrice(selectedUnit.edcPrice || '');
-      // Calculate the total price based on the new edited values
       const editedTotal =
         (parseFloat(selectedUnit.rate || 0) + parseFloat(selectedUnit.plcCharges || 0) + parseFloat(selectedUnit.idcCharges || 0) + parseFloat(selectedUnit.edcPrice || 0)) * parseFloat(plotSize);
       setEditedTotalPrice(editedTotal);
@@ -310,13 +315,28 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
   const handleToggleThirdCustomer = () => {
     setShowThirdCustomer(!showThirdCustomer);
   };
-  
+  const handleSubmit1 = (e) => {
+    e.preventDefault();
+    setShowConfirm(true);
+  };
   return (
     <div className='main-content back'>
       <h3 className='Headtext'>Add a New Customer </h3>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit1}>
         <h4 className='Headtext'>First Customer </h4>
         <div className='gridcontainer'>
+        <div className=" grid-item">
+            <input
+              className="input-cal input-base"
+              id="input"
+              placeholder="Mr./Mrs./Miss"
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
           <div className=" grid-item">
             <input
               className="input-cal input-base"
@@ -328,7 +348,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               required
             />
-            <label id="label-input">Name</label>
           </div>
           <div className=" grid-item">
             <input
@@ -341,7 +360,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               required
             />
-            <label id="label-input">Father/Husband Name</label>
           </div>
           <div className=" grid-item">
             <input
@@ -354,7 +372,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               required
             />
-            <label id="label-input">Address</label>
           </div>
           <div className=" grid-item">
             <input
@@ -368,7 +385,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               required
             />
-            <label id="label-input">Aadhar Number</label>
           </div>
           <div className=" grid-item">
             <input
@@ -377,11 +393,10 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               placeholder="Enter Pan Number"
               type="text"
               name="panNumber"
-              value={formData.panNumber}
+              value={formData.panNumber.toUpperCase()}
               onChange={handleInputChange}
               required
             />
-            <label id="label-input">PAN Number</label>
           </div>
           <div className=" grid-item">
             <input
@@ -395,7 +410,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               required
             />
-            <label id="label-input">Mobile Number</label>
           </div>
           <div className=" grid-item">
             <input
@@ -408,7 +422,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               required
             />
-            <label id="label-input">Income</label>
           </div>
           <div className=" grid-item">
             <input
@@ -421,7 +434,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               required
             />
-            <label id="label-input">Email</label>
           </div>
         </div>
         <div>
@@ -442,7 +454,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Name</label>
           </div>
           <div className=" grid-item">
             <input
@@ -455,7 +466,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Father/Husband Name</label>
           </div>
           <div className=" grid-item">
             <input
@@ -468,7 +478,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Address</label>
           </div>
           <div className=" grid-item">
             <input
@@ -482,7 +491,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Aadhar Number</label>
           </div>
           <div className=" grid-item">
             <input
@@ -495,7 +503,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">PAN Number</label>
           </div>
           <div className=" grid-item">
             <input
@@ -509,7 +516,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Mobile Number</label>
           </div>
           <div className=" grid-item">
             <input
@@ -522,7 +528,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Email</label>
           </div>
             </div>
             </>
@@ -545,7 +550,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               
             />
             </div>
-            <label id="label-input">Name</label>  
 
           <div className=" grid-item">
             <input
@@ -558,7 +562,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Father/Husband Name</label>
           </div>
           <div className=" grid-item">
             <input
@@ -571,7 +574,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Address</label>
           </div>
           <div className=" grid-item">
             <input
@@ -585,7 +587,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Aadhar Number</label>
           </div>
           <div className=" grid-item">
             <input
@@ -598,7 +599,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">PAN Number</label>
           </div>
           <div className=" grid-item">
             <input
@@ -612,7 +612,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Mobile Number</label>
           </div>
           <div className=" grid-item">
             <input
@@ -625,7 +624,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               
             />
-            <label id="label-input">Email</label>
           </div>
           </div>
           </>
@@ -673,7 +671,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               required
             />
-            <label id="label-input">Discount</label>
           </div>
           <div className="grid-item">
             <select
@@ -689,7 +686,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
                 <option key={index} value={plan.planName}>{plan.planName}</option>
               ))}
             </select>
-            <label id="label-input">Payment Plan</label>
           </div>
           <div className="relative grid-item">
             <input
@@ -702,7 +698,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={handleInputChange}
               required
             />
-            <label id="label-input">Booking Date</label>
           </div>
           <div className="grid-item">
             <select
@@ -750,7 +745,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={(e) => setPlotSize(e.target.value)}
               required
             />
-            <label id="label-input">Plot size</label>
           </div>
           <div className=' grid-item'>
             <input
@@ -763,7 +757,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={(e) => setEditedRate(e.target.value)}
               required
             />
-            <label id="label-input">Base Price</label>
           </div>
           <div className=' grid-item'>
             <input
@@ -776,7 +769,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={(e) => setEditedIdcCharges(e.target.value)}
               required
             />
-            <label id="label-input">IDC Charges</label>
           </div>
           <div className=' grid-item'>
             <input
@@ -789,7 +781,6 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={(e) => setEditedPlcCharges(e.target.value)}
               required
             />
-            <label id="label-input">PlC Charges</label>
           </div>
           <div className=' grid-item'>
             <input
@@ -802,11 +793,9 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
               onChange={(e) => setEditedEdcPrice(e.target.value)}
               required
             />
-            <label id="label-input">EDC Charges</label>
           </div>
           <div className='grid-item'>
           <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id='input' placeholder="Total Price" value={editedtotalPrice} onChange={(e) => setEditedTotalPrice(e.target.value)}  />
-          <label id="label-input">Total Price</label>
         </div>
           <div className="container mt-2 grid-item">
             <input
@@ -831,6 +820,15 @@ const [showThirdCustomer, setShowThirdCustomer] = useState(false);
         <div className='mt-4'>
           <button type="submit" className="btn btn-primary " >Submit</button>
         </div>
+        <ConfirmationModal
+            show={showConfirm}
+            onClose={() => setShowConfirm(false)}
+            onConfirm={() => {
+              setShowConfirm(false);
+              handleSubmit();
+            }}
+            message="Are you sure you want to add this Customer?"
+          />
       </form>
     </div>
   );
