@@ -52,7 +52,7 @@ const customerSchema = new mongoose.Schema({
     default: 0
   },
   paymentPlan: {
-    type: String  // Adjusted to store only the name of the payment plan
+    type: String  
   },
   bookingDate: {
     type: Date
@@ -94,8 +94,6 @@ const customerSchema = new mongoose.Schema({
   },
   email2: {
     type: String,
-    required: true,
-    unique: true
   },
   name3: {
     type: String,
@@ -123,18 +121,12 @@ const customerSchema = new mongoose.Schema({
   },
   email3: {
     type: String,
-    required: true,
-    unique: true
   },
 });
-
-// Pre-save middleware to generate and set the customer ID
 customerSchema.pre('save', async function(next) {
   if (this.isNew) {
     try {
-      // Generate a scenario number
       const scenarioNumber = await mongoose.models.Customer.countDocuments() + 1;
-      // Construct the customer ID
       this.customerId = `WI0${scenarioNumber}`;
       next();
     } catch (error) {
@@ -144,8 +136,5 @@ customerSchema.pre('save', async function(next) {
     next();
   }
 });
-
-
 const Customer = mongoose.model("Customer", customerSchema);
-
 module.exports = Customer;

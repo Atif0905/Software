@@ -178,19 +178,18 @@ app.get("/paginatedUsers", async (req, res) => {
   res.json(results)
 });
 
-app.post("/uploadProject", async (req, res) => {
-  const { name, description, totalLand } = req.body;
+  app.post("/uploadProject", async (req, res) => {
+  const { name, description, totalLand, GST, AccountNo, Bank, IFSC, Payable ,CompanyName } = req.body;
 
-  try {
-    // Create a new project using the Project model without blocks
-    const project = await Project.create({ name, description, totalLand });
-    res.status(201).json({ status: "ok", data: project });
-  } catch (error) {
-    console.error("Error uploading project:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
+    try {
+      // Create a new project using the Project model without blocks
+      const project = await Project.create({ name,  description, totalLand, GST, AccountNo, Bank, IFSC, Payable ,CompanyName});
+      res.status(201).json({ status: "ok", data: project });
+    } catch (error) {
+      console.error("Error uploading project:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
 app.get("/getAllProjects", async (req, res) => {
   try {
     const projects = await Project.find({});
@@ -200,8 +199,6 @@ app.get("/getAllProjects", async (req, res) => {
     res.status(500).json({ status: "error", error: "Internal server error" });
   }
 });
-
-// Endpoint to fetch project by ID
 app.get("/getProject/:projectId", async (req, res) => {
   const { projectId } = req.params;
 
@@ -321,8 +318,6 @@ app.post("/addBlock/:projectId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Endpoint to add a unit to a block
 app.post("/addUnit/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
   const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice,edcPrice } = req.body;
@@ -339,8 +334,6 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
     if (!block) {
       return res.status(404).json({ error: "Block not found" });
     }
-
-    // Create a new unit and add it to the block
     const newUnit = {
       name,
       plotSize,
@@ -620,7 +613,6 @@ app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
   }
 });
 
-// Endpoint to add a customer
 app.post("/addCustomer", async (req, res) => {
   const {
     name,
@@ -657,15 +649,10 @@ app.post("/addCustomer", async (req, res) => {
   } = req.body;
 
   try {
-    // Generate a scenario number
     const scenarioNumber = await Customer.countDocuments() + 1;
-
-    // Generate unique ID
     const customerId = `WI0${scenarioNumber}`;
-
-    // Create a new customer with payment plan names
     const newCustomer = await Customer.create({
-      customerId, // Add the generated ID
+      customerId, 
       name,
       fatherOrHusbandName,
       address,
@@ -811,10 +798,6 @@ app.put("/editCustomer/:customerId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-
-// Assuming you have a route handler for creating payment plans
 app.post('/createPaymentPlan', async (req, res) => {
   try {
     const { type, planName, numInstallments, installments } = req.body;
@@ -853,9 +836,6 @@ app.get('/paymentPlans', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching payment plans' });
   }
 });
-
-// Endpoint to handle payment details
-// Endpoint to add payment details
 app.post("/paymentDetails", async (req, res) => {
   const { customerId, paymentType, paymentMode, amount, reference, comment, aadharNumber, PaymentDate } = req.body;
 
@@ -883,12 +863,8 @@ app.post("/paymentDetails", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-// Endpoint to get all payment details
 app.get("/paymentDetails", async (req, res) => {
   try {
-    // Fetch all payment details from the database
     const payments = await Payment.find();
 
     res.status(200).json({ status: "ok", data: payments });
@@ -897,21 +873,64 @@ app.get("/paymentDetails", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 app.get("/paymentDetails/:customerId", async (req, res) => {
   const { customerId } = req.params;
-
   try {
-    // Fetch payment details for the specified Aadhar number from the database
     const payments = await Payment.find({ customerId });
-
     if (payments.length === 0) {
       return res.status(404).json({ error: "No payments found for the specified Aadhar number" });
     }
-
     res.status(200).json({ status: "ok", data: payments });
   } catch (error) {
     console.error("Error fetching payment details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.put("/paymentDetails/:paymentId", async (req, res) => {
+  const { paymentId } = req.params;
+  const { customerId, paymentMode, amount, reference, comment, PaymentDate } = req.body;
+
+  try {
+    if ( !reference || !customerId) {
+      return res.status(400).json({ error: " Reference, and CustomerId are required fields" });
+    }
+    const updatedPayment = await Payment.findByIdAndUpdate(
+      paymentId,
+      {
+        customerId,
+        paymentMode,
+        amount,
+        reference,
+        comment,
+        PaymentDate
+      },
+      { new: true }
+    );
+
+    if (!updatedPayment) {
+      return res.status(404).json({ error: "Payment not found" });
+    }
+
+    res.status(200).json({ status: "ok", message: "Payment details updated successfully", data: updatedPayment });
+  } catch (error) {
+    console.error("Error updating payment details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.delete("/paymentDetails/:paymentId", async (req, res) => {
+  const { paymentId } = req.params;
+
+  try {
+    // Find the payment record by ID and delete it
+    const deletedPayment = await Payment.findByIdAndDelete(paymentId);
+
+    if (!deletedPayment) {
+      return res.status(404).json({ error: "Payment not found" });
+    }
+
+    res.status(200).json({ status: "ok", message: "Payment details deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting payment details:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

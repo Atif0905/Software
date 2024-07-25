@@ -28,8 +28,14 @@ const blockSchema = new mongoose.Schema({
 const projectSchema = new mongoose.Schema({
   name: String,
   description: String,
-  totalLand: String, // New field for total land
-  blocks: [blockSchema] // Array of blocks within the project
+  totalLand: String, 
+  GST: String,
+  AccountNo: String,
+  Bank: String,
+  IFSC: String,
+  Payable: String,
+  CompanyName: String,
+  blocks: [blockSchema]
 });
 
 // Create the Project model using the schema

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Payments.css";
 const Receivedpayments = () => {
-  const [customerId, setCustomerId] = useState('');
-  const [selectedCustomerId, setSelectedCustomerId] = useState('');
+  const [customerId, setCustomerId] = useState("");
+  const [selectedCustomerId, setSelectedCustomerId] = useState("");
   const [customerDetails, setCustomerDetails] = useState(null);
   const [error, setError] = useState(null);
-  const [yourCustomerId, setYourCustomerId] = useState('');
+  const [yourCustomerId, setYourCustomerId] = useState("");
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [submittedInstallments, setSubmittedInstallments] = useState([]);
   const [matchedPayments, setMatchedPayments] = useState([]);
@@ -20,12 +20,12 @@ const Receivedpayments = () => {
   const [isPaymentClicked, setIsPaymentClicked] = useState(false);
   const [unitData, setUnitData] = useState(null);
   const [payment, setPayment] = useState({
-    paymentType: '',
-    paymentMode: '',
-    amount: '',
-    reference: '',
-    comment: '',
-    PaymentDate: '',
+    paymentType: "",
+    paymentMode: "",
+    amount: "",
+    reference: "",
+    comment: "",
+    PaymentDate: "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,61 +33,70 @@ const Receivedpayments = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('form submit successfully');
+    console.log("form submit successfully");
     try {
       if (customerId !== yourCustomerId) {
-        setError('Entered Customer ID does not match the searched Customer ID');
+        setError("Entered Customer ID does not match the searched Customer ID");
         return;
       }
-      console.log('Form Data:', {
+      console.log("Form Data:", {
         paymentType: payment.paymentType,
         paymentMode: payment.paymentMode,
         amount: payment.amount,
         reference: payment.reference,
         comment: payment.comment,
         customerId: yourCustomerId,
-        PaymentDate: payment.PaymentDate
+        PaymentDate: payment.PaymentDate,
       });
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/paymentDetails`,{
-        paymentType: payment.paymentType,
-        paymentMode: payment.paymentMode,
-        amount: payment.amount,
-        reference: payment.reference,
-        comment: payment.comment,
-        customerId: yourCustomerId,
-        PaymentDate: payment.PaymentDate
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/paymentDetails`,
+        {
+          paymentType: payment.paymentType,
+          paymentMode: payment.paymentMode,
+          amount: payment.amount,
+          reference: payment.reference,
+          comment: payment.comment,
+          customerId: yourCustomerId,
+          PaymentDate: payment.PaymentDate,
+        }
+      );
       setSubmittedInstallments([...submittedInstallments, payment.paymentType]);
       setDisabledInstallments([...disabledInstallments, payment.paymentType]); // Disable selected installment
       setPayment({
-        paymentType: '',
-        paymentMode: '',
-        amount: '',
-        reference: '',
-        comment: '',
-        PaymentDate: ''
+        paymentType: "",
+        paymentMode: "",
+        amount: "",
+        reference: "",
+        comment: "",
+        PaymentDate: "",
       });
       setError(null);
     } catch (error) {
-      console.error('Error submitting payment:', error);
-      setError('Error submitting payment. Please try again later.'); // Set error message for display
+      console.error("Error submitting payment:", error);
+      setError("Error submitting payment. Please try again later."); // Set error message for display
     }
   };
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
-      console.log("Main",response)
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`
+      );
+      console.log("Main", response);
       return response.data.data;
     } catch (error) {
-      console.error('Error fetching payment details:', error);
-      throw new Error('Error fetching payment details. Please try again later.');
+      console.error("Error fetching payment details:", error);
+      throw new Error(
+        "Error fetching payment details. Please try again later."
+      );
     }
   };
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const paymentDetails = await fetchPaymentDetailsByCustomerId(customerId);
-        setMatchedPayments(paymentDetails); 
+        const paymentDetails = await fetchPaymentDetailsByCustomerId(
+          customerId
+        );
+        setMatchedPayments(paymentDetails);
       } catch (error) {
         setError(error.message);
       }
@@ -98,84 +107,120 @@ const Receivedpayments = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-        const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
-          const projectName = await fetchName('getProject', customer.project);
-          const blockName = await fetchName('getBlock', customer.project, customer.block);
-          const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
-          const unitDetails = await fetchUnitDetails(customer.project, customer.block, customer.plotOrUnit);
-          return {
-            ...customer,
-            projectName: projectName.toUpperCase(),
-            blockName: blockName.toUpperCase(),
-            unitName: unitName.toUpperCase(),
-            ...unitDetails,
-          };
-        }));
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/Viewcustomer`
+        );
+        const customersWithDetails = await Promise.all(
+          response.data.map(async (customer) => {
+            const projectName = await fetchName("getProject", customer.project);
+            const blockName = await fetchName(
+              "getBlock",
+              customer.project,
+              customer.block
+            );
+            const unitName = await fetchName(
+              "getUnit",
+              customer.project,
+              customer.block,
+              customer.plotOrUnit
+            );
+            const unitDetails = await fetchUnitDetails(
+              customer.project,
+              customer.block,
+              customer.plotOrUnit
+            );
+            return {
+              ...customer,
+              projectName: projectName.toUpperCase(),
+              blockName: blockName.toUpperCase(),
+              unitName: unitName.toUpperCase(),
+              ...unitDetails,
+            };
+          })
+        );
         setCustomers(customersWithDetails);
       } catch (error) {
-        console.error('Error fetching customers:', error);
-        setError('Error fetching customers. Please try again later.');
+        console.error("Error fetching customers:", error);
+        setError("Error fetching customers. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
     fetchCustomers();
-  }, []);  
+  }, []);
   const fetchUnitDetails = async (projectId, blockId, unitId) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`
+      );
       const unitData = response.data.data;
-      return unitData; 
+      return unitData;
     } catch (error) {
-      console.error('Error fetching unit details:', error);
+      console.error("Error fetching unit details:", error);
       return null;
     }
   };
   useEffect(() => {
     const fetchPaymentPlans = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/paymentPlans`
+        );
         if (Array.isArray(response.data.paymentPlans)) {
-          const modifiedPlans = response.data.paymentPlans.map(async plan => {
-            const modifiedInstallments = await Promise.all(plan.installments.map(async installment => {
-              try {
-                const installmentResponse = await axios.get(`${process.env.REACT_APP_API_URL}/installmentDetails/${installment._id}`);
-                return {
-                  ...installment,
-                  amountRs: installmentResponse.data.amountRS
-                };
-              } catch (error) {
-                console.error('Error fetching installment details:', error);
-                return installment;
-              }
-            }));
+          const modifiedPlans = response.data.paymentPlans.map(async (plan) => {
+            const modifiedInstallments = await Promise.all(
+              plan.installments.map(async (installment) => {
+                try {
+                  const installmentResponse = await axios.get(
+                    `${process.env.REACT_APP_API_URL}/installmentDetails/${installment._id}`
+                  );
+                  return {
+                    ...installment,
+                    amountRs: installmentResponse.data.amountRS,
+                  };
+                } catch (error) {
+                  console.error("Error fetching installment details:", error);
+                  return installment;
+                }
+              })
+            );
             return { ...plan, installments: modifiedInstallments };
           });
           const filteredPlans = await Promise.all(modifiedPlans);
           setPaymentPlans(filteredPlans);
         } else {
-          console.error('Invalid data format for payment plans:', response.data);
+          console.error(
+            "Invalid data format for payment plans:",
+            response.data
+          );
         }
       } catch (error) {
-        console.error('Error fetching payment plans:', error);
+        console.error("Error fetching payment plans:", error);
       }
     };
     fetchPaymentPlans();
-  }, []);  
+  }, []);
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!customerId) {
-      setError('Please enter a valid Customer ID');
+      setError("Please enter a valid Customer ID");
       return;
     }
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/viewcustomer/${customerId}`);
-      console.log('Fetched customer details:', response.data);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/viewcustomer/${customerId}`
+      );
+      console.log("Fetched customer details:", response.data);
       const customerDetails = response.data;
-      const unitDetails = await fetchUnitDetails(customerDetails.project, customerDetails.block, customerDetails.plotOrUnit);
-        if (Array.isArray(unitDetails) && unitDetails.length > 0) {
-        const matchedUnit = unitDetails.find(unit => unit.id === customerDetails.plotOrUnit);
+      const unitDetails = await fetchUnitDetails(
+        customerDetails.project,
+        customerDetails.block,
+        customerDetails.plotOrUnit
+      );
+      if (Array.isArray(unitDetails) && unitDetails.length > 0) {
+        const matchedUnit = unitDetails.find(
+          (unit) => unit.id === customerDetails.plotOrUnit
+        );
         if (matchedUnit) {
           const customerUnitDetails = {
             unitPrice: matchedUnit.unitPrice,
@@ -184,25 +229,32 @@ const Receivedpayments = () => {
             plotSize: matchedUnit.plotSize,
             sizeType: matchedUnit.sizeType,
             rate: matchedUnit.rate,
-            edcPrice : matchedUnit.edcPrice
+            edcPrice: matchedUnit.edcPrice,
           };
-          setCustomerDetails({ ...customerDetails, unitDetails: customerUnitDetails });
-          setUnitData(matchedUnit); 
-          return; 
+          setCustomerDetails({
+            ...customerDetails,
+            unitDetails: customerUnitDetails,
+          });
+          setUnitData(matchedUnit);
+          return;
         } else {
-          console.log('No matching unit found');
+          console.log("No matching unit found");
         }
-      } 
+      }
       setCustomerDetails(customerDetails);
-      setUnitData(null); 
-  
+      setUnitData(null);
+
       if (response.data.paymentPlan) {
-        const matchedPlan = paymentPlans.find(plan => plan.planName === response.data.paymentPlan);
+        const matchedPlan = paymentPlans.find(
+          (plan) => plan.planName === response.data.paymentPlan
+        );
         if (matchedPlan) {
           setSelectedPlanInstallments(matchedPlan.installments);
           const disabledInstallments = matchedPlan.installments
-            .filter(installment => submittedInstallments.includes(installment.installment))
-            .map(installment => installment.installment);
+            .filter((installment) =>
+              submittedInstallments.includes(installment.installment)
+            )
+            .map((installment) => installment.installment);
           setDisabledInstallments(disabledInstallments);
         } else {
           setSelectedPlanInstallments([]);
@@ -210,34 +262,39 @@ const Receivedpayments = () => {
       }
       setError(null);
       setShowCustomerDetails(true);
-      setSelectedCustomerId(customerId); 
+      setSelectedCustomerId(customerId);
     } catch (error) {
-      console.error('Error fetching customer details:', error);
-      setError('Customer not found');
+      console.error("Error fetching customer details:", error);
+      setError("Customer not found");
       setCustomerDetails(null);
     }
   };
   const handleMakePayment = async () => {
     setIsPaymentClicked(true);
     try {
-      const response = await fetchUnitDetails(customerDetails.project, customerDetails.block, customerDetails.plotOrUnit);
-      setUnitData(response); 
-      console.log('Fetched Unit Data:', response); 
-    } catch (error) {
-    }
+      const response = await fetchUnitDetails(
+        customerDetails.project,
+        customerDetails.block,
+        customerDetails.plotOrUnit
+      );
+      setUnitData(response);
+      console.log("Fetched Unit Data:", response);
+    } catch (error) {}
   };
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    return date.toLocaleDateString('en-US', options);
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    return date.toLocaleDateString("en-US", options);
   };
   const fetchName = async (endpoint, ...ids) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join('/')}`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join("/")}`
+      );
       return response.data.data.name;
     } catch (error) {
       console.error(`Error fetching ${endpoint} name:`, error);
-      return 'Unknown';
+      return "Unknown";
     }
   };
   const handleViewDetails = (customerDetails) => {
@@ -246,100 +303,118 @@ const Receivedpayments = () => {
   useEffect(() => {
     const fetchUnitDetails = async (projectId, blockId, unitId) => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`
+        );
         const unitData = response.data.data;
-        console.log('Unit Data:', unitData);
-        return unitData; 
+        console.log("Unit Data:", unitData);
+        return unitData;
       } catch (error) {
-        console.error('Error fetching unit details:', error);
-        return null; 
+        console.error("Error fetching unit details:", error);
+        return null;
       }
     };
-  
+
     fetchUnitDetails();
   }, [customerDetails]);
-  
-  const filteredPayments = matchedPayments.filter(payment => payment.customerId === selectedCustomerId);
+
+  const filteredPayments = matchedPayments.filter(
+    (payment) => payment.customerId === selectedCustomerId
+  );
   let totalDue = unitData && unitData.totalPrice ? unitData.totalPrice : 0;
-  filteredPayments.forEach(payment => {
+  filteredPayments.forEach((payment) => {
     totalDue -= parseFloat(payment.amount);
   });
-function ordinalSuffix(number) {
-  const suffixes = ["th", "st", "nd", "rd"];
-  const v = number % 100;
-  return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
-}
-const possessionCharges = unitData ? ((parseFloat(unitData.idcCharges) + parseFloat(unitData.plcCharges) + parseFloat(unitData.edcPrice)) * parseFloat(unitData.plotSize)).toFixed(2) : '';
+  function ordinalSuffix(number) {
+    const suffixes = ["th", "st", "nd", "rd"];
+    const v = number % 100;
+    return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
+  }
+  const possessionCharges = unitData
+    ? (
+        (parseFloat(unitData.idcCharges) +
+          parseFloat(unitData.plcCharges) +
+          parseFloat(unitData.edcPrice)) *
+        parseFloat(unitData.plotSize)
+      ).toFixed(2)
+    : "";
   return (
- <div className="main-content">
- <h4 className="Headtext">Receive Payment from Customer</h4>
- <div className="d-flex">
-<form onSubmit={handleSearch}>
-  <div className="col-8">
-    <div className="whiteback">
-      <label className="mt-3">Customer ID</label>
-      <input
-        className="form-input-field" type="text" placeholder="Enter Customer ID" value={customerId.toUpperCase()} onChange={(e) => setCustomerId(e.target.value)}
-      />
-      <button className="add-buttons mt-3" type="submit"> Search </button>
-    </div>
-  </div>
-</form>
-{showCustomerDetails && error && <p>{error}</p>}
-{showCustomerDetails && customerDetails && (
-  <div className="col-8 whiteback">
-    <div className="table-wrapper">
-      <table className="fl-table d-flex">
-<thead>
-  <tr>
-    <th>Name</th>
-  </tr>
-  <tr>
-    <th>Father/Husband Name</th>
-  </tr>
-  <tr>
-    <th>Address</th>
-  </tr>
-  <tr>
-    <th>Customer ID</th>
-  </tr>
-  <tr>
-    <th>Pan Number</th>
-  </tr>
-  <tr>
-    <th>Mobile Number</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td>{customerDetails.name}</td>
-  </tr>
-  <tr>
-    <td>{customerDetails.fatherOrHusbandName}</td>
-  </tr>
-  <tr>
-    <td>{customerDetails.address}</td>
-  </tr>
-  <tr>
-    <td>{customerDetails.customerId}</td>
-  </tr>
-  <tr>
-    <td>{customerDetails.panNumber}</td>
-  </tr>
-  <tr>
-    <td>{customerDetails.mobileNumber}</td>
-  </tr>
-        </tbody>
-      </table>
-    </div>
-    <h4 className="Headtext1" onClick={handleMakePayment}>
-      <span className="makepayment">Add  Payment</span>
-    </h4>
-  </div>
+    <div className="main-content">
+      <h4 className="Headtext">Receive Payment from Customer</h4>
+      <div className="d-flex">
+        <form onSubmit={handleSearch}>
+          <div className="col-8">
+            <div className="whiteback">
+              <label className="mt-3">Customer ID</label>
+              <input
+                className="form-input-field"
+                type="text"
+                placeholder="Enter Customer ID"
+                value={customerId.toUpperCase()}
+                onChange={(e) => setCustomerId(e.target.value)}
+              />
+              <button className="add-buttons mt-3" type="submit">
+                {" "}
+                Search{" "}
+              </button>
+            </div>
+          </div>
+        </form>
+        {showCustomerDetails && error && <p>{error}</p>}
+        {showCustomerDetails && customerDetails && (
+          <div className="col-8 whiteback">
+            <div className="table-wrapper">
+              <table className="fl-table d-flex">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                  </tr>
+                  <tr>
+                    <th>Father/Husband Name</th>
+                  </tr>
+                  <tr>
+                    <th>Address</th>
+                  </tr>
+                  <tr>
+                    <th>Customer ID</th>
+                  </tr>
+                  <tr>
+                    <th>Pan Number</th>
+                  </tr>
+                  <tr>
+                    <th>Mobile Number</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{customerDetails.name}</td>
+                  </tr>
+                  <tr>
+                    <td>{customerDetails.fatherOrHusbandName}</td>
+                  </tr>
+                  <tr>
+                    <td>{customerDetails.address}</td>
+                  </tr>
+                  <tr>
+                    <td>{customerDetails.customerId}</td>
+                  </tr>
+                  <tr>
+                    <td>{customerDetails.panNumber}</td>
+                  </tr>
+                  <tr>
+                    <td>{customerDetails.mobileNumber}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <h4 className="Headtext1" onClick={handleMakePayment}>
+              <span className="makepayment">Add Payment</span>
+            </h4>
+          </div>
         )}
       </div>
       {!isPaymentClicked && error && <p>{error}</p>}
-        {isPaymentClicked && customerDetails &&  unitData && (
+      {isPaymentClicked && customerDetails && unitData && (
         <div>
           <h4 className="Headtext">Post Payment of customers</h4>
           <h4 className="Headtext1">
@@ -352,134 +427,149 @@ const possessionCharges = unitData ? ((parseFloat(unitData.idcCharges) + parseFl
               <form onSubmit={handleSubmit}>
                 <label>Select Installments</label>
                 <select
-  className="select-buttons ps-1"
-  name="paymentType"
-  value={payment.paymentType}
-  onChange={handleChange}
->
-  <option>Select</option>
-  {selectedPlanInstallments.map((installment, index) => (
-    !submittedInstallments.includes(installment.installment) && installment.installment !== payment.paymentType && (
-      <option
-        key={index}
-        value={installment.installment}
-        disabled={disabledInstallments.includes(installment.installment) || installment.installment === payment.paymentType}
-      >
-        {index === 0 ? "Booking" : `${ordinalSuffix(index)} Installment`} - {((parseFloat(installment.amountRS) / 100) * (parseFloat(unitData.plotSize) * parseFloat(unitData.rate)))}
-      </option>
-    )
-  ))}
-  {!submittedInstallments.includes('Possession Charges') && (
-    <option disabled={payment.paymentType === 'Possession Charges'}>
-      Possession Charges - {possessionCharges}
-    </option>
-  )}
-</select>
+                  className="select-buttons ps-1"
+                  name="paymentType"
+                  value={payment.paymentType}
+                  onChange={handleChange}
+                >
+                  <option>Select</option>
+                  {selectedPlanInstallments.map(
+                    (installment, index) =>
+                      !submittedInstallments.includes(
+                        installment.installment
+                      ) &&
+                      installment.installment !== payment.paymentType && (
+                        <option
+                          key={index}
+                          value={installment.installment}
+                          disabled={
+                            disabledInstallments.includes(
+                              installment.installment
+                            ) || installment.installment === payment.paymentType
+                          }
+                        >
+                          {index === 0
+                            ? "Booking"
+                            : `${ordinalSuffix(index)} Installment`}{" "}
+                          -{" "}
+                          {(parseFloat(installment.amountRS) / 100) *
+                            (parseFloat(unitData.plotSize) *
+                              parseFloat(unitData.rate))}
+                        </option>
+                      )
+                  )}
+                  {!submittedInstallments.includes("Possession Charges") && (
+                    <option
+                      disabled={payment.paymentType === "Possession Charges"}
+                    >
+                      Possession Charges - {possessionCharges}
+                    </option>
+                  )}
+                </select>
 
+                <label>Select Payment Mode</label>
+                <select
+                  className="select-buttons ps-1"
+                  name="paymentMode"
+                  value={payment.paymentMode}
+                  onChange={handleChange}
+                >
+                  <option>Select</option>
+                  <option>cheque</option>
+                  <option>cash</option>
+                  <option>Bank Deposit</option>
+                  <option>Bank Transfer</option>
+                  <option>Online</option>
+                  <option>commision Adjustment</option>
+                </select>
+                <label>Amount</label>
+                <input
+                  type="number"
+                  className="form-input-field"
+                  name="amount"
+                  value={payment.amount}
+                  onChange={handleChange}
+                />
+                <label>Cheque/ Receipt/ No.</label>
+                <input
+                  type="text"
+                  className="form-input-field"
+                  name="reference"
+                  value={payment.reference}
+                  onChange={handleChange}
+                />
+                <label>Payment Date</label>
+                <input
+                  type="date"
+                  className="form-input-field"
+                  name="PaymentDate"
+                  value={payment.PaymentDate}
+                  onChange={handleChange}
+                />
+                <label>Customer ID</label>
+                <input
+                  required
+                  className="form-input-field"
+                  type="text"
+                  placeholder="Enter Your Customer ID"
+                  value={yourCustomerId.toUpperCase()}
+                  onChange={(e) => setYourCustomerId(e.target.value)}
+                />
+                <label>Comment</label>
+                <input
+                  type="text"
+                  className="form-input-field"
+                  name="comment"
+                  placeholder="Enter comment regarding payment"
+                  value={payment.comment}
+                  onChange={handleChange}
+                />
+                <button type="submit" className="btn btn-primary mt-3">
+                  Submit
+                </button>
+              </form>
+            </div>
+            <div className="col-8 mt-4">
+              <div className="whiteback">
+                <h2 className="head">Total Due Till date : {totalDue}</h2>
+                <h4 className="Headtext1">Payment Plan Installments</h4>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Installment</th>
+                      <th>Due Date</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredPayments.map((payment, index) => (
+                      <tr key={index}>
+                        <td>
+                          {payment.paymentType.startsWith("Possession Charges")
+                            ? "Possession Charges"
+                            : isNaN(payment.paymentType)
+                            ? payment.paymentType
+                            : payment.paymentType === "1"
+                            ? "Booking"
+                            : payment.paymentType === "2"
+                            ? "1st Installment"
+                            : payment.paymentType === "3"
+                            ? "2nd Installment"
+                            : payment.paymentType === "4"
+                            ? "3rd Installment"
+                            : parseInt(payment.paymentType) -
+                              1 +
+                              ordinalSuffix(parseInt(payment.paymentType) - 1) +
+                              " Installment"}
+                        </td>
 
-<label>Select Payment Mode</label>
-<select
-  className="select-buttons ps-1"
-  name="paymentMode"
-  value={payment.paymentMode}
-  onChange={handleChange}
->
-  <option>Select</option>
-  <option>cheque</option>
-  <option>cash</option>
-  <option>Bank Deposit</option>
-  <option>Bank Transfer</option>
-  <option>Online</option>
-  <option>commision Adjustment</option>
-</select>
-<label>Amount</label>
-<input
-  type="number"
-  className="form-input-field"
-  name="amount"
-  value={payment.amount}
-  onChange={handleChange}
-/>
-<label>Cheque/ Receipt/ No.</label>
-<input
-  type="text"
-  className="form-input-field"
-  name="reference"
-  value={payment.reference}
-  onChange={handleChange}
-/>
-<label>Payment Date</label>
-<input
-  type="date"
-  className="form-input-field"
-  name="PaymentDate"
-  value={payment.PaymentDate}
-  onChange={handleChange}
-/>
-<label>Customer ID</label>
-<input
-  required
-  className="form-input-field"
-  type="text"
-  placeholder="Enter Your Customer ID"
-  value={yourCustomerId.toUpperCase()}
-  onChange={(e) => setYourCustomerId(e.target.value)}
-/>
-<label>Comment</label>
-<input
-  type="text"
-  className="form-input-field"
-  name="comment"
-  placeholder="Enter comment regarding payment"
-  value={payment.comment}
-  onChange={handleChange}
-/>
-<button type="submit" className="btn btn-primary mt-3">
-  Submit
-</button>
-  </form>
-</div>
-<div className="col-8 mt-4">
-<div className="whiteback">
-    <h2 className="head">
-      Total Due Till date : {totalDue}
-    </h2>
-    <h4 className="Headtext1">Payment Plan Installments</h4>
-    <table>
-      <thead>
-        <tr>
-          <th>Installment</th>
-          <th>Due Date</th>
-          <th>Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        {filteredPayments.map((payment, index) => (
-          <tr key={index}>
-            <td>
-  {payment.paymentType.startsWith('Possession Charges') 
-    ? 'Possession Charges' 
-    : isNaN(payment.paymentType) 
-      ? payment.paymentType 
-      : payment.paymentType === '1' 
-        ? 'Booking' 
-        : payment.paymentType === '2' 
-          ? '1st Installment' 
-          : payment.paymentType === '3' 
-            ? '2nd Installment' 
-            : payment.paymentType === '4' 
-              ? '3rd Installment' 
-              : (parseInt(payment.paymentType) - 1) + ordinalSuffix(parseInt(payment.paymentType) - 1) + ' Installment'
-  }
-</td>
-
-            <td>{formatDate(payment.PaymentDate)}</td>
-            <td>{payment.amount}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>     
-  </div>
+                        <td>{formatDate(payment.PaymentDate)}</td>
+                        <td>{payment.amount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

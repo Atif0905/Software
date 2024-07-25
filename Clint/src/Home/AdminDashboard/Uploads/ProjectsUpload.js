@@ -63,7 +63,7 @@ const ProjectsUpload = () => {
     fetchCustomers();
   }, []);
   useEffect(() => {
-    const due = parseFloat(totalPrice) - parseFloat(totalReceivedPayment);
+    const due = (parseFloat(totalPrice || 0) - parseFloat(totalReceivedPayment) || 0);
     setDuePayment(due.toFixed(2));
   }, [totalPrice, totalReceivedPayment]);
   const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize, edcPrice) => {
