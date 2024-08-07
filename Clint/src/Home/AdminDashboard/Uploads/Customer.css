@@ -169,8 +169,9 @@ border: #c7c7c7 .2px solid !important;
 background-color: rgb(249,249,249);
 }
 #viewcustomertable th{
- font-size: 14px;
+ font-size: 12px;
 }
 #viewcustomertable td{
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 500;
 }

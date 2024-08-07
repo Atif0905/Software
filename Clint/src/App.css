@@ -3,7 +3,7 @@ body {
   overflow-x: hidden;
 }
 .main-content {
-  margin-left: 15%;
+  margin-left: 16%;
   padding: 16px;
   background-size: contain;
   background-attachment: fixed ;
@@ -41,6 +41,7 @@ grid-gap: 20px;
   width: 20px;
   height: 20px;
   margin-left: 10px;
+  cursor: pointer;
 }
 .grid-item{
 border-top: 3px solid rgb(98, 174, 255);
@@ -130,10 +131,11 @@ position: relative;
   border-radius: 5px;
 }
 .successbutton {
+  width: 100%;
   margin: 10px;
-  padding: 10px 20px;
+  padding: 10px;
   border: none;
-  background-color: green;
+  background-color: rgb(1, 216, 1);
   color: white;
   cursor: pointer;
   border-radius: 5px;
@@ -146,6 +148,25 @@ position: relative;
   color: white;
   cursor: pointer;
   border-radius: 5px;
+}
+.right{
+  text-align: right;
+}
+.ledgerarea{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.calendarWrap{
+  display: inline-block;
+  position: relative;
+}
+.calendarElement {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 40px;
+  border: 1px solid #ccc;
+  z-index: 999;
 }
 @media (max-width:1205px) {
 .gridcontainer{

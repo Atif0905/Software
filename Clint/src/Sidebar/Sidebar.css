@@ -17,12 +17,13 @@
   height: 50px;
   position: sticky;
   top: 0;
+  z-index: 999;
 }
 .sidebar {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  width: 15%;
+  width: 16%;
   height: 100%;
   background-color: rgb(34,45,50);
   background-size: contain;
@@ -70,7 +71,6 @@
   color: #fff;
 }
 .dropdown .dropdown-menu {
-  display: none;
   position: relative;
   list-style-type: none; 
   padding: 0;
@@ -83,6 +83,7 @@
   display: block;
   color: #fff;
   opacity: 1 !important;
+  z-index: 0;
 }
 
 .dropdown .dropdown-item {

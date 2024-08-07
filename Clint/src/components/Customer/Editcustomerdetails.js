@@ -7,10 +7,12 @@ const Editcustomerdetails = () => {
     const [customer, setCustomer] = useState(null);
     const [updateStatus, setUpdateStatus] = useState(null);
     const [editedCustomer, setEditedCustomer] = useState({
+        title: '',
         name: '',
         fatherOrHusbandName: '',
         address: '',
         aadharNumber: '',
+        bookingDate: '',
         panNumber: '',
         mobileNumber: '',
         email: '',
@@ -27,6 +29,9 @@ const Editcustomerdetails = () => {
         aadharNumber3: '',
         panNumber3: '',
         mobileNumber3: '',
+        DOB: '',
+        AgreementDate : '',
+        AllotmentDate : '',
         email3: ''
     });
     const [showConfirm, setShowConfirm] = useState(false);
@@ -91,6 +96,14 @@ const Editcustomerdetails = () => {
                 <div>
                 <h3 className='Headtext'>Update Customer {customer && customer.name && customer.name.toUpperCase()}- {customer && customer.customerId}</h3>
                     <div className='gridcontainer'>
+                    <div className='grid-item'>
+                    <select type='text' name='title' value={editedCustomer.title} onChange={handleChange} placeholder='Name' required>
+                        <option>Select Option</option>
+                        <option>MR.</option>
+                        <option>Mrs.</option>
+                        <option>Miss</option>
+                    </select>
+                    </div>
                         <div className='grid-item'>
                     <input type='text' name='name' value={editedCustomer.name} onChange={handleChange} placeholder='Name' required/>
                     </div>
@@ -110,10 +123,26 @@ const Editcustomerdetails = () => {
                     <input type='text' name='panNumber' value={editedCustomer.panNumber} onChange={handleChange} placeholder='panNumber' required/>
                     </div>
                     <div className='grid-item'>
-                    
                     <input type="number" name='mobileNumber' value={editedCustomer.mobileNumber} onChange={handleChange} placeholder='mobileNumber' required/>
                     </div>
-
+                    <div className='grid-item'>
+                    <label>DOB </label>
+                    <input type="date" className="input-cal input-base" name='DOB' value={editedCustomer.DOB} onChange={handleChange}  placeholder='DOB' />
+                    </div>
+                    {/* <div className="relative grid-item">
+                    <label>Booking Date</label>
+                    <input className="input-cal input-base" id="input" placeholder="Booking Date" type="date" name="bookingDate" value={editedCustomer.bookingDate} onChange={handleChange} required
+                    />
+                    </div> */}
+                    <div className="relative grid-item">
+            <label>Allotment Date</label>
+            <input className="input-cal input-base" id="input" placeholder="Allotment Date" type="date" name="AllotmentDate" value={editedCustomer.AllotmentDate} onChange={handleChange}
+            />
+          </div>
+                    <div className="relative grid-item">
+            <label>Agreement Date</label>
+            <input className="input-cal input-base" id="input" placeholder="Enter Agreement Date" type="date" name="AgreementDate" value={editedCustomer.AgreementDate} onChange={handleChange} />
+          </div>
                     </div>
                     <h3 className='Headtext'>Second Customer</h3>
                     <div className='gridcontainer '>

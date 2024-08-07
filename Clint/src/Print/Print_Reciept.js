@@ -10,7 +10,6 @@ const Print_reciept = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [projects, setProjects] = useState([]);
-  const [date, setDate] = useState(new Date());
   const [projectdetails, setProjectdetails] = useState(null);
   const fetchName = async (endpoint, ...ids) => {
     try {
@@ -155,12 +154,17 @@ const Print_reciept = () => {
   }, [_id]);
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    const options = { year: "numeric", day: "2-digit", month: "2-digit" };
     return date.toLocaleDateString("en-US", options);
   };
   if (loading) {
     return <div>Loading...</div>;
   }
+  var date = new Date;
+  var Year =  date.getFullYear();
+  var month = String(date.getMonth() +1).padStart(2, '0');
+  var todaydate = String(date.getDate()).padStart(2, '0');
+  var datepattern = todaydate + '-' + month + '-' + Year ;
   return (
     <div className="Printcontainer">
       <div className="printarea1">
@@ -186,7 +190,7 @@ const Print_reciept = () => {
               <br />
               GSTIN: 09AADCW1980H1Z2
             </p>
-            <p>{date.toDateString()}</p>
+            <p>{datepattern}</p>
           </div>
         </div>
         <div className="printarea4">

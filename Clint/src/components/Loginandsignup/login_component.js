@@ -7,6 +7,16 @@ export default function Login() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate(); 
+
+  function ShowPassword() {
+    var x = document.getElementById("myInput");
+    if (x.type === "password") {
+      x.type = "text";
+    } else {
+      x.type = "password";
+    }
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     axios.post(`${process.env.REACT_APP_API_URL}/login-user`, {
@@ -62,7 +72,10 @@ export default function Login() {
               className="form-control"
               placeholder="Enter password"
               onChange={(e) => setPassword(e.target.value)}
+              id="myInput"
             />
+            <br/>
+            <input  type="checkbox" onClick={ShowPassword} /><label className="custom-control-label">Show Password</label>
           </div>
           <div className="mb-3">
             <div className="custom-control custom-checkbox">

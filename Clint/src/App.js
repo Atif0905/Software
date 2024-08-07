@@ -150,6 +150,7 @@ import Print_reciept from "./Print/Print_Reciept";
 import Edit_Payment from "./Print/Edit_Payment";
 import DemandDraft from "./Print/DemandDraft";
 import Welcomeletter from "./Print/Welcomeletter";
+import Ledger from "./Print/Ledger";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -240,6 +241,7 @@ function App() {
           <Route path="/edit_payment/:_id" element={<Edit_Payment/>}/>
           <Route path="/print_demand_datewise/:_id" element={<DemandDraft/>}/>
           <Route path="/welcomeletter/:_id" element={<Welcomeletter/>}/>
+          <Route path="/ledger/:_id" element={<Ledger/>}/>
         </Routes>
       </div>
     </Router>

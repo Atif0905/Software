@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Customer.css';
 import ConfirmationModal from '../../../Confirmation/ConfirmationModal';
+import { DateRangePicker } from 'react-date-range';
+import { addDays } from 'date-fns';
+import 'react-date-range/dist/styles.css'; 
+import 'react-date-range/dist/theme/default.css'; 
 const AddCustomerForm = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -35,6 +39,17 @@ const AddCustomerForm = () => {
     panNumber3: '',
     mobileNumber3: '',
     email3: '',
+    EmployeeName: '',
+    permanentaddress: '',
+    CreatedBy: '',
+    DOB: '',
+    DOB2: '',
+    DOB3: '',
+    AgreementDate: '',
+    AllotmentDate: '',
+    TenureStartDate: '',
+    TenureEndDate: '',
+    Tenuredays: '',
     sendEmail: false
   });
   const [projects, setProjects] = useState([]);
@@ -48,6 +63,13 @@ const AddCustomerForm = () => {
   const [editedIdcCharges, setEditedIdcCharges] = useState('');
   const [editedEdcPrice, setEditedEdcPrice] = useState('');
   const [editedtotalPrice, setEditedTotalPrice] = useState();
+  const [state, setState] = useState([
+    {
+      startDate: new Date(),
+      endDate: addDays(new Date(), 7),
+      key: 'selection'
+    }
+  ]);
   const [showSecondCustomer, setShowSecondCustomer] = useState(false);
 const [showThirdCustomer, setShowThirdCustomer] = useState(false);
 const [showConfirm, setShowConfirm] = useState(false);
@@ -112,6 +134,7 @@ const [showConfirm, setShowConfirm] = useState(false);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
   };
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
@@ -124,6 +147,7 @@ const [showConfirm, setShowConfirm] = useState(false);
       e.target.focus()
     }, 0)
   }
+  
   const handleSubmit = async (e) => {
     
     try {
@@ -131,6 +155,14 @@ const [showConfirm, setShowConfirm] = useState(false);
         const timestamp = Date.now();
         const randomNum = Math.floor(Math.random() * 1000);
         return `${prefix}${timestamp}${randomNum}@${domain}`;
+      };
+      const { startDate, endDate } = state[0];
+      const formatDate = (date) => {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
       };
       const parsedFormData = {
         ...formData,
@@ -153,8 +185,16 @@ const [showConfirm, setShowConfirm] = useState(false);
         aadharNumber3: formData.aadharNumber3 || 'NA',
         panNumber3: formData.panNumber3 || 'NA',
         mobileNumber3: formData.mobileNumber3 || 'NA',
+        DOB: formData.DOB || 'NA',
+        DOB2: formData.DOB2 || 'NA',
+        DOB3: formData.DOB3 || 'NA',
         email3: formData.email3 || generateUniqueEmail(),
+        TenureStartDate: formatDate(startDate) || 'NA',
+        TenureEndDate: formatDate(endDate) || 'NA',
       };
+      const startDateFormatted = new Date(parsedFormData.TenureStartDate);
+    const endDateFormatted = new Date(parsedFormData.TenureEndDate);
+    const tenureDays = Math.ceil((endDateFormatted - startDateFormatted) / (1000 * 60 * 60 * 24));
       const selectedProject = projects.find(project => project._id === formData.selectedProjectId);
       const selectedBlock = selectedProject?.blocks.find(block => block._id === formData.selectedBlockId);
       const selectedUnit = selectedBlock?.units.find(unit => unit._id === formData.selectedUnitId);
@@ -162,7 +202,8 @@ const [showConfirm, setShowConfirm] = useState(false);
         ...parsedFormData,
         selectedProject,
         selectedBlock,
-        selectedUnit
+        selectedUnit,
+        Tenuredays: tenureDays,
       };
       const markUnitSoldResponse = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${selectedProject._id}/${selectedBlock._id}/${selectedUnit._id}`);
       if (markUnitSoldResponse.status === 200 && markUnitSoldResponse.data.status === 'ok') {
@@ -203,7 +244,6 @@ const [showConfirm, setShowConfirm] = useState(false);
             selectedUnitId: '',
             discount: '',
             paymentPlan: '',
-            bookingDate: '',
             bookingType: '',
             sendEmail: false,
             plotSize: '',
@@ -226,6 +266,18 @@ const [showConfirm, setShowConfirm] = useState(false);
             panNumber3: '',
             mobileNumber3: '',
             email3: '',
+            permanentaddress: '',
+            EmployeeName: '',
+            CreatedBy: '',
+            DOB: '',
+            DOB2: '',
+            DOB3: '',
+            bookingDate: '',
+            AgreementDate: '',
+            AllotmentDate: '',
+            TenureStartDate: '',
+            TenureEndDate: '',
+            Tenuredays: '',
           });
           await handleEditUnit();
         } else {
@@ -326,114 +378,43 @@ const [showConfirm, setShowConfirm] = useState(false);
         <h4 className='Headtext'>First Customer </h4>
         <div className='gridcontainer'>
         <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Mr./Mrs./Miss"
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              required
-            />
+        <select type='text' name='title'  className="input-cal input-base" value={formData.title} onChange={handleInputChange} placeholder='Title' required>
+                        <option value="">Select Option</option>
+                        <option value="MR.">MR.</option>
+                        <option value="MRS.">Mrs.</option>
+                        <option value="Miss.">Miss.</option>
+                    </select>
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder=" Enter Name"
-              type="text"
-              name="name"
-              value={formData.name.toUpperCase()}
-              onChange={handleInputChange}
-              required
-            />
+            <input className="input-cal input-base" id="input" placeholder=" Enter Name" type="text" name="name" value={formData.name.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Father/HusbandName"
-              type="text"
-              name="fatherOrHusbandName"
-              value={formData.fatherOrHusbandName.toUpperCase()}
-              onChange={handleInputChange}
-              required
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Father/HusbandName" type="text" name="fatherOrHusbandName" value={formData.fatherOrHusbandName.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Address"
-              type="text"
-              name="address"
-              value={formData.address.toUpperCase()}
-              onChange={handleInputChange}
-              required
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Present Address" type="text" name="address" value={formData.address.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Aadhar Number"
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              name="aadharNumber"
-              value={formData.aadharNumber}
-              onChange={handleInputChange}
-              required
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Permanent Address" type="text" name="permanentaddress" value={formData.permanentaddress.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Pan Number"
-              type="text"
-              name="panNumber"
-              value={formData.panNumber.toUpperCase()}
-              onChange={handleInputChange}
-              required
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Aadhar Number" type="number" onWheel={numberInputOnWheelPreventChange} name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Mobile Number"
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              name="mobileNumber"
-              value={formData.mobileNumber}
-              onChange={handleInputChange}
-              required
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Pan Number" type="text" name="panNumber" value={formData.panNumber.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Income"
-              type="text"
-              name="income"
-              value={formData.income.toUpperCase()}
-              onChange={handleInputChange}
-              required
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Mobile Number" type="number" onWheel={numberInputOnWheelPreventChange} name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Email"
-              type="text"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Income" type="text" name="income" value={formData.income.toUpperCase()} onChange={handleInputChange} required />
+          </div>
+          <div className=" grid-item">
+            <input className="input-cal input-base" id="input" placeholder="Enter Email" type="text" name="email" value={formData.email} onChange={handleInputChange} required />
+          </div>
+          <div className=" grid-item">
+            <label>Date Of Birth</label>
+            <input className="input-cal input-base" id="input" placeholder="Enter Date Of Birth" type="date" name="DOB" value={formData.DOB} onChange={handleInputChange} required/>
           </div>
         </div>
         <div>
@@ -444,90 +425,28 @@ const [showConfirm, setShowConfirm] = useState(false);
         <h3 className='Headtext'> Second Customer </h3>
         <div className='gridcontainer mt-2'>
         <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder=" Enter Name"
-              type="text"
-              name="name2"
-              value={formData.name2.toUpperCase()}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder=" Enter Name" type="text" name="name2" value={formData.name2.toUpperCase()} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Father/HusbandName"
-              type="text"
-              name="fatherOrHusbandName2"
-              value={formData.fatherOrHusbandName2.toUpperCase()}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Father/HusbandName" type="text" name="fatherOrHusbandName2" value={formData.fatherOrHusbandName2.toUpperCase()} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Address"
-              type="text"
-              name="address2"
-              value={formData.address2.toUpperCase()}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Address" type="text" name="address2" value={formData.address2.toUpperCase()} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Aadhar Number"
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              name="aadharNumber2"
-              value={formData.aadharNumber2}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Aadhar Number" type="number" onWheel={numberInputOnWheelPreventChange} name="aadharNumber2" value={formData.aadharNumber2} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Pan Number"
-              type="text"
-              name="panNumber2"
-              value={formData.panNumber2}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Pan Number" type="text" name="panNumber2" value={formData.panNumber2} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Mobile Number"
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              name="mobileNumber2"
-              value={formData.mobileNumber2}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Mobile Number" type="number" onWheel={numberInputOnWheelPreventChange} name="mobileNumber2" value={formData.mobileNumber2} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Email"
-              type="text"
-              name="email2"
-              value={formData.email2}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Email" type="text" name="email2" value={formData.email2} onChange={handleInputChange} />
+          </div>
+          <div className=" grid-item">
+            <input className="input-cal input-base" id="input" placeholder="Enter Email" type="date" name="DOB2" value={formData.DOB2} onChange={handleInputChange} required />
           </div>
             </div>
             </>
@@ -539,91 +458,28 @@ const [showConfirm, setShowConfirm] = useState(false);
             <h3 className='Headtext'>Third Customer</h3>
             <div className='gridcontainer mt-2'>
             <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder=" Enter Name"
-              type="text"
-              name="name3"
-              value={formData.name3.toUpperCase()}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder=" Enter Name" type="text" name="name3" value={formData.name3.toUpperCase()} onChange={handleInputChange} />
             </div>
-
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Father/HusbandName"
-              type="text"
-              name="fatherOrHusbandName3"
-              value={formData.fatherOrHusbandName3.toUpperCase()}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Father/HusbandName" type="text" name="fatherOrHusbandName3" value={formData.fatherOrHusbandName3.toUpperCase()} onChange={handleInputChange}               />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Address"
-              type="text"
-              name="address3"
-              value={formData.address3.toUpperCase()}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Address" type="text" name="address3" value={formData.address3.toUpperCase()} onChange={handleInputChange}               />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Aadhar Number"
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              name="aadharNumber3"
-              value={formData.aadharNumber3}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Aadhar Number" type="number" onWheel={numberInputOnWheelPreventChange} name="aadharNumber3" value={formData.aadharNumber3} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Pan Number"
-              type="text"
-              name="panNumber3"
-              value={formData.panNumber3}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Pan Number" type="text" name="panNumber3" value={formData.panNumber3} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Mobile Number"
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              name="mobileNumber3"
-              value={formData.mobileNumber3}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Mobile Number" type="number" onWheel={numberInputOnWheelPreventChange} name="mobileNumber3" value={formData.mobileNumber3} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Email"
-              type="text"
-              name="email3"
-              value={formData.email3}
-              onChange={handleInputChange}
-              
-            />
+            <input className="input-cal input-base" id="input" placeholder="Enter Email" type="text" name="email3" value={formData.email3} onChange={handleInputChange} />
+          </div>
+          <div className=" grid-item">
+            <input className="input-cal input-base" id="input" placeholder="Enter Email" type="date" name="DOB#" value={formData.DOB3} onChange={handleInputChange} required/>
           </div>
           </div>
           </>
@@ -631,14 +487,7 @@ const [showConfirm, setShowConfirm] = useState(false);
         <h4 className='Headtext mt-5'>Property Details</h4>
         <div className='gridcontainer'>
           <div className=" grid-item">
-            <select
-              className="input-cal input-base"
-              id="input"
-              name="propertyType"
-              value={formData.propertyType}
-              onChange={handleInputChange}
-              required
-            >
+            <select className="input-cal input-base" id="input" name="propertyType" value={formData.propertyType} onChange={handleInputChange} required >
               <option value="">Select Property Type</option>
               <option value="Plot">Plot</option>
               <option value="Shop">Shop</option>
@@ -647,73 +496,59 @@ const [showConfirm, setShowConfirm] = useState(false);
             </select>
           </div>
           <div className=" grid-item">
-            <select
-              className="input-cal input-base"
-              id="input"
-              name="bookingType"
-              value={formData.bookingType}
-              onChange={handleInputChange}
-              required
-            >
+            <select className="input-cal input-base" id="input" name="bookingType" value={formData.bookingType} onChange={handleInputChange} required>
               <option value="">Select Booking Type</option>
               <option value="Booking Confirmed">Booking Confirmed</option>
               <option value="Booking Hold">Booking Hold</option>
             </select>
           </div>
           <div className=" grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Discount "
-              type="text"
-              name="discount"
-              value={formData.discount.toUpperCase()}
-              onChange={handleInputChange}
-              required
-            />
+            <select className="input-cal input-base" id="input" name="CreatedBy" value={formData.CreatedBy} onChange={handleInputChange} required >
+              <option value="">Select Created By</option>
+              <option value="Vijeta">Vijeta</option>
+              <option value="Jyoti">Jyoti</option>
+            </select>
+          </div>
+          <div className=" grid-item">
+            <select className="input-cal input-base" id="input" name="EmployeeName" value={formData.EmployeeName} onChange={handleInputChange} required >
+              <option value="">Select Employee Name</option>
+              <option value="Ankit Tonger">Ankit Tonger</option>
+              <option value="Rohit Khari">Rohit Khari</option>
+              <option value="Paras Goel">Paras Goel</option>
+            </select>
+          </div>
+          <div className=" grid-item">
+            <input className="input-cal input-base" id="input" placeholder="Enter Discount " type="text" name="discount" value={formData.discount.toUpperCase()} onChange={handleInputChange} required />
+          </div>
+          <div className="relative grid-item">
+            <label>Agreement Date</label>
+            <input className="input-cal input-base" id="input" placeholder="Enter Agreement Date" type="date" name="AgreementDate" value={formData.AgreementDate} onChange={handleInputChange} />
+          </div>
+          <div className="relative grid-item">
+            <label>Allotment Date</label>
+            <input className="input-cal input-base" id="input" placeholder="Allotment Date" type="date" name="AllotmentDate" value={formData.AllotmentDate} onChange={handleInputChange} />
+          </div>
+          <div className="relative grid-item">
+            <label>Booking Date</label>
+            <input className="input-cal input-base" id="input" placeholder="Booking Date" type="date" name="bookingDate" value={formData.bookingDate} onChange={handleInputChange} />
           </div>
           <div className="grid-item">
-            <select
-              className="input-cal input-base"
-              id="input"
-              name="paymentPlan"
-              value={formData.paymentPlan}
-              onChange={handleInputChange}
-              required
-            >
+            <select className="input-cal input-base" id="input" name="paymentPlan" value={formData.paymentPlan} onChange={handleInputChange} required >
               <option value="">Select plan</option>
               {paymentPlans.map((plan, index) => (
                 <option key={index} value={plan.planName}>{plan.planName}</option>
               ))}
             </select>
           </div>
-          <div className="relative grid-item">
-            <input
-              className="input-cal input-base"
-              id="input"
-              placeholder="Booking Date"
-              type="date"
-              name="bookingDate"
-              value={formData.bookingDate}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
           <div className="grid-item">
-            <select
-              className='input-select'
-              onChange={(e) => handleClickProject(e.target.value)}
-            >
+            <select className='input-select' onChange={(e) => handleClickProject(e.target.value)}>
               <option value="">Select Project</option>
               {projects.map((project, index) => (
                 <option key={index} value={project._id}>{project.name}</option>
               ))}
             </select>
             {showBlocks && formData.selectedProjectId && (
-              <select
-                className='input-select'
-                onChange={(e) => handleClickBlock(e.target.value)}
-              >
+              <select className='input-select' onChange={(e) => handleClickBlock(e.target.value)} >
                 <option value="">Select Block</option>
                 {projects.find(project => project._id === formData.selectedProjectId)?.blocks.map((block, index) => (
                   <option key={index} value={block._id}>{block.name}</option>
@@ -721,10 +556,7 @@ const [showConfirm, setShowConfirm] = useState(false);
               </select>
             )}
             {showUnits && selectedBlockUnits.length > 0 && (
-              <select
-                className='input-select'
-                onChange={(e) => handleClickUnit(e.target.value)}
-              >
+              <select className='input-select' onChange={(e) => handleClickUnit(e.target.value)}>
                 <option value="">Select Unit</option>
                 {selectedBlockUnits
                   .filter(unit => unit.status !== "sold" && unit.status !== "hold") 
@@ -735,69 +567,24 @@ const [showConfirm, setShowConfirm] = useState(false);
             )}
           </div>
           <div className=' grid-item'>
-            <input
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Plot Size"
-              value={plotSize}
-              onChange={(e) => setPlotSize(e.target.value)}
-              required
-            />
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id="input" placeholder="Enter Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required />
           </div>
           <div className=' grid-item'>
-            <input
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Base Price"
-              value={editedRate}
-              onChange={(e) => setEditedRate(e.target.value)}
-              required
-            />
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id="input" placeholder="Enter Base Price" value={editedRate} onChange={(e) => setEditedRate(e.target.value)} required />
           </div>
           <div className=' grid-item'>
-            <input
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter IDC Charges"
-              value={editedIdcCharges}
-              onChange={(e) => setEditedIdcCharges(e.target.value)}
-              required
-            />
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id="input" placeholder="Enter IDC Charges" value={editedIdcCharges} onChange={(e) => setEditedIdcCharges(e.target.value)} required />
           </div>
           <div className=' grid-item'>
-            <input
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter Plc Charges"
-              value={editedPlcCharges}
-              onChange={(e) => setEditedPlcCharges(e.target.value)}
-              required
-            />
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id="input" placeholder="Enter Plc Charges" value={editedPlcCharges} onChange={(e) => setEditedPlcCharges(e.target.value)} required />
           </div>
           <div className=' grid-item'>
-            <input
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              className="input-cal input-base"
-              id="input"
-              placeholder="Enter EDC Charges"
-              value={editedEdcPrice}
-              onChange={(e) => setEditedEdcPrice(e.target.value)}
-              required
-            />
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id="input" placeholder="Enter EDC Charges" value={editedEdcPrice} onChange={(e) => setEditedEdcPrice(e.target.value)} required />
           </div>
           <div className='grid-item'>
           <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id='input' placeholder="Total Price" value={editedtotalPrice} onChange={(e) => setEditedTotalPrice(e.target.value)}  />
         </div>
-          <div className="container mt-2 grid-item">
+          {/* <div className="container mt-2 grid-item">
             <input
               type="checkbox"
               id="cbx2"
@@ -813,10 +600,19 @@ const [showConfirm, setShowConfirm] = useState(false);
               </svg>
             </label>
             Send Email
-          </div>
+          </div> */}
         </div>
-
-
+        <div className="relative mt-3">
+            <label>Tenure Date</label>
+            <DateRangePicker
+        onChange={item => setState([item.selection])}
+        showSelectionPreview={true}
+        moveRangeOnFirstSelection={false}
+        months={2}
+        ranges={state}
+        direction="horizontal"
+        required/>
+          </div>
         <div className='mt-4'>
           <button type="submit" className="btn btn-primary " >Submit</button>
         </div>

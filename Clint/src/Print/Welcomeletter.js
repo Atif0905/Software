@@ -97,7 +97,7 @@ const Welcomeletter = () => {
       {customerDetails && projectdetails && (
         <div className="row mt-5">
           <div className="col-6">
-          <h6>Dear {customerDetails.name.toUpperCase()} </h6>
+          <h6>Dear {customerDetails.title} {customerDetails.name.toUpperCase()} </h6>
           <p>Address: {customerDetails.address.toUpperCase()}</p>
           <p>{customerDetails.propertyType} No : {customerDetails.unitName}</p>
           <p>Area: {customerDetails.plotSize} {customerDetails.sizeType}</p>

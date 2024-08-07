@@ -10,7 +10,6 @@ const DemandDraft = () => {
   const [payment , setPayment] = useState(null);
   const [projects, setProjects] = useState([]);
   const [projectdetails, setProjectdetails] = useState(null);
-  const [date, setDate] = useState(new Date());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -133,6 +132,11 @@ const DemandDraft = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+  var date = new Date;
+  var Year =  date.getFullYear();
+  var month = String(date.getMonth() +1).padStart(2, '0');
+  var todaydate = String(date.getDate()).padStart(2, '0');
+  var datepattern = todaydate + '-' + month + '-' + Year ;
 
   return (
     <div className="container last mt-5">
@@ -142,13 +146,13 @@ const DemandDraft = () => {
           <div>
             <div className="row">
               <div className="col-6">
-                <h6>{customerDetails.name.toUpperCase()}</h6>
+                <h6>{customerDetails.title} {customerDetails.name.toUpperCase()}</h6>
                 <h6 className="mt-5">{customerDetails.address}</h6>
                 <h6>Area: {customerDetails.plotSize}</h6>
                 <h6>Rate: {customerDetails.rate}</h6>
               </div>
               <div className="col-6">
-                <h6>Demand date: {date.toDateString()}</h6>
+                <h6>Demand date:  {datepattern}</h6>
                 <h6>GSTIN NO: {projectdetails.GST}</h6>
                 <h6>Project Name: {customerDetails.projectName}</h6>
                 <h6>Unit No {customerDetails.blockName}-{customerDetails.unitName}</h6>

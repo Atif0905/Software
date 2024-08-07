@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Payments.css";
+import ConfirmationModal from "../Confirmation/ConfirmationModal";
 const Receivedpayments = () => {
   const [customerId, setCustomerId] = useState("");
   const [selectedCustomerId, setSelectedCustomerId] = useState("");
@@ -19,6 +20,7 @@ const Receivedpayments = () => {
   const [loading, setLoading] = useState(true);
   const [isPaymentClicked, setIsPaymentClicked] = useState(false);
   const [unitData, setUnitData] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false); 
   const [payment, setPayment] = useState({
     paymentType: "",
     paymentMode: "",
@@ -26,19 +28,21 @@ const Receivedpayments = () => {
     reference: "",
     comment: "",
     PaymentDate: "",
+    amounttoberecieved: "",
+    Interest: ""
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
     setPayment({ ...payment, [name]: value });
   };
   const handleSubmit = async (e) => {
-    e.preventDefault();
     console.log("form submit successfully");
     try {
       if (customerId !== yourCustomerId) {
         setError("Entered Customer ID does not match the searched Customer ID");
         return;
       }
+      
       console.log("Form Data:", {
         paymentType: payment.paymentType,
         paymentMode: payment.paymentMode,
@@ -47,6 +51,7 @@ const Receivedpayments = () => {
         comment: payment.comment,
         customerId: yourCustomerId,
         PaymentDate: payment.PaymentDate,
+        amounttoberecieved: payment.amounttoberecieved,
       });
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/paymentDetails`,
@@ -58,10 +63,11 @@ const Receivedpayments = () => {
           comment: payment.comment,
           customerId: yourCustomerId,
           PaymentDate: payment.PaymentDate,
+          amounttoberecieved: payment.amounttoberecieved,
         }
       );
       setSubmittedInstallments([...submittedInstallments, payment.paymentType]);
-      setDisabledInstallments([...disabledInstallments, payment.paymentType]); // Disable selected installment
+      setDisabledInstallments([...disabledInstallments, payment.paymentType]);
       setPayment({
         paymentType: "",
         paymentMode: "",
@@ -69,7 +75,10 @@ const Receivedpayments = () => {
         reference: "",
         comment: "",
         PaymentDate: "",
+        amounttoberecieved: "",
+        Interest: '',
       });
+      
       setError(null);
     } catch (error) {
       console.error("Error submitting payment:", error);
@@ -81,7 +90,6 @@ const Receivedpayments = () => {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`
       );
-      console.log("Main", response);
       return response.data.data;
     } catch (error) {
       console.error("Error fetching payment details:", error);
@@ -107,9 +115,7 @@ const Receivedpayments = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/Viewcustomer`
-        );
+         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
         const customersWithDetails = await Promise.all(
           response.data.map(async (customer) => {
             const projectName = await fetchName("getProject", customer.project);
@@ -119,21 +125,14 @@ const Receivedpayments = () => {
               customer.block
             );
             const unitName = await fetchName(
-              "getUnit",
-              customer.project,
-              customer.block,
-              customer.plotOrUnit
+              "getUnit", 
+              customer.project, customer.block, customer.plotOrUnit
             );
             const unitDetails = await fetchUnitDetails(
-              customer.project,
-              customer.block,
-              customer.plotOrUnit
+              customer.project,customer.block,customer.plotOrUnit
             );
             return {
-              ...customer,
-              projectName: projectName.toUpperCase(),
-              blockName: blockName.toUpperCase(),
-              unitName: unitName.toUpperCase(),
+              ...customer, projectName: projectName.toUpperCase(), blockName: blockName.toUpperCase(), unitName: unitName.toUpperCase(),
               ...unitDetails,
             };
           })
@@ -166,6 +165,7 @@ const Receivedpayments = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/paymentPlans`
         );
+        console.log(response)
         if (Array.isArray(response.data.paymentPlans)) {
           const modifiedPlans = response.data.paymentPlans.map(async (plan) => {
             const modifiedInstallments = await Promise.all(
@@ -222,14 +222,7 @@ const Receivedpayments = () => {
           (unit) => unit.id === customerDetails.plotOrUnit
         );
         if (matchedUnit) {
-          const customerUnitDetails = {
-            unitPrice: matchedUnit.unitPrice,
-            idcCharges: matchedUnit.idcCharges,
-            plcCharges: matchedUnit.plcCharges,
-            plotSize: matchedUnit.plotSize,
-            sizeType: matchedUnit.sizeType,
-            rate: matchedUnit.rate,
-            edcPrice: matchedUnit.edcPrice,
+          const customerUnitDetails = { unitPrice: matchedUnit.unitPrice, idcCharges: matchedUnit.idcCharges, plcCharges: matchedUnit.plcCharges, plotSize: matchedUnit.plotSize, sizeType: matchedUnit.sizeType, rate: matchedUnit.rate, edcPrice: matchedUnit.edcPrice,
           };
           setCustomerDetails({
             ...customerDetails,
@@ -238,7 +231,6 @@ const Receivedpayments = () => {
           setUnitData(matchedUnit);
           return;
         } else {
-          console.log("No matching unit found");
         }
       }
       setCustomerDetails(customerDetails);
@@ -250,6 +242,19 @@ const Receivedpayments = () => {
         );
         if (matchedPlan) {
           setSelectedPlanInstallments(matchedPlan.installments);
+          console.log(matchedPlan)
+          const totalInstallments = matchedPlan.numInstallments;
+          const tenureDays = customerDetails.Tenuredays;
+          const installmentInterval = tenureDays / totalInstallments;
+          const installmentDueDates = matchedPlan.installments.map((installment, index) => {
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + (installmentInterval * (index + 1)));
+            return { 
+              installment: installment.installment,
+              dueDate: dueDate.toISOString().split('T')[0], // Format the date as YYYY-MM-DD
+            };
+          });
+          console.log("Installment Due Dates:", installmentDueDates);
           const disabledInstallments = matchedPlan.installments
             .filter((installment) =>
               submittedInstallments.includes(installment.installment)
@@ -278,7 +283,6 @@ const Receivedpayments = () => {
         customerDetails.plotOrUnit
       );
       setUnitData(response);
-      console.log("Fetched Unit Data:", response);
     } catch (error) {}
   };
   const formatDate = (dateString) => {
@@ -299,6 +303,7 @@ const Receivedpayments = () => {
   };
   const handleViewDetails = (customerDetails) => {
     setSelectedCustomer(customerDetails);
+
   };
   useEffect(() => {
     const fetchUnitDetails = async (projectId, blockId, unitId) => {
@@ -307,7 +312,6 @@ const Receivedpayments = () => {
           `${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`
         );
         const unitData = response.data.data;
-        console.log("Unit Data:", unitData);
         return unitData;
       } catch (error) {
         console.error("Error fetching unit details:", error);
@@ -338,6 +342,24 @@ const Receivedpayments = () => {
         parseFloat(unitData.plotSize)
       ).toFixed(2)
     : "";
+    const handleSubmit1 = (e) => {
+      e.preventDefault();
+      setShowConfirm(true);
+    };
+    const calculateInterest = (dueDate, amountToBeReceived, amountPaid) => {
+      const interestRate = 0.10; // 10% interest rate
+      const today = new Date();
+      const dueDateObj = new Date(dueDate);
+      let interest = 0;
+      
+      if (today > dueDateObj) {
+        const monthsOverdue = Math.floor((today - dueDateObj) / (1000 * 60 * 60 * 24 * 30));
+        interest = (amountToBeReceived - amountPaid) * interestRate * monthsOverdue;
+      }
+      
+      return interest.toFixed(2);
+    };
+
   return (
     <div className="main-content">
       <h4 className="Headtext">Receive Payment from Customer</h4>
@@ -346,17 +368,8 @@ const Receivedpayments = () => {
           <div className="col-8">
             <div className="whiteback">
               <label className="mt-3">Customer ID</label>
-              <input
-                className="form-input-field"
-                type="text"
-                placeholder="Enter Customer ID"
-                value={customerId.toUpperCase()}
-                onChange={(e) => setCustomerId(e.target.value)}
-              />
-              <button className="add-buttons mt-3" type="submit">
-                {" "}
-                Search{" "}
-              </button>
+              <input className="form-input-field" type="text" placeholder="Enter Customer ID" value={customerId.toUpperCase()} onChange={(e) => setCustomerId(e.target.value)}/>
+              <button className="add-buttons mt-3" type="submit">   {" "}  Search{" "}  </button>
             </div>
           </div>
         </form>
@@ -366,50 +379,24 @@ const Receivedpayments = () => {
             <div className="table-wrapper">
               <table className="fl-table d-flex">
                 <thead>
-                  <tr>
-                    <th>Name</th>
-                  </tr>
-                  <tr>
-                    <th>Father/Husband Name</th>
-                  </tr>
-                  <tr>
-                    <th>Address</th>
-                  </tr>
-                  <tr>
-                    <th>Customer ID</th>
-                  </tr>
-                  <tr>
-                    <th>Pan Number</th>
-                  </tr>
-                  <tr>
-                    <th>Mobile Number</th>
-                  </tr>
+                  <tr><th>Name</th></tr>
+                  <tr><th>Father/Husband Name</th></tr> 
+                  <tr><th>Address</th></tr>
+                  <tr><th>Customer ID</th></tr>
+                  <tr><th>Pan Number</th></tr>
+                  <tr><th>Mobile Number</th></tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>{customerDetails.name}</td>
-                  </tr>
-                  <tr>
-                    <td>{customerDetails.fatherOrHusbandName}</td>
-                  </tr>
-                  <tr>
-                    <td>{customerDetails.address}</td>
-                  </tr>
-                  <tr>
-                    <td>{customerDetails.customerId}</td>
-                  </tr>
-                  <tr>
-                    <td>{customerDetails.panNumber}</td>
-                  </tr>
-                  <tr>
-                    <td>{customerDetails.mobileNumber}</td>
-                  </tr>
+                  <tr><td>{customerDetails.name.toUpperCase()}</td></tr>
+                  <tr><td>{customerDetails.fatherOrHusbandName.toUpperCase()}</td></tr>
+                  <tr><td>{customerDetails.address.toUpperCase()}</td></tr>
+                  <tr><td>{customerDetails.customerId}</td></tr>
+                  <tr><td>{customerDetails.panNumber.toUpperCase()}</td></tr>
+                  <tr><td>{customerDetails.mobileNumber}</td></tr>
                 </tbody>
               </table>
             </div>
-            <h4 className="Headtext1" onClick={handleMakePayment}>
-              <span className="makepayment">Add Payment</span>
-            </h4>
+            <h4 className="Headtext1" onClick={handleMakePayment}> <span className="makepayment">Add Payment</span> </h4>
           </div>
         )}
       </div>
@@ -424,7 +411,7 @@ const Receivedpayments = () => {
           </h4>
           <div className="d-flex justify-content-between">
             <div className="col-3 whiteback mt-4">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit1}>
                 <label>Select Installments</label>
                 <select
                   className="select-buttons ps-1"
@@ -468,12 +455,7 @@ const Receivedpayments = () => {
                 </select>
 
                 <label>Select Payment Mode</label>
-                <select
-                  className="select-buttons ps-1"
-                  name="paymentMode"
-                  value={payment.paymentMode}
-                  onChange={handleChange}
-                >
+                <select className="select-buttons ps-1" name="paymentMode" value={payment.paymentMode} onChange={handleChange} >
                   <option>Select</option>
                   <option>cheque</option>
                   <option>cash</option>
@@ -482,51 +464,30 @@ const Receivedpayments = () => {
                   <option>Online</option>
                   <option>commision Adjustment</option>
                 </select>
+                <label>Amount To be Received</label>
+                <input type="number" className="form-input-field" name="amount" value={payment.amounttoberecieved} onChange={handleChange} />
                 <label>Amount</label>
-                <input
-                  type="number"
-                  className="form-input-field"
-                  name="amount"
-                  value={payment.amount}
-                  onChange={handleChange}
-                />
+                <input type="number" className="form-input-field" name="amount" value={payment.amount} onChange={handleChange} />
                 <label>Cheque/ Receipt/ No.</label>
-                <input
-                  type="text"
-                  className="form-input-field"
-                  name="reference"
-                  value={payment.reference}
-                  onChange={handleChange}
-                />
+                <input type="text" className="form-input-field" name="reference" value={payment.reference} onChange={handleChange} />
                 <label>Payment Date</label>
-                <input
-                  type="date"
-                  className="form-input-field"
-                  name="PaymentDate"
-                  value={payment.PaymentDate}
-                  onChange={handleChange}
-                />
+                <input type="date" className="form-input-field" name="PaymentDate" value={payment.PaymentDate} onChange={handleChange} />
                 <label>Customer ID</label>
-                <input
-                  required
-                  className="form-input-field"
-                  type="text"
-                  placeholder="Enter Your Customer ID"
-                  value={yourCustomerId.toUpperCase()}
-                  onChange={(e) => setYourCustomerId(e.target.value)}
-                />
+                <input required className="form-input-field" type="text" placeholder="Enter Your Customer ID" value={yourCustomerId.toUpperCase()} onChange={(e) => setYourCustomerId(e.target.value)} />
                 <label>Comment</label>
-                <input
-                  type="text"
-                  className="form-input-field"
-                  name="comment"
-                  placeholder="Enter comment regarding payment"
-                  value={payment.comment}
-                  onChange={handleChange}
-                />
+                <input type="text" className="form-input-field" name="comment" placeholder="Enter comment regarding payment" value={payment.comment} onChange={handleChange} />
                 <button type="submit" className="btn btn-primary mt-3">
                   Submit
                 </button>
+                <ConfirmationModal
+            show={showConfirm}
+            onClose={() => setShowConfirm(false)}
+            onConfirm={() => {
+              setShowConfirm(false);
+              handleSubmit();
+            }}
+            message="Are you sure you want to add this block?"
+          />
               </form>
             </div>
             <div className="col-8 mt-4">
@@ -577,5 +538,4 @@ const Receivedpayments = () => {
     </div>
   );
 };
-
 export default Receivedpayments;

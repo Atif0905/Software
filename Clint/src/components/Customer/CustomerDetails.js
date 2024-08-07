@@ -329,6 +329,7 @@ const CustomerDetails = () => {
           {data &&  (
           <div className="d-flex justify-content-between mt-3">
           <div className="welcome"> <a href={`/welcomeletter/${data._id}`}>Print Welcome letter</a></div>
+          <div className="welcome"> <a href={`/ledger/${data._id}`}>Print ledger </a></div>
             <div className="demand"> <a href={`/print_demand_datewise/${data._id}`}>Print Demand</a></div>
             </div>
           )}
