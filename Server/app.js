@@ -615,6 +615,7 @@ app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
 
 app.post("/addCustomer", async (req, res) => {
   const {
+    title,
     name,
     fatherOrHusbandName,
     address,
@@ -646,6 +647,17 @@ app.post("/addCustomer", async (req, res) => {
     panNumber3,
     mobileNumber3,
     email3,
+    permanentaddress,
+    EmployeeName,
+    DOB,
+    DOB2,
+    DOB3,
+    AgreementDate,
+    AllotmentDate,
+    CreatedBy,
+    TenureStartDate,
+    TenureEndDate,
+    Tenuredays
   } = req.body;
 
   try {
@@ -653,6 +665,7 @@ app.post("/addCustomer", async (req, res) => {
     const customerId = `WI0${scenarioNumber}`;
     const newCustomer = await Customer.create({
       customerId, 
+      title,
       name,
       fatherOrHusbandName,
       address,
@@ -684,6 +697,17 @@ app.post("/addCustomer", async (req, res) => {
       panNumber3,
       mobileNumber3,
       email3,
+      permanentaddress,
+      EmployeeName,
+      DOB,
+      DOB2,
+      DOB3,
+      AgreementDate,
+      AllotmentDate,
+      CreatedBy,
+      TenureStartDate,
+      TenureEndDate,
+      Tenuredays
     });
 
     res.status(201).json({ status: "ok", data: newCustomer });
@@ -692,11 +716,8 @@ app.post("/addCustomer", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// View Castumer
 app.get('/Viewcustomer', async (req, res) => {
   try {
-    // Fetch all customers from the database
     const customers = await Customer.find();
     res.json(customers);
   } catch (error) {
@@ -730,6 +751,7 @@ app.put("/editCustomer/:customerId", async (req, res) => {
     }
     const {
       customerId: updatedCustomerId,
+      title,
       name,
       fatherOrHusbandName,
       address,
@@ -756,11 +778,19 @@ app.put("/editCustomer/:customerId", async (req, res) => {
       aadharNumber3,
       panNumber3,
       mobileNumber3,
+      permanentaddress,
+      DOB,
+      DOB2,
+      DOB3,
+      AgreementDate,
+      AllotmentDate,
       email3,
+      
     } = req.body;
 
     // Update customer details excluding customerId
     Object.assign(existingCustomer, {
+      title,
       name,
       fatherOrHusbandName,
       address,
@@ -787,6 +817,12 @@ app.put("/editCustomer/:customerId", async (req, res) => {
       aadharNumber3,
       panNumber3,
       mobileNumber3,
+      permanentaddress,
+      DOB,
+      DOB2,
+      DOB3,
+      AgreementDate,
+      AllotmentDate,
       email3,
     });
 
@@ -837,7 +873,7 @@ app.get('/paymentPlans', async (req, res) => {
   }
 });
 app.post("/paymentDetails", async (req, res) => {
-  const { customerId, paymentType, paymentMode, amount, reference, comment, aadharNumber, PaymentDate } = req.body;
+  const { customerId, paymentType, paymentMode, amount, reference, comment, aadharNumber, PaymentDate, amounttoberecieved } = req.body;
 
   try {
     // Check if required fields are provided
@@ -854,7 +890,9 @@ app.post("/paymentDetails", async (req, res) => {
       reference,
       comment,
       aadharNumber,
-      PaymentDate
+      PaymentDate,
+      amounttoberecieved,
+      Interest
     });
 
     res.status(201).json({ status: "ok", message: "Payment details added successfully", data: payment });
@@ -902,7 +940,9 @@ app.put("/paymentDetails/:paymentId", async (req, res) => {
         amount,
         reference,
         comment,
-        PaymentDate
+        PaymentDate,
+        amounttoberecieved,
+        Interest
       },
       { new: true }
     );

@@ -11,6 +11,7 @@ const CustomerList = () => {
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+        console.log(response);
         const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
           const projectName = await fetchName('getProject', customer.project);
           const blockName = await fetchName('getBlock', customer.project, customer.block);
@@ -24,14 +25,13 @@ const CustomerList = () => {
             blockName: blockName.toUpperCase(),
             unitName: unitName.toUpperCase(),
             ...unitDetails,
-            paymentDetails: paymentDetails.data // Assigning all payment details
+            paymentDetails: paymentDetails.data 
           };
         }));
         setCustomers(customersWithDetails);
         const totalAmounts = calculateTotalAmounts(customersWithDetails);
         dispatch(setCustomers(customersWithDetails));
       } catch (error) {
-        console.error('Error fetching customers:', error);
         dispatch(setError('Error fetching customers. Please try again later.'));
       } finally {
         dispatch(setLoading(true));
@@ -44,7 +44,6 @@ const CustomerList = () => {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
       return response.data;
     } catch (error) {
-      console.error('Error fetching payment details:', error);
       return { data: [] };
     }
   };
