@@ -1,4 +1,4 @@
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -16,30 +16,23 @@ const uploadMiddleware = multer({dest: 'uploads/'});
 const fs = require('fs');
 const Post = require('./Models/CreatePost')
 const Blog = require('./Models/Createblog');
+const Installment = require('./Models/Duedate');
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(__dirname + '/uploads'));
-
-
-
-const { PORT, MONGODB_URI, JWT_SECRET } = process.env; // Access environment variables
-
+const { PORT, MONGODB_URI, JWT_SECRET } = process.env;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.set("view engine", "ejs");
-
 mongoose.set('strictQuery', false);
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
     console.log("DB Connected")
   })
   .catch((e) => console.log(e));
-
 require("./userDetails");
-
 const User = mongoose.model("UserInfo");
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -48,7 +41,6 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + '-' + file.originalname);
   }
 });
-
 const fileFilter = (req, file, cb) => {
   if (file.mimetype === 'image/webp') {
     cb(null, true);
@@ -56,20 +48,16 @@ const fileFilter = (req, file, cb) => {
     cb(new Error('Only .webp files are allowed'));
   }
 };
-
 const upload = multer({ 
   storage: storage,
   fileFilter: fileFilter
 });
-
 module.exports = upload;
 app.post("/register", async (req, res) => {
   const { fname, lname, email, password, userType } = req.body;
-
   const encryptedPassword = await bcrypt.hash(password, 10);
   try {
     const oldUser = await User.findOne({ email });
-
     if (oldUser) {
       return res.json({ error: "User Exists" });
     }
@@ -85,10 +73,8 @@ app.post("/register", async (req, res) => {
     res.send({ status: "error" });
   }
 });
-
 app.post("/login-user", async (req, res) => {
   const { email, password } = req.body;
-
   const user = await User.findOne({ email });
   if (!user) {
     return res.json({ error: "User Not found" });
@@ -97,12 +83,10 @@ app.post("/login-user", async (req, res) => {
     const token = jwt.sign({ email: user.email }, JWT_SECRET, {
       expiresIn: "1h", // Token expires in  1h
     });
-
     return res.json({ status: "ok", data: token });
   }
   res.json({ status: "error", error: "Invalid Password" });
 });
-
 app.post("/userData", async (req, res) => {
   const { token } = req.body;
   try {
@@ -115,7 +99,6 @@ app.post("/userData", async (req, res) => {
     if (user == "token expired") {
       return res.send({ status: "error", data: "token expired" });
     }
-
     const useremail = user.email;
     User.findOne({ email: useremail })
       .then((data) => {
@@ -126,11 +109,9 @@ app.post("/userData", async (req, res) => {
       });
   } catch (error) { }
 });
-
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
-
 app.get("/getAllUser", async (req, res) => {
   try {
     const allUser = await User.find({});
@@ -139,7 +120,6 @@ app.get("/getAllUser", async (req, res) => {
     console.log(error);
   }
 });
-
 app.post("/deleteUser", async (req, res) => {
   const { userid } = req.body;
   try {
@@ -151,19 +131,15 @@ app.post("/deleteUser", async (req, res) => {
     console.log(error);
   }
 });
-
 app.get("/paginatedUsers", async (req, res) => {
   const allUser = await User.find({});
   const page = parseInt(req.query.page)
   const limit = parseInt(req.query.limit)
-
   const startIndex = (page - 1) * limit
   const lastIndex = (page) * limit
-
   const results = {}
   results.totalUser = allUser.length;
   results.pageCount = Math.ceil(allUser.length / limit);
-
   if (lastIndex < allUser.length) {
     results.next = {
       page: page + 1,
@@ -177,12 +153,9 @@ app.get("/paginatedUsers", async (req, res) => {
   results.result = allUser.slice(startIndex, lastIndex);
   res.json(results)
 });
-
   app.post("/uploadProject", async (req, res) => {
   const { name, description, totalLand, GST, AccountNo, Bank, IFSC, Payable ,CompanyName } = req.body;
-
     try {
-      // Create a new project using the Project model without blocks
       const project = await Project.create({ name,  description, totalLand, GST, AccountNo, Bank, IFSC, Payable ,CompanyName});
       res.status(201).json({ status: "ok", data: project });
     } catch (error) {
@@ -201,7 +174,6 @@ app.get("/getAllProjects", async (req, res) => {
 });
 app.get("/getProject/:projectId", async (req, res) => {
   const { projectId } = req.params;
-
   try {
     const project = await Project.findById(projectId);
     if (!project) {
@@ -213,8 +185,6 @@ app.get("/getProject/:projectId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Endpoint to fetch block by ID
 app.get("/getBlock/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
 
@@ -233,11 +203,8 @@ app.get("/getBlock/:projectId/:blockId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Endpoint to fetch unit by ID
 app.get("/getUnit/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
-
   try {
     const project = await Project.findById(projectId);
     if (!project) {
@@ -257,48 +224,32 @@ app.get("/getUnit/:projectId/:blockId/:unitId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Endpoint to edit project (add/update/delete blocks, add/update/delete units)
 app.put("/editProject/:projectId", async (req, res) => {
   const { projectId } = req.params;
   const { name, description, blocks } = req.body;
-
   try {
     const project = await Project.findById(projectId);
-
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
-
-    // Update project details
     project.name = name;
     project.description = description;
-
-    // Update blocks
     project.blocks = blocks;
-
     await project.save();
-
     res.status(200).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error editing project:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Endpoint to add a block to a project
 app.post("/addBlock/:projectId", async (req, res) => {
   const { projectId } = req.params;
   const { name, totalPlotInBlock, plotSize, basicRateOfBlock, idcRateOfBlock, edcRateOfBlock } = req.body;
-
   try {
     const project = await Project.findById(projectId);
-
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
-
-    // Create a new block and add it to the project
     const newBlock = {
       name,
       totalPlotInBlock,
@@ -307,11 +258,8 @@ app.post("/addBlock/:projectId", async (req, res) => {
       idcRateOfBlock,
       edcRateOfBlock,
     };
-
     project.blocks.push(newBlock);
-
     await project.save();
-
     res.status(201).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error adding block:", error);
@@ -321,16 +269,12 @@ app.post("/addBlock/:projectId", async (req, res) => {
 app.post("/addUnit/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
   const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice,edcPrice } = req.body;
-
   try {
     const project = await Project.findById(projectId);
-
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
-
     const block = project.blocks.id(blockId);
-
     if (!block) {
       return res.status(404).json({ error: "Block not found" });
     }
@@ -343,92 +287,69 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
       plcCharges,
       totalPrice,
       edcPrice,
-      status: 'available', // Assuming default status is available
+      status: 'available', 
     };
-
     block.units.push(newUnit);
-
     await project.save();
-
     res.status(201).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error adding unit:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-// Endpoint to edit unit including its charges
 app.put("/editUnit/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
   const {  rate, idcCharges, plcCharges, totalPrice, edcPrice } = req.body;
-
   try {
-    // Validate ObjectIDs
     if (!mongoose.Types.ObjectId.isValid(projectId) ||
         !mongoose.Types.ObjectId.isValid(blockId) ||
         !mongoose.Types.ObjectId.isValid(unitId)) {
       return res.status(400).json({ error: "Invalid project, block, or unit ID" });
     }
-
     const project = await Project.findById(projectId);
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
-
     const block = project.blocks.id(blockId);
     if (!block) {
       return res.status(404).json({ error: "Block not found" });
     }
-
     const unit = block.units.id(unitId);
     if (!unit) {
       return res.status(404).json({ error: "Unit not found" });
     }
-
-    // Update unit details including charges
     unit.rate = rate;
     unit.idcCharges = idcCharges;
     unit.plcCharges = plcCharges;
     unit.totalPrice = totalPrice;
     unit.edcPrice = edcPrice;
-
     await project.save();
-
     res.status(200).json({ status: "ok", message: "Unit updated successfully", data: project });
   } catch (error) {
     console.error("Error editing unit:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 app.put("/markUnitHold/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
-
   try {
     const project = await Project.findById(projectId);
-
     if (!project) {
       console.error("Project not found");
       return res.status(404).json({ error: "Project not found" });
     }
-
     const block = project.blocks.id(blockId);
-
     if (!block) {
       console.error("Block not found");
       return res.status(404).json({ error: "Block not found" });
     }
-
     const unit = block.units.id(unitId);
-
     if (!unit) {
       console.error("Unit not found");
       return res.status(404).json({ error: "Unit not found" });
     }
-
-    // Update unit status
     unit.status = "hold";
     await project.save();
-
     console.log("Unit marked as hold successfully");
     res.status(200).json({ status: "ok", data: project });
   } catch (error) {
@@ -436,37 +357,26 @@ app.put("/markUnitHold/:projectId/:blockId/:unitId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-//available api
 app.put("/markUnitAvailable/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
-
   try {
     const project = await Project.findById(projectId);
-
     if (!project) {
       console.error("Project not found");
       return res.status(404).json({ error: "Project not found" });
     }
-
     const block = project.blocks.id(blockId);
-
     if (!block) {
       console.error("Block not found");
       return res.status(404).json({ error: "Block not found" });
     }
-
     const unit = block.units.id(unitId);
-
     if (!unit) {
       console.error("Unit not found");
       return res.status(404).json({ error: "Unit not found" });
     }
-
-    // Update unit status
     unit.status = "available";
     await project.save();
-
     console.log("Unit marked as available successfully");
     res.status(200).json({ status: "ok", data: project });
   } catch (error) {
@@ -474,37 +384,26 @@ app.put("/markUnitAvailable/:projectId/:blockId/:unitId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Route to mark a unit as sold
 app.put("/markUnitSold/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
-
   try {
     const project = await Project.findById(projectId);
-
     if (!project) {
       console.error("Project not found");
       return res.status(404).json({ error: "Project not found" });
     }
-
     const block = project.blocks.id(blockId);
-
     if (!block) {
       console.error("Block not found");
       return res.status(404).json({ error: "Block not found" });
     }
-
     const unit = block.units.id(unitId);
-
     if (!unit) {
       console.error("Unit not found");
       return res.status(404).json({ error: "Unit not found" });
     }
-
-    // Update unit status
     unit.status = "sold";
     await project.save();
-
     console.log("Unit marked as sold successfully");
     res.status(200).json({ status: "ok", data: project });
   } catch (error) {
@@ -512,68 +411,46 @@ app.put("/markUnitSold/:projectId/:blockId/:unitId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Endpoint to delete a project
 app.delete("/deleteProject/:projectId", async (req, res) => {
   const { projectId } = req.params;
-
   try {
     const project = await Project.findById(projectId);
-
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
-
     await project.remove();
-
     res.status(200).json({ status: "ok", message: "Project deleted successfully" });
   } catch (error) {
     console.error("Error deleting project:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Endpoint to delete a block from a project
 app.delete("/deleteBlock/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
-
   try {
     const project = await Project.findById(projectId);
-
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
-
-    // Find the block by id and remove it
     project.blocks.id(blockId).remove();
-
     await project.save();
-
     res.status(200).json({ status: "ok", message: "Block deleted successfully" });
   } catch (error) {
     console.error("Error deleting block:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Endpoint to delete a unit from a block
 app.delete("/deleteUnit/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
-
   try {
     const project = await Project.findById(projectId);
-
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
-
     const block = project.blocks.id(blockId);
-
     if (!block) {
       return res.status(404).json({ error: "Block not found" });
     }
-
-    // Find the unit by id and remove it from the block
     block.units.id(unitId).remove();
 
     await project.save();
@@ -584,35 +461,26 @@ app.delete("/deleteUnit/:projectId/:blockId/:unitId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// Endpoint to get the count of units in a block
 app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
   const { projectId, blockId } = req.params;
-
   try {
     const project = await Project.findById(projectId);
-
     if (!project) {
       console.error("Project not found");
       return res.status(404).json({ error: "Project not found" });
     }
-
     const block = project.blocks.id(blockId);
-
     if (!block) {
       console.error("Block not found");
       return res.status(404).json({ error: "Block not found" });
     }
-
     const unitCount = block.units.length;
-
     res.status(200).json({ status: "ok", unitCount });
   } catch (error) {
     console.error("Error getting unit count:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 app.post("/addCustomer", async (req, res) => {
   const {
     title,
@@ -629,7 +497,7 @@ app.post("/addCustomer", async (req, res) => {
     selectedBlock,
     selectedUnit,
     discount,
-    paymentPlan, // Assuming paymentPlan is an array of payment plan objects
+    paymentPlan, 
     bookingDate,
     bookingType,
     sendEmail,
@@ -659,7 +527,6 @@ app.post("/addCustomer", async (req, res) => {
     TenureEndDate,
     Tenuredays
   } = req.body;
-
   try {
     const scenarioNumber = await Customer.countDocuments() + 1;
     const customerId = `WI0${scenarioNumber}`;
@@ -679,7 +546,7 @@ app.post("/addCustomer", async (req, res) => {
       block: selectedBlock,
       plotOrUnit: selectedUnit,
       discount,
-      paymentPlan, // Ensure paymentPlan is an array of strings (names)
+      paymentPlan,
       bookingDate,
       bookingType,
       sendEmail,
@@ -709,7 +576,6 @@ app.post("/addCustomer", async (req, res) => {
       TenureEndDate,
       Tenuredays
     });
-
     res.status(201).json({ status: "ok", data: newCustomer });
   } catch (error) {
     console.error("Error adding customer:", error);
@@ -725,7 +591,6 @@ app.get('/Viewcustomer', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-// Search by Adhar 
 app.get("/viewcustomer/:customerId", async (req, res) => {
   try {
     const { customerId } = req.params;
@@ -739,7 +604,6 @@ app.get("/viewcustomer/:customerId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-// Update customer details based on customer ID
 app.put("/editCustomer/:customerId", async (req, res) => {
   const { customerId } = req.params;
 
@@ -784,11 +648,8 @@ app.put("/editCustomer/:customerId", async (req, res) => {
       DOB3,
       AgreementDate,
       AllotmentDate,
-      email3,
-      
+      email3
     } = req.body;
-
-    // Update customer details excluding customerId
     Object.assign(existingCustomer, {
       title,
       name,
@@ -823,49 +684,74 @@ app.put("/editCustomer/:customerId", async (req, res) => {
       DOB3,
       AgreementDate,
       AllotmentDate,
-      email3,
+      email3
     });
-
     const updatedCustomer = await existingCustomer.save();
-
     res.json({ status: "ok", data: updatedCustomer });
   } catch (error) {
     console.error("Error updating customer:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+app.post('/DueDate', async (req, res) => {
+  const { dueDate, installment, customerId, amount } = req.body;
+
+  if (!dueDate || installment === undefined || customerId === undefined || amount === undefined) {
+    return res.status(400).json({ message: 'dueDate, installment, customerId, and amount are required.' });
+  }
+  try {
+    const formattedDueDate = new Date(dueDate).toISOString().split('T')[0];
+    const existingInstallment = await Installment.findOne({
+      dueDate: formattedDueDate,
+      installment,
+      customerId,
+      amount
+    });
+    if (existingInstallment) {
+      return res.status(409).json({ message: 'Duplicate installment entry. This installment already exists.' });
+    }
+    const newInstallment = new Installment({
+      dueDate: formattedDueDate,
+      installment,
+      customerId,
+      amount
+    });
+    await newInstallment.save();
+    res.status(201).json(newInstallment);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating installment', error });
+  }
+});
+app.get('/DueDate', async (req, res) => {
+  try {
+    const installments = await Installment.find();
+    res.json(installments);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving installments', error });
+  }
+});
 app.post('/createPaymentPlan', async (req, res) => {
   try {
     const { type, planName, numInstallments, installments } = req.body;
-
     if (!type || !planName || !numInstallments || !installments) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-
     const paymentPlan = new PaymentPlan({
       type: type,
       planName: planName,
       numInstallments: numInstallments,
       installments: installments,
     });
-
     await paymentPlan.save();
-
     res.status(201).json({ message: 'Payment plan created successfully', paymentPlan });
   } catch (error) {
     console.error('Error creating payment plan:', error);
     res.status(500).json({ error: 'An error occurred while creating the payment plan' });
   }
 });
-
-//view payment plan endpoint
-
 app.get('/paymentPlans', async (req, res) => {
   try {
-    // Fetch all payment plans from the database
     const paymentPlans = await PaymentPlan.find();
-
-    // Send the response with the fetched payment plans
     res.status(200).json({ paymentPlans });
   } catch (error) {
     console.error('Error fetching payment plans:', error);
@@ -874,14 +760,10 @@ app.get('/paymentPlans', async (req, res) => {
 });
 app.post("/paymentDetails", async (req, res) => {
   const { customerId, paymentType, paymentMode, amount, reference, comment, aadharNumber, PaymentDate, amounttoberecieved } = req.body;
-
   try {
-    // Check if required fields are provided
     if (!paymentType || !reference || !customerId) {
       return res.status(400).json({ error: "PaymentType, Reference, and CustomerId are required fields" });
     }
-
-    // Create a new payment record
     const payment = await Payment.create({
       customerId,
       paymentType,
@@ -894,7 +776,6 @@ app.post("/paymentDetails", async (req, res) => {
       amounttoberecieved,
       Interest
     });
-
     res.status(201).json({ status: "ok", message: "Payment details added successfully", data: payment });
   } catch (error) {
     console.error("Error adding payment details:", error);
@@ -904,7 +785,6 @@ app.post("/paymentDetails", async (req, res) => {
 app.get("/paymentDetails", async (req, res) => {
   try {
     const payments = await Payment.find();
-
     res.status(200).json({ status: "ok", data: payments });
   } catch (error) {
     console.error("Error fetching payment details:", error);
@@ -927,7 +807,6 @@ app.get("/paymentDetails/:customerId", async (req, res) => {
 app.put("/paymentDetails/:paymentId", async (req, res) => {
   const { paymentId } = req.params;
   const { customerId, paymentMode, amount, reference, comment, PaymentDate } = req.body;
-
   try {
     if ( !reference || !customerId) {
       return res.status(400).json({ error: " Reference, and CustomerId are required fields" });
@@ -946,11 +825,9 @@ app.put("/paymentDetails/:paymentId", async (req, res) => {
       },
       { new: true }
     );
-
     if (!updatedPayment) {
       return res.status(404).json({ error: "Payment not found" });
     }
-
     res.status(200).json({ status: "ok", message: "Payment details updated successfully", data: updatedPayment });
   } catch (error) {
     console.error("Error updating payment details:", error);
@@ -959,22 +836,17 @@ app.put("/paymentDetails/:paymentId", async (req, res) => {
 });
 app.delete("/paymentDetails/:paymentId", async (req, res) => {
   const { paymentId } = req.params;
-
   try {
-    // Find the payment record by ID and delete it
     const deletedPayment = await Payment.findByIdAndDelete(paymentId);
-
     if (!deletedPayment) {
       return res.status(404).json({ error: "Payment not found" });
     }
-
     res.status(200).json({ status: "ok", message: "Payment details deleted successfully" });
   } catch (error) {
     console.error("Error deleting payment details:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, area, customerfather) => {
   const fonts = {
     Roboto: {
@@ -984,7 +856,6 @@ const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, a
       bolditalics: 'node_modules/roboto-font/fonts/Roboto/roboto-bolditalic-webfont.ttf'
     }
   };
-
   const printer = new pdfMakePrinter(fonts);
   const docDefinition = {
     content: [
@@ -1032,10 +903,8 @@ const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, a
       }
     }
   };
-
   const pdfDoc = printer.createPdfKitDocument(docDefinition);
   const chunks = [];
-
   return new Promise((resolve, reject) => {
     pdfDoc.on('data', (chunk) => {
       chunks.push(chunk);
@@ -1047,30 +916,21 @@ const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, a
     pdfDoc.on('error', (err) => {
       reject(err);
     });
-
     pdfDoc.end();
   });
 };
-
-// Assuming you already have the route for sending emails
 app.post('/send-email', async (req, res) => {
   try {
     const { to, subject, customerName, customerAddress, unitName, unitArea,ProjectName } = req.body;
     console.log(customerName)
-
-    // Generate PDF document
     const pdfBuffer = await generatePdf(customerName, customerAddress, unitName, unitArea);
-
-    // Create a transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'crm@wic.org.in', // your Gmail address
-        pass: 'bpda usjb jbiz qrkb ' // your Gmail password
+        user: 'crm@wic.org.in',
+        pass: 'bpda usjb jbiz qrkb ' 
       }
     });
-
-    // Define email content with PDF attachment
     const mailOptions = {
       from: 'crm@wic.org.in',
       to,
@@ -1109,30 +969,23 @@ app.post('/send-email', async (req, res) => {
       `,
       attachments: [
         {
-          filename: 'welcome_letter.pdf', // Name of the attachment
-          content: pdfBuffer, // Content of the PDF file
+          filename: 'welcome_letter.pdf', 
+          content: pdfBuffer, 
           contentType: 'application/pdf'
         }
       ]
     };
-
-
-    // Send email
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent:', info.response);
-
     res.sendStatus(200);
   } catch (error) {
     console.error('Error sending email:', error);
     res.status(500).send('Failed to send email');
   }
 });
-
 app.post('/createpost', upload.array('files', 5), async (req, res) => {
   const files = req.files.map(file => file.path);
   const { projectname, address, content, category, subcategory, price, type } = req.body;
-
-  // Assuming Post is your Mongoose model or ORM model
   const postDoc = await Post.create({
     projectname,
     address,
@@ -1141,15 +994,13 @@ app.post('/createpost', upload.array('files', 5), async (req, res) => {
     subcategory,
     price,
     type,
-    files: files, // Assuming you have a field in your model to store file paths
+    files: files, 
   });
-
   res.json(postDoc);
 });
 app.get('/createpost', async(req, res) => {
   res.json(await Post.find());
 });
-
 app.put('/editpost/:postId', uploadMiddleware.single('cover'), async (req, res) => {
   try {
       const postId = req.params.postId;
@@ -1168,7 +1019,6 @@ app.put('/editpost/:postId', uploadMiddleware.single('cover'), async (req, res) 
       res.status(500).send('Error editing post');
   }
 });
-
 app.delete('/deletepost/:postId', async (req, res) => {
   try {
       const postId = req.params.postId;
@@ -1204,8 +1054,6 @@ app.post('/createblog', upload.array('files', 5), async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-// Endpoint to fetch existing blogs
 app.get('/createblog', async (req, res) => {
   try {
     const blogs = await Blog.find();

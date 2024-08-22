@@ -22,9 +22,6 @@ const mongoose = require('mongoose');
       type: String,
       required: true
     },
-    Interest: {
-      type: Number,
-    },
     reference: {
       type: String,
       required: true
