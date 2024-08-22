@@ -29,7 +29,6 @@ const Receivedpayments = () => {
     comment: "",
     PaymentDate: "",
     amounttoberecieved: "",
-    Interest: ""
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,7 +75,6 @@ const Receivedpayments = () => {
         comment: "",
         PaymentDate: "",
         amounttoberecieved: "",
-        Interest: '',
       });
       
       setError(null);
@@ -217,44 +215,62 @@ const Receivedpayments = () => {
         customerDetails.block,
         customerDetails.plotOrUnit
       );
+      console.log(unitDetails)
       if (Array.isArray(unitDetails) && unitDetails.length > 0) {
         const matchedUnit = unitDetails.find(
           (unit) => unit.id === customerDetails.plotOrUnit
         );
         if (matchedUnit) {
-          const customerUnitDetails = { unitPrice: matchedUnit.unitPrice, idcCharges: matchedUnit.idcCharges, plcCharges: matchedUnit.plcCharges, plotSize: matchedUnit.plotSize, sizeType: matchedUnit.sizeType, rate: matchedUnit.rate, edcPrice: matchedUnit.edcPrice,
+          const customerUnitDetails = {
+            unitPrice: matchedUnit.unitPrice,
+            idcCharges: matchedUnit.idcCharges,
+            plcCharges: matchedUnit.plcCharges,
+            plotSize: matchedUnit.plotSize,
+            sizeType: matchedUnit.sizeType,
+            rate: matchedUnit.rate,
+            edcPrice: matchedUnit.edcPrice,
           };
           setCustomerDetails({
             ...customerDetails,
             unitDetails: customerUnitDetails,
           });
           setUnitData(matchedUnit);
-          return;
         } else {
+          setCustomerDetails(customerDetails);
+          setUnitData(null);
         }
+      } else {
+        setCustomerDetails(customerDetails);
+        setUnitData(null);
       }
-      setCustomerDetails(customerDetails);
-      setUnitData(null);
-
+  
+      let installmentDueDates = [];
       if (response.data.paymentPlan) {
         const matchedPlan = paymentPlans.find(
           (plan) => plan.planName === response.data.paymentPlan
         );
+  
         if (matchedPlan) {
           setSelectedPlanInstallments(matchedPlan.installments);
-          console.log(matchedPlan)
           const totalInstallments = matchedPlan.numInstallments;
           const tenureDays = customerDetails.Tenuredays;
           const installmentInterval = tenureDays / totalInstallments;
-          const installmentDueDates = matchedPlan.installments.map((installment, index) => {
+  
+          installmentDueDates = matchedPlan.installments.map((installment, index) => {
             const dueDate = new Date();
-            dueDate.setDate(dueDate.getDate() + (installmentInterval * (index + 1)));
-            return { 
+            dueDate.setDate(dueDate.getDate() + installmentInterval * (index + 1));
+            
+            // Calculate the amount for this specific installment
+            const amount = (parseFloat(installment.amountRS) / 100) * 
+                           (parseFloat(unitDetails.plotSize) * parseFloat(unitDetails.rate));
+            
+            return {
               installment: installment.installment,
-              dueDate: dueDate.toISOString().split('T')[0], // Format the date as YYYY-MM-DD
+              dueDate: dueDate.toISOString().split('T')[0],
+              amount: amount, // Store the calculated amount for this installment
             };
           });
-          console.log("Installment Due Dates:", installmentDueDates);
+  
           const disabledInstallments = matchedPlan.installments
             .filter((installment) =>
               submittedInstallments.includes(installment.installment)
@@ -265,26 +281,60 @@ const Receivedpayments = () => {
           setSelectedPlanInstallments([]);
         }
       }
+      setCustomerDetails((prevDetails) => ({
+        ...prevDetails,
+        Duedates: installmentDueDates,
+      }));
+  
+      // Store the due dates along with the amount in the DueDate API
+      for (let dueDate of installmentDueDates) {
+        try {
+          await axios.post(`${process.env.REACT_APP_API_URL}/DueDate`, {
+            dueDate: dueDate.dueDate,
+            installment: dueDate.installment,
+            amount: dueDate.amount, // Include the calculated amount
+            customerId: customerId
+          });
+        } catch (error) {
+          if (error.response && error.response.status === 409) {
+            console.log(`Duplicate entry for installment ${dueDate.installment} on ${dueDate.dueDate}`);
+          } else {
+            console.error(`Error storing installment ${dueDate.installment} on ${dueDate.dueDate}:`, error);
+          }
+        }
+      }
+  
       setError(null);
       setShowCustomerDetails(true);
       setSelectedCustomerId(customerId);
+  
     } catch (error) {
       console.error("Error fetching customer details:", error);
       setError("Customer not found");
       setCustomerDetails(null);
     }
   };
+  
+  
+  const handleViewDetails = (customerDetails) => {
+    setSelectedCustomer(customerDetails);
+  };
+  
   const handleMakePayment = async () => {
     setIsPaymentClicked(true);
     try {
+      // Use the previously fetched unit data (unitData) directly here, or fetch again if needed
       const response = await fetchUnitDetails(
         customerDetails.project,
         customerDetails.block,
         customerDetails.plotOrUnit
       );
-      setUnitData(response);
-    } catch (error) {}
+      setUnitData(response); 
+    } catch (error) {
+      console.error("Error making payment:", error);
+    }
   };
+  
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = { year: "numeric", month: "2-digit", day: "2-digit" };
@@ -300,10 +350,6 @@ const Receivedpayments = () => {
       console.error(`Error fetching ${endpoint} name:`, error);
       return "Unknown";
     }
-  };
-  const handleViewDetails = (customerDetails) => {
-    setSelectedCustomer(customerDetails);
-
   };
   useEffect(() => {
     const fetchUnitDetails = async (projectId, blockId, unitId) => {
@@ -465,7 +511,7 @@ const Receivedpayments = () => {
                   <option>commision Adjustment</option>
                 </select>
                 <label>Amount To be Received</label>
-                <input type="number" className="form-input-field" name="amount" value={payment.amounttoberecieved} onChange={handleChange} />
+                <input type="number" className="form-input-field" name="amounttoberecieved" value={payment.amounttoberecieved} onChange={handleChange} />
                 <label>Amount</label>
                 <input type="number" className="form-input-field" name="amount" value={payment.amount} onChange={handleChange} />
                 <label>Cheque/ Receipt/ No.</label>

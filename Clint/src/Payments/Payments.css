@@ -9,9 +9,6 @@
     font-size: 12px;
     font-weight: normal;
     border: none;
-    border-collapse: collapse;
-    width: 100% !important;
-    max-width: 100% !important ;
     white-space: nowrap;
     background-color: rgb(249,249,249);
 }
@@ -22,6 +19,7 @@
 }
 .fl-table td,
 .fl-table th {
+    width: 100%;
     text-align: left;
     padding: 8px;
     border-bottom: none !important;

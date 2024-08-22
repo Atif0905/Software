@@ -152,7 +152,6 @@ const Ledger = () => {
                 <p>Name:</p> <p>{customerDetails.name2.toUpperCase()}</p>
                 <p>Present Address:</p> <p>{customerDetails.address2}</p>
                 <p>Contact No:</p> <p>{customerDetails.mobileNumber2}</p>
-                <p>Email Id:</p> <p>{customerDetails.email2}</p>
                 <p>Pan Number:</p><p>{customerDetails.panNumber2}</p>
                 <p>Adhar No:</p><p>{customerDetails.aadharNumber2}</p>
                 <p>Date Of Birth:</p><p>{formatDate(customerDetails.DOB2)}</p>
