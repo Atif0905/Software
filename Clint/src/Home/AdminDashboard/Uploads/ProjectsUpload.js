@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import '../AdminDashboard.css';
 import { FaMoneyCheck } from "react-icons/fa6";
+import Loader from "../../../Confirmation/Loader";
 const ProjectsUpload = () => {
   const [projects, setProjects] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -122,7 +123,7 @@ const ProjectsUpload = () => {
     }
   };  
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader/></div>;
   }
   if (error) {
     return <div>{error}</div>;
@@ -159,6 +160,18 @@ const ProjectsUpload = () => {
             <h3 className="colouredtext">Due Payment</h3>
             <div className="d-flex justify-content-between">
             <p className="colouredtext1">{parseFloat(totalPrice) - parseFloat(calculateTotalAmountReceived())}</p>
+            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+            </div>
+          </div>
+          <div className="coloureddiv">
+            <p className="descriptiondiv"> </p>
+          </div>          
+        </div>
+        <div className="paymentmaindiv">
+          <div className="coloureddiv1">
+            <h3 className="colouredtext">Interest Amount Payment</h3>
+            <div className="d-flex justify-content-between">
+            <p className="colouredtext1">0</p>
             <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
           </div>

@@ -40,6 +40,7 @@ const AddCustomerForm = () => {
     mobileNumber3: '',
     email3: '',
     EmployeeName: '',
+    Teamleadname: '',
     permanentaddress: '',
     CreatedBy: '',
     DOB: '',
@@ -268,6 +269,7 @@ const [showConfirm, setShowConfirm] = useState(false);
             email3: '',
             permanentaddress: '',
             EmployeeName: '',
+            Teamleadname:'',
             CreatedBy: '',
             DOB: '',
             DOB2: '',
@@ -516,6 +518,9 @@ const [showConfirm, setShowConfirm] = useState(false);
               <option value="Rohit Khari">Rohit Khari</option>
               <option value="Paras Goel">Paras Goel</option>
             </select>
+          </div>
+          <div className=" grid-item">
+            <input className="input-cal input-base" id="input" placeholder="Enter Teamlead Name " type="text" name="Teamleadname" value={formData.Teamleadname.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
             <input className="input-cal input-base" id="input" placeholder="Enter Discount " type="text" name="discount" value={formData.discount.toUpperCase()} onChange={handleInputChange} required />

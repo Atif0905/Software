@@ -1,4 +1,4 @@
-// actions.js
+
 export const setCustomers = (customers) => ({
     type: 'SET_CUSTOMERS',
     payload: customers,
@@ -8,7 +8,6 @@ export const setCustomers = (customers) => ({
     type: 'SET_ERROR',
     payload: error,
   });
-// actions.js or actions file
 export const setLoading = (isLoading) => ({
   type: 'SET_LOADING',
   payload: isLoading,

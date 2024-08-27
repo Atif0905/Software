@@ -17,6 +17,7 @@ const fs = require('fs');
 const Post = require('./Models/CreatePost')
 const Blog = require('./Models/Createblog');
 const Installment = require('./Models/Duedate');
+const Expense = require('./Models/Expense')
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(__dirname + '/uploads'));
@@ -154,9 +155,9 @@ app.get("/paginatedUsers", async (req, res) => {
   res.json(results)
 });
   app.post("/uploadProject", async (req, res) => {
-  const { name, description, totalLand, GST, AccountNo, Bank, IFSC, Payable ,CompanyName } = req.body;
+  const { name, description, totalLand, GST, Bsprate, AccountNo, Bank, IFSC, Payable ,CompanyName, Posessionfinaldate } = req.body;
     try {
-      const project = await Project.create({ name,  description, totalLand, GST, AccountNo, Bank, IFSC, Payable ,CompanyName});
+      const project = await Project.create({ name,  description, totalLand, GST, AccountNo, Bank, IFSC, Payable ,CompanyName, Bsprate, Posessionfinaldate});
       res.status(201).json({ status: "ok", data: project });
     } catch (error) {
       console.error("Error uploading project:", error);
@@ -517,6 +518,7 @@ app.post("/addCustomer", async (req, res) => {
     email3,
     permanentaddress,
     EmployeeName,
+    Teamleadname,
     DOB,
     DOB2,
     DOB3,
@@ -566,6 +568,7 @@ app.post("/addCustomer", async (req, res) => {
       email3,
       permanentaddress,
       EmployeeName,
+      Teamleadname,
       DOB,
       DOB2,
       DOB3,
@@ -643,6 +646,7 @@ app.put("/editCustomer/:customerId", async (req, res) => {
       panNumber3,
       mobileNumber3,
       permanentaddress,
+      Teamleadname,
       DOB,
       DOB2,
       DOB3,
@@ -679,6 +683,7 @@ app.put("/editCustomer/:customerId", async (req, res) => {
       panNumber3,
       mobileNumber3,
       permanentaddress,
+      Teamleadname,
       DOB,
       DOB2,
       DOB3,
@@ -759,7 +764,7 @@ app.get('/paymentPlans', async (req, res) => {
   }
 });
 app.post("/paymentDetails", async (req, res) => {
-  const { customerId, paymentType, paymentMode, amount, reference, comment, aadharNumber, PaymentDate, amounttoberecieved } = req.body;
+  const { customerId, paymentType, paymentMode, amount, reference, comment, aadharNumber, PaymentDate } = req.body;
   try {
     if (!paymentType || !reference || !customerId) {
       return res.status(400).json({ error: "PaymentType, Reference, and CustomerId are required fields" });
@@ -773,8 +778,6 @@ app.post("/paymentDetails", async (req, res) => {
       comment,
       aadharNumber,
       PaymentDate,
-      amounttoberecieved,
-      Interest
     });
     res.status(201).json({ status: "ok", message: "Payment details added successfully", data: payment });
   } catch (error) {
@@ -820,8 +823,6 @@ app.put("/paymentDetails/:paymentId", async (req, res) => {
         reference,
         comment,
         PaymentDate,
-        amounttoberecieved,
-        Interest
       },
       { new: true }
     );
@@ -1061,5 +1062,23 @@ app.get('/createblog', async (req, res) => {
   } catch (error) {
     console.error('Error fetching blogs:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+app.post('/expenses', async (req, res) => {
+  try {
+    const { teamLeadName, expenseSummary, amount, comment } = req.body;
+    const newExpense = new Expense({ teamLeadName, expenseSummary, amount, comment });
+    await newExpense.save();
+    res.status(201).json(newExpense);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create expense record' });
+  }
+});
+app.get('/expenses', async (req, res) => {
+  try {
+    const expenses = await Expense.find();
+    res.status(200).json(expenses);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch expense records' });
   }
 });

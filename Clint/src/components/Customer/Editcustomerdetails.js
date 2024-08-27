@@ -32,6 +32,7 @@ const Editcustomerdetails = () => {
         DOB: '',
         AgreementDate : '',
         AllotmentDate : '',
+        Teamleadname:'',
         email3: ''
     });
     const [showConfirm, setShowConfirm] = useState(false);
@@ -129,11 +130,7 @@ const Editcustomerdetails = () => {
                     <label>DOB </label>
                     <input type="date" className="input-cal input-base" name='DOB' value={editedCustomer.DOB} onChange={handleChange}  placeholder='DOB' />
                     </div>
-                    {/* <div className="relative grid-item">
-                    <label>Booking Date</label>
-                    <input className="input-cal input-base" id="input" placeholder="Booking Date" type="date" name="bookingDate" value={editedCustomer.bookingDate} onChange={handleChange} required
-                    />
-                    </div> */}
+                    
                     <div className="relative grid-item">
             <label>Allotment Date</label>
             <input className="input-cal input-base" id="input" placeholder="Allotment Date" type="date" name="AllotmentDate" value={editedCustomer.AllotmentDate} onChange={handleChange}
@@ -142,6 +139,10 @@ const Editcustomerdetails = () => {
                     <div className="relative grid-item">
             <label>Agreement Date</label>
             <input className="input-cal input-base" id="input" placeholder="Enter Agreement Date" type="date" name="AgreementDate" value={editedCustomer.AgreementDate} onChange={handleChange} />
+          </div>
+          <div className="relative grid-item">
+            <label>Agreement Date</label>
+            <input className="input-cal input-base" id="input" placeholder="Enter Agreement Date" type="text" name="Teamleadname" value={editedCustomer.Teamleadname.toUpperCase()} onChange={handleChange} />
           </div>
                     </div>
                     <h3 className='Headtext'>Second Customer</h3>

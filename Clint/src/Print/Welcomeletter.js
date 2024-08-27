@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./Print.css"
+import Loader from "../Confirmation/Loader";
 const Welcomeletter = () => {
     const { _id } = useParams();
     const [loading, setLoading] = useState(true);
@@ -87,7 +88,7 @@ const Welcomeletter = () => {
     }
   };
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader/></div>;
   }
 
   return (

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setPaymentDetails } from "../../Actions/Actions";
 import './Customer.css'
+import Loader from "../../Confirmation/Loader";
 const CustomerDetails = () => {
   const { _id } = useParams();
   const dispatch = useDispatch();
@@ -185,9 +186,9 @@ const CustomerDetails = () => {
   return (
     <div className="main-content">
       <h2 className="Headtext">Customer List</h2>
+      {loading && <div className="mt-5"><Loader/></div>}
+          {error && <p>Error: {error}</p>}
       <div className="table-wrapper whiteback">
-        {loading && <p>Loading...</p>}
-        {error && <p>Error: {error}</p>}
         {data && (
           <table id="firsttable">
             <tr>
