@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./Print.css";
+import Loader from "../Confirmation/Loader";
 const Print_reciept = () => {
   const { _id } = useParams();
   const [paymentDetails, setPaymentDetails] = useState(null);
@@ -158,7 +159,7 @@ const Print_reciept = () => {
     return date.toLocaleDateString("en-US", options);
   };
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader/></div>;
   }
   var date = new Date;
   var Year =  date.getFullYear();

@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
-import { setCustomers, setError } from '../../Actions/Actions'; 
-import { Link } from 'react-router-dom';
-import { setLoading } from '../../Actions/Actions';
-import Loader from '../../Confirmation/Loader';
-const CustomerList = () => {
+import { setCustomers, setError } from '../Actions/Actions'; 
+import { setLoading } from '../Actions/Actions';
+import Loader from '../Confirmation/Loader';
+const PaymentPerunit = () => {
   const { customers, loading, error } = useSelector(state => state.customer);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -97,36 +96,30 @@ const CustomerList = () => {
   }
   return (
     <div className='main-content'>
-      <h2 className='Headtext'>Customer List</h2>
+      <h2 className='Headtext'>Payment Per Unit (Sold Unit)</h2>
       <div className="table-wrapper whiteback">
         <table id='viewcustomertable'>
           <thead>
             <tr>
-              <th>CUSTOMER ID</th>
-              <th>NAME</th>
-              <th>CONTACT NUMBER</th>
-              <th>EMAIL</th>
-              <th>PROJECT</th>
-              <th>BLOCK-PLOT/UNIT</th>
+              <th>PROJECT Name</th>
+              <th>BLOCK-PLOT</th>
+              <th>UNIT NO</th>
               <th>UNIT PRICE</th>
               <th>PAYMENT RECEIVED</th>
               <th>BALANCE</th>
-              <th>Action</th>
+              <th>Payment Received in %</th>
             </tr>
           </thead>
           <tbody>
             {customers.map((customer, index) => (
               <tr key={index}>
-                <td>{customer.customerId ? customer.customerId.toUpperCase() : ''}</td>
-                <td><Link to={`/Customer_Details/${customer._id}`}>{customer.name ? customer.name.toUpperCase() : ''}</Link></td>
-                <td>{customer.mobileNumber}</td>
-                <td>{customer.email ? customer.email : ''}</td>
                 <td>{customer.projectName}</td>
-                <td>{customer.blockName}-{customer.unitName}</td>
+                <td>{customer.blockName}</td>
+                <td>{customer.unitName}</td>
                 <td>{customer.unitPrice}</td>
                 <td>{customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0}</td>
                 <td>{customer.unitPrice - (customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0)}</td>
-                <td><Link to={`/Edit_Customer_Details/${customer._id}`}>Edit Details</Link></td>
+                <td style={{ color: (customer.paymentDetails ? (customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) / customer.unitPrice) * 100 : 0) < 50 ? 'red' : 'green' }}>{parseFloat((customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0) / customer.unitPrice * 100).toFixed(2)}%</td>
               </tr>
             ))}
           </tbody>
@@ -135,4 +128,4 @@ const CustomerList = () => {
     </div>
   );
 };
-export default CustomerList;
+export default PaymentPerunit;

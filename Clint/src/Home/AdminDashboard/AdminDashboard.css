@@ -3,6 +3,22 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
 }
+.unitdiv{
+    width: 150px;
+    height: 100px;
+    background-color: rgb(176, 173, 252);
+    border-radius: 10px;
+}
+.unitsolddiv{
+    width: 150px;
+    height: 100px;
+    background-color: rgb(247, 123, 117);
+    border-radius: 10px;
+}
+.unitdivtext{
+    text-align: center;
+    font-size: 28px;
+}
 .profilehead{
     color: black;
     text-align: right;
@@ -16,6 +32,13 @@
     height: 130px;
     width: 320px;
     background-color: rgb(221, 76, 57);
+}
+.accountspaymentmaindiv{
+    height: 130px;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 5%;
+    border-radius: 10px;
 }
 .react-icon-red{
     color: rgb(149, 51, 41);
@@ -38,6 +61,31 @@
     letter-spacing: 0em;
     text-align: left;
     color: white;
+}
+.accountscolouredtext{
+    margin-top: 10px;
+    font-size: 16px;
+    letter-spacing: 1px !important;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0em;
+    text-align: left;
+    color: rgb(63, 63, 63) !important;
+}
+.fontcolour{
+    width: 30px;
+    background-color: rgba(82, 77, 233, 0.196) ;
+    border-radius: 50%;
+    color: rgb(81,77,233);
+}
+.fontcolour1{
+    width: 30px;
+    background-color: rgba(237, 62, 53, 0.445) ;
+    border-radius: 50%;
+    color: rgb(237,61,53);
+}
+.fontmargin{
+    margin-left: 6px;
 }
 @media (min-width:1440px) {
     .flexy{
@@ -71,5 +119,13 @@
         display: grid;
         grid-template-columns: repeat(2, 48%);
         gap: 15px;
+    }
+}
+@media (max-width:767px) {
+    .react-icon-red{
+        display: none;
+    }
+    .colouredtext1 {
+        font-size: 14px;
     }
 }

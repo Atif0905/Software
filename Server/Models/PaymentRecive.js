@@ -18,10 +18,10 @@ const mongoose = require('mongoose');
       type: Number,
       required: true
     },
-    amounttoberecieved:{
-      type: String,
-      required: true
-    },
+    // amounttoberecieved:{
+    //   type: String,
+    //   required: true
+    // },
     reference: {
       type: String,
       required: true

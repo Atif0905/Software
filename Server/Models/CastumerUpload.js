@@ -172,6 +172,10 @@ const customerSchema = new mongoose.Schema({
     type: String,
     default: false,
   },
+  Teamleadname: {
+    type: String,
+    default: false,
+  }
 });
 customerSchema.pre("save", async function (next) {
   if (this.isNew) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import './Print.css';
+import Loader from "../Confirmation/Loader";
 
 const DemandDraft = () => {
   const { _id } = useParams();
@@ -130,7 +131,7 @@ const DemandDraft = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader/></div>;
   }
   var date = new Date;
   var Year =  date.getFullYear();

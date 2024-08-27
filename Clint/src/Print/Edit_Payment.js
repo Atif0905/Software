@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from 'axios';
 import ConfirmationModal from "../Confirmation/ConfirmationModal";
+import Loader from "../Confirmation/Loader";
 const Edit_Payment = () => {
   const { _id } = useParams();
   const [error, setError] = useState(null);
@@ -165,7 +166,7 @@ const Edit_Payment = () => {
           </div>
         </div>
       ) : (
-        <p>Loading...</p>
+        <p><Loader/></p>
       )}
     </div>
   );

@@ -30,11 +30,13 @@ const projectSchema = new mongoose.Schema({
   description: String,
   totalLand: String, 
   GST: String,
+  Bsprate: String,
   AccountNo: String,
   Bank: String,
   IFSC: String,
   Payable: String,
   CompanyName: String,
+  Posessionfinaldate: String,
   blocks: [blockSchema]
 });
 

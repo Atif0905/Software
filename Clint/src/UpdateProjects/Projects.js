@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Projects.css';
 import ConfirmationModal from '../Confirmation/ConfirmationModal';
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 const Projects = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -13,6 +14,8 @@ const Projects = () => {
   const [Bank, setBank] = useState('');
   const [IFSC, setIFSC] = useState('');
   const [Payable, setPayable] = useState('');
+  const [Bsprate, setBsprate] = useState('');
+  const [Posessionfinaldate, setPosessionfinaldate] = useState('');
   const [CompanyName, setCompanyName] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -29,7 +32,9 @@ const Projects = () => {
         IFSC,
         Payable,
         blocks,
-        CompanyName
+        Bsprate,
+        CompanyName,
+        Posessionfinaldate
       }, {
         headers: {
           'Content-Type': 'application/json',
@@ -44,10 +49,12 @@ const Projects = () => {
         setTotalLand('');
         setGST('');
         setAccountNo('');
+        setBsprate('');
         setBank('');
         setIFSC('');
         setPayable('');
         setCompanyName('');
+        setPosessionfinaldate('');
         setBlocks([{ name: '', units: [{ name: '' }] }]);
       } else {
         alert(data.error || 'Failed to upload project');
@@ -71,11 +78,15 @@ const Projects = () => {
           <form onSubmit={handleSubmit1}>
             <div className="form-group mt-3">
               <label htmlFor="name" className="ml">Project Name</label>
-              <input type="text" className='form-input-field' id="Project name" value={name} placeholder="Enter Project Name" onChange={(e) => setName(e.target.value)} required />
+              <input type="text" className='form-input-field' id="Project name" value={name.toUpperCase()} placeholder="Enter Project Name" onChange={(e) => setName(e.target.value)} required />
             </div>
             <div className="form-group mt-3">
               <label htmlFor="description" className='ml'>Location</label>
               <input type='text' className='form-input-field' id="description" placeholder='Location' value={description} onChange={(e) => setDescription(e.target.value)} rows="5" required />
+            </div>
+            <div className="form-group mt-3">
+              <label htmlFor="totalLand" className="ml">Basic Rate</label>
+              <input type="number" className='form-input-field' id="Bsprate" value={Bsprate} placeholder="Basic Rate" onChange={(e) => setBsprate(e.target.value)} required />
             </div>
             <div className="form-group mt-3">
               <label htmlFor="totalLand" className="ml">Total Land</label>
@@ -91,23 +102,27 @@ const Projects = () => {
             </div>
             <div className="form-group mt-3">
               <label htmlFor="GST" className="ml">GST Number</label>
-              <input type="text" className='form-input-field' id="GST" value={GST} placeholder="Enter GST Number" onChange={(e) => setGST(e.target.value)} required />
+              <input type="text" className='form-input-field' id="GST" value={GST.toUpperCase()} placeholder="Enter GST Number" onChange={(e) => setGST(e.target.value)} required />
             </div>
             <div className="form-group mt-3">
               <label htmlFor="AccountNo" className="ml">Account No</label>
-              <input type="text" className='form-input-field' id="AccountNo" value={AccountNo} placeholder="Enter Account No" onChange={(e) => setAccountNo(e.target.value)} required />
+              <input type="text" className='form-input-field' id="AccountNo" value={AccountNo.toUpperCase()} placeholder="Enter Account No" onChange={(e) => setAccountNo(e.target.value)} required />
             </div>
             <div className="form-group mt-3">
               <label htmlFor="Bank" className="ml">Bank Name</label>
-              <input type="text" className='form-input-field' id="Bank" value={Bank} placeholder="Enter Bank Name" onChange={(e) => setBank(e.target.value)} required />
+              <input type="text" className='form-input-field' id="Bank" value={Bank.toUpperCase()} placeholder="Enter Bank Name" onChange={(e) => setBank(e.target.value)} required />
             </div>
             <div className="form-group mt-3">
               <label htmlFor="IFSC" className="ml">IFSC</label>
-              <input type="text" className='form-input-field' id="IFSC" value={IFSC} placeholder="Enter IFSC Code" onChange={(e) => setIFSC(e.target.value)} required />
+              <input type="text" className='form-input-field' id="IFSC" value={IFSC.toUpperCase()} placeholder="Enter IFSC Code" onChange={(e) => setIFSC(e.target.value)} required />
             </div>
             <div className="form-group mt-3">
               <label htmlFor="Payable" className="ml">Payable At</label>
-              <input type="text" className='form-input-field' id="Payable" value={Payable} placeholder="Payable At" onChange={(e) => setPayable(e.target.value)} required />
+              <input type="text" className='form-input-field' id="Payable" value={Payable.toUpperCase()} placeholder="Payable At" onChange={(e) => setPayable(e.target.value)} required />
+            </div>
+            <div className="form-group mt-3">
+              <label htmlFor="Posessionfinaldate" className="ml">Posession Final Date</label>
+              <input type="date" className='form-input-field' id="Posessionfinaldate" value={Posessionfinaldate.toUpperCase()} placeholder="Posession final date" onChange={(e) => setPosessionfinaldate(e.target.value)} required />
             </div>
             <div className="form-group mt-3 mb-3">
               <button type="submit" className='uploadbutt'>Upload Project</button>

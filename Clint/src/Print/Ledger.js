@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import './Print.css';
+import Loader from "../Confirmation/Loader";
 const Ledger = () => {
     const { _id } = useParams();
     const [paymentDetails, setPaymentDetails] = useState([]);
@@ -117,7 +118,7 @@ const Ledger = () => {
             parseFloat(customerDetails.rate))
         : "0";
       if (loading) {
-        return <div>Loading...</div>;
+        return <div><Loader/></div>;
       }
       const formatDate = (dateString) => {
         const date = new Date(dateString);

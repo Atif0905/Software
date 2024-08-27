@@ -214,7 +214,7 @@ const Sidebar = () => {
       <li className="dropdown-toggle" onClick={toggleDropdown4}> <FaPenToSquare /> Payments</li>
       <div className={"dropdown-menu" + (isopen4 ? " active" : "")} aria-labelledby="dropdownMenuButton">
         <li className=" dropdown-item"><Link to='/ReceivedPayments'><MdOutlineCircle /> Receive Payment</Link></li>
-        <li className=" dropdown-item"><Link to='/Unclearchequedetails'><MdOutlineCircle /> Unclear cheque details</Link></li>
+        <li className=" dropdown-item"><Link to='/PayInterestAmount'><MdOutlineCircle /> Pay Interest Amount</Link></li>
       </div>
     </div>
     <div className="dropdown">

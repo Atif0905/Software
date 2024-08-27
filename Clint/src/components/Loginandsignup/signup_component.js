@@ -47,6 +47,8 @@ export default function SignUp() {
           <h3>Sign Up</h3>
           <div>
             Register As
+            <div className="d-flex justify-content-between">
+              <div>
             <input
               type="radio"
               name="UserType"
@@ -54,13 +56,24 @@ export default function SignUp() {
               onChange={(e) => setUserType(e.target.value)}
             />
             User
+            </div>
+            <div>
+            <input
+              type="radio"
+              name="UserType"
+              value="Accounts"
+              onChange={(e) => setUserType(e.target.value)}
+            />
+            Accounts</div>
+            <div>
             <input
               type="radio"
               name="UserType"
               value="Admin"
               onChange={(e) => setUserType(e.target.value)}
             />
-            Admin
+            Admin</div>
+            </div>
           </div>
           {userType === "Admin" && (
             <div className="mb-3">
