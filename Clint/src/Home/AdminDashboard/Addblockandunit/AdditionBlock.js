@@ -158,6 +158,8 @@ const AdditionBlock = () => {
       <h4 className="Headtext">Add Block</h4>
       <div className="col-6 whiteback">
         <form onSubmit={handleSubmit}>
+          <div>
+            <label>Select Project</label><br/>
           <div className="form-group">
             <label>Select Project</label>
             <select
@@ -173,6 +175,8 @@ const AdditionBlock = () => {
               ))}
             </select>
           </div>
+          <div className='mt-2'>
+            <label className=''>Block name</label><br/>
 
           <div className="form-group">
             <label>Block Name</label>
@@ -185,6 +189,18 @@ const AdditionBlock = () => {
               required
             />
           </div>
+          <label className='mt-2'>Total Plot </label><br/>
+          <input
+            type="number"
+            onWheel={numberInputOnWheelPreventChange}
+            className="form-input-field "
+            placeholder="Total Plot in Block"
+            value={totalPlotInBlock}
+            onChange={(e) => setTotalPlotInBlock(e.target.value)}
+            required
+          />
+          <div className='mt-2'>
+            <label className=''>Plot Size</label><br/>
 
           <div className="form-group">
             <label>Total Plot</label>
@@ -212,8 +228,13 @@ const AdditionBlock = () => {
             />
           </div>
 
+          <div className='mt-2'>
+            <label className=''>Basic Rate</label><br/>
+
+
           <div className="form-group">
             <label>Basic Rate</label>
+
             <input
               type="number"
               onWheel={numberInputOnWheelPreventChange}
@@ -224,6 +245,9 @@ const AdditionBlock = () => {
               required
             />
           </div>
+          <div className='mt-2'>
+            <label className=''>IDC Rate</label><br/>
+
 
           <div className="form-group">
             <label>IDC Rate</label>
@@ -237,7 +261,8 @@ const AdditionBlock = () => {
               required
             />
           </div>
-
+          <div className='mt-2'>
+            <label className=''>EDC Rate</label><br/>
           <div className="form-group">
             <label>EDC Rate</label>
             <input

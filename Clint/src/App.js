@@ -103,7 +103,7 @@ function App() {
           <Route path="/DirectorDetails/:_id" element={<AccountsSidebar/>}/>
           <Route path="/ExpenseForm" element={<AccountsSidebar/>}/>
           <Route path="/Expensedetails" element={<AccountsSidebar/>}/>
-          <Route path="/TotalExpensePaidByteamLeader/:_id" element={<AccountsSidebar/>}/>
+          <Route path="/TotalExpensePaidtoteamLeader/:_id" element={<AccountsSidebar/>}/>
         </Routes>
 
         <Routes>
@@ -149,7 +149,7 @@ function App() {
           <Route path="/DirectorDetails/:_id" element={<DirectorDetails/>}/>
           <Route path="/ExpenseForm" element={<ExpenseForm/>}/>
           <Route path="/Expensedetails" element={<Expensedetails/>}/>
-          <Route path="/TotalExpensePaidByteamLeader/:_id" element={<ExpensePaidByteamLeader/>}/>
+          <Route path="/TotalExpensePaidtoteamLeader/:_id" element={<ExpensePaidByteamLeader/>}/>
         </Routes>
       </div>
     </Router>

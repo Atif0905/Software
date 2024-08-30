@@ -179,6 +179,36 @@ const AdditionUnit = () => {
       <h4 className='Headtext'>Add Unit</h4>
       <div className='col-6 whiteback'>
         <div className='mt-3'>
+          <label className=''>Unit Name</label><br/>
+          <input type="text" className="form-input-field " placeholder="Unit Name" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value.toUpperCase())} required />
+        </div>
+        <div className='mt-2'>
+          <label className=''>Plot size</label><br/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required />
+        </div>
+        <div className='mt-2'>
+          <label className=''>Rate</label><br/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} />
+        </div>
+        <div className='mt-2'>
+          <label className=''>IDC charges</label><br/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} />
+        </div>
+        <div className='mt-2'>
+          <label className=''>PLC charges</label><br/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="PLC Charges" value={plcCharges} onChange={(e) => setPlcCharges(e.target.value)} />
+        </div>
+        <div className='mt-2'>
+          <label className=''>EDC charges</label><br/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="EDC Charges" value={edcPrice} onChange={(e) => setEdcPrice(e.target.value)} />
+        </div>
+        <div className='mt-2'>
+          <label className=''>Total Price</label><br/>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="Total Price" value={totalPrice} onChange={(e) => setTotalPrice(e.target.value)} />
+        </div>
+        <div className="mt-2">
+          <label>Select Project</label><br/>
+          <select className="select-buttons ps-1" onChange={(e) => setSelectedProjectId(e.target.value)} required>
           <label>Unit Name</label>
           <input
             type="text"
@@ -270,6 +300,8 @@ const AdditionUnit = () => {
           </select>
         </div>
         <div className="mt-2">
+          <label>Select Size Type</label><br/>
+          <select className="select-buttons ps-1" value={sizeType} onChange={(e) => setSizeType(e.target.value)} required>
           <label>Select Size Type</label>
           <select
             className="select-buttons ps-1"
@@ -285,6 +317,8 @@ const AdditionUnit = () => {
           </select>
         </div>
         <div className="mt-2">
+          <label>Select Block</label><br/>
+          <select className="select-buttons ps-1" onChange={(e) => setSelectedBlockId(e.target.value)} required>
           <label>Select Block</label>
           <select
             className="select-buttons ps-1"

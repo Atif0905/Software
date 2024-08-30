@@ -129,14 +129,36 @@ margin-right: 10px;
 background-color: #ebf0f5;
 min-height: 100vh; 
 }
-.whiteback{
-background-color: white;
-box-shadow: 4px 4px 4px 0px #55707D;
-padding: 10px;
-border-top-left-radius: 5px;
-border-top-right-radius: 5px;
-position: relative;
+.whiteback {
+  background-color: white;
+  box-shadow: 4px 4px 4px 0px #55707D;
+  padding: 10px;
+  border-radius: 7px;
+  position: relative;
+  overflow-x: auto; 
+  white-space: nowrap; 
 }
+.main-content,.whiteback::-webkit-scrollbar {
+  height: 7px; 
+}
+.main-content,.whiteback::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+.main-content,.whiteback::-webkit-scrollbar-thumb {
+  background-color: #888; 
+  border-radius: 5px; 
+}
+.main-content,.whiteback::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+.whiteback1{
+  background-color: white;
+  box-shadow: 4px 4px 4px 0px #55707D;
+  padding: 10px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  position: relative;
+  }
 .gridcontainer{
 display: grid;
 grid-template-columns: repeat(4,23%);
