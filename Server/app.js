@@ -18,6 +18,10 @@ const Post = require('./Models/CreatePost')
 const Blog = require('./Models/Createblog');
 const Installment = require('./Models/Duedate');
 const Expense = require('./Models/Expense')
+
+
+const uploadProjects = multer({ dest: 'uploads/' });
+
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(__dirname + '/uploads'));
@@ -154,16 +158,116 @@ app.get("/paginatedUsers", async (req, res) => {
   results.result = allUser.slice(startIndex, lastIndex);
   res.json(results)
 });
-  app.post("/uploadProject", async (req, res) => {
-  const { name, description, totalLand, GST, Bsprate, AccountNo, Bank, IFSC, Payable ,CompanyName, Posessionfinaldate } = req.body;
+  // app.post("/uploadProject", async (req, res) => {
+  // const { name, description, totalLand, GST, Bsprate, AccountNo, Bank, IFSC, Payable ,CompanyName, Posessionfinaldate } = req.body;
+  //   try {
+  //     const project = await Project.create({ name,  description, totalLand, GST, AccountNo, Bank, IFSC, Payable ,CompanyName, Bsprate, Posessionfinaldate});
+  //     res.status(201).json({ status: "ok", data: project });
+  //   } catch (error) {
+  //     console.error("Error uploading project:", error);
+  //     res.status(500).json({ error: "Internal server error" });
+  //   }
+  // });
+
+
+
+
+
+
+
+
+
+
+
+
+  app.post("/uploadProject", uploadProjects.single('file'), async (req, res) => {
+    let {
+      name,
+      description,
+      totalLand,
+      GST,
+      Bsprate,
+      AccountNo,
+      Bank,
+      IFSC,
+      Payable,
+      CompanyName,
+      Posessionfinaldate
+    } = req.body;
+  
+    // Check if a file is uploaded
+    if (req.file) {
+      try {
+        // Read and parse the CSV file
+        const csvFilePath = req.file.path;
+        const fileContent = fs.readFileSync(csvFilePath, 'utf8');
+  
+        // Parse CSV content
+        Papa.parse(fileContent, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function (results) {
+            if (results.data && results.data.length > 0) {
+              const projectData = results.data[0]; // Assuming a single project per CSV file
+              name = projectData.name || name;
+              description = projectData.description || description;
+              totalLand = projectData.totalLand || totalLand;
+              GST = projectData.GST || GST;
+              Bsprate = projectData.Bsprate || Bsprate;
+              AccountNo = projectData.AccountNo || AccountNo;
+              Bank = projectData.Bank || Bank;
+              IFSC = projectData.IFSC || IFSC;
+              Payable = projectData.Payable || Payable;
+              CompanyName = projectData.CompanyName || CompanyName;
+              Posessionfinaldate = projectData.Posessionfinaldate || Posessionfinaldate;
+            }
+          }
+        });
+  
+        // Delete the file after processing
+        fs.unlinkSync(csvFilePath);
+      } catch (error) {
+        console.error("Error processing CSV file:", error);
+        return res.status(500).json({ error: "Error processing CSV file" });
+      }
+    }
+  
     try {
-      const project = await Project.create({ name,  description, totalLand, GST, AccountNo, Bank, IFSC, Payable ,CompanyName, Bsprate, Posessionfinaldate});
+      // Create the project record in the database
+      const project = await Project.create({
+        name,
+        description,
+        totalLand,
+        GST,
+        Bsprate,
+        AccountNo,
+        Bank,
+        IFSC,
+        Payable,
+        CompanyName,
+        Posessionfinaldate
+      });
+  
       res.status(201).json({ status: "ok", data: project });
     } catch (error) {
       console.error("Error uploading project:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.get("/getAllProjects", async (req, res) => {
   try {
     const projects = await Project.find({});
@@ -243,14 +347,102 @@ app.put("/editProject/:projectId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-app.post("/addBlock/:projectId", async (req, res) => {
+// app.post("/addBlock/:projectId", async (req, res) => {
+//   const { projectId } = req.params;
+//   const { name, totalPlotInBlock, plotSize, basicRateOfBlock, idcRateOfBlock, edcRateOfBlock } = req.body;
+//   try {
+//     const project = await Project.findById(projectId);
+//     if (!project) {
+//       return res.status(404).json({ error: "Project not found" });
+//     }
+//     const newBlock = {
+//       name,
+//       totalPlotInBlock,
+//       plotSize,
+//       basicRateOfBlock,
+//       idcRateOfBlock,
+//       edcRateOfBlock,
+//     };
+//     project.blocks.push(newBlock);
+//     await project.save();
+//     res.status(201).json({ status: "ok", data: project });
+//   } catch (error) {
+//     console.error("Error adding block:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+// app.post("/addUnit/:projectId/:blockId", async (req, res) => {
+//   const { projectId, blockId } = req.params;
+//   const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice,edcPrice } = req.body;
+//   try {
+//     const project = await Project.findById(projectId);
+//     if (!project) {
+//       return res.status(404).json({ error: "Project not found" });
+//     }
+//     const block = project.blocks.id(blockId);
+//     if (!block) {
+//       return res.status(404).json({ error: "Block not found" });
+//     }
+//     const newUnit = {
+//       name,
+//       plotSize,
+//       sizeType,
+//       rate,
+//       idcCharges,
+//       plcCharges,
+//       totalPrice,
+//       edcPrice,
+//       status: 'available', 
+//     };
+//     block.units.push(newUnit);
+//     await project.save();
+//     res.status(201).json({ status: "ok", data: project });
+//   } catch (error) {
+//     console.error("Error adding unit:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
+
+app.post("/addBlock/:projectId", upload.single('file'), async (req, res) => {
   const { projectId } = req.params;
-  const { name, totalPlotInBlock, plotSize, basicRateOfBlock, idcRateOfBlock, edcRateOfBlock } = req.body;
+  let { name, totalPlotInBlock, plotSize, basicRateOfBlock, idcRateOfBlock, edcRateOfBlock } = req.body;
+
+  // Check if a CSV file is uploaded
+  if (req.file) {
+    try {
+      const csvFilePath = req.file.path;
+      const fileContent = fs.readFileSync(csvFilePath, 'utf8');
+
+      Papa.parse(fileContent, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          if (results.data && results.data.length > 0) {
+            const blockData = results.data[0]; // Assuming a single block per CSV file
+            name = blockData.name || name;
+            totalPlotInBlock = blockData.totalPlotInBlock || totalPlotInBlock;
+            plotSize = blockData.plotSize || plotSize;
+            basicRateOfBlock = blockData.basicRateOfBlock || basicRateOfBlock;
+            idcRateOfBlock = blockData.idcRateOfBlock || idcRateOfBlock;
+            edcRateOfBlock = blockData.edcRateOfBlock || edcRateOfBlock;
+          }
+        }
+      });
+
+      fs.unlinkSync(csvFilePath);
+    } catch (error) {
+      console.error("Error processing CSV file:", error);
+      return res.status(500).json({ error: "Error processing CSV file" });
+    }
+  }
+
   try {
     const project = await Project.findById(projectId);
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
+
     const newBlock = {
       name,
       totalPlotInBlock,
@@ -259,26 +451,65 @@ app.post("/addBlock/:projectId", async (req, res) => {
       idcRateOfBlock,
       edcRateOfBlock,
     };
+
     project.blocks.push(newBlock);
     await project.save();
+
     res.status(201).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error adding block:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-app.post("/addUnit/:projectId/:blockId", async (req, res) => {
+
+
+
+app.post("/addUnit/:projectId/:blockId", upload.single('file'), async (req, res) => {
   const { projectId, blockId } = req.params;
-  const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice,edcPrice } = req.body;
+  let { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice, edcPrice } = req.body;
+
+  // Check if a CSV file is uploaded
+  if (req.file) {
+    try {
+      const csvFilePath = req.file.path;
+      const fileContent = fs.readFileSync(csvFilePath, 'utf8');
+
+      Papa.parse(fileContent, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          if (results.data && results.data.length > 0) {
+            const unitData = results.data[0]; // Assuming a single unit per CSV file
+            name = unitData.name || name;
+            plotSize = unitData.plotSize || plotSize;
+            sizeType = unitData.sizeType || sizeType;
+            rate = unitData.rate || rate;
+            idcCharges = unitData.idcCharges || idcCharges;
+            plcCharges = unitData.plcCharges || plcCharges;
+            totalPrice = unitData.totalPrice || totalPrice;
+            edcPrice = unitData.edcPrice || edcPrice;
+          }
+        }
+      });
+
+      fs.unlinkSync(csvFilePath);
+    } catch (error) {
+      console.error("Error processing CSV file:", error);
+      return res.status(500).json({ error: "Error processing CSV file" });
+    }
+  }
+
   try {
     const project = await Project.findById(projectId);
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
+
     const block = project.blocks.id(blockId);
     if (!block) {
       return res.status(404).json({ error: "Block not found" });
     }
+
     const newUnit = {
       name,
       plotSize,
@@ -288,16 +519,61 @@ app.post("/addUnit/:projectId/:blockId", async (req, res) => {
       plcCharges,
       totalPrice,
       edcPrice,
-      status: 'available', 
+      status: 'available',
     };
+
     block.units.push(newUnit);
     await project.save();
+
     res.status(201).json({ status: "ok", data: project });
   } catch (error) {
     console.error("Error adding unit:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.put("/editUnit/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
   const {  rate, idcCharges, plcCharges, totalPrice, edcPrice } = req.body;
