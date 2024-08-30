@@ -5,21 +5,17 @@ import { useDispatch } from "react-redux";
 import { setPaymentDetails } from "../Actions/Actions";
 import '../components/Customer/Customer.css';
 import Loader from "../Confirmation/Loader";
-
-// Loading component
 const Loading = () => (
   <div className="loading-spinner">
     <Loader/>
   </div>
 );
-
 const DirectorDetails = () => {
   const { _id } = useParams();
   const dispatch = useDispatch();
-  const [data, setData] = useState(null);
+  const [data, setData] = useState(null); 
   const [teamLeadNames, setTeamLeadNames] = useState([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
@@ -29,56 +25,37 @@ const DirectorDetails = () => {
         const matchedCustomer = customerResponse.data.find(
           (c) => c._id === _id
         );
-
         if (matchedCustomer) {
-          const projectName = await fetchName(
-            "getProject",
-            matchedCustomer.project
-          );
-          const blockName = await fetchName(
-            "getBlock",
-            matchedCustomer.project,
-            matchedCustomer.block
-          );
-          const unitName = await fetchName(
-            "getUnit",
-            matchedCustomer.project,
-            matchedCustomer.block,
-            matchedCustomer.plotOrUnit
-          );
-          const unitDetails = await fetchUnitDetails(
-            matchedCustomer.project,
-            matchedCustomer.block,
-            matchedCustomer.plotOrUnit
-          );
-          const paymentDetailsResponse = await fetchPaymentDetailsByCustomerId(
-            matchedCustomer.customerId
-          );
+          const projectDetails = await fetchName("getProject", matchedCustomer.project);
+          const blockDetails = await fetchName("getBlock", matchedCustomer.project, matchedCustomer.block);
+          const unitDetails = await fetchName("getUnit", matchedCustomer.project, matchedCustomer.block, matchedCustomer.plotOrUnit);
+          const unitExtraDetails = await fetchUnitDetails(matchedCustomer.project, matchedCustomer.block, matchedCustomer.plotOrUnit);
+          const paymentDetailsResponse = await fetchPaymentDetailsByCustomerId(matchedCustomer.customerId);  
           const updatedCustomer = {
             ...matchedCustomer,
-            projectName: projectName.toUpperCase(),
-            blockName: blockName.toUpperCase(),
-            unitName: unitName.toUpperCase(),
+            projectName: projectDetails.name.toUpperCase(),
+            projectId: projectDetails._id,
+            blockName: blockDetails.name.toUpperCase(),
+            blockId: blockDetails._id,
+            unitName: unitDetails.name.toUpperCase(),
+            unitId: unitDetails._id,
             paymentDetails: paymentDetailsResponse.data,
-            ...unitDetails,
-          };
-
+            ...unitExtraDetails,
+          };  
           setData(updatedCustomer);
           dispatch({ type: "SET_CUSTOMERS", payload: [updatedCustomer] });
-          dispatch(setPaymentDetails(paymentDetailsResponse.data));
-
+          dispatch(setPaymentDetails(paymentDetailsResponse.data));  
           const teamLeadResponse = await axios.get(
             `${process.env.REACT_APP_API_URL}/Viewcustomer`
-          );
-
+          );  
           const matchedEmployees = teamLeadResponse.data.filter(
             (e) => e.EmployeeName === matchedCustomer.EmployeeName
           );
-
-          const uniqueTeamLeadNames = [
-            ...new Set(matchedEmployees.map((e) => e.Teamleadname)),
-          ];
-          setTeamLeadNames(uniqueTeamLeadNames);
+          const uniqueTeamLeads = matchedEmployees.map((e) => ({
+            name: e.Teamleadname,
+            _id: e._id,
+          }));
+   setTeamLeadNames(uniqueTeamLeads);
         } else {
           dispatch({ type: "SET_ERROR", payload: "Customer not found." });
         }
@@ -93,7 +70,6 @@ const DirectorDetails = () => {
         dispatch({ type: "SET_LOADING", payload: false });
       }
     };
-
     if (_id) {
       fetchCustomerDetails();
     } else {
@@ -102,7 +78,6 @@ const DirectorDetails = () => {
       setLoading(false);
     }
   }, [_id]);
-
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(
@@ -114,19 +89,24 @@ const DirectorDetails = () => {
       return { data: [] };
     }
   };
-
   const fetchName = async (endpoint, ...ids) => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join("/")}`
       );
-      return response.data.data.name;
+      const data = response.data.data;
+      return {
+        name: data.name,
+        _id: data._id,
+      };
     } catch (error) {
       console.error(`Error fetching ${endpoint} name:`, error);
-      return "Unknown";
+      return {
+        name: "Unknown",
+        _id: "Unknown",
+      };
     }
   };
-
   const fetchUnitDetails = async (projectId, blockId, unitId) => {
     try {
       const response = await axios.get(
@@ -155,16 +135,16 @@ const DirectorDetails = () => {
       };
     }
   };
-
   return (
     <div className="main-content">
-      <h2 className="Headtext">{data?.EmployeeName} Details</h2>
       <div >
         {loading ? (
           <div className="d-flex justify-content-center">
           <Loading />
           </div>
         ) : teamLeadNames.length > 0 ? (
+          <div>
+          <h2 className="Headtext">{data?.EmployeeName} Details</h2>
           <div className="table-wrapper whiteback">
             <table id='viewcustomertable'>
               <thead>
@@ -173,13 +153,15 @@ const DirectorDetails = () => {
                 </tr>
               </thead>
               <tbody>
-                {teamLeadNames.map((name, index) => (
-                  <tr key={index}>
-                    <td>{name.toUpperCase()}</td>
-                  </tr>
-                ))}
-              </tbody>
+  {teamLeadNames.map((teamLead, index) => (
+    <tr key={index}>
+      <td>{teamLead.name.toUpperCase()}</td>
+    </tr>
+  ))}
+</tbody>
+
             </table>
+          </div>
           </div>
         ) : null}
       </div>

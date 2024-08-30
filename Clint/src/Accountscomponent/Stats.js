@@ -96,7 +96,7 @@ const Stats = () => {
     }
   return (
     <div className='main-content'>
-        <h2 className='mt-5'>Stats of All Directors</h2>
+        <h2 className='Headtext'>Stats of All Directors</h2>
         <div className="table-wrapper whiteback">
         <table id='viewcustomertable'>
           <thead>

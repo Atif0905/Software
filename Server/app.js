@@ -1066,8 +1066,8 @@ app.get('/createblog', async (req, res) => {
 });
 app.post('/expenses', async (req, res) => {
   try {
-    const { teamLeadName, expenseSummary, amount, comment } = req.body;
-    const newExpense = new Expense({ teamLeadName, expenseSummary, amount, comment });
+    const { teamLeadName, expenseSummary, amount, comment, Paydate } = req.body;
+    const newExpense = new Expense({ teamLeadName, expenseSummary, amount, comment, Paydate });
     await newExpense.save();
     res.status(201).json(newExpense);
   } catch (error) {

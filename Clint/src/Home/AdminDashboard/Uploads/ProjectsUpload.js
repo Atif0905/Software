@@ -3,6 +3,8 @@ import axios from "axios";
 import '../AdminDashboard.css';
 import { FaMoneyCheck } from "react-icons/fa6";
 import Loader from "../../../Confirmation/Loader";
+import PasswordPrompt from "../../../Accountscomponent/PasswordPrompt";
+
 const ProjectsUpload = () => {
   const [projects, setProjects] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -12,6 +14,20 @@ const ProjectsUpload = () => {
   const [totalReceivedPayment, setTotalReceivedPayment] = useState(0);
   const [duePayment, setDuePayment] = useState(0);
   const [paymentDetails, setPaymentDetails] = useState({});
+  const [isVisible, setIsVisible] = useState({
+    totalPrice: false,
+    totalReceivedPayment: false,
+    duePayment: false,
+    interestAmountPayment: false,
+  });
+  const [isPasswordEntered, setIsPasswordEntered] = useState({
+    totalPrice: false,
+    totalReceivedPayment: false,
+    duePayment: false,
+    interestAmountPayment: false,
+  });
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(null);
+
   const fetchProjects = async () => {
     try {
       const response = await axios.get(
@@ -37,16 +53,19 @@ const ProjectsUpload = () => {
     } catch (error) {
       console.error("Error fetching projects:", error);
     }
-  };    
+  };
+
   useEffect(() => {
     fetchProjects();
   }, []);
+
   useEffect(() => {
     if (projects.length > 0) {
       const totalPriceOfAllUnits = calculateTotalPriceOfAllUnits();
       setTotalPrice(totalPriceOfAllUnits);
     }
   }, [projects]);
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -63,14 +82,17 @@ const ProjectsUpload = () => {
     };  
     fetchCustomers();
   }, []);
+
   useEffect(() => {
     const due = (parseFloat(totalPrice || 0) - parseFloat(totalReceivedPayment) || 0);
     setDuePayment(due.toFixed(2));
   }, [totalPrice, totalReceivedPayment]);
+
   const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize, edcPrice) => {
     const total = (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges) + parseFloat(edcPrice)) * parseFloat(plotSize);
     return total;
   };
+
   useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
@@ -87,13 +109,15 @@ const ProjectsUpload = () => {
     };
     fetchPaymentDetails();
   }, []);
+
   const calculateTotalAmountReceived = () => {
     if (!Array.isArray(paymentDetails) || paymentDetails.length === 0) {
       return 0;
     }  
     const totalAmountReceived = paymentDetails.reduce((sum, payment) => sum + payment.amount, 0);
-      return parseFloat(totalAmountReceived).toFixed(2);
+    return parseFloat(totalAmountReceived).toFixed(2);
   };
+
   const calculateTotalPriceOfAllUnits = () => {
     let totalPrice = 0;
     projects.forEach(project => {
@@ -105,6 +129,7 @@ const ProjectsUpload = () => {
     });
     return totalPrice.toFixed(2);
   };
+
   const getUnitCount = async (projectId, blockId) => {
     try {
       const response = await axios.get(
@@ -122,33 +147,54 @@ const ProjectsUpload = () => {
       return 0;
     }
   };  
-  if (loading) {
-    return <div><Loader/></div>;
-  }
-  if (error) {
-    return <div>{error}</div>;
-  }  
+
+  const toggleVisibility = (key) => {
+    if (!isPasswordEntered[key]) {
+      setShowPasswordPrompt(key);
+    } else {
+      setIsVisible((prevState) => ({ ...prevState, [key]: !prevState[key] }));
+    }
+  };
+
+  const handlePasswordSubmit = (enteredPassword) => {
+    if (enteredPassword === "womeki") {
+      setIsPasswordEntered((prevState) => ({ ...prevState, [showPasswordPrompt]: true }));
+      setIsVisible((prevState) => ({ ...prevState, [showPasswordPrompt]: true }));
+    } else {
+      alert("Incorrect password. Please try again.");
+    }
+    setShowPasswordPrompt(null);
+  };
+
   return (
-    <div className="container">
-      <div className="  flexy ">
+    <div className="admin-dashboard">
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="container">
+      <div className="flexy">
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
             <h3 className="colouredtext">Total Payment</h3>
             <div className="d-flex justify-content-between">
-            <p className="colouredtext1">{totalPrice}</p>
-            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+              <p className="colouredtext1" onClick={() => toggleVisibility('totalPrice')}>
+                {isVisible.totalPrice ? totalPrice : '********'}
+              </p>
+              <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
           </div>
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
           </div>
-          </div>
+        </div>
         <div className="paymentmaindiv">
           <div className="coloureddiv1">
             <h3 className="colouredtext">Received Payment</h3>
             <div className="d-flex justify-content-between">
-            <p className="colouredtext1">{calculateTotalAmountReceived()}</p>
-            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+              <p className="colouredtext1" onClick={() => toggleVisibility('totalReceivedPayment')}>
+                {isVisible.totalReceivedPayment ? calculateTotalAmountReceived() : '********'}
+              </p>
+              <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
           </div>
           <div className="coloureddiv">
@@ -159,8 +205,10 @@ const ProjectsUpload = () => {
           <div className="coloureddiv1">
             <h3 className="colouredtext">Due Payment</h3>
             <div className="d-flex justify-content-between">
-            <p className="colouredtext1">{parseFloat(totalPrice) - parseFloat(calculateTotalAmountReceived())}</p>
-            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+              <p className="colouredtext1" onClick={() => toggleVisibility('duePayment')}>
+                {isVisible.duePayment ? (parseFloat(totalPrice) - parseFloat(calculateTotalAmountReceived())).toFixed(2) : '********'}
+              </p>
+              <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
           </div>
           <div className="coloureddiv">
@@ -171,8 +219,10 @@ const ProjectsUpload = () => {
           <div className="coloureddiv1">
             <h3 className="colouredtext">Interest Amount Payment</h3>
             <div className="d-flex justify-content-between">
-            <p className="colouredtext1">0</p>
-            <h6 className="react-icon-red"><FaMoneyCheck/></h6>
+              <p className="colouredtext1" onClick={() => toggleVisibility('interestAmountPayment')}>
+                {isVisible.interestAmountPayment ? '0' : '********'}
+              </p>
+              <h6 className="react-icon-red"><FaMoneyCheck/></h6>
             </div>
           </div>
           <div className="coloureddiv">
@@ -181,6 +231,16 @@ const ProjectsUpload = () => {
         </div>
       </div>
     </div>
+
+      )}
+      {showPasswordPrompt && (
+        <PasswordPrompt
+          onSubmit={handlePasswordSubmit}
+          onClose={() => setShowPasswordPrompt(null)}
+        />
+      )}
+    </div>
   );
 };
+
 export default ProjectsUpload;
