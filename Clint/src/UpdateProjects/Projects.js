@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Papa from 'papaparse';  // Import papaparse
 import './Projects.css';
 import ConfirmationModal from '../Confirmation/ConfirmationModal';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+
 const Projects = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -18,6 +20,33 @@ const Projects = () => {
   const [Posessionfinaldate, setPosessionfinaldate] = useState('');
   const [CompanyName, setCompanyName] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleCSVUpload = (event) => {
+    const file = event.target.files[0];
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        if (results.data && results.data.length > 0) {
+          const projectData = results.data[0]; // Assuming a single project per CSV file
+          
+          // Update state with parsed CSV data
+          setName(projectData.name || '');
+          setDescription(projectData.description || '');
+          setTotalLand(projectData.totalLand || '');
+          setGST(projectData.GST || '');
+          setAccountNo(projectData.AccountNo || '');
+          setBank(projectData.Bank || '');
+          setIFSC(projectData.IFSC || '');
+          setPayable(projectData.Payable || '');
+          setBsprate(projectData.Bsprate || '');
+          setPosessionfinaldate(projectData.Posessionfinaldate || '');
+          setCompanyName(projectData.CompanyName || '');
+          setBlocks([{ name: projectData.blockName || '', units: [{ name: projectData.unitName || '' }] }]);
+        }
+      }
+    });
+  };
 
   const handleSubmit = async () => {
     const token = localStorage.getItem('token');
@@ -44,6 +73,7 @@ const Projects = () => {
       const data = response.data;
       if (response.status === 201 && data.status === 'ok') {
         alert('Project uploaded successfully!');
+        // Reset form fields
         setName('');
         setDescription('');
         setTotalLand('');
@@ -75,6 +105,7 @@ const Projects = () => {
       <div className=''>
         <h3 className='Headtext'>Add a New Project</h3>
         <div className='col-6 whiteback'>
+          <form onSubmit={handleSubmit1}>
           <form onSubmit={handleSubmit1}>
             <div className="form-group mt-3">
               <label htmlFor="name" className="ml">Project Name</label><br/>
@@ -125,6 +156,10 @@ const Projects = () => {
               <input type="date" className='form-input-field' id="Posessionfinaldate" value={Posessionfinaldate.toUpperCase()} placeholder="Posession final date" onChange={(e) => setPosessionfinaldate(e.target.value)} required />
             </div>
             <div className="form-group mt-3 mb-3">
+              {/* <button type="submit" className='uploadbutt'>Upload Project</button> */}
+            </div>
+          </form>
+            <div className="form-group mt-3 mb-3">
               <button type="submit" className='uploadbutt'>Upload Project</button>
             </div>
           </form>
@@ -137,6 +172,10 @@ const Projects = () => {
             }}
             message="Are you sure you want to add this Project?"
           />
+        </div>
+        <div>
+          <label htmlFor="csvUpload">Upload By CSV </label>
+          <input type="file" id="csvUpload" accept=".csv" onChange={handleCSVUpload} />
         </div>
       </div>
     </div>
