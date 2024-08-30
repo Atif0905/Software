@@ -61,6 +61,7 @@
     letter-spacing: 0em;
     text-align: left;
     color: white;
+    cursor: pointer;
 }
 .accountscolouredtext{
     margin-top: 10px;

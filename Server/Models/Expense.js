@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-
-// Define the Expense Schema
 const expenseSchema = new mongoose.Schema({
   teamLeadName: {
     type: String,
@@ -18,6 +16,10 @@ const expenseSchema = new mongoose.Schema({
     type: String,
     default: '', // Comment is optional, so we set a default value
   },
+  Paydate: {
+    type: String,
+    required: true
+  }
 }, { timestamps: true }); // Automatically adds createdAt and updatedAt timestamps
 
 // Create a Mongoose Model

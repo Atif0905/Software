@@ -130,8 +130,8 @@ background-color: #ebf0f5;
 min-height: 100vh; 
 }
 .whiteback{
-border-top: 3px solid rgb(60,141,188);
 background-color: white;
+box-shadow: 4px 4px 4px 0px #55707D;
 padding: 10px;
 border-top-left-radius: 5px;
 border-top-right-radius: 5px;

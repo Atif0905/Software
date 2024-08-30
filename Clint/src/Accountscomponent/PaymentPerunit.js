@@ -1,44 +1,47 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
-import { setCustomers, setError } from '../Actions/Actions'; 
-import { setLoading } from '../Actions/Actions';
+import { setCustomers, setError, setLoading } from '../Actions/Actions';
 import Loader from '../Confirmation/Loader';
+
 const PaymentPerunit = () => {
   const { customers, loading, error } = useSelector(state => state.customer);
   const dispatch = useDispatch();
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
         console.log(response);
+
         const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
           const projectName = await fetchName('getProject', customer.project);
+          const projectRate = await fetchProjectRate(customer.project); // Fetch Bsprate
           const blockName = await fetchName('getBlock', customer.project, customer.block);
           const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
           const unitDetails = await fetchUnitDetails(customer.project, customer.block, customer.plotOrUnit);
           const paymentDetails = await fetchPaymentDetailsByCustomerId(customer.customerId);
-          
+
           return {
             ...customer,
             projectName: projectName.toUpperCase(),
+            projectRate: projectRate, 
             blockName: blockName.toUpperCase(),
             unitName: unitName.toUpperCase(),
             ...unitDetails,
-            paymentDetails: paymentDetails.data 
+            paymentDetails: paymentDetails.data,
           };
         }));
-        setCustomers(customersWithDetails);
-        const totalAmounts = calculateTotalAmounts(customersWithDetails);
         dispatch(setCustomers(customersWithDetails));
       } catch (error) {
         dispatch(setError('Error fetching customers. Please try again later.'));
       } finally {
-        dispatch(setLoading(true));
+        dispatch(setLoading(false));
       }
     };
     fetchCustomers();
   }, [dispatch]);
+
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
@@ -47,6 +50,7 @@ const PaymentPerunit = () => {
       return { data: [] };
     }
   };
+
   const fetchName = async (endpoint, ...ids) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join('/')}`);
@@ -56,6 +60,7 @@ const PaymentPerunit = () => {
       return 'Unknown';
     }
   };
+
   const fetchUnitDetails = async (projectId, blockId, unitId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
@@ -77,37 +82,46 @@ const PaymentPerunit = () => {
         plcCharges: 'Unknown',
         plotSize: 'Unknown',
         sizeType: 'Unknown',
-        rate: 'unknown',
-        edcPrice: 'unknown'
+        rate: 'Unknown',
+        edcPrice: 'Unknown'
       };
     }
   };
-  const calculateTotalAmounts = (customers) => {
-    const totalAmounts = {};
-    customers.forEach(customer => {
-      const customerId = customer.customerId;
-      const totalAmountReceived = customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0);
-      totalAmounts[customerId] = totalAmountReceived;
-    });
-    return totalAmounts;
+
+  const fetchProjectRate = async (projectId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getProject/${projectId}`);
+      console.log(response);
+      return response.data.data.Bsprate; // Make sure this matches your API response
+    } catch (error) {
+      console.error('Error fetching project rate:', error);
+      return 'Unknown';
+    }
   };
-  if (loading) {
-    return <div><Loader/></div>;
-  }
   return (
     <div className='main-content'>
-      <h2 className='Headtext'>Payment Per Unit (Sold Unit)</h2>
+      {loading ? (
+          <div className="d-flex justify-content-center">
+          <Loader />
+          </div>
+        ) : (
+          <div>
+          <h2 className='Headtext'>Payment Per Unit (Sold Unit)</h2>
       <div className="table-wrapper whiteback">
         <table id='viewcustomertable'>
           <thead>
             <tr>
-              <th>PROJECT Name</th>
+              <th>PROJECT NAME</th>
               <th>BLOCK-PLOT</th>
               <th>UNIT NO</th>
+              <th>COMPANY DEMAND</th>
+              <th>UNIT SOLD AT</th>
+              <th>BROKERAGE</th>
+              <th>Total Brokerage</th>
               <th>UNIT PRICE</th>
               <th>PAYMENT RECEIVED</th>
               <th>BALANCE</th>
-              <th>Payment Received in %</th>
+              <th>PAYMENT RECEIVED IN %</th>
             </tr>
           </thead>
           <tbody>
@@ -116,16 +130,36 @@ const PaymentPerunit = () => {
                 <td>{customer.projectName}</td>
                 <td>{customer.blockName}</td>
                 <td>{customer.unitName}</td>
+                <td>{customer.projectRate || 0}</td>
+                <td>{(customer.unitPrice / customer.plotSize)}</td>
+                <td>{(customer.unitPrice / customer.plotSize) - (customer.projectRate) || 0}</td>
+                <td>{(customer.unitPrice - (customer.projectRate * customer.plotSize)) || 0}</td>
                 <td>{customer.unitPrice}</td>
                 <td>{customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0}</td>
                 <td>{customer.unitPrice - (customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0)}</td>
-                <td style={{ color: (customer.paymentDetails ? (customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) / customer.unitPrice) * 100 : 0) < 50 ? 'red' : 'green' }}>{parseFloat((customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0) / customer.unitPrice * 100).toFixed(2)}%</td>
+                <td style={{ 
+  color: (customer.paymentDetails ? 
+    ((customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) / customer.unitPrice) * 100) 
+    : 0) < 50 ? 'red' 
+    : (customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) / customer.unitPrice) * 100 <= 80 ? '#f59e0b' 
+    : '#047857' 
+}}>
+  {parseFloat(
+    (customer.paymentDetails ? 
+      customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) 
+      : 0) / customer.unitPrice * 100
+    ).toFixed(2)}%
+</td>
+
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      </div>
+        )}
     </div>
   );
 };
+
 export default PaymentPerunit;

@@ -14,7 +14,6 @@ const DirectorsReport = () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
         const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
-          
           return {
             ...customer,
           };
@@ -34,7 +33,14 @@ const DirectorsReport = () => {
   const renderedEmployeeNames = new Set();
   return (
     <div className='main-content'>
-      <h2 className='mt-5'>Directors Report</h2>
+            <div >
+        {loading ? (
+          <div className="d-flex justify-content-center">
+          <Loader />
+          </div>
+        ) : (
+          <div>
+      <h2 className='Headtext'>Directors Report</h2>
       <div className="table-wrapper whiteback">
         <table id='viewcustomertable'>
           <thead>
@@ -56,6 +62,9 @@ const DirectorsReport = () => {
             })}
           </tbody>
         </table>
+      </div>
+      </div>
+      )}
       </div>
     </div>
   )

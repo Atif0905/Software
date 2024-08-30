@@ -43,6 +43,8 @@ import DirectorsReport from "./Accountscomponent/DirectorsReport";
 import DirectorDetails from "./Accountscomponent/DirectorDetails";
 import PayInterestAmount from "./Payments/PayInterestAmount";
 import ExpenseForm from "./Accountscomponent/ExpenseForm";
+import Expensedetails from "./Accountscomponent/Expensedetails";
+import ExpensePaidByteamLeader from "./Accountscomponent/ExpensePaidByteamLeader";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -100,6 +102,8 @@ function App() {
           <Route path="/DirectorsReport" element={<AccountsSidebar/>}/>
           <Route path="/DirectorDetails/:_id" element={<AccountsSidebar/>}/>
           <Route path="/ExpenseForm" element={<AccountsSidebar/>}/>
+          <Route path="/Expensedetails" element={<AccountsSidebar/>}/>
+          <Route path="/TotalExpensePaidByteamLeader/:_id" element={<AccountsSidebar/>}/>
         </Routes>
 
         <Routes>
@@ -144,6 +148,8 @@ function App() {
           <Route path="/DirectorsReport" element={<DirectorsReport/>}/>
           <Route path="/DirectorDetails/:_id" element={<DirectorDetails/>}/>
           <Route path="/ExpenseForm" element={<ExpenseForm/>}/>
+          <Route path="/Expensedetails" element={<Expensedetails/>}/>
+          <Route path="/TotalExpensePaidByteamLeader/:_id" element={<ExpensePaidByteamLeader/>}/>
         </Routes>
       </div>
     </Router>

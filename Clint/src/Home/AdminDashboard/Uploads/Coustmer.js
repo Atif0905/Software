@@ -516,7 +516,6 @@ const [showConfirm, setShowConfirm] = useState(false);
               <option value="">Select Employee Name</option>
               <option value="Ankit Tonger">Ankit Tonger</option>
               <option value="Rohit Khari">Rohit Khari</option>
-              <option value="Paras Goel">Paras Goel</option>
             </select>
           </div>
           <div className=" grid-item">

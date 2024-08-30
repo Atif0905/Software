@@ -8,6 +8,7 @@ const ExpenseForm = () => {
   const [expenseSummary, setExpenseSummary] = useState('');
   const [amount, setAmount] = useState('');
   const [comment, setComment] = useState('');
+  const [Paydate, setPaydate] = useState('');
   const [showConfirm, setShowConfirm] = useState(false); 
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const ExpenseForm = () => {
       expenseSummary,
       amount,
       comment,
+      Paydate,
     };
 
     try {
@@ -40,6 +42,7 @@ const ExpenseForm = () => {
       setExpenseSummary('');
       setAmount('');
       setComment('');
+      setPaydate('');
     } catch (error) {
       console.error('Error submitting expense:', error);
     }
@@ -81,19 +84,15 @@ const ExpenseForm = () => {
                 <input type="number" id="amount" className="form-input-field" value={amount} onChange={(e) => setAmount(e.target.value)} required />
               </div>
               <div>
+                <label htmlFor="Paydate" className='mt-3'>Payment date:</label>
+                <input type="date" id="Paydate" className="form-input-field" value={Paydate} onChange={(e) => setPaydate(e.target.value)} required />
+              </div>
+              <div>
                 <label htmlFor="comment" className='mt-3'>Comment:</label>
                 <input type='text' id="comment" className="form-input-field" value={comment} onChange={(e) => setComment(e.target.value)} />
               </div>
               <button className='btn btn-primary mt-3' type="submit">Submit</button>
-              <ConfirmationModal 
-                show={showConfirm} 
-                onClose={() => setShowConfirm(false)} 
-                onConfirm={() => {
-                  setShowConfirm(false);
-                  handleSubmit();
-                }}
-                message="Are you sure you want to Submit this Expense"
-              />
+              <ConfirmationModal show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => {  setShowConfirm(false);  handleSubmit(); }} message="Are you sure you want to Submit this Expense" />
             </form>
           </div>
         </div>
