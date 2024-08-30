@@ -41,7 +41,6 @@ const PaymentPerunit = () => {
     };
     fetchCustomers();
   }, [dispatch]);
-
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
@@ -50,7 +49,6 @@ const PaymentPerunit = () => {
       return { data: [] };
     }
   };
-
   const fetchName = async (endpoint, ...ids) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join('/')}`);
@@ -60,7 +58,6 @@ const PaymentPerunit = () => {
       return 'Unknown';
     }
   };
-
   const fetchUnitDetails = async (projectId, blockId, unitId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
@@ -87,12 +84,11 @@ const PaymentPerunit = () => {
       };
     }
   };
-
   const fetchProjectRate = async (projectId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getProject/${projectId}`);
       console.log(response);
-      return response.data.data.Bsprate; // Make sure this matches your API response
+      return response.data.data.Bsprate;
     } catch (error) {
       console.error('Error fetching project rate:', error);
       return 'Unknown';
@@ -111,6 +107,7 @@ const PaymentPerunit = () => {
         <table id='viewcustomertable'>
           <thead>
             <tr>
+              <th>Client Name</th>
               <th>PROJECT NAME</th>
               <th>BLOCK-PLOT</th>
               <th>UNIT NO</th>
@@ -127,12 +124,13 @@ const PaymentPerunit = () => {
           <tbody>
             {customers.map((customer, index) => (
               <tr key={index}>
+                <td>{customer.name.toUpperCase()}</td>
                 <td>{customer.projectName}</td>
                 <td>{customer.blockName}</td>
                 <td>{customer.unitName}</td>
                 <td>{customer.projectRate || 0}</td>
                 <td>{(customer.unitPrice / customer.plotSize)}</td>
-                <td>{(customer.unitPrice / customer.plotSize) - (customer.projectRate) || 0}</td>
+                <td>{(customer.unitPrice / customer.plotSize) - (customer.projectRate) || 0}/ {customer.plotSize} {customer.sizeType}</td>
                 <td>{(customer.unitPrice - (customer.projectRate * customer.plotSize)) || 0}</td>
                 <td>{customer.unitPrice}</td>
                 <td>{customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0}</td>

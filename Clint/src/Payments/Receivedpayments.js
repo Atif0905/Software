@@ -392,9 +392,9 @@ const Receivedpayments = () => {
       <div className="d-flex">
         <form onSubmit={handleSearch}>
           <div className="col-8">
-            <div className="whiteback">
+            <div className="whiteback1">
               <label className="mt-3">Customer ID</label>
-              <input className="form-input-field" type="text" placeholder="Enter Customer ID" value={customerId.toUpperCase()} onChange={(e) => setCustomerId(e.target.value)}/>
+              <input className="form-input-field" type="text" placeholder="Enter Customer ID" value={customerId.toUpperCase()} onChange={(e) => setCustomerId(e.target.value)}/><br/>
               <button className="add-buttons mt-3" type="submit">   {" "}  Search{" "}  </button>
             </div>
           </div>
@@ -436,9 +436,9 @@ const Receivedpayments = () => {
             {customerDetails.mobileNumber} , unitPrice : {unitData.totalPrice}
           </h4>
           <div className="d-flex justify-content-between">
-            <div className="col-3 whiteback mt-4">
+            <div className="col-3 whiteback1 mt-4">
               <form onSubmit={handleSubmit1}>
-                <label>Select Installments</label>
+                <label>Select Installments</label><br/>
                 <select
                   className="select-buttons ps-1"
                   name="paymentType"

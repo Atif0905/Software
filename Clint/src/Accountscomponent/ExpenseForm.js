@@ -61,7 +61,8 @@ const ExpenseForm = () => {
           <div className='whiteback'>
             <form onSubmit={handleSubmit1}>
               <div>
-                <label htmlFor="teamLeadName" className='mt-3'>Team Lead Name:</label>
+                
+                <label htmlFor="teamLeadName" className='mt-3'>Team Lead Name:</label><br/>
                 <select id="teamLeadName" className="form-input-field" value={teamLeadName} onChange={(e) => setTeamLeadName(e.target.value)} required>
                   <option value="">Select Team Lead</option>
                   {teamLeadNames.map((name, index) => (
@@ -70,7 +71,7 @@ const ExpenseForm = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="expenseSummary" className='mt-3'>Expense Summary:</label>
+                <label htmlFor="expenseSummary" className='mt-3'>Expense Summary:</label><br/>
                 <select id="expenseSummary" className="form-input-field" value={expenseSummary} onChange={(e) => setExpenseSummary(e.target.value)} required >
                   <option value="">Select Option</option>
                   <option value="Salary">Salary</option>
@@ -80,15 +81,15 @@ const ExpenseForm = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="amount" className='mt-3'>Amount:</label>
+                <label htmlFor="amount" className='mt-3'>Amount:</label><br/>
                 <input type="number" id="amount" className="form-input-field" value={amount} onChange={(e) => setAmount(e.target.value)} required />
               </div>
               <div>
-                <label htmlFor="Paydate" className='mt-3'>Payment date:</label>
+                <label htmlFor="Paydate" className='mt-3'>Payment date:</label><br/>
                 <input type="date" id="Paydate" className="form-input-field" value={Paydate} onChange={(e) => setPaydate(e.target.value)} required />
               </div>
               <div>
-                <label htmlFor="comment" className='mt-3'>Comment:</label>
+                <label htmlFor="comment" className='mt-3'>Comment:</label><br/>
                 <input type='text' id="comment" className="form-input-field" value={comment} onChange={(e) => setComment(e.target.value)} />
               </div>
               <button className='btn btn-primary mt-3' type="submit">Submit</button>

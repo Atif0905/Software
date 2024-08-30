@@ -101,7 +101,7 @@ const AdditionBlock = () => {
       <div className='col-6 whiteback'>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Select Project</label>
+            <label>Select Project</label><br/>
             <select
               className="select-buttons ps-1"
               onChange={(e) => setSelectedProjectId(e.target.value)}
@@ -115,7 +115,7 @@ const AdditionBlock = () => {
             </select>
           </div>
           <div className='mt-2'>
-            <label className=''>Block name</label>
+            <label className=''>Block name</label><br/>
             <input
               type="text"
               className="form-input-field"
@@ -124,7 +124,7 @@ const AdditionBlock = () => {
               onChange={(e) => setNewBlockName(e.target.value.toUpperCase())}
             />
           </div>
-          <label className='mt-2'>Total Plot </label>
+          <label className='mt-2'>Total Plot </label><br/>
           <input
             type="number"
             onWheel={numberInputOnWheelPreventChange}
@@ -135,7 +135,7 @@ const AdditionBlock = () => {
             required
           />
           <div className='mt-2'>
-            <label className=''>Plot Size</label>
+            <label className=''>Plot Size</label><br/>
             <input
               type="number"
               onWheel={numberInputOnWheelPreventChange}
@@ -147,7 +147,7 @@ const AdditionBlock = () => {
             />
           </div>
           <div className='mt-2'>
-            <label className=''>Basic Rate</label>
+            <label className=''>Basic Rate</label><br/>
             <input
               type="number"
               onWheel={numberInputOnWheelPreventChange}
@@ -159,7 +159,7 @@ const AdditionBlock = () => {
             />
           </div>
           <div className='mt-2'>
-            <label className=''>IDC Rate</label>
+            <label className=''>IDC Rate</label><br/>
             <input
               type="number"
               onWheel={numberInputOnWheelPreventChange}
@@ -171,7 +171,7 @@ const AdditionBlock = () => {
             />
           </div>
           <div className='mt-2'>
-            <label className=''>EDC Rate</label>
+            <label className=''>EDC Rate</label><br/>
             <input
               type="number"
               onWheel={numberInputOnWheelPreventChange}
