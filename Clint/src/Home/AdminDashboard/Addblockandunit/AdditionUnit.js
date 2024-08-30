@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Papa from 'papaparse';
 import ConfirmationModal from '../../../Confirmation/ConfirmationModal';
+
 const AdditionUnit = () => {
   const [projects, setProjects] = useState([]);
   const [plotSize, setPlotSize] = useState("");
@@ -14,6 +16,60 @@ const AdditionUnit = () => {
   const [newUnitName, setNewUnitName] = useState("");
   const [selectedBlockId, setSelectedBlockId] = useState("null");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [csvData, setCsvData] = useState([]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    if (rate && plcCharges && idcCharges && plotSize) {
+      const calculatedTotalPrice = calculatePerUnitPayment(rate, plcCharges, idcCharges, plotSize, edcPrice);
+      setTotalPrice(calculatedTotalPrice.toFixed(2));
+    }
+  }, [rate, plcCharges, idcCharges, plotSize, edcPrice]);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
+      const data = response.data;
+      if (response.status === 200 && data.status === "ok") {
+        const projectsWithUnitCount = await Promise.all(
+          data.data.map(async (project) => {
+            const blocksWithUnitCount = await Promise.all(
+              project.blocks.map(async (block) => {
+                const unitCount = await getUnitCount(project._id, block._id);
+                return { ...block, unitCount };
+              })
+            );
+            return { ...project, blocks: blocksWithUnitCount };
+          })
+        );
+        setProjects(projectsWithUnitCount);
+      } else {
+        console.error("Failed to fetch projects:", data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
+
+  const getUnitCount = async (projectId, blockId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnitCount/${projectId}/${blockId}`);
+      const data = response.data;
+      if (response.status === 200 && data.status === "ok") {
+        return data.unitCount;
+      } else {
+        console.error("Failed to get unit count:", data.error);
+        return 0;
+      }
+    } catch (error) {
+      console.error("Error getting unit count:", error);
+      return 0;
+    }
+  };
+
   const handleAddUnit = async () => {
     const calculatedTotalPrice = calculatePerUnitPayment(rate, plcCharges, idcCharges, plotSize, edcPrice);
     try {
@@ -48,62 +104,68 @@ const AdditionUnit = () => {
       console.error("Error adding unit:", error);
     }
   };
-  const fetchProjects = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/getAllProjects`
-      );
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        const projectsWithUnitCount = await Promise.all(
-          data.data.map(async (project) => {
-            const blocksWithUnitCount = await Promise.all(
-              project.blocks.map(async (block) => {
-                const unitCount = await getUnitCount(project._id, block._id);
-                return { ...block, unitCount };
-              })
-            );
-            return { ...project, blocks: blocksWithUnitCount };
-          })
-        );
-        setProjects(projectsWithUnitCount);
-      } else {
-        console.error("Failed to fetch projects:", data.error);
-      }
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-    }
-  };
-  const getUnitCount = async (projectId, blockId) => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/getUnitCount/${projectId}/${blockId}`
-      );
-      const data = response.data;
-      if (response.status === 200 && data.status === "ok") {
-        return data.unitCount;
-      } else {
-        console.error("Failed to get unit count:", data.error);
-        return 0;
-      }
-    } catch (error) {
-      console.error("Error getting unit count:", error);
-      return 0;
-    }
-  };
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-  useEffect(() => {
-    if (rate && plcCharges && idcCharges && plotSize) {
-      const calculatedTotalPrice = calculatePerUnitPayment(rate, plcCharges, idcCharges, plotSize, edcPrice);
-      setTotalPrice(calculatedTotalPrice.toFixed(2));
-    }
-  }, [rate, plcCharges, idcCharges, plotSize, edcPrice]);
-  const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize) => {
+
+  const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize, edcPrice) => {
     const total = (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges) + parseFloat(edcPrice)) * parseFloat(plotSize);
     return total;
   };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      Papa.parse(file, {
+        complete: (results) => {
+          // Log the results to inspect the data
+          console.log('CSV Results:', results);
+
+          const { data, meta } = results;
+          if (meta.fields) {
+            const parsedData = data.map(row => ({
+              name: row['Unit Name'],
+              plotSize: row['Plot Size'],
+              sizeType: row['Size Type'],
+              rate: row['Rate'],
+              idcCharges: row['IDC Charges'],
+              plcCharges: row['PLC Charges'],
+              edcPrice: row['EDC Charges'],
+            }));
+            setCsvData(parsedData);
+          } else {
+            console.error('CSV parsing error: Header is missing or in unexpected format');
+          }
+        },
+        header: true,
+        skipEmptyLines: true,
+        error: (error) => {
+          console.error('Error parsing CSV:', error);
+        }
+      });
+    }
+  };
+
+  const handleBulkUpload = async () => {
+    try {
+      if (!selectedProjectId || selectedBlockId === "null") {
+        console.error('No project or block selected.');
+        return;
+      }
+      for (const unit of csvData) {
+        const calculatedTotalPrice = calculatePerUnitPayment(unit.rate, unit.plcCharges, unit.idcCharges, unit.plotSize, unit.edcPrice);
+        await axios.post(
+          `${process.env.REACT_APP_API_URL}/addUnit/${selectedProjectId}/${selectedBlockId}`,
+          {
+            ...unit,
+            totalPrice: calculatedTotalPrice.toFixed(2)
+          }
+        );
+      }
+      fetchProjects();
+      setCsvData([]);
+    } catch (error) {
+      console.error('Error bulk uploading units:', error);
+    }
+  };
+
   const numberInputOnWheelPreventChange = (e) => {
     e.target.blur();
     e.stopPropagation();
@@ -111,41 +173,96 @@ const AdditionUnit = () => {
       e.target.focus();
     }, 0);
   };
+
   return (
     <div className="main-content back">
-      <h4 className='Headtext'> Add Unit</h4>
+      <h4 className='Headtext'>Add Unit</h4>
       <div className='col-6 whiteback'>
         <div className='mt-3'>
-          <label className=''>Unit Name</label>
-          <input type="text" className="form-input-field " placeholder="Unit Name" value={newUnitName} onChange={(e) => setNewUnitName(e.target.value.toUpperCase())} required />
+          <label>Unit Name</label>
+          <input
+            type="text"
+            className="form-input-field"
+            placeholder="Unit Name"
+            value={newUnitName}
+            onChange={(e) => setNewUnitName(e.target.value.toUpperCase())}
+            required
+          />
         </div>
         <div className='mt-2'>
-          <label className=''>Plot size</label>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required />
+          <label>Plot Size</label>
+          <input
+            type="number"
+            onWheel={numberInputOnWheelPreventChange}
+            className="form-input-field"
+            placeholder="Plot Size"
+            value={plotSize}
+            onChange={(e) => setPlotSize(e.target.value)}
+            required
+          />
         </div>
         <div className='mt-2'>
-          <label className=''>Rate</label>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="Rate" value={rate} onChange={(e) => setRate(e.target.value)} />
+          <label>Rate</label>
+          <input
+            type="number"
+            onWheel={numberInputOnWheelPreventChange}
+            className="form-input-field"
+            placeholder="Rate"
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+          />
         </div>
         <div className='mt-2'>
-          <label className=''>IDC charges</label>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="IDC Charges" value={idcCharges} onChange={(e) => setIdcCharges(e.target.value)} />
+          <label>IDC Charges</label>
+          <input
+            type="number"
+            onWheel={numberInputOnWheelPreventChange}
+            className="form-input-field"
+            placeholder="IDC Charges"
+            value={idcCharges}
+            onChange={(e) => setIdcCharges(e.target.value)}
+          />
         </div>
         <div className='mt-2'>
-          <label className=''>PLC charges</label>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="PLC Charges" value={plcCharges} onChange={(e) => setPlcCharges(e.target.value)} />
+          <label>PLC Charges</label>
+          <input
+            type="number"
+            onWheel={numberInputOnWheelPreventChange}
+            className="form-input-field"
+            placeholder="PLC Charges"
+            value={plcCharges}
+            onChange={(e) => setPlcCharges(e.target.value)}
+          />
         </div>
         <div className='mt-2'>
-          <label className=''>EDC charges</label>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="EDC Charges" value={edcPrice} onChange={(e) => setEdcPrice(e.target.value)} />
+          <label>EDC Charges</label>
+          <input
+            type="number"
+            onWheel={numberInputOnWheelPreventChange}
+            className="form-input-field"
+            placeholder="EDC Charges"
+            value={edcPrice}
+            onChange={(e) => setEdcPrice(e.target.value)}
+          />
         </div>
         <div className='mt-2'>
-          <label className=''>Total Price</label>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field " placeholder="Total Price" value={totalPrice} onChange={(e) => setTotalPrice(e.target.value)} />
+          <label>Total Price</label>
+          <input
+            type="number"
+            onWheel={numberInputOnWheelPreventChange}
+            className="form-input-field"
+            placeholder="Total Price"
+            value={totalPrice}
+            onChange={(e) => setTotalPrice(e.target.value)}
+          />
         </div>
         <div className="mt-2">
           <label>Select Project</label>
-          <select className="select-buttons ps-1" onChange={(e) => setSelectedProjectId(e.target.value)} required>
+          <select
+            className="select-buttons ps-1"
+            onChange={(e) => setSelectedProjectId(e.target.value)}
+            required
+          >
             <option value="">Select Project</option>
             {projects.map((project, index) => (
               <option key={index} value={project._id}>{project.name}</option>
@@ -154,7 +271,12 @@ const AdditionUnit = () => {
         </div>
         <div className="mt-2">
           <label>Select Size Type</label>
-          <select className="select-buttons ps-1" value={sizeType} onChange={(e) => setSizeType(e.target.value)} required>
+          <select
+            className="select-buttons ps-1"
+            value={sizeType}
+            onChange={(e) => setSizeType(e.target.value)}
+            required
+          >
             <option value="">Select Size Type</option>
             <option value="sq.ft">Sq. Ft</option>
             <option value="sq.m">Sq. M</option>
@@ -164,7 +286,11 @@ const AdditionUnit = () => {
         </div>
         <div className="mt-2">
           <label>Select Block</label>
-          <select className="select-buttons ps-1" onChange={(e) => setSelectedBlockId(e.target.value)} required>
+          <select
+            className="select-buttons ps-1"
+            onChange={(e) => setSelectedBlockId(e.target.value)}
+            required
+          >
             <option value="null">Select Block</option>
             {selectedProjectId && projects.find(project => project._id === selectedProjectId)?.blocks.map((block, index) => (
               <option key={index} value={block._id}>{block.name}</option>
@@ -172,6 +298,13 @@ const AdditionUnit = () => {
           </select>
         </div>
         <div className="mt-3">
+          <input
+            type="file"
+            accept=".csv"
+            className="form-input-field"
+            onChange={handleFileUpload}
+          />
+          <button className="add-buttons mt-4" onClick={handleBulkUpload}>Upload Units</button>
           <button className="add-buttons mt-4" onClick={() => setShowConfirm(true)}>Add Unit</button>
         </div>
       </div>
@@ -187,4 +320,5 @@ const AdditionUnit = () => {
     </div>
   );
 };
+
 export default AdditionUnit;
