@@ -1,6 +1,7 @@
 body {
   margin: 0;
   overflow-x: hidden;
+  background-color: #f6f6f6 !important;
 }
 @keyframes fall-in {
   0% {
@@ -136,6 +137,28 @@ padding: 10px;
 border-top-left-radius: 5px;
 border-top-right-radius: 5px;
 position: relative;
+}
+.whiteback1 {
+  background-color: white;
+  box-shadow: 4px 4px 4px 0px #55707D;
+  padding: 10px;
+  border-radius: 7px;
+  position: relative;
+  overflow-x: auto; 
+  white-space: nowrap; 
+}
+.main-content,.whiteback1::-webkit-scrollbar {
+  height: 7px; 
+}
+.main-content,.whiteback1::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+.main-content,.whiteback::-webkit-scrollbar-thumb {
+  background-color: #888; 
+  border-radius: 5px; 
+}
+.main-content,.whiteback1::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
 .gridcontainer{
 display: grid;
@@ -292,4 +315,175 @@ display: grid;
 grid-template-columns: repeat(2,48%);
 grid-gap: 20px;
 }
+}
+.button-group {
+  margin-bottom: 20px;
+}
+.print-button, .pdf-button {
+  padding: 10px 15px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.print-button {
+  background-color: #4CAF50;
+  color: white;
+}
+.pdf-button {
+  background-color: #008CBA;
+  color: white;
+}
+@media print {
+  .button-group {
+    display: none;
+  }
+}
+.anchor{
+  border: none;
+  text-decoration: underline;
+  background-color: white;
+  color: blue;
+}
+.Excel {
+  --color: #00A97F;
+  --color2: rgb(10, 25, 30);
+  padding: 10px 15px;
+  background-color: transparent;
+  border-radius: 6px;
+  border: .3px solid var(--color);
+  transition: .5s;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  font-weight: 400;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  text-transform: uppercase;
+  color: var(--color);
+ }
+ .Excel::after, .Excel::before {
+  content: '';
+  height: 100%;
+  width: 100%;
+  transform: skew(90deg) translate(-50%, -50%);
+  position: absolute;
+  inset: 50%;
+  z-index: -1;
+  transition: .5s ease-out;
+  background-color: var(--color);
+ }
+ .Excel::before {
+  top: -50%;
+  left: -25%;
+  transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
+ }
+ .Excel:hover::before {
+  transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
+ }
+ .Excel:hover::after {
+  transform: skew(45deg) translate(-50%, -50%);
+ }
+ .Excel:hover {
+  color: var(--color2);
+ }
+ .Excel:active {
+  filter: brightness(.7);
+  transform: scale(.98);
+ }
+ .Download {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  background-color: rgb(27, 27, 27);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition-duration: .3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.11);
+}
+.svgIcon {
+  fill: rgb(214, 178, 255);
+}
+.icon2 {
+  width: 18px;
+  height: 5px;
+  border-bottom: 2px solid rgb(182, 143, 255);
+  border-left: 2px solid rgb(182, 143, 255);
+  border-right: 2px solid rgb(182, 143, 255);
+}
+.tooltip {
+  position: absolute;
+  right: -105px;
+  opacity: 0;
+  background-color: rgb(12, 12, 12);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: .2s;
+  pointer-events: none;
+  letter-spacing: 0.5px;
+}
+.tooltip::before {
+  position: absolute;
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-color: rgb(12, 12, 12);
+  background-size: 1000%;
+  background-position: center;
+  transform: rotate(45deg);
+  left: -5%;
+  transition-duration: .3s;
+}
+.Download:hover .tooltip {
+  opacity: 1;
+  transition-duration: .3s;
+}
+.Download:hover {
+  background-color: rgb(150, 94, 255);
+  transition-duration: .3s;
+}
+.Download:hover .icon2 {
+  border-bottom: 2px solid rgb(235, 235, 235);
+  border-left: 2px solid rgb(235, 235, 235);
+  border-right: 2px solid rgb(235, 235, 235);
+}
+.Download:hover .svgIcon {
+  fill: rgb(255, 255, 255);
+  animation: slide-in-top 0.6s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+@keyframes slide-in-top {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-content, #print-content * {
+    visibility: visible;
+  }
+  #print-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  .button-group {
+    display: none;
+  }
 }

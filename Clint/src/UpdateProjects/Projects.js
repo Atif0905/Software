@@ -172,11 +172,12 @@ const Projects = () => {
             }}
             message="Are you sure you want to add this Project?"
           />
-        </div>
-        <div>
+          <div className=' mb-5'>
           <label htmlFor="csvUpload">Upload By CSV </label>
           <input type="file" id="csvUpload" accept=".csv" onChange={handleCSVUpload} />
         </div>
+        </div>
+        
       </div>
     </div>
   );

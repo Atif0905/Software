@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Loader from '../Confirmation/Loader';
 import './Accounts.css';
 
 const ExpensePaidByteamLeader = () => {
   const { _id } = useParams(); 
+  const navigate = useNavigate();
   const [expense, setExpense] = useState(null);
   const [matchingExpenses, setMatchingExpenses] = useState([]);
   const [filteredExpenses, setFilteredExpenses] = useState([]);
@@ -102,6 +103,12 @@ const ExpensePaidByteamLeader = () => {
 
   const years = Array.from(new Set(matchingExpenses.map((exp) => new Date(exp.Paydate).getFullYear())));
 
+  const handlePrintClick = (expense) => {
+    navigate('/print-page', { state: { expense } });
+  };
+  const handlePrintClick1 = () => {
+    navigate('/FilteredPrintPage', { state: { expenses: filteredExpenses } });
+  };
   return (
     <div className='main-content'>
       <h2 className='Headtext'>{expense.teamLeadName.toUpperCase()} Expense Details</h2>
@@ -109,60 +116,63 @@ const ExpensePaidByteamLeader = () => {
         <p>Total Expenses by {expense.teamLeadName.toUpperCase()} <strong>({calculateTotalAmount()})</strong></p>
         <div className="filter-container d-flex justify-content-between">
           <div>
-          <label htmlFor="summaryFilter">Filter by Summary: </label>
-          <select id="summaryFilter" className="filter-select" value={summaryFilter} onChange={(e) => setSummaryFilter(e.target.value)}>
-            <option value="">All Summaries</option>
-            {uniqueSummaries.map((summary, index) => (
-              <option key={index} value={summary}>
-                {summary}
-              </option>
-            ))}
-          </select>
+            <label htmlFor="summaryFilter">Filter by Summary: </label>
+            <select id="summaryFilter" className="filter-select" value={summaryFilter} onChange={(e) => setSummaryFilter(e.target.value)}>
+              <option value="">All Summaries</option>
+              {uniqueSummaries.map((summary, index) => (
+                <option key={index} value={summary}>
+                  {summary}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
-          <label htmlFor="monthFilter">Filter by Month: </label>
-          <select id="monthFilter" className="filter-select" value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)} >
-            <option value="">All Months</option>
-            {months.map((month) => (
-              <option key={month.value} value={month.value}>
-                {month.label}
-              </option>
-            ))}
-          </select>
+            <label htmlFor="monthFilter">Filter by Month: </label>
+            <select id="monthFilter" className="filter-select" value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)} >
+              <option value="">All Months</option>
+              {months.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
-          <label htmlFor="yearFilter">Filter by Year: </label>
-          <select id="yearFilter" className="filter-select" value={yearFilter} onChange={(e) => setYearFilter(e.target.value)} >
-            <option value="">All Years</option>
-            {years.map((year, index) => (
-              <option key={index} value={year}> {year} </option>
-            ))}
-          </select>
+            <label htmlFor="yearFilter">Filter by Year: </label>
+            <select id="yearFilter" className="filter-select" value={yearFilter} onChange={(e) => setYearFilter(e.target.value)} >
+              <option value="">All Years</option>
+              {years.map((year, index) => (
+                <option key={index} value={year}> {year} </option>
+              ))}
+            </select>
           </div>
+          <button onClick={handlePrintClick1} className='print-button'>Print Filtered Data</button>
         </div>
         {filteredExpenses.length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th>Amount</th>
-                <th>Summary</th>
-                <th>Payment Date</th>
-                <th>Comment</th>
-                <th>Print</th>
-              </tr>
-            </thead>
-            <tbody>
-            {filteredExpenses.map((exp) => (
-              <tr key={exp._id}>
-                <td>{exp.amount}</td>
-                <td>{exp.expenseSummary}</td>
-                <td>{formatDate(exp.Paydate)}</td>
-                <td>{exp.comment}</td>
-                <td>Print</td>
-              </tr>
-            ))}
-            </tbody>
-          </table>
+          <>
+            <table>
+              <thead>
+                <tr>
+                  <th>Amount</th>
+                  <th>Summary</th>
+                  <th>Payment Date</th>
+                  <th>Comment</th>
+                  <th>Print</th>
+                </tr>
+              </thead>
+              <tbody>
+              {filteredExpenses.map((exp) => (
+                <tr key={exp._id}>
+                  <td>{exp.amount}</td>
+                  <td>{exp.expenseSummary}</td>
+                  <td>{formatDate(exp.Paydate)}</td>
+                  <td>{exp.comment}</td>
+                  <td><button className='anchor' onClick={() => handlePrintClick(exp)}>Print</button></td>
+                </tr>
+              ))}
+              </tbody>
+            </table>
+          </>
         ) : (
           <p>No expenses found for this filter criteria.</p>
         )}
