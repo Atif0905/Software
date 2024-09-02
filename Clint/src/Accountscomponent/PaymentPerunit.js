@@ -12,7 +12,6 @@ const PaymentPerunit = () => {
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-        console.log(response);
 
         const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
           const projectName = await fetchName('getProject', customer.project);
@@ -87,7 +86,6 @@ const PaymentPerunit = () => {
   const fetchProjectRate = async (projectId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getProject/${projectId}`);
-      console.log(response);
       return response.data.data.Bsprate;
     } catch (error) {
       console.error('Error fetching project rate:', error);

@@ -37,7 +37,6 @@ const ExpenseForm = () => {
 
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/expenses`, expenseData);
-      console.log('Expense submitted:', response.data);
       setTeamLeadName('');
       setExpenseSummary('');
       setAmount('');
