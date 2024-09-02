@@ -215,7 +215,7 @@ const ProjectsUpload = () => {
             <p className="descriptiondiv"> </p>
           </div>          
         </div>
-        <div className="paymentmaindiv">
+        {/* <div className="paymentmaindiv">
           <div className="coloureddiv1">
             <h3 className="colouredtext">Interest Amount Payment</h3>
             <div className="d-flex justify-content-between">
@@ -228,7 +228,7 @@ const ProjectsUpload = () => {
           <div className="coloureddiv">
             <p className="descriptiondiv"> </p>
           </div>          
-        </div>
+        </div> */}
       </div>
     </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setPaymentDetails } from "../../Actions/Actions";
@@ -8,7 +8,7 @@ import Loader from "../../Confirmation/Loader";
 const CustomerDetails = () => {
   const { _id } = useParams();
   const dispatch = useDispatch();
-  const customer = useSelector((state) => state.customer);
+  // const customer = useSelector((state) => state.customer);
   const loading = useSelector((state) => state.loading);
   const error = useSelector((state) => state.error);
   const [data, setData] = useState(null);
@@ -272,7 +272,7 @@ const CustomerDetails = () => {
       </div>
       {paymentDetails && (
         <div className="payment-details ">
-          <h3 className="mt-4">Payment Details</h3>
+          <h3 className=" Headtext mt-4">Payment Details</h3>
           <div className="whiteback">
             <div>
           <table>
