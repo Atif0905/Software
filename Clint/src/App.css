@@ -487,3 +487,15 @@ grid-gap: 20px;
     display: none;
   }
 }
+.pie-chart-container {
+  width: 100%;
+  max-width: 400px; 
+  margin: 0 auto;
+  padding: 20px; 
+  border-radius: 8px; 
+}
+
+.pie-chart-container canvas {
+  max-width: 100%; 
+  height: auto; 
+}

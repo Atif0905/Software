@@ -49,9 +49,22 @@
   transform: translate(-50%,-50%);
   overflow-y: auto;
   overflow-x: hidden;
-  width: 85%;
-    height: 90%;
-    padding: 20px;
+  width: 95%;
+  height: 90%;
+  padding: 20px;
+}
+.modal-container::-webkit-scrollbar {
+  width: 9px; 
+}
+.modal-container::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+.whiteback::-webkit-scrollbar-thumb {
+  background-color: #636363 !important; 
+  border-radius: 5px; 
+}
+.modal-container::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
 .closeicon{
   position: absolute;
