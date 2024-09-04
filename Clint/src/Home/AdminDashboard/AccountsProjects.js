@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretDown, faLocationDot, faTimes, faMoneyBill, faWallet } from "@fortawesome/free-solid-svg-icons";
-import { IoBagOutline } from "react-icons/io5";
-import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from "chart.js";
+import { faCaretDown, faLocationDot, faTimes } from "@fortawesome/free-solid-svg-icons";
 import "../../UpdateProjects/Projects.css";
+import { IoBagOutline } from "react-icons/io5";
+import { faMoneyBill, faWallet } from '@fortawesome/free-solid-svg-icons';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
@@ -13,27 +14,37 @@ const AccountsProjects = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [showBlocks, setShowBlocks] = useState(true);
+  const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] = useState({});
+  const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
+  const [blockwiseSoldUnitCounts, setBlockwiseSoldUnitCounts] = useState({});
+
+  useEffect(() => { fetchProjects(); }, []);
+  
+  const updateUnitCounts = () => {
+    let blockCounts = {};
+    projects.forEach((project) => {
+      project.blocks.forEach((block) => {
+        blockCounts[block._id] = block.units.length;
+      });
+    });
+    setBlockwiseAvailableUnitCounts(blockCounts);
+  };
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
-        if (response.status === 200 && response.data.status === "ok") {
-          setProjects(response.data.data);
-        } else {
-          console.error("Failed to fetch projects:", response.data.error);
-        }
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
+    updateUnitCounts();
+    updateTotalUnitsCount();
+    updateSoldUnitCounts();
+    updateProjectUnitCounts();
+  }, [projects]);
 
+  useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails`);
+        const data = response.data.data;
         if (response.status === 200) {
-          setPaymentDetails(response.data.data);
+          setPaymentDetails(data);
         } else {
           console.error("Failed to fetch payment details.");
         }
@@ -41,61 +52,158 @@ const AccountsProjects = () => {
         console.error("Error fetching payment details:", error);
       }
     };
-
-    fetchProjects();
     fetchPaymentDetails();
   }, []);
 
+  const updateTotalUnitsCount = () => {
+    let totalAvailableUnits = 0;
+    let blockwiseAvailableCounts = {};
+    projects.forEach((project) => {
+      project.blocks.forEach((block) => {
+        const availableUnits = block.units.filter(
+          (unit) => unit.status !== "hold" && unit.status !== "sold"
+        );
+        totalAvailableUnits += availableUnits.length;
+        blockwiseAvailableCounts[block._id] = availableUnits.length;
+      });
+    });
+    setBlockwiseAvailableUnitCounts(blockwiseAvailableCounts);
+  };
+
+  const updateSoldUnitCounts = () => {
+    let totalSoldUnits = 0;
+    let blockwiseSoldCounts = {};
+    projects.forEach((project) => {
+      project.blocks.forEach((block) => {
+        const soldUnits = block.units.filter((unit) => unit.status === "sold");
+        totalSoldUnits += soldUnits.length;
+        blockwiseSoldCounts[block._id] = soldUnits.length;
+      });
+    });
+    setBlockwiseSoldUnitCounts(blockwiseSoldCounts);
+  };
+
+  const fetchProjects = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
+      const data = response.data;
+      if (response.status === 200 && data.status === "ok") {
+        const projectsWithUnitCount = await Promise.all(
+          data.data.map(async (project) => {
+            const blocksWithUnitCount = await Promise.all(
+              project.blocks.map(async (block) => {
+                const unitCount = await getUnitCount(project._id, block._id);
+                return { ...block, unitCount };
+              })
+            );
+            return { ...project, blocks: blocksWithUnitCount };
+          })
+        );
+        setProjects(projectsWithUnitCount);
+      } else {
+        console.error("Failed to fetch projects:", data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
+
+  const getUnitCount = async (projectId, blockId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnitCount/${projectId}/${blockId}`);
+      const data = response.data;
+      if (response.status === 200 && data.status === "ok") {
+        return data.unitCount;
+      } else {
+        console.error("Failed to get unit count:", data.error);
+        return 0;
+      }
+    } catch (error) {
+      console.error("Error getting unit count:", error);
+      return 0;
+    }
+  };
+
+  const updateProjectUnitCounts = () => {
+    const counts = {};
+    projects.forEach((project) => {
+      const { totalUnits, totalSoldUnits } = calculateUnitCountsByProjectId(project._id);
+      counts[project._id] = { totalUnits, totalSoldUnits };
+    });
+    setProjectUnitCounts(counts);
+  };
+
+  const calculateUnitCountsByProjectId = (projectId) => {
+    const project = projects.find((project) => project._id === projectId);
+    if (!project) {
+      return { totalUnits: 0, totalSoldUnits: 0 };
+    }
+    let totalUnits = 0;
+    let totalSoldUnits = 0;
+    project.blocks.forEach((block) => {
+      block.units.forEach((unit) => {
+        totalUnits += 1;
+        if (unit.status === "sold") {
+          totalSoldUnits += 1;
+        }
+      });
+    });
+    return { totalUnits, totalSoldUnits };
+  };
+
   const handleClickProject = (projectId) => {
-    setSelectedProjectId((prevId) => (prevId === projectId ? "" : projectId));
-    setShowBlocks((prevShow) => !prevShow);
+    setSelectedProjectId(projectId);
+    setShowBlocks(!showBlocks);
   };
 
   const closeModal = () => {
-    document.querySelector(".modal-wrapper").style.display = "none";
-    document.body.style.overflow = "auto";
+    const body = document.querySelector("body");
+    const modalWrapper = document.querySelector(".modal-wrapper");
+    modalWrapper.style.display = "none";
+    body.style.overflow = "auto";
   };
 
-  const calculateTotalPriceSum = useMemo(() => {
-    if (!selectedProjectId) return 0;
+  const calculateTotalPriceSum = () => {
+    let totalPriceSum = 0;
+    if (selectedProjectId) {
+      const selectedProject = projects.find((project) => project._id === selectedProjectId);
+      if (selectedProject) {
+        selectedProject.blocks.forEach((block) => {
+          block.units.forEach((unit) => {
+            totalPriceSum += parseFloat(unit.totalPrice);
+          });
+        });
+      }
+    }
+    return totalPriceSum;
+  };
 
-    const selectedProject = projects.find((project) => project._id === selectedProjectId);
-    if (!selectedProject) return 0;
+  const totalPriceSum = calculateTotalPriceSum();
 
-    return selectedProject.blocks.reduce((sum, block) => {
-      return sum + block.units.reduce((unitSum, unit) => unitSum + parseFloat(unit.totalPrice), 0);
-    }, 0);
-  }, [selectedProjectId, projects]);
+  const getPieChartData = () => {
+    if (selectedProjectId) {
+      const projectCounts = projectUnitCounts[selectedProjectId] || {};
+      const totalUnits = projectCounts.totalUnits || 0;
+      const totalSoldUnits = projectCounts.totalSoldUnits || 0;
+      const totalAvailableUnits = totalUnits - totalSoldUnits;
 
-  const projectUnitCounts = useMemo(() => {
-    return projects.reduce((counts, project) => {
-      const totalUnits = project.blocks.reduce((sum, block) => sum + block.units.length, 0);
-      const totalSoldUnits = project.blocks.reduce((sum, block) => sum + block.units.filter(unit => unit.status === "sold").length, 0);
+      return {
+        labels: ['Sold Units', 'Available Units'],
+        datasets: [
+          {
+            label: 'Unit Status',
+            data: [totalSoldUnits, totalAvailableUnits],
+            backgroundColor: ['#FF6384', '#36A2EB'],
+            borderColor: ['#FF6384', '#36A2EB'],
+            borderWidth: 1,
+          },
+        ],
+      };
+    }
+    return { labels: [], datasets: [] };
+  };
 
-      counts[project._id] = { totalUnits, totalSoldUnits };
-      return counts;
-    }, {});
-  }, [projects]);
-
-  const pieChartData = useMemo(() => {
-    if (!selectedProjectId) return { labels: [], datasets: [] };
-
-    const { totalUnits = 0, totalSoldUnits = 0 } = projectUnitCounts[selectedProjectId] || {};
-    const totalAvailableUnits = totalUnits - totalSoldUnits;
-
-    return {
-      labels: ["Sold Units", "Available Units"],
-      datasets: [
-        {
-          label: "Unit Status",
-          data: [totalSoldUnits, totalAvailableUnits],
-          backgroundColor: ["#FF6384", "#36A2EB"],
-          borderColor: ["#FF6384", "#36A2EB"],
-          borderWidth: 1,
-        },
-      ],
-    };
-  }, [selectedProjectId, projectUnitCounts]);
+  const pieChartData = getPieChartData();
 
   return (
     <div className="container">
@@ -142,7 +250,7 @@ const AccountsProjects = () => {
                         </div>
                         <h3 className="accountscolouredtext">Total Payment</h3>
                         <div className="d-flex justify-content-between">
-                          <p className="accountscolouredtext1"> ₹{calculateTotalPriceSum.toFixed(2)}</p>
+                          <p className="accountscolouredtext1"> ₹{totalPriceSum}</p>
                         </div>
                       </div>
                     </div>
@@ -168,7 +276,7 @@ const AccountsProjects = () => {
                         <div className="d-flex justify-content-between">
                           <p className="accountscolouredtext1">
                             ₹{(
-                              calculateTotalPriceSum.toFixed(2) -
+                              totalPriceSum -
                               (paymentDetails[selectedProjectId] || 0)
                             ).toFixed(2)}
                           </p>
