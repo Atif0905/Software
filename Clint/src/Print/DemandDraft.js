@@ -167,8 +167,8 @@ const DemandDraft = () => {
 
 
   return (
-    <div className="container last mt-5">
-      <div className='button-group d-flex justify-content-end mt-5'>
+    <div id='print-content'>
+            <div className='button-group d-flex justify-content-end mt-5'>
         <button onClick={handlePrint} className='print-button'>Print</button>
         <button className="Download" onClick={handleDownloadPDF}>
           <svg className="svgIcon" viewBox="0 0 384 512" height="1em" xmlns="http://www.w3.org/2000/svg">
@@ -177,7 +177,8 @@ const DemandDraft = () => {
           <span className="icon2"></span>
         </button>
       </div>
-      <div  id='print-content'>
+    <div className="container last mt-5">
+      <div  >
       <h4 className="text-center mt-3">DUE AMOUNT INTIMATION</h4>
       <div className="mt-5">
         {customerDetails && projectdetails && (
@@ -301,6 +302,7 @@ const DemandDraft = () => {
         )}
       </div>
       </div>
+    </div>
     </div>
   );
 };
