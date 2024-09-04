@@ -22,7 +22,7 @@ const AccountsSidebar = () => {
       <div className='nav1'> <h1 className='sidehead '>WIC</h1> </div>
       <ul className="sidebar">
         <div className='mt-5'>
-    <li className='Links mt-2'><Link to="/"><FontAwesomeIcon icon={faChalkboardUser} className='mar'/>Dashboard</Link></li>
+    <li className='Links mt-2'><Link to="/AccountsDashBoard"><FontAwesomeIcon icon={faChalkboardUser} className='mar'/>Dashboard</Link></li>
     <li className='Links'><Link to="/PaymentPerUnit"><FontAwesomeIcon icon={faFileInvoice} className='mar'/>Payment Per Unit</Link></li>
     <li className='Links'><Link to="/Stats"><FontAwesomeIcon icon={faChartBar} className='mar'/>Stats</Link></li>
     <li className='Links'><Link to="/DirectorsReport"><FontAwesomeIcon icon={faClipboard} className='mar'/>Directors Report</Link></li>

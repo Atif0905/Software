@@ -7,11 +7,12 @@ const AdminDashboard = () => {
   return (
     <>
     <Sidebar/>
-    <div className='main-content'>
-    <h4 className='Headtext'>DashBoard</h4>
+    <main className='main-content'>
+    <div className='mt-5'>
       <AdminUploadProject/>
       <UploadedProjects/>
-    </div>
+      </div>
+    </main>
     </>
   )
 }

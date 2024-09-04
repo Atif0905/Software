@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import './Print.css';
 import Loader from "../Confirmation/Loader";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 const Ledger = () => {
     const { _id } = useParams();
     const [paymentDetails, setPaymentDetails] = useState([]);
@@ -125,10 +127,44 @@ const Ledger = () => {
         const options = { year: "numeric", month: "2-digit", day: "2-digit" };
         return date.toLocaleDateString("en-US", options);
       };
+      const handlePrint = () => {
+        window.print();
+      };
+    
+      const handleDownloadPDF = async () => {
+        const input = document.getElementById('print-content');
+        const canvas = await html2canvas(input);
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+        const imgWidth = 210; // A4 size width in mm
+        const pageHeight = 295; // A4 size height in mm
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        let heightLeft = imgHeight;
+    
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+    
+        while (heightLeft >= 0) {
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 0, -heightLeft, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        pdf.save('Ledger.pdf');
+      };
+    
   return (
     <div className="container ">
+      <div className='button-group d-flex justify-content-end mt-5'>
+        <button onClick={handlePrint} className='print-button'>Print</button>
+        <button className="Download" onClick={handleDownloadPDF}>
+          <svg className="svgIcon" viewBox="0 0 384 512" height="1em" xmlns="http://www.w3.org/2000/svg">
+            <path d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"></path>
+          </svg>
+          <span className="icon2"></span>
+        </button>
+      </div>
         {customerDetails && projectdetails && (
-            <div>
+            <div id='print-content' >
         <h6 className='text-center mt-5'>APPLICANT FILE</h6>
         <div className='d-flex justify-content-between'>
         <h6>Customer Id: {customerDetails.customerId}</h6>
