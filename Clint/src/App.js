@@ -45,6 +45,8 @@ import PayInterestAmount from "./Payments/PayInterestAmount";
 import ExpenseForm from "./Accountscomponent/ExpenseForm";
 import Expensedetails from "./Accountscomponent/Expensedetails";
 import ExpensePaidByteamLeader from "./Accountscomponent/ExpensePaidByteamLeader";
+import PrintPage from "./Print/PrintPage";
+import FilteredPrintPage from "./Print/FilteredPrintPage";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -150,6 +152,8 @@ function App() {
           <Route path="/ExpenseForm" element={<ExpenseForm/>}/>
           <Route path="/Expensedetails" element={<Expensedetails/>}/>
           <Route path="/TotalExpensePaidByteamLeader/:_id" element={<ExpensePaidByteamLeader/>}/>
+          <Route path="print-page" element={<PrintPage/>}/>
+          <Route path="FilteredPrintPage" element={<FilteredPrintPage/>}/>
         </Routes>
       </div>
     </Router>
