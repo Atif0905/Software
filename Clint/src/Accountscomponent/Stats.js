@@ -104,14 +104,18 @@ const Stats = () => {
         datasets: [
             {
                 label: 'Payment Received',
-                data: customers.map(customer => customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0)),
+                data: customers.map(customer => 
+                    (customer.paymentDetails || []).reduce((sum, payment) => sum + payment.amount, 0)
+                ),
                 borderColor: 'rgba(75, 192, 192, 1)',
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 fill: false
             },
             {
                 label: 'Due Amount',
-                data: customers.map(customer => customer.unitPrice - customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0)),
+                data: customers.map(customer => 
+                    customer.unitPrice - (customer.paymentDetails || []).reduce((sum, payment) => sum + payment.amount, 0)
+                ),
                 borderColor: 'rgba(255, 99, 132, 1)',
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 fill: false
@@ -125,6 +129,7 @@ const Stats = () => {
             }
         ]
     };
+    
 
     if (loading) {
         return <div><Loader/></div>;
@@ -152,20 +157,21 @@ const Stats = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {customers.map((customer, index) => (
-                            <tr key={index}>
-                                <td>{customer.EmployeeName.toUpperCase()}</td>
-                                <td>{customer.Teamleadname.toUpperCase()}</td>
-                                <td>{customer.projectName}</td>
-                                <td>{customer.blockName}</td>
-                                <td>{customer.unitName}</td>
-                                <td>{customer.unitPrice}</td>
-                                <td>{customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0}</td>
-                                <td>{customer.unitPrice - (customer.paymentDetails ? customer.paymentDetails.reduce((sum, payment) => sum + payment.amount, 0) : 0)}</td>
-                                <td>{formatDate(customer.paymentDate)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
+    {customers.map((customer, index) => (
+        <tr key={index}>
+            <td>{customer.EmployeeName.toUpperCase()}</td>
+            <td>{customer.Teamleadname.toUpperCase()}</td>
+            <td>{customer.projectName}</td>
+            <td>{customer.blockName}</td>
+            <td>{customer.unitName}</td>
+            <td>{customer.unitPrice}</td>
+            <td>{(customer.paymentDetails || []).reduce((sum, payment) => sum + payment.amount, 0)}</td>
+            <td>{customer.unitPrice - (customer.paymentDetails || []).reduce((sum, payment) => sum + payment.amount, 0)}</td>
+            <td>{formatDate(customer.paymentDate)}</td>
+        </tr>
+    ))}
+</tbody>
+
                 </table>
             </div>
         </div>

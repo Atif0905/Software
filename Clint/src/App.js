@@ -47,6 +47,7 @@ import Expensedetails from "./Accountscomponent/Expensedetails";
 import ExpensePaidByteamLeader from "./Accountscomponent/ExpensePaidByteamLeader";
 import PrintPage from "./Print/PrintPage";
 import FilteredPrintPage from "./Print/FilteredPrintPage";
+import AccountsDashboard from "./Home/AdminDashboard/AccountsDashboard";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -72,7 +73,7 @@ function App() {
       <div className="App">        
         <Routes>
           {/* Sidebar routes */}
-          <Route path="/" element={<Navigate to="/userDetails" />} /> 
+          <Route path="/" element={<Navigate to="/DashBoard" />} /> 
           {/* <Route path="/userDetails" element={<Sidebar />} /> */}
           <Route path="/AdminDashboard/*" element={<Sidebar />} />
           <Route path="/uploaded-projects" element={<Sidebar />} />
@@ -99,6 +100,7 @@ function App() {
           <Route path="/Customer_Details/:_id" element={<Sidebar/>}/>
           <Route path="/Edit_Customer_Details/:_id" element={<Sidebar/>}/>
           <Route path="/edit_payment/:_id" element={<Sidebar/>}/> 
+          <Route path="/AccountsDashBoard" element={<AccountsSidebar/>}/>
           <Route path="/PaymentPerUnit" element={<AccountsSidebar/>}/>
           <Route path="/Stats" element={<AccountsSidebar/>}/>
           <Route path="/DirectorsReport" element={<AccountsSidebar/>}/>
@@ -112,7 +114,7 @@ function App() {
           <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
           <Route path="/sign-in" element={<Login />} />
           <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/userDetails" element={<UserDetails />} />
+          <Route path="/DashBoard" element={<UserDetails />} />
           <Route path="/AdminDashboard" element={<AdminDashboard />} />
           <Route path="/uploaded-projects" element={<UploadedProjects />} />
           <Route path="/project/:projectId" element={<ProjectDetails />} />
@@ -145,6 +147,7 @@ function App() {
           <Route path="/print_demand_datewise/:_id" element={<DemandDraft/>}/>
           <Route path="/welcomeletter/:_id" element={<Welcomeletter/>}/>
           <Route path="/ledger/:_id" element={<Ledger/>}/>
+          <Route path="/AccountsDashBoard" element={<AccountsDashboard/>}/>
           <Route path="/PaymentPerUnit" element={<PaymentPerunit/>}/>
           <Route path="/Stats" element={<Stats/>}/>
           <Route path="/DirectorsReport" element={<DirectorsReport/>}/>
