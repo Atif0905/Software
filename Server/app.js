@@ -18,7 +18,7 @@ const Post = require('./Models/CreatePost')
 const Blog = require('./Models/Createblog');
 const Installment = require('./Models/Duedate');
 const Expense = require('./Models/Expense')
-
+const ChanelPartner = require('./Models/ChanelPartner'); 
 
 const uploadProjects = multer({ dest: 'uploads/' });
 
@@ -1171,5 +1171,14 @@ app.delete('/expenses/:id', async (req, res) => {
     res.status(200).json({ message: 'Expense record deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete expense record' });
+  }
+});
+app.post('/chanelpartner', async (req, res) => {
+  try {
+    const newChanelPartner = new ChanelPartner(req.body);
+    const savedChanelPartner = await newChanelPartner.save();
+    res.status(201).json(savedChanelPartner);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
