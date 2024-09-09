@@ -19,7 +19,7 @@ const AccountsSidebar = () => {
   }
   return (
     <div>
-      <div className='nav1'> <h1 className='sidehead '>WIC</h1> </div>
+      <div className='nav1'> <h2 className='sidehead'>Womeki Tech Solutions</h2> </div>
       <ul className="sidebar">
         <div className='mt-5'>
     <li className='Links mt-2'><Link to="/AccountsDashBoard"><FontAwesomeIcon icon={faChalkboardUser} className='mar'/>Dashboard</Link></li>

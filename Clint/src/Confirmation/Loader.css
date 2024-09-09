@@ -84,3 +84,15 @@
       transform: rotateX(70deg) rotateZ(630deg);
     }
   }
+  .copyrightdiv{
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    height: 50px;
+    padding: 12px;
+    background-color: white;
+  }
+  .copyrighttext{
+    text-align: right;
+    margin-right: 18%;
+  }

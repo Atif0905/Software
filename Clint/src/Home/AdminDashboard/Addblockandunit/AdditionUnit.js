@@ -304,8 +304,8 @@ const AdditionUnit = () => {
             className="form-input-field"
             onChange={handleFileUpload}
           />
-          <button className="add-buttons mt-4" onClick={handleBulkUpload}>Upload Units</button>
-          <button className="add-buttons mt-4" onClick={() => setShowConfirm(true)}>Add Unit</button>
+          <button className="addbutton mt-4" onClick={handleBulkUpload}>Upload Units</button>
+          <button className="addbutton mt-4" onClick={() => setShowConfirm(true)}>Add Unit</button>
         </div>
       </div>
       <ConfirmationModal 

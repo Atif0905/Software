@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import Loader from '../Confirmation/Loader';
+import Loader from '../../Confirmation/Loader';
 
 const Expensedetails = () => {
   const [expenses, setExpenses] = useState([]);
@@ -70,6 +70,7 @@ const Expensedetails = () => {
           </div>
         )}
       </div>
+      
     </div>
   );
 };

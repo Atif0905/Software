@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Papa from 'papaparse';  // Import papaparse
+import Papa from 'papaparse'; 
 import './Projects.css';
 import ConfirmationModal from '../Confirmation/ConfirmationModal';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-
 const Projects = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -20,7 +17,6 @@ const Projects = () => {
   const [Posessionfinaldate, setPosessionfinaldate] = useState('');
   const [CompanyName, setCompanyName] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
-
   const handleCSVUpload = (event) => {
     const file = event.target.files[0];
     Papa.parse(file, {
@@ -28,9 +24,7 @@ const Projects = () => {
       skipEmptyLines: true,
       complete: function(results) {
         if (results.data && results.data.length > 0) {
-          const projectData = results.data[0]; // Assuming a single project per CSV file
-          
-          // Update state with parsed CSV data
+          const projectData = results.data[0];
           setName(projectData.name || '');
           setDescription(projectData.description || '');
           setTotalLand(projectData.totalLand || '');
@@ -73,7 +67,6 @@ const Projects = () => {
       const data = response.data;
       if (response.status === 201 && data.status === 'ok') {
         alert('Project uploaded successfully!');
-        // Reset form fields
         setName('');
         setDescription('');
         setTotalLand('');
@@ -94,12 +87,10 @@ const Projects = () => {
       alert('An error occurred while uploading project');
     }
   };
-
   const handleSubmit1 = (e) => {
     e.preventDefault();
     setShowConfirm(true);
   };
-
   return (
     <div className="main-content back">
       <div className=''>
@@ -156,23 +147,15 @@ const Projects = () => {
               <input type="date" className='form-input-field' id="Posessionfinaldate" value={Posessionfinaldate.toUpperCase()} placeholder="Posession final date" onChange={(e) => setPosessionfinaldate(e.target.value)} required />
             </div>
             <div className="form-group mt-3 mb-3">
-              {/* <button type="submit" className='uploadbutt'>Upload Project</button> */}
             </div>
           </form>
             <div className="form-group mt-3 mb-3">
-              <button type="submit" className='uploadbutt'>Upload Project</button>
+              <button type="submit" className='addbutton'>Upload Project</button>
             </div>
           </form>
-          <ConfirmationModal
-            show={showConfirm}
-            onClose={() => setShowConfirm(false)}
-            onConfirm={() => {
-              setShowConfirm(false);
-              handleSubmit();
-            }}
-            message="Are you sure you want to add this Project?"
-          />
-          <div className=' mb-5'>
+          <ConfirmationModal show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => {   setShowConfirm(false);   handleSubmit();}}
+            message="Are you sure you want to add this Project?"/>
+          <div className=''>
           <label htmlFor="csvUpload">Upload By CSV </label>
           <input type="file" id="csvUpload" accept=".csv" onChange={handleCSVUpload} />
         </div>

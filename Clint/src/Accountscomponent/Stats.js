@@ -141,7 +141,7 @@ const Stats = () => {
             <div className="chart-container mb-5">
                 <Line data={chartData} />
             </div>
-            <div className="table-wrapper whiteback">
+            {/* <div className="table-wrapper whiteback">
                 <table id='viewcustomertable'>
                     <thead>
                         <tr>
@@ -173,7 +173,8 @@ const Stats = () => {
 </tbody>
 
                 </table>
-            </div>
+            </div> */}
+            
         </div>
     );
 }

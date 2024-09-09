@@ -200,15 +200,15 @@ const CustomerDetails = () => {
                       />
                     </td>
                     <td><a href={`/edit_payment/${payment._id}`}>Edit</a></td>
-                    <td><a href={`/print_reciept/${payment._id}`}>Print</a></td>
+                    <td><a target="_blank" href={`/print_reciept/${payment._id}`}>Print</a></td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <div className="d-flex justify-content-between mt-3">
-              <div className="welcome"><a href={`/welcomeletter/${data._id}`}>Print Welcome letter</a></div>
-              <div className="welcome"><a href={`/ledger/${data._id}`}>Print ledger</a></div>
-              <div className="demand"><a href={`/print_demand_datewise/${data._id}`}>Print Demand</a></div>
+              <div className="welcome"><a target="_blank" href={`/welcomeletter/${data._id}`}>Print Welcome letter</a></div>
+              <div className="welcome"><a target="_blank" href={`/ledger/${data._id}`}>Print ledger</a></div>
+              <div className="demand"><a target="_blank" href={`/print_demand_datewise/${data._id}`}>Print Demand</a></div>
             </div>
           </div>
         </div>

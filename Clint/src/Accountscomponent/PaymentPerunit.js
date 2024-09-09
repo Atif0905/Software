@@ -2,8 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCustomers, setError, setLoading } from '../Actions/Actions';
 import Loader from '../Confirmation/Loader';
-import {fetchCustomers,fetchName,fetchUnitDetails,fetchPaymentDetailsByCustomerId,fetchProjectRate,} from '../services/customerService'; // Importing service functions
-
+import {fetchCustomers,fetchName,fetchUnitDetails,fetchPaymentDetailsByCustomerId,fetchProjectRate,} from '../services/customerService'; 
 const PaymentPerunit = () => {
   const { customers, loading, error } = useSelector((state) => state.customer);
   const dispatch = useDispatch();
@@ -133,5 +132,4 @@ const PaymentPerunit = () => {
     </div>
   );
 };
-
 export default PaymentPerunit;

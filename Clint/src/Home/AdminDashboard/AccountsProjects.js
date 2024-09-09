@@ -299,7 +299,7 @@ const AccountsProjects = () => {
                     </div>
                   </div>
                   <div className="mt-5">
-                    <h4>The Percentage of Project Sold is {parseFloat((projectUnitCounts[project._id]?.totalSoldUnits || 0) / (projectUnitCounts[project._id]?.totalUnits || 0) * 100).toFixed(2) || 0}%</h4>
+                    {/* <h4>The Percentage of Project Sold is {parseFloat((projectUnitCounts[project._id]?.totalSoldUnits || 0) / (projectUnitCounts[project._id]?.totalUnits || 0) * 100).toFixed(2) || 0}%</h4> */}
                   </div>
                   <div className="pie-chart-container mt-5">
                     <Pie data={pieChartData} />
