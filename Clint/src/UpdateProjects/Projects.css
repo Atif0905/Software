@@ -6,10 +6,10 @@
 .projectdiv {
   width: 320px;
   height: 130px;
-  /* box-shadow: rgba(0, 0, 0, 0.45) 0px 4px 2px 0px;    */
   background-color: rgb(0, 192, 239);
-  /* border-radius: 10px; */
-  border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.45); */
+  box-shadow: rgba(0, 0, 0, 0.235) 4.95px 4.95px 2.6px;
+  border-radius: 10px;
 }
 .react-icon{
   color: #3c8dbc;
@@ -85,6 +85,8 @@
   flex-direction: column;
   align-items: center;
   background-color: rgba(0, 171, 215);
+  border-bottom-left-radius: 10px ;
+  border-bottom-right-radius: 10px ;
 }
 .coloureddiv1 {
   width: 100%;
@@ -283,42 +285,25 @@ margin-top: 25%;
   width: 95%;
   height: 45px;
   border: 1px solid #C0C0C0;
-  /* border-radius: 5px; */
   font-size: 14px;
   color: #000000;
   padding-left: 2%;
-  /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
-
 }
 .form-msg-field{
   width: 95%;
   height: auto;
   border: 1px solid #C0C0C0;
-  /* border-radius: 5px; */
   font-size: 14px;
   color: #000000;
   padding-left: 2%;
-  /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
-}
-.add-buttons{
-  width: 120px;
-  height: 40px;
-  border: 1px solid #C0C0C0;
-  border-radius: 5px;
-  background-color: #00C0EF;
-  font-size: 14px;
-  color: #FFFFFF;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 .select-buttons{
   width: 95%;
   height: 40px;
   border: 1px solid #C0C0C0;
-  /* border-radius: 5px; */
   background-color: #FFFFFF;
   font-size: 14px;
   color: #000000;
-  /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
 }
 .delete-buttons{
   width: 120px;

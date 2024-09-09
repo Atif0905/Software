@@ -42,12 +42,13 @@ import Stats from "./Accountscomponent/Stats";
 import DirectorsReport from "./Accountscomponent/DirectorsReport";
 import DirectorDetails from "./Accountscomponent/DirectorDetails";
 import PayInterestAmount from "./Payments/PayInterestAmount";
-import ExpenseForm from "./Accountscomponent/ExpenseForm";
-import Expensedetails from "./Accountscomponent/Expensedetails";
-import ExpensePaidByteamLeader from "./Accountscomponent/ExpensePaidByteamLeader";
 import PrintPage from "./Print/PrintPage";
 import FilteredPrintPage from "./Print/FilteredPrintPage";
 import AccountsDashboard from "./Home/AdminDashboard/AccountsDashboard";
+import ExpenseForm from "./Accountscomponent/Expenses/ExpenseForm";
+import Expensedetails from "./Accountscomponent/Expenses/Expensedetails";
+import ExpensePaidByteamLeader from "./Accountscomponent/Expenses/ExpensePaidByteamLeader";
+import EditExpense from "./Accountscomponent/Expenses/EditExpense";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -108,6 +109,7 @@ function App() {
           <Route path="/ExpenseForm" element={<AccountsSidebar/>}/>
           <Route path="/Expensedetails" element={<AccountsSidebar/>}/>
           <Route path="/TotalExpensePaidByteamLeader/:_id" element={<AccountsSidebar/>}/>
+          <Route path="/edit-expense" element={<AccountsSidebar />} />
         </Routes>
 
         <Routes>
@@ -157,7 +159,9 @@ function App() {
           <Route path="/TotalExpensePaidByteamLeader/:_id" element={<ExpensePaidByteamLeader/>}/>
           <Route path="print-page" element={<PrintPage/>}/>
           <Route path="FilteredPrintPage" element={<FilteredPrintPage/>}/>
+          <Route path="/edit-expense" element={<EditExpense />} />
         </Routes>
+        
       </div>
     </Router>
   );

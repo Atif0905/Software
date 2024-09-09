@@ -618,7 +618,7 @@ const [showConfirm, setShowConfirm] = useState(false);
         required/>
           </div>
         <div className='mt-4'>
-          <button type="submit" className="btn btn-primary " >Submit</button>
+          <button type="submit" className="addbutton " >Submit</button>
         </div>
         <ConfirmationModal
             show={showConfirm}

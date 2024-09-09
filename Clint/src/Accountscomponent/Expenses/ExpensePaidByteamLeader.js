@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Loader from '../Confirmation/Loader';
-import './Accounts.css';
+import Loader from '../../Confirmation/Loader';
+import '../Accounts.css';
 
 const ExpensePaidByteamLeader = () => {
   const { _id } = useParams(); 
@@ -49,22 +49,17 @@ const ExpensePaidByteamLeader = () => {
   useEffect(() => {
     const filterBySummaryMonthYear = () => {
       let filtered = matchingExpenses;
-
       if (summaryFilter) {
         filtered = filtered.filter((exp) => exp.expenseSummary === summaryFilter);
       }
-
       if (monthFilter) {
         filtered = filtered.filter((exp) => new Date(exp.Paydate).getMonth() + 1 === parseInt(monthFilter));
       }
-
       if (yearFilter) {
         filtered = filtered.filter((exp) => new Date(exp.Paydate).getFullYear() === parseInt(yearFilter));
       }
-
       setFilteredExpenses(filtered);
     };
-
     filterBySummaryMonthYear();
   }, [summaryFilter, monthFilter, yearFilter, matchingExpenses]);
 
@@ -106,14 +101,42 @@ const ExpensePaidByteamLeader = () => {
   const handlePrintClick = (expense) => {
     navigate('/print-page', { state: { expense } });
   };
+
   const handlePrintClick1 = () => {
     navigate('/FilteredPrintPage', { state: { expenses: filteredExpenses } });
   };
+
+  const handleDeleteClick = async (id) => {
+    try {
+      // Delete the expense using the API
+      await axios.delete(`${process.env.REACT_APP_API_URL}/expenses/${id}`);
+      
+      // Update filtered and matching expenses to reflect the deletion
+      setFilteredExpenses(filteredExpenses.filter(exp => exp._id !== id));
+      setMatchingExpenses(matchingExpenses.filter(exp => exp._id !== id));
+      
+      // If the deleted expense is the currently viewed expense, reset it
+      if (expense && expense._id === id) {
+        setExpense(null); 
+      }
+      
+      alert('Expense deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete expense:', error.response ? error.response.data : error.message);
+      alert('Failed to delete expense');
+    }
+  };
+  const handleEditClick = (expense) => {
+    localStorage.setItem('editExpense', JSON.stringify(expense));
+    navigate('/edit-expense'); // Navigate to the static edit page
+  };
   return (
     <div className='main-content'>
-      <h2 className='Headtext'>{expense.teamLeadName.toUpperCase()} Expense Details</h2>
+      <h2 className='Headtext'>{expense ? expense.teamLeadName.toUpperCase() : ''} Expense Details</h2>
       <div className='whiteback'>
-        <p>Total Expenses by {expense.teamLeadName.toUpperCase()} <strong>({calculateTotalAmount()})</strong></p>
+        {expense && (
+          <p>Total Expenses by {expense.teamLeadName.toUpperCase()} <strong>({calculateTotalAmount()})</strong></p>
+        )}
         <div className="filter-container d-flex justify-content-between">
           <div>
             <label htmlFor="summaryFilter">Filter by Summary: </label>
@@ -158,6 +181,8 @@ const ExpensePaidByteamLeader = () => {
                   <th>Payment Date</th>
                   <th>Comment</th>
                   <th>Print</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -168,6 +193,9 @@ const ExpensePaidByteamLeader = () => {
                   <td>{formatDate(exp.Paydate)}</td>
                   <td>{exp.comment}</td>
                   <td><button className='anchor' onClick={() => handlePrintClick(exp)}>Print</button></td>
+                  <td><button className='anchor' onClick={() => handleEditClick(exp)}>Edit</button></td>
+                  <td><img src="/deletebutton.png" className="delete" onClick={() => handleDeleteClick(exp._id)}
+                      /></td>
                 </tr>
               ))}
               </tbody>
@@ -177,6 +205,7 @@ const ExpensePaidByteamLeader = () => {
           <p>No expenses found for this filter criteria.</p>
         )}
       </div>
+      
     </div>
   );
 };

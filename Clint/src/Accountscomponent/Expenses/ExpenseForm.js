@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ConfirmationModal from '../Confirmation/ConfirmationModal';
+import ConfirmationModal from '../../Confirmation/ConfirmationModal';
 
 const ExpenseForm = () => {
   const [teamLeadNames, setTeamLeadNames] = useState([]);
@@ -54,7 +54,7 @@ const ExpenseForm = () => {
 
   return (
     <div className='main-content'>
-      <h2 className="Headtext">Expense Form</h2>
+      <h2 className="Headtext">Add Expenses</h2>
       <div className='row'>
         <div className='col-6'>
           <div className='whiteback'>
@@ -90,12 +90,13 @@ const ExpenseForm = () => {
                 <label htmlFor="comment" className='mt-3'>Comment:</label>
                 <input type='text' id="comment" className="form-input-field" value={comment} onChange={(e) => setComment(e.target.value)} />
               </div>
-              <button className='btn btn-primary mt-3' type="submit">Submit</button>
+              <button className='addbutton mt-3' type="submit">Submit</button>
               <ConfirmationModal show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => {  setShowConfirm(false);  handleSubmit(); }} message="Are you sure you want to Submit this Expense" />
             </form>
           </div>
         </div>
       </div>
+      
     </div>
   );
 };

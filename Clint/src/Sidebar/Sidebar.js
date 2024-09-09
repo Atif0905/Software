@@ -31,7 +31,7 @@ const Sidebar = () => {
   return (
     <div>
       <div className='nav1'>
-        <h1 className='sidehead'>WIC</h1>
+        <h2 className='sidehead'>WTS (Womeki Tech Solutions)</h2>
       </div>
       <ul className="sidebar">
         <div className='mt-5'>

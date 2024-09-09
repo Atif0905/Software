@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Papa from 'papaparse';
 import ConfirmationModal from '../../../Confirmation/ConfirmationModal';
-// import './AdditionBlock.css'; // Assuming you have a CSS file for styling
 
 const AdditionBlock = () => {
   const [totalPlotInBlock, setTotalPlotInBlock] = useState('');
@@ -60,7 +59,6 @@ const AdditionBlock = () => {
       return 0;
     }
   };
-
   const handleAddBlock = async () => {
     try {
       const response = await axios.post(
@@ -88,12 +86,10 @@ const AdditionBlock = () => {
       console.error('Error adding block:', error);
     }
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setShowConfirm(true);
   };
-
   const numberInputOnWheelPreventChange = (e) => {
     e.target.blur();
     e.stopPropagation();
@@ -101,15 +97,12 @@ const AdditionBlock = () => {
       e.target.focus();
     }, 0);
   };
-
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       Papa.parse(file, {
         complete: (results) => {
-          // Log the results to inspect the data
           console.log('CSV Results:', results);
-
           const { data, meta } = results;
           if (meta.fields) {
             const parsedData = data.map(row => ({
@@ -133,7 +126,6 @@ const AdditionBlock = () => {
       });
     }
   };
-
   const handleBulkUpload = async () => {
     try {
       if (!selectedProjectId) {
@@ -152,7 +144,6 @@ const AdditionBlock = () => {
       console.error('Error bulk uploading blocks:', error);
     }
   };
-
   return (
     <div className="main-content back">
       <h4 className="Headtext">Add Block</h4>
@@ -160,11 +151,7 @@ const AdditionBlock = () => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Select Project</label>
-            <select
-              className="form-input-field select-buttons"
-              onChange={(e) => setSelectedProjectId(e.target.value)}
-              required
-            >
+            <select className="form-input-field select-buttons" onChange={(e) => setSelectedProjectId(e.target.value)} required>
               <option value="">Select Project</option>
               {projects.map((project, index) => (
                 <option key={index} value={project._id}>
@@ -173,106 +160,38 @@ const AdditionBlock = () => {
               ))}
             </select>
           </div>
-
           <div className="form-group">
             <label>Block Name</label>
-            <input
-              type="text"
-              className="form-input-field"
-              placeholder="Block Name"
-              value={newBlockName}
-              onChange={(e) => setNewBlockName(e.target.value.toUpperCase())}
-              required
-            />
+            <input type="text" className="form-input-field" placeholder="Block Name" value={newBlockName} onChange={(e) => setNewBlockName(e.target.value.toUpperCase())} required />
           </div>
-
           <div className="form-group">
             <label>Total Plot</label>
-            <input
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              className="form-input-field"
-              placeholder="Total Plot in Block"
-              value={totalPlotInBlock}
-              onChange={(e) => setTotalPlotInBlock(e.target.value)}
-              required
-            />
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="Total Plot in Block" value={totalPlotInBlock} onChange={(e) => setTotalPlotInBlock(e.target.value)} required />
           </div>
-
           <div className="form-group">
             <label>Plot Size</label>
-            <input
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              className="form-input-field"
-              placeholder="Plot Size (sqyd)"
-              value={plotSize}
-              onChange={(e) => setPlotSize(e.target.value)}
-              required
-            />
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="Plot Size (sqyd)" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required />
           </div>
-
           <div className="form-group">
             <label>Basic Rate</label>
-            <input
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              className="form-input-field"
-              placeholder="Basic Rate of Block"
-              value={basicRateOfBlock}
-              onChange={(e) => setBasicRateOfBlock(e.target.value)}
-              required
-            />
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="Basic Rate of Block" value={basicRateOfBlock} onChange={(e) => setBasicRateOfBlock(e.target.value)} required />
           </div>
-
           <div className="form-group">
             <label>IDC Rate</label>
-            <input
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              className="form-input-field"
-              placeholder="IDC Rate of Block"
-              value={idcRateOfBlock}
-              onChange={(e) => setIdcRateOfBlock(e.target.value)}
-              required
-            />
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="IDC Rate of Block" value={idcRateOfBlock} onChange={(e) => setIdcRateOfBlock(e.target.value)} required />
           </div>
-
           <div className="form-group">
             <label>EDC Rate</label>
-            <input
-              type="number"
-              onWheel={numberInputOnWheelPreventChange}
-              className="form-input-field"
-              placeholder="EDC Rate of Block"
-              value={edcRateOfBlock}
-              onChange={(e) => setEdcRateOfBlock(e.target.value)}
-              required
-            />
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" placeholder="EDC Rate of Block" value={edcRateOfBlock} onChange={(e) => setEdcRateOfBlock(e.target.value)} required />
           </div>
-
-          <button type="submit" className="add-buttons mt-3">
+          <button type="submit" className="addbutton mt-3">
             Add Block
           </button>
-
           <div className="form-group mt-4">
             <label>Upload CSV</label>
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileUpload}
-              className="form-input-field"
-            />
-            <button
-              type="button"
-              className="add-buttons mt-2"
-              onClick={handleBulkUpload}
-              disabled={csvData.length === 0}
-            >
-              Upload CSV
-            </button>
+            <input type="file" accept=".csv" onChange={handleFileUpload} className="form-input-field" />
+            <button type="button" className="addbutton mt-2" onClick={handleBulkUpload} disabled={csvData.length === 0} >Upload CSV</button>
           </div>
-
           <ConfirmationModal
             show={showConfirm}
             onClose={() => setShowConfirm(false)}

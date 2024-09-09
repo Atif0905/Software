@@ -532,48 +532,6 @@ app.post("/addUnit/:projectId/:blockId", upload.single('file'), async (req, res)
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.put("/editUnit/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
   const {  rate, idcCharges, plcCharges, totalPrice, edcPrice } = req.body;
@@ -760,100 +718,13 @@ app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
 });
 app.post("/addCustomer", async (req, res) => {
   const {
-    title,
-    name,
-    fatherOrHusbandName,
-    address,
-    aadharNumber,
-    panNumber,
-    mobileNumber,
-    income,
-    email,
-    propertyType,
-    selectedProject,
-    selectedBlock,
-    selectedUnit,
-    discount,
-    paymentPlan, 
-    bookingDate,
-    bookingType,
-    sendEmail,
-    name2,
-    fatherOrHusbandName2,
-    address2,
-    aadharNumber2,
-    panNumber2,
-    mobileNumber2,
-    email2,
-    name3,
-    fatherOrHusbandName3,
-    address3,
-    aadharNumber3,
-    panNumber3,
-    mobileNumber3,
-    email3,
-    permanentaddress,
-    EmployeeName,
-    Teamleadname,
-    DOB,
-    DOB2,
-    DOB3,
-    AgreementDate,
-    AllotmentDate,
-    CreatedBy,
-    TenureStartDate,
-    TenureEndDate,
-    Tenuredays
+    title,name,fatherOrHusbandName,address,aadharNumber,panNumber,mobileNumber,income,email,propertyType,selectedProject,selectedBlock,selectedUnit,discount,paymentPlan, bookingDate,bookingType,sendEmail,name2,fatherOrHusbandName2,address2,aadharNumber2,panNumber2,mobileNumber2,email2,name3,fatherOrHusbandName3,address3,aadharNumber3,panNumber3,mobileNumber3,email3,permanentaddress,EmployeeName,Teamleadname,DOB,DOB2,DOB3,AgreementDate,AllotmentDate,CreatedBy,TenureStartDate,TenureEndDate,Tenuredays
   } = req.body;
   try {
     const scenarioNumber = await Customer.countDocuments() + 1;
     const customerId = `WI0${scenarioNumber}`;
     const newCustomer = await Customer.create({
-      customerId, 
-      title,
-      name,
-      fatherOrHusbandName,
-      address,
-      aadharNumber,
-      panNumber,
-      mobileNumber,
-      income,
-      email,
-      propertyType,
-      project: selectedProject,
-      block: selectedBlock,
-      plotOrUnit: selectedUnit,
-      discount,
-      paymentPlan,
-      bookingDate,
-      bookingType,
-      sendEmail,
-      name2,
-      fatherOrHusbandName2,
-      address2,
-      aadharNumber2,
-      panNumber2,
-      mobileNumber2,
-      email2,
-      name3,
-      fatherOrHusbandName3,
-      address3,
-      aadharNumber3,
-      panNumber3,
-      mobileNumber3,
-      email3,
-      permanentaddress,
-      EmployeeName,
-      Teamleadname,
-      DOB,
-      DOB2,
-      DOB3,
-      AgreementDate,
-      AllotmentDate,
-      CreatedBy,
-      TenureStartDate,
-      TenureEndDate,
-      Tenuredays
+      customerId, title,name,fatherOrHusbandName,address,aadharNumber,panNumber,mobileNumber,income,email,propertyType,project: selectedProject,block: selectedBlock,plotOrUnit: selectedUnit,discount,paymentPlan,bookingDate,bookingType,sendEmail,name2,fatherOrHusbandName2,address2,aadharNumber2,panNumber2,mobileNumber2,email2,name3,fatherOrHusbandName3,address3,aadharNumber3,panNumber3,mobileNumber3,email3,permanentaddress,EmployeeName,Teamleadname,DOB,DOB2,DOB3,AgreementDate,AllotmentDate,CreatedBy,TenureStartDate,TenureEndDate,Tenuredays
     });
     res.status(201).json({ status: "ok", data: newCustomer });
   } catch (error) {
@@ -893,79 +764,10 @@ app.put("/editCustomer/:customerId", async (req, res) => {
       return res.status(404).json({ error: "Customer not found" });
     }
     const {
-      customerId: updatedCustomerId,
-      title,
-      name,
-      fatherOrHusbandName,
-      address,
-      aadharNumber,
-      panNumber,
-      mobileNumber,
-      email,
-      propertyType,
-      discount,
-      paymentPlan,
-      bookingDate,
-      bookingType,
-      sendEmail,
-      name2,
-      fatherOrHusbandName2,
-      address2,
-      aadharNumber2,
-      panNumber2,
-      mobileNumber2,
-      email2,
-      name3,
-      fatherOrHusbandName3,
-      address3,
-      aadharNumber3,
-      panNumber3,
-      mobileNumber3,
-      permanentaddress,
-      Teamleadname,
-      DOB,
-      DOB2,
-      DOB3,
-      AgreementDate,
-      AllotmentDate,
-      email3
+      customerId: updatedCustomerId, title, name, fatherOrHusbandName, address, aadharNumber, panNumber, mobileNumber, email, propertyType, discount, paymentPlan, bookingDate, bookingType, sendEmail, name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2, name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, permanentaddress, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, email3
     } = req.body;
     Object.assign(existingCustomer, {
-      title,
-      name,
-      fatherOrHusbandName,
-      address,
-      aadharNumber,
-      panNumber,
-      mobileNumber,
-      email,
-      propertyType,
-      discount,
-      paymentPlan,
-      bookingDate,
-      bookingType,
-      sendEmail,
-      name2,
-      fatherOrHusbandName2,
-      address2,
-      aadharNumber2,
-      panNumber2,
-      mobileNumber2,
-      email2,
-      name3,
-      fatherOrHusbandName3,
-      address3,
-      aadharNumber3,
-      panNumber3,
-      mobileNumber3,
-      permanentaddress,
-      Teamleadname,
-      DOB,
-      DOB2,
-      DOB3,
-      AgreementDate,
-      AllotmentDate,
-      email3
+      title, name, fatherOrHusbandName, address, aadharNumber, panNumber, mobileNumber, email, propertyType, discount, paymentPlan, bookingDate, bookingType, sendEmail, name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2, name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, permanentaddress, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, email3
     });
     const updatedCustomer = await existingCustomer.save();
     res.json({ status: "ok", data: updatedCustomer });
@@ -983,19 +785,13 @@ app.post('/DueDate', async (req, res) => {
   try {
     const formattedDueDate = new Date(dueDate).toISOString().split('T')[0];
     const existingInstallment = await Installment.findOne({
-      dueDate: formattedDueDate,
-      installment,
-      customerId,
-      amount
+      dueDate: formattedDueDate, installment, customerId, amount
     });
     if (existingInstallment) {
       return res.status(409).json({ message: 'Duplicate installment entry. This installment already exists.' });
     }
     const newInstallment = new Installment({
-      dueDate: formattedDueDate,
-      installment,
-      customerId,
-      amount
+      dueDate: formattedDueDate, installment, customerId, amount
     });
     await newInstallment.save();
     res.status(201).json(newInstallment);
@@ -1092,13 +888,7 @@ app.put("/paymentDetails/:paymentId", async (req, res) => {
     }
     const updatedPayment = await Payment.findByIdAndUpdate(
       paymentId,
-      {
-        customerId,
-        paymentMode,
-        amount,
-        reference,
-        comment,
-        PaymentDate,
+      { customerId, paymentMode, amount, reference, comment, PaymentDate,
       },
       { new: true }
     );
@@ -1313,16 +1103,7 @@ app.post('/createblog', upload.array('files', 5), async (req, res) => {
     const files = req.files.map(file => file.path);
     const { name, description, content1, content2, content3, content4, content5, category } = req.body;
 
-    const blogDoc = await Blog.create({
-      name,
-      description,
-      content1,
-      content2,
-      content3,
-      content4,
-      content5,
-      category,
-      files: files,
+    const blogDoc = await Blog.create({ name, description, content1, content2, content3, content4, content5, category, files: files,
     });
 
     res.json(blogDoc);
@@ -1356,5 +1137,39 @@ app.get('/expenses', async (req, res) => {
     res.status(200).json(expenses);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch expense records' });
+  }
+});
+app.put('/expenses/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { teamLeadName, expenseSummary, amount, comment, Paydate } = req.body;
+    const updatedExpense = await Expense.findByIdAndUpdate(
+      id,
+      { teamLeadName, expenseSummary, amount, comment, Paydate },
+      { new: true } 
+    );
+
+    if (!updatedExpense) {
+      return res.status(404).json({ error: 'Expense record not found' });
+    }
+
+    res.status(200).json(updatedExpense);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update expense record' });
+  }
+});
+app.delete('/expenses/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const deletedExpense = await Expense.findByIdAndDelete(id);
+
+    if (!deletedExpense) {
+      return res.status(404).json({ error: 'Expense record not found' });
+    }
+
+    res.status(200).json({ message: 'Expense record deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete expense record' });
   }
 });
