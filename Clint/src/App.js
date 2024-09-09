@@ -49,6 +49,7 @@ import ExpenseForm from "./Accountscomponent/Expenses/ExpenseForm";
 import Expensedetails from "./Accountscomponent/Expenses/Expensedetails";
 import ExpensePaidByteamLeader from "./Accountscomponent/Expenses/ExpensePaidByteamLeader";
 import EditExpense from "./Accountscomponent/Expenses/EditExpense";
+import ChanelPartnerForm from "./ChanelPartnerForm/ChanelPartnerForm";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -160,6 +161,7 @@ function App() {
           <Route path="print-page" element={<PrintPage/>}/>
           <Route path="FilteredPrintPage" element={<FilteredPrintPage/>}/>
           <Route path="/edit-expense" element={<EditExpense />} />
+          <Route path="/Chanel-Partner-form" element={<ChanelPartnerForm/>} />
         </Routes>
         
       </div>
