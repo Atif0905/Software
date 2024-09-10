@@ -7,9 +7,7 @@ import { IoBagOutline } from "react-icons/io5";
 import { faMoneyBill, faWallet } from '@fortawesome/free-solid-svg-icons';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
-
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
-
 const AccountsProjects = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
@@ -18,9 +16,7 @@ const AccountsProjects = () => {
   const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
   const [blockwiseSoldUnitCounts, setBlockwiseSoldUnitCounts] = useState({});
-
-  useEffect(() => { fetchProjects(); }, []);
-  
+  useEffect(() => { fetchProjects(); }, []);  
   const updateUnitCounts = () => {
     let blockCounts = {};
     projects.forEach((project) => {
@@ -30,14 +26,12 @@ const AccountsProjects = () => {
     });
     setBlockwiseAvailableUnitCounts(blockCounts);
   };
-
   useEffect(() => {
     updateUnitCounts();
     updateTotalUnitsCount();
     updateSoldUnitCounts();
     updateProjectUnitCounts();
   }, [projects]);
-
   useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
@@ -54,7 +48,6 @@ const AccountsProjects = () => {
     };
     fetchPaymentDetails();
   }, []);
-
   const updateTotalUnitsCount = () => {
     let totalAvailableUnits = 0;
     let blockwiseAvailableCounts = {};
@@ -69,7 +62,6 @@ const AccountsProjects = () => {
     });
     setBlockwiseAvailableUnitCounts(blockwiseAvailableCounts);
   };
-
   const updateSoldUnitCounts = () => {
     let totalSoldUnits = 0;
     let blockwiseSoldCounts = {};
@@ -82,7 +74,6 @@ const AccountsProjects = () => {
     });
     setBlockwiseSoldUnitCounts(blockwiseSoldCounts);
   };
-
   const fetchProjects = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
@@ -107,7 +98,6 @@ const AccountsProjects = () => {
       console.error("Error fetching projects:", error);
     }
   };
-
   const getUnitCount = async (projectId, blockId) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnitCount/${projectId}/${blockId}`);
@@ -123,7 +113,6 @@ const AccountsProjects = () => {
       return 0;
     }
   };
-
   const updateProjectUnitCounts = () => {
     const counts = {};
     projects.forEach((project) => {
@@ -132,7 +121,6 @@ const AccountsProjects = () => {
     });
     setProjectUnitCounts(counts);
   };
-
   const calculateUnitCountsByProjectId = (projectId) => {
     const project = projects.find((project) => project._id === projectId);
     if (!project) {
@@ -150,19 +138,16 @@ const AccountsProjects = () => {
     });
     return { totalUnits, totalSoldUnits };
   };
-
   const handleClickProject = (projectId) => {
     setSelectedProjectId(projectId);
     setShowBlocks(!showBlocks);
   };
-
   const closeModal = () => {
     const body = document.querySelector("body");
     const modalWrapper = document.querySelector(".modal-wrapper");
     modalWrapper.style.display = "none";
     body.style.overflow = "auto";
   };
-
   const calculateTotalPriceSum = () => {
     let totalPriceSum = 0;
     if (selectedProjectId) {
@@ -218,9 +203,7 @@ const AccountsProjects = () => {
                 <p className="descriptiondiv">
                   {project.description} <FontAwesomeIcon icon={faLocationDot} />
                 </p>
-                <p className="react-icon">
-                  <IoBagOutline />
-                </p>
+                <p className="react-icon"><IoBagOutline /></p>
               </div>
               <div
                 className="viewdetail-div"

@@ -1,8 +1,10 @@
+// /models/channelPartner.js
 const mongoose = require('mongoose');
+const { sendPartnerEmail } = require('../services/emailService'); // Import the email service
 
-// ChanelPartner Schema
-const ChanelPartnerSchema = new mongoose.Schema({
-  customerfirstName: {
+// ChannelPartner Schema
+const ChannelPartnerSchema = new mongoose.Schema({
+  customerFirstName: {
     type: String,
     required: true,
   },
@@ -13,7 +15,7 @@ const ChanelPartnerSchema = new mongoose.Schema({
   customerEmail: {
     type: String,
     required: true,
-    unique: true, // Ensure email is unique
+    unique: true,
   },
   gender: {
     type: String,
@@ -23,34 +25,58 @@ const ChanelPartnerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  Referedby: {
+  referredBy: {
     type: String,
     required: true,
   },
   uniqueId: {
     type: String,
-    required: true,
-    unique: true,    
+    unique: true,
   },
   createdAt: {
     type: Date,
-    default: Date.now, // Automatically set the creation date
+    default: Date.now,
+  },
+});
+
+// Middleware to generate uniqueId before saving a new document
+ChannelPartnerSchema.pre('save', async function (next) {
+  if (this.isNew) {
+    try {
+      const lastPartner = await mongoose.model('ChannelPartner').findOne().sort({ createdAt: -1 });
+
+      let lastNumber = 0;
+      if (lastPartner && lastPartner.uniqueId) {
+        const match = lastPartner.uniqueId.match(/\d+$/);
+        if (match) {
+          lastNumber = parseInt(match[0], 10);
+        }
+      }
+
+      const newNumber = lastNumber + 1;
+      const newUniqueId = `WICChanel${newNumber.toString().padStart(2, '0')}`;
+
+      this.uniqueId = newUniqueId;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
   }
 });
 
-ChanelPartnerSchema.pre("save", async function (next) {
-    if (this.isNew) {
-      try {
-        const scenarioNumber =
-          (await mongoose.models.Channel.countDocuments()) + 1;
-        this.uniqueId = `WIC Chanel0${scenarioNumber}`;
-        next();
-      } catch (error) {
-        next(error);
-      }
-    } else {
-      next();
-    }
-  });
-  const Chanel = mongoose.model("Chanel", ChanelPartnerSchema);
-  module.exports = Chanel;
+// Post-save middleware to send an email
+ChannelPartnerSchema.post('save', async function (doc, next) {
+  try {
+    await sendPartnerEmail(doc); // Call the email sending function
+    next();
+  } catch (error) {
+    console.error('Error sending email:', error);
+    next(error);
+  }
+});
+
+const ChannelPartner = mongoose.model('ChannelPartner', ChannelPartnerSchema);
+
+module.exports = ChannelPartner;

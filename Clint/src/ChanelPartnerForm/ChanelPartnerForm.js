@@ -2,41 +2,48 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Chanel.css';
 import Nav from './Nav';
+import ConfirmationModal from '../Confirmation/ConfirmationModal';
 
 const ChanelPartnerForm = () => {
   const [formData, setFormData] = useState({
-    customerfirstName: '',
+    customerFirstName: '',
     customerSecondName: '',
     customerEmail: '',
     gender: '',
-    Referedby: '',  // This should be capital 'R'
     phoneNumber: '',
+    referredBy: '',
   });
   
-
-  const [responseMessage, setResponseMessage] = useState('');
+  const [error, setError] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false); 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  
+    console.log('Form Data: ', formData);
+  
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/chanelpartner`, formData);
-      setResponseMessage('Registration successful!');
-    } catch (error) {
-      if (error.response) {
-        // Server responded with a status other than 2xx
-        console.error('Error response data:', error.response.data);
-        console.error('Error status:', error.response.status);
-        setResponseMessage(`Failed to register: ${error.response.data.message || 'Please try again.'}`);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/channelpartner`, formData);
+      setError('');
+    } catch (err) {
+      console.error("Error response from server: ", err);
+      if (err.response && err.response.status === 400) {
+        setError(err.response.data.error);
       } else {
-        setResponseMessage('Failed to register. Please try again.');
-        console.error('Error sending request:', error);
+        setError('Error creating Channel Partner');
       }
     }
   };
-  
+  const handleSubmit1 = (e) => {
+    e.preventDefault();
+    setShowConfirm(true);
+  };
 
   return (
     <div>
@@ -59,87 +66,80 @@ const ChanelPartnerForm = () => {
 
             <div className="formdiv">
               <div className="formfilldiv">
-                <form onSubmit={handleSubmit}>
-                  <div>
-                    <input
-                      type="text"
-                      id="customerfirstName"
-                      name="customerfirstName"
-                      className="filldiv"
-                      value={formData.customerfirstName}
-                      onChange={handleChange}
-                      placeholder="Enter Your First Name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      id="customerSecondName"
-                      name="customerSecondName"
-                      className="filldiv"
-                      value={formData.customerSecondName}
-                      onChange={handleChange}
-                      placeholder="Enter Your Last Name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="email"
-                      id="customerEmail"
-                      name="customerEmail"
-                      className="filldiv"
-                      value={formData.customerEmail}
-                      onChange={handleChange}
-                      placeholder="Enter Your Email"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="number"
-                      id="phoneNumber"
-                      name="phoneNumber"
-                      className="filldiv"
-                      placeholder="Enter your Contact Number"
-                      value={formData.phoneNumber}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      id="Referedby"
-                      name="Referedby"
-                      className="filldiv"
-                      placeholder="Referred By"
-                      value={formData.Referedby} // lowercase `referedby`
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <select
-                      id="gender"
-                      name="gender"
-                      className="filldiv"
-                      value={formData.gender}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="" disabled>Select Gender</option>
-                      <option key="male" value="Male">Male</option>
-                      <option key="female" value="Female">Female</option>
-                      <option key="other" value="Other">Other</option>
-                    </select>
-                  </div>
-                  <div className="butdiv">
+              <form onSubmit={handleSubmit1}>
+        <div>
+          <input
+            type="text"
+            name="customerFirstName"
+            className="filldiv"
+            placeholder='Enter Your First Name'
+            value={formData.customerFirstName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <input
+            type="text"
+            name="customerSecondName"
+            className="filldiv"            
+            placeholder='Enter Your Last Name'
+            value={formData.customerSecondName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <input
+            type="email"
+            name="customerEmail"
+            className="filldiv"            
+            placeholder='Enter Your Email'
+            value={formData.customerEmail}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className="filldiv"
+            required
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <input
+            type="text"
+            name="phoneNumber"
+            placeholder='Enter Your Phone Number'
+            className="filldiv"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <input
+            type="text"
+            name="referredBy"
+            className="filldiv"            
+            placeholder='Refered By'
+            value={formData.referredBy}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="butdiv">
                     <button className="but2" type="submit">SUBMIT</button>
+                    <ConfirmationModal show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => {  setShowConfirm(false);  handleSubmit(); }} message="Are you sure you want to Submit this Expense" />
                   </div>
-                </form>
-                {responseMessage && <p className="responseMessage">{responseMessage}</p>}
+      </form>
               </div>
             </div>
           </div>

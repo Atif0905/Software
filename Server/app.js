@@ -18,7 +18,7 @@ const Post = require('./Models/CreatePost')
 const Blog = require('./Models/Createblog');
 const Installment = require('./Models/Duedate');
 const Expense = require('./Models/Expense')
-const ChanelPartner = require('./Models/ChanelPartner'); 
+const ChannelPartner = require('./Models/ChanelPartner');
 
 const uploadProjects = multer({ dest: 'uploads/' });
 
@@ -1173,12 +1173,48 @@ app.delete('/expenses/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete expense record' });
   }
 });
-app.post('/chanelpartner', async (req, res) => {
+app.post('/channelpartner', async (req, res) => {
   try {
-    const newChanelPartner = new ChanelPartner(req.body);
-    const savedChanelPartner = await newChanelPartner.save();
-    res.status(201).json(savedChanelPartner);
+    const { customerFirstName, customerSecondName, customerEmail, gender, phoneNumber, referredBy } = req.body;
+
+    // Debugging: Log incoming data
+    console.log(req.body);
+
+    // Create a new Channel Partner entry
+    const newChannelPartner = new ChannelPartner({
+      customerFirstName,
+      customerSecondName,
+      customerEmail,
+      gender,
+      phoneNumber,
+      referredBy,
+    });
+
+    // Save the new Channel Partner to the database
+    const savedChannelPartner = await newChannelPartner.save();
+
+    // Respond with the saved data
+    res.status(201).json(savedChannelPartner);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    // Log error to the console for debugging
+    console.error("Error creating Channel Partner: ", error);
+
+    // Check for duplicate email or unique constraint violation
+    if (error.code === 11000) {
+      res.status(400).json({ error: 'Email or Unique ID already exists' });
+    } else {
+      res.status(500).json({ error: 'Error creating Channel Partner' });
+    }
+  }
+});
+
+
+// Get all ChannelPartners
+app.get('/api/channelpartner', async (req, res) => {
+  try {
+    const channelPartners = await ChannelPartner.find();
+    res.status(200).json(channelPartners);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching Channel Partners' });
   }
 });
