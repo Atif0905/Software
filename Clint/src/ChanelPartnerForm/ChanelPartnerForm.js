@@ -53,7 +53,7 @@ const ChanelPartnerForm = () => {
         <h2 className="head2">Building Success Together - Become Our Channel Partner</h2>
       </div>
 
-      <div className="back">
+      <div className="back1">
         <div className="container">
           <div className="formcontainer">
             <div className="formdiv">
