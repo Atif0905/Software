@@ -1199,7 +1199,7 @@ app.post('/channelpartner', async (req, res) => {
 
 
 // Get all ChannelPartners
-app.get('/api/channelpartner', async (req, res) => {
+app.get('/channelpartner', async (req, res) => {
   try {
     const channelPartners = await ChannelPartner.find();
     res.status(200).json(channelPartners);
