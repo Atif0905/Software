@@ -137,7 +137,7 @@ const ChanelPartnerForm = () => {
         </div>
         <div className="butdiv">
                     <button className="but2" type="submit">SUBMIT</button>
-                    <ConfirmationModal show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => {  setShowConfirm(false);  handleSubmit(); }} message="Are you sure you want to Submit this Expense" />
+                    <ConfirmationModal show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => {  setShowConfirm(false);  handleSubmit(); }} message="Are you sure you want to Submit this form" />
                   </div>
       </form>
               </div>
