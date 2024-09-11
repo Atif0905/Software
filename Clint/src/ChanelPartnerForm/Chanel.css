@@ -174,7 +174,7 @@ nav .menu span {
   grid-template-columns: 0.75fr 1.25fr;
 }
 
-.back{
+.back1{
     background-image: url('../../public/backimg.png');
     background-size: cover;
     background-repeat: no-repeat;

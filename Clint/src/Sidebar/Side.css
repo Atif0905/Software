@@ -1,0 +1,63 @@
+.newside{
+    height: 100%;
+    background: linear-gradient(180deg, #5651AB -26.59%, #232145 129.35%);
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 16%;
+    background-size: contain;
+    background-attachment: fixed ;
+    background-position: center;
+    position: fixed;
+    z-index: 2;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+.Sidelink{
+    font-family: Kanit;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 29.9px;
+    text-align: left;
+    color: #FFFFFF;    
+    padding-left: 40px;    
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.Sidelink:hover{
+    width: 100%;
+    background-color: white;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    color: black;
+    margin-left: 20px;
+    padding-left: 20px;
+}
+.sidelogo{
+    width: 177px;
+height: 117px;
+}
+.sabove{
+    width: 50%;
+height: 48px;
+position: sticky;
+background-color: white;
+margin-left: 20px;
+border-bottom-left-radius: 20px;
+border-bottom-right-radius: 20px;
+padding: 10px;
+display: flex;
+justify-content: space-between;
+}
+.center1{
+    display: flex;
+justify-content: center;
+}
+.userface{
+    width: 20px;
+height: 20px;
+}
+.logouticon{
+    width: 25px;
+    height: 25px;
+}

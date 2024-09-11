@@ -98,9 +98,6 @@ const AdminUser = () => {
         />
         <input placeholder="Limit" value={limit} onChange={e => setLimit(e.target.value)} />
         <button onClick={changeLimit} className="setbutton">Set Limit</button>
-        <button onClick={logOut} className="btn btn-primary">
-          Log Out
-        </button>
       </div>
     </div>
   );
