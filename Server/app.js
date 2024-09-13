@@ -1173,37 +1173,38 @@ app.delete('/expenses/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete expense record' });
   }
 });
-// app.post('/channelpartner', async (req, res) => {
-//   try {
-//     const { customerFirstName, customerSecondName, customerEmail, gender, phoneNumber, referredBy } = req.body;
-//     console.log(req.body);
-//     const newChannelPartner = new ChannelPartner({
-//       customerFirstName,
-//       customerSecondName,
-//       customerEmail,
-//       gender,
-//       phoneNumber,
-//       referredBy,
-//     });
-//     const savedChannelPartner = await newChannelPartner.save();
-//     res.status(201).json(savedChannelPartner);
-//   } catch (error) {
-//     console.error("Error creating Channel Partner: ", error);
-//     if (error.code === 11000) {
-//       res.status(400).json({ error: 'Email or Unique ID already exists' });
-//     } else {
-//       res.status(500).json({ error: 'Error creating Channel Partner' });
-//     }
-//   }
-// });
+app.post('/channelpartner', async (req, res) => {
+  try {
+    const { customerFirstName, customerSecondName, customerEmail, gender, phoneNumber, referredBy } = req.body;
+    console.log(req.body);
+    const newChannelPartner = new ChannelPartner({
+      customerFirstName,
+      customerSecondName,
+      customerEmail,
+      gender,
+      phoneNumber,
+      referredBy,
+    });
+    const savedChannelPartner = await newChannelPartner.save();
+    res.status(201).json(savedChannelPartner);
+  } catch (error) {
+    console.error("Error creating Channel Partner: ", error);
+    if (error.code === 11000) {
+      res.status(400).json({ error: 'Email or Unique ID already exists' });
+    } else {
+      res.status(500).json({ error: 'Error creating Channel Partner' });
+    }
+  }
+});
 
 
-// // Get all ChannelPartners
-// app.get('/channelpartner', async (req, res) => {
-//   try {
-//     const channelPartners = await ChannelPartner.find();
-//     res.status(200).json(channelPartners);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error fetching Channel Partners' });
-//   }
-// });
+// Get all ChannelPartners
+app.get('/channelpartner', async (req, res) => {
+  try {
+    const channelPartners = await ChannelPartner.find();
+    res.status(200).json(channelPartners);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching Channel Partners' });
+  }
+});
+    
