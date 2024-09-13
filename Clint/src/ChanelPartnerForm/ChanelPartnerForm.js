@@ -29,7 +29,7 @@ const ChanelPartnerForm = () => {
     console.log('Form Data: ', formData);
   
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/channelpartner`, formData);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/channelpartnerwic`, formData);
       setError('');
     } catch (err) {
       console.error("Error response from server: ", err);
