@@ -97,7 +97,7 @@ const Receivedpayments = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+         const response = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
         const customersWithDetails = await Promise.all(
           response.data.map(async (customer) => {
             const projectName = await fetchName("getProject", customer.project);
@@ -155,12 +155,12 @@ const Receivedpayments = () => {
                   const installmentResponse = await axios.get(
                     `${process.env.REACT_APP_API_URL}/installmentDetails/${installment._id}`
                   );
+                  console.log(installmentResponse)
                   return {
                     ...installment,
                     amountRs: installmentResponse.data.amountRS,
                   };
                 } catch (error) {
-                  console.error("Error fetching installment details:", error);
                   return installment;
                 }
               })
@@ -168,6 +168,7 @@ const Receivedpayments = () => {
             return { ...plan, installments: modifiedInstallments };
           });
           const filteredPlans = await Promise.all(modifiedPlans);
+          console.log(filteredPlans)
           setPaymentPlans(filteredPlans);
         } else {
           console.error(
@@ -189,7 +190,7 @@ const Receivedpayments = () => {
     }
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/viewcustomer/${customerId}`
+        `${process.env.REACT_APP_API_URL}/customer/${customerId}`
       );
       const customerDetails = response.data;
       const unitDetails = await fetchUnitDetails(
@@ -280,7 +281,6 @@ const Receivedpayments = () => {
         const unitData = response.data.data;
         return unitData;
       } catch (error) {
-        console.error("Error fetching unit details:", error);
         return null;
       }
     };
@@ -315,13 +315,13 @@ const Receivedpayments = () => {
       <h4 className="Headtext">Receive Payment from Customer</h4>
       <div className="d-flex">
         <form onSubmit={handleSearch}>
-          <div className="col-8">
+          <div className="col-9">
             <div className="whiteback">
               <label className="mt-3">Customer ID</label>
               <input className="form-input-field" type="text" placeholder="Enter Customer ID" value={customerId.toUpperCase()} onChange={(e) => setCustomerId(e.target.value)}/>
-              <button className="addbutton mt-3" type="submit">
-            Search
-          </button>
+              <div className="center"><button className="addbutton mt-3" type="submit">Search
+              </button></div>
+            
             </div>
           </div>
         </form>
@@ -444,7 +444,7 @@ const Receivedpayments = () => {
             </div>
             <div className="col-8 mt-4">
               <div className="whiteback">
-                <h2 className="head">Total Due Till date : {totalDue}</h2>
+                <h2 className="head1">Total Due Till date : {totalDue}</h2>
                 <h4 className="Headtext1">Payment Plan Installments</h4>
                 <table>
                   <thead>

@@ -39,7 +39,7 @@ const Editcustomerdetails = () => {
     useEffect(() => {
         const fetchCustomerData = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
                 const customers = response.data; 
                 const matchedCustomer = customers.find(cust => cust._id === _id);
                 if (matchedCustomer) {
@@ -75,12 +75,11 @@ const Editcustomerdetails = () => {
         });
     
         try {
-            const response = await axios.put(`${process.env.REACT_APP_API_URL}/editCustomer/${_id}`, updatedCustomerNA);
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/customer/${_id}`, updatedCustomerNA);
             console.log('Customer updated:', response.data);
             setUpdateStatus('success');
-            // Assuming the response contains the updated customer object
             const updatedCustomer = response.data;
-            setCustomer(updatedCustomer); // Update the customer state with the updated details
+            setCustomer(updatedCustomer);
         } catch (error) {
             console.error('Error updating customer:', error);
             setUpdateStatus('error');

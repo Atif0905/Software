@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { fetchProjects, fetchCustomers, fetchPaymentDetails } from '../../../services/customerService'; // Import the services
 import '../AdminDashboard.css';
-import { FaMoneyCheck } from "react-icons/fa6";
-import Loader from "../../../Confirmation/Loader";
+import { BsArrowDownRightCircleFill } from "react-icons/bs";
 import PasswordPrompt from "../../../Accountscomponent/PasswordPrompt";
-
+import Loader from '../../../Confirmation/Loader'
+import Copyright from "../../../Confirmation/Copyright";
 const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => {
   const [projects, setProjects] = useState(projectsData || []);
   const [customers, setCustomers] = useState(customersData || []);
@@ -84,49 +84,42 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
     }
     setShowPasswordPrompt(null);
   };
-
   return (
-    <div className="admin-dashboard">
-      {loading ? (
-        <Loader />
+    <div className="">
+       {loading ? (
+        <Loader/>
       ) : (
-        <div className="container">
-          <div className="flexy">
-            <div className="paymentmaindiv">
-              <div className="coloureddiv1">
-                <h3 className="colouredtext">Total Payment</h3>
-                <div className="d-flex justify-content-between">
-                  <p className="colouredtext1" onClick={() => toggleVisibility('totalPrice')}>
-                    {isVisible.totalPrice ? calculateTotalPriceOfAllUnits : '********'}
-                  </p>
-                  <h6 className="react-icon-red"><FaMoneyCheck /></h6>
-                </div>
-              </div>
-            </div>
-            <div className="paymentmaindiv">
-              <div className="coloureddiv1">
-                <h3 className="colouredtext">Received Payment</h3>
-                <div className="d-flex justify-content-between">
-                  <p className="colouredtext1" onClick={() => toggleVisibility('totalReceivedPayment')}>
-                    {isVisible.totalReceivedPayment ? calculateTotalAmountReceived : '********'}
-                  </p>
-                  <h6 className="react-icon-red"><FaMoneyCheck /></h6>
-                </div>
-              </div>
-            </div>
-            <div className="paymentmaindiv">
-              <div className="coloureddiv1">
-                <h3 className="colouredtext">Due Payment</h3>
-                <div className="d-flex justify-content-between">
-                  <p className="colouredtext1" onClick={() => toggleVisibility('duePayment')}>
-                    {isVisible.duePayment ? calculateDuePayment : '********'}
-                  </p>
-                  <h6 className="react-icon-red"><FaMoneyCheck /></h6>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="upperconatiner">
+      <div className="paymentdiv">
+        <h3 className="text-center mt-3">PAYMENT </h3>
+        <div className="row">
+        <div className="col-1 mt-3">
+        <div className="circle"><div className="paymentcircle1"><div className="paymentcircle"></div></div></div>
+        <div className="circle"><div className="paymentcircle1"><div className="paymentcircle"></div></div></div>
+        <div className="circle"><div className="paymentcircle1"><div className="paymentcircle"></div></div></div>
         </div>
+        <div className="col-11">
+        <div className="payment-box  totalpaymentdiv">
+      <h6 className="paymenttext">Total Payment</h6>
+      <p className="colouredtext1" onClick={() => toggleVisibility('totalPrice')}>{isVisible.totalPrice ? calculateTotalPriceOfAllUnits : '***********'}</p>
+      <BsArrowDownRightCircleFill className="arrowicon1 arrowicon" onClick={() => toggleVisibility('totalPrice')} />
+      </div>
+        <div className=" payment-box  receivepaymentdiv">
+      <h6 className="paymenttext">Received Payment</h6>
+      <p className="colouredtext1" onClick={() => toggleVisibility('totalReceivedPayment')}>{isVisible.totalReceivedPayment ? calculateTotalAmountReceived : '***********'}</p>
+      <BsArrowDownRightCircleFill className="arrowicon2 arrowicon" onClick={() => toggleVisibility('totalReceivedPayment')} />
+      </div>
+      <div className=" payment-box duepaymentdiv">
+      <h3 className="paymenttext">Due Payment</h3>
+      <p className="colouredtext1" onClick={() => toggleVisibility('duePayment')}>{isVisible.duePayment ? calculateDuePayment : '***********'}</p>
+      <BsArrowDownRightCircleFill className="arrowicon3 arrowicon" onClick={() => toggleVisibility('duePayment')} />
+      </div>
+
+        </div>
+        </div>
+      </div>
+      <div></div>
+      </div>
       )}
       {showPasswordPrompt && (
         <PasswordPrompt
@@ -134,6 +127,7 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
           onClose={() => setShowPasswordPrompt(null)}
         />
       )}
+
     </div>
   );
 };

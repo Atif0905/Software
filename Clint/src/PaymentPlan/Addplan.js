@@ -40,7 +40,7 @@ const AddPlan = () => {
       console.error('Error: All installments must have amountRS and daysFromBooking');
       return;
     }
-    axios.post(`${process.env.REACT_APP_API_URL}/createPaymentPlan`, {
+    axios.post(`${process.env.REACT_APP_API_URL}/PaymentPlans`, {
       type: selectedOption,
       planName: planName,
       numInstallments: numInstallments,
@@ -62,9 +62,12 @@ const AddPlan = () => {
   };
   return (
     <div className='main-content'>
+      <div className='row'>
+      <div className='col-3'></div>
       <div className='col-5'>
-        <h4 className='Headtext'>Add a New Payment Plan</h4>
-        <div className='whiteback'>
+        <div className='formback'>
+        <h4 className='formhead'>Add a New Payment Plan</h4>
+        <div className='p-3'>
           <form onSubmit={handleSubmit1}>
             <label>Choose an option:</label>
             <select className="select-buttons ps-1" value={selectedOption} onChange={handleSelectChange}>
@@ -88,7 +91,7 @@ const AddPlan = () => {
                 </div>
               ))}
             </div>
-            <button type="submit" className="btn btn-primary mt-3">Submit</button>
+            <div className='center'><button type="submit" className="addbutton mt-3">SUBMIT</button></div>
             <ConfirmationModal
             show={showConfirm}
             onClose={() => setShowConfirm(false)}
@@ -100,6 +103,8 @@ const AddPlan = () => {
           </form>
         </div>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

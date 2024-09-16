@@ -8,6 +8,7 @@ const Viewplan = () => {
     const fetchPaymentPlans = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
+        console.log(response)
         setPaymentPlans(response.data.paymentPlans);
         setLoading(false);
       } catch (error) {
@@ -21,57 +22,45 @@ const Viewplan = () => {
     setSelectedPlan(plan);
   };
   return (
-    <div className='main-content d-flex justify-content-between'>
-      <div className='col-5'>
-        <h4 className='Headtext'>Payment Plans</h4>
-        <div className='whiteback'>
-          <table>
-            <thead>
-              <tr>
+    <div className='main-content '>
+      <div className='col-4 offset-3 formback' >
+        <h4 className='formhead'>Payment Plans</h4>
+        <div className='formback'>
+              <div className='formtablehead d-flex justify-content-between'>
                 <th>Id</th>
                 <th>Name</th>
                 <th>View Details</th>
-              </tr>
-            </thead>
-            <tbody>
+                </div>
               {paymentPlans.map((plan, index) => (
                 <React.Fragment key={index}>
-                  <tr>
+                  <div className='formtabletext d-flex justify-content-between'>
                     <td>{index + 1}</td> 
                     <td>{plan.planName}</td>
                     <td>
                       <a className='view' onClick={() => handleViewDetails(plan)}>View Details</a>
                     </td>
-                  </tr>
+                  </div>
                 </React.Fragment>
               ))}
-            </tbody>
-          </table>
         </div>
       </div>
-      <div className='col-6'>
+      <div className=' mt-5'>
   {selectedPlan && (
-    <div>
-    <h4 className='Headtext'>Installment Details</h4>
-    <div className='whiteback'>
-      <table>
-        <thead>
-          <tr>
+    <div className='formback '>
+    <h4 className='formhead'>Installment Details</h4>
+    <div className='formback'>
+          <div className='formtablehead d-flex justify-content-between'>
             <th>Installment No:</th>
             <th>Days from booking:</th>
-            <th>Amount:</th>
-          </tr>
-        </thead>
-        <tbody>
+            <th>Percentage:</th>
+          </div>
           {selectedPlan.installments.map((installmentObj, index) => (
-            <tr key={index}>
+            <div className='formtabletext d-flex justify-content-between' key={index}>
               <td>{installmentObj.installment}</td>
               <td>{installmentObj.daysFromBooking}</td>
               <td>{installmentObj.amountRS}</td>
-            </tr>
+            </div>
           ))}
-        </tbody>
-      </table>
     </div>
     </div>
   )}

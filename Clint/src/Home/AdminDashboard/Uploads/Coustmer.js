@@ -7,51 +7,7 @@ import { addDays } from 'date-fns';
 import 'react-date-range/dist/styles.css'; 
 import 'react-date-range/dist/theme/default.css'; 
 const AddCustomerForm = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    title: '',
-    fatherOrHusbandName: '',
-    address: '',
-    aadharNumber: '',
-    panNumber: '',
-    mobileNumber: '',
-    income: '', 
-    email: '',
-    propertyType: '',
-    selectedProjectId: '',
-    selectedBlockId: '',
-    selectedUnitId: '',
-    discount: '',
-    paymentPlan: '',
-    bookingDate: '',
-    bookingType: '',
-    name2: '',
-    fatherOrHusbandName2: '',
-    address2: '',
-    aadharNumber2: '',
-    panNumber2 : '',
-    mobileNumber2: '',
-    email2: '',
-    name3: '',
-    fatherOrHusbandName3: '',
-    address3: '',
-    aadharNumber3: '',
-    panNumber3: '',
-    mobileNumber3: '',
-    email3: '',
-    EmployeeName: '',
-    Teamleadname: '',
-    permanentaddress: '',
-    CreatedBy: '',
-    DOB: '',
-    DOB2: '',
-    DOB3: '',
-    AgreementDate: '',
-    AllotmentDate: '',
-    TenureStartDate: '',
-    TenureEndDate: '',
-    Tenuredays: '',
-    sendEmail: false
+  const [formData, setFormData] = useState({ name: '', title: '', fatherOrHusbandName: '', address: '', aadharNumber: '', panNumber: '', mobileNumber: '', income: '',  email: '', propertyType: '', selectedProjectId: '', selectedBlockId: '', selectedUnitId: '', discount: '', paymentPlan: '', bookingDate: '', bookingType: '', name2: '', fatherOrHusbandName2: '', address2: '', aadharNumber2: '', panNumber2 : '', mobileNumber2: '', email2: '', name3: '', fatherOrHusbandName3: '', address3: '', aadharNumber3: '', panNumber3: '', mobileNumber3: '', email3: '', EmployeeName: '', Teamleadname: '', permanentaddress: '', CreatedBy: '', DOB: '', DOB2: '', DOB3: '', AgreementDate: '', AllotmentDate: '', TenureStartDate: '', TenureEndDate: '', Tenuredays: '', sendEmail: false
   });
   const [projects, setProjects] = useState([]);
   const [showBlocks, setShowBlocks] = useState(false);
@@ -81,6 +37,7 @@ const [showConfirm, setShowConfirm] = useState(false);
     const fetchPaymentPlans = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
+        console.log(response)
         setPaymentPlans(response.data.paymentPlans);
       } catch (error) {
         console.error('Error fetching payment plans:', error);
@@ -208,7 +165,7 @@ const [showConfirm, setShowConfirm] = useState(false);
       };
       const markUnitSoldResponse = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${selectedProject._id}/${selectedBlock._id}/${selectedUnit._id}`);
       if (markUnitSoldResponse.status === 200 && markUnitSoldResponse.data.status === 'ok') {
-        const addCustomerResponse = await axios.post(`${process.env.REACT_APP_API_URL}/addCustomer`, dataToSend);
+        const addCustomerResponse = await axios.post(`${process.env.REACT_APP_API_URL}/customer`, dataToSend);
         if (addCustomerResponse.status === 201) {
           if (formData.sendEmail) {
             const emailData = {
@@ -229,57 +186,7 @@ const [showConfirm, setShowConfirm] = useState(false);
               console.error('Failed to send email:', sendEmailResponse.statusText);
             }
           }
-          setFormData({
-            name: '',
-            title: '',
-            fatherOrHusbandName: '',
-            address: '',
-            aadharNumber: '',
-            panNumber: '',
-            mobileNumber: '',
-            income: '',
-            email: '',
-            propertyType: '',
-            selectedProjectId: '',
-            selectedBlockId: '',
-            selectedUnitId: '',
-            discount: '',
-            paymentPlan: '',
-            bookingType: '',
-            sendEmail: false,
-            plotSize: '',
-            rate: '',
-            idcCharges: '',
-            plcCharges: '',
-            edcPrice: '',
-            totalPrice: '',
-            name2: '',
-            fatherOrHusbandName2: '',
-            address2: '',
-            aadharNumber2: '',
-            panNumber2: '',
-            mobileNumber2: '',
-            email2: '',
-            name3: '',
-            fatherOrHusbandName3: '',
-            address3: '',
-            aadharNumber3: '',
-            panNumber3: '',
-            mobileNumber3: '',
-            email3: '',
-            permanentaddress: '',
-            EmployeeName: '',
-            Teamleadname:'',
-            CreatedBy: '',
-            DOB: '',
-            DOB2: '',
-            DOB3: '',
-            bookingDate: '',
-            AgreementDate: '',
-            AllotmentDate: '',
-            TenureStartDate: '',
-            TenureEndDate: '',
-            Tenuredays: '',
+          setFormData({ name: '', title: '', fatherOrHusbandName: '', address: '', aadharNumber: '', panNumber: '', mobileNumber: '', income: '', email: '', propertyType: '', selectedProjectId: '', selectedBlockId: '', selectedUnitId: '', discount: '', paymentPlan: '', bookingType: '', sendEmail: false, plotSize: '', rate: '', idcCharges: '', plcCharges: '', edcPrice: '', totalPrice: '', name2: '', fatherOrHusbandName2: '', address2: '', aadharNumber2: '', panNumber2: '', mobileNumber2: '', email2: '', name3: '', fatherOrHusbandName3: '', address3: '', aadharNumber3: '', panNumber3: '', mobileNumber3: '', email3: '', permanentaddress: '', EmployeeName: '', Teamleadname:'', CreatedBy: '', DOB: '', DOB2: '', DOB3: '', bookingDate: '', AgreementDate: '', AllotmentDate: '', TenureStartDate: '', TenureEndDate: '', Tenuredays: '',
           });
           await handleEditUnit();
         } else {
@@ -375,12 +282,16 @@ const [showConfirm, setShowConfirm] = useState(false);
   };
   return (
     <div className='main-content back'>
-      <h3 className='Headtext'>Add a New Customer </h3>
+      <div className='formback'>
+      <h3 className='formhead'>Add a New Applicant </h3>
+      <div className='p-3'>
+        
+        <h4 className='customerhead'><span>FIRST APPLICANT</span></h4>
       <form onSubmit={handleSubmit1}>
-        <h4 className='Headtext'>First Customer </h4>
         <div className='gridcontainer'>
         <div className=" grid-item">
-        <select type='text' name='title'  className="input-cal input-base" value={formData.title} onChange={handleInputChange} placeholder='Title' required>
+          <label>Prefix</label>
+        <select type='text' name='title'  className="form-input-field" value={formData.title} onChange={handleInputChange} placeholder='Title' required>
                         <option value="">Select Option</option>
                         <option value="MR.">MR.</option>
                         <option value="MRS.">Mrs.</option>
@@ -388,108 +299,132 @@ const [showConfirm, setShowConfirm] = useState(false);
                     </select>
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder=" Enter Name" type="text" name="name" value={formData.name.toUpperCase()} onChange={handleInputChange} required />
+            <label>Name</label>
+            <input className="form-input-field" id="input" placeholder=" Enter Name" type="text" name="name" value={formData.name.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Father/HusbandName" type="text" name="fatherOrHusbandName" value={formData.fatherOrHusbandName.toUpperCase()} onChange={handleInputChange} required />
+            <label>Father/Husband Name</label>
+            <input className="form-input-field" id="input" placeholder="Enter Father/HusbandName" type="text" name="fatherOrHusbandName" value={formData.fatherOrHusbandName.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Present Address" type="text" name="address" value={formData.address.toUpperCase()} onChange={handleInputChange} required />
+            <label>Present Address</label>
+            <input className="form-input-field" id="input" placeholder="Enter Present Address" type="text" name="address" value={formData.address.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Permanent Address" type="text" name="permanentaddress" value={formData.permanentaddress.toUpperCase()} onChange={handleInputChange} required />
+            <label>Permanent Address  </label>
+            <input className="form-input-field" id="input" placeholder="Enter Permanent Address" type="text" name="permanentaddress" value={formData.permanentaddress.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Aadhar Number" type="number" onWheel={numberInputOnWheelPreventChange} name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} required />
+            <label>Aadhaar Number </label>
+            <input className="form-input-field" id="input" placeholder="Enter Aadhar Number" type="number" onWheel={numberInputOnWheelPreventChange} name="aadharNumber" value={formData.aadharNumber} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Pan Number" type="text" name="panNumber" value={formData.panNumber.toUpperCase()} onChange={handleInputChange} required />
+            <label>PAN Number </label>
+            <input className="form-input-field" id="input" placeholder="Enter Pan Number" type="text" name="panNumber" value={formData.panNumber.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Mobile Number" type="number" onWheel={numberInputOnWheelPreventChange} name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} required />
+            <label>Mobile Number </label>
+            <input className="form-input-field" id="input" placeholder="Enter Mobile Number" type="number" onWheel={numberInputOnWheelPreventChange} name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Income" type="text" name="income" value={formData.income.toUpperCase()} onChange={handleInputChange} required />
+            <label>Income</label>
+            <input className="form-input-field" id="input" placeholder="Enter Income" type="text" name="income" value={formData.income.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Email" type="text" name="email" value={formData.email} onChange={handleInputChange} required />
+            <label>E-mail</label>
+            <input className="form-input-field" id="input" placeholder="Enter Email" type="text" name="email" value={formData.email} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
             <label>Date Of Birth</label>
-            <input className="input-cal input-base" id="input" placeholder="Enter Date Of Birth" type="date" name="DOB" value={formData.DOB} onChange={handleInputChange} required/>
+            <input className="form-input-field" id="input" placeholder="Enter Date Of Birth" type="date" name="DOB" value={formData.DOB} onChange={handleInputChange} required/>
           </div>
         </div>
         <div>
-        <button type="button" className="Addcustomerbutt mt-4" onClick={handleToggleSecondCustomer}>Add Second Customer Details
+        <button type="button" className="Addcustomerbutt mt-4" onClick={handleToggleSecondCustomer}> Second Applicant Details
 </button></div>
 {showSecondCustomer && (
         <>
-        <h3 className='Headtext'> Second Customer </h3>
         <div className='gridcontainer mt-2'>
         <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder=" Enter Name" type="text" name="name2" value={formData.name2.toUpperCase()} onChange={handleInputChange} />
+          <label>Name</label>
+            <input className="form-input-field" id="input" placeholder=" Enter Name" type="text" name="name2" value={formData.name2.toUpperCase()} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Father/HusbandName" type="text" name="fatherOrHusbandName2" value={formData.fatherOrHusbandName2.toUpperCase()} onChange={handleInputChange} />
+            <label>Father/Husband Name</label>
+            <input className="form-input-field" id="input" placeholder="Enter Father/HusbandName" type="text" name="fatherOrHusbandName2" value={formData.fatherOrHusbandName2.toUpperCase()} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Address" type="text" name="address2" value={formData.address2.toUpperCase()} onChange={handleInputChange} />
+            <label>Permanent Address  </label>
+            <input className="form-input-field" id="input" placeholder="Enter Address" type="text" name="address2" value={formData.address2.toUpperCase()} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Aadhar Number" type="number" onWheel={numberInputOnWheelPreventChange} name="aadharNumber2" value={formData.aadharNumber2} onChange={handleInputChange} />
+            <label>Aadhaar Number </label>
+            <input className="form-input-field" id="input" placeholder="Enter Aadhar Number" type="number" onWheel={numberInputOnWheelPreventChange} name="aadharNumber2" value={formData.aadharNumber2} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Pan Number" type="text" name="panNumber2" value={formData.panNumber2} onChange={handleInputChange} />
+            <label>PAN Number </label>
+            <input className="form-input-field" id="input" placeholder="Enter Pan Number" type="text" name="panNumber2" value={formData.panNumber2} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Mobile Number" type="number" onWheel={numberInputOnWheelPreventChange} name="mobileNumber2" value={formData.mobileNumber2} onChange={handleInputChange} />
+            <label>Mobile Number </label>
+            <input className="form-input-field" id="input" placeholder="Enter Mobile Number" type="number" onWheel={numberInputOnWheelPreventChange} name="mobileNumber2" value={formData.mobileNumber2} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Email" type="text" name="email2" value={formData.email2} onChange={handleInputChange} />
+            <label>E-mail</label>
+            <input className="form-input-field" id="input" placeholder="Enter Email" type="text" name="email2" value={formData.email2} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Email" type="date" name="DOB2" value={formData.DOB2} onChange={handleInputChange} required />
+            <label>Date Of Birth </label>
+            <input className="form-input-field" id="input" placeholder="Enter DOB" type="date" name="DOB2" value={formData.DOB2} onChange={handleInputChange} required />
           </div>
             </div>
             </>
             )}
-<button type="button" className="Addcustomerbutt mt-4" onClick={handleToggleThirdCustomer}>Add Third Customer Details
+<button type="button" className="Addcustomerbutt mt-4" onClick={handleToggleThirdCustomer}>Third Applicant Details
 </button>
 {showThirdCustomer && (
   <>
-            <h3 className='Headtext'>Third Customer</h3>
             <div className='gridcontainer mt-2'>
             <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder=" Enter Name" type="text" name="name3" value={formData.name3.toUpperCase()} onChange={handleInputChange} />
+              <label>Name</label>
+            <input className="form-input-field" id="input" placeholder=" Enter Name" type="text" name="name3" value={formData.name3.toUpperCase()} onChange={handleInputChange} />
             </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Father/HusbandName" type="text" name="fatherOrHusbandName3" value={formData.fatherOrHusbandName3.toUpperCase()} onChange={handleInputChange}               />
+            <label>Father/Husband Name</label>
+            <input className="form-input-field" id="input" placeholder="Enter Father/HusbandName" type="text" name="fatherOrHusbandName3" value={formData.fatherOrHusbandName3.toUpperCase()} onChange={handleInputChange}               />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Address" type="text" name="address3" value={formData.address3.toUpperCase()} onChange={handleInputChange}               />
+            <label>Permanent Address  </label>
+            <input className="form-input-field" id="input" placeholder="Enter Address" type="text" name="address3" value={formData.address3.toUpperCase()} onChange={handleInputChange}               />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Aadhar Number" type="number" onWheel={numberInputOnWheelPreventChange} name="aadharNumber3" value={formData.aadharNumber3} onChange={handleInputChange} />
+            <label>Aadhaar Number </label>
+            <input className="form-input-field" id="input" placeholder="Enter Aadhar Number" type="number" onWheel={numberInputOnWheelPreventChange} name="aadharNumber3" value={formData.aadharNumber3} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Pan Number" type="text" name="panNumber3" value={formData.panNumber3} onChange={handleInputChange} />
+            <label>PAN Number </label>
+            <input className="form-input-field" id="input" placeholder="Enter Pan Number" type="text" name="panNumber3" value={formData.panNumber3} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Mobile Number" type="number" onWheel={numberInputOnWheelPreventChange} name="mobileNumber3" value={formData.mobileNumber3} onChange={handleInputChange} />
+            <label>Mobile Number </label>
+            <input className="form-input-field" id="input" placeholder="Enter Mobile Number" type="number" onWheel={numberInputOnWheelPreventChange} name="mobileNumber3" value={formData.mobileNumber3} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Email" type="text" name="email3" value={formData.email3} onChange={handleInputChange} />
+            <label>E-mail</label>
+            <input className="form-input-field" id="input" placeholder="Enter Email" type="text" name="email3" value={formData.email3} onChange={handleInputChange} />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Email" type="date" name="DOB#" value={formData.DOB3} onChange={handleInputChange} required/>
+            <label>Date Of Birth </label>
+            <input className="form-input-field" id="input" placeholder="Enter DOB" type="date" name="DOB#" value={formData.DOB3} onChange={handleInputChange} required/>
           </div>
           </div>
           </>
 )}
-        <h4 className='Headtext mt-5'>Property Details</h4>
+        <h4 className='customerhead mt-3'><span>Property Details</span></h4>
         <div className='gridcontainer'>
           <div className=" grid-item">
-            <select className="input-cal input-base" id="input" name="propertyType" value={formData.propertyType} onChange={handleInputChange} required >
+            <label>Property Type </label>
+            <select className="form-input-field" id="input" name="propertyType" value={formData.propertyType} onChange={handleInputChange} required >
               <option value="">Select Property Type</option>
               <option value="Plot">Plot</option>
               <option value="Shop">Shop</option>
@@ -498,46 +433,51 @@ const [showConfirm, setShowConfirm] = useState(false);
             </select>
           </div>
           <div className=" grid-item">
-            <select className="input-cal input-base" id="input" name="bookingType" value={formData.bookingType} onChange={handleInputChange} required>
+            <label>Booking Type</label>
+            <select className="form-input-field" id="input" name="bookingType" value={formData.bookingType} onChange={handleInputChange} required>
               <option value="">Select Booking Type</option>
               <option value="Booking Confirmed">Booking Confirmed</option>
               <option value="Booking Hold">Booking Hold</option>
             </select>
           </div>
           <div className=" grid-item">
-            <select className="input-cal input-base" id="input" name="CreatedBy" value={formData.CreatedBy} onChange={handleInputChange} required >
+            <label>Created By</label>
+            <select className="form-input-field" id="input" name="CreatedBy" value={formData.CreatedBy} onChange={handleInputChange} required >
               <option value="">Select Created By</option>
               <option value="Vijeta">Vijeta</option>
               <option value="Jyoti">Jyoti</option>
             </select>
           </div>
           <div className=" grid-item">
-            <select className="input-cal input-base" id="input" name="EmployeeName" value={formData.EmployeeName} onChange={handleInputChange} required >
+            <label>Employee Name</label>
+            <select className="form-input-field" id="input" name="EmployeeName" value={formData.EmployeeName} onChange={handleInputChange} required >
               <option value="">Select Employee Name</option>
               <option value="Ankit Tonger">Ankit Tonger</option>
-              <option value="Rohit Khari">Rohit Khari</option>
             </select>
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Teamlead Name " type="text" name="Teamleadname" value={formData.Teamleadname.toUpperCase()} onChange={handleInputChange} required />
+            <label>Team lead Name </label>
+            <input className="form-input-field" id="input" placeholder="Enter Teamlead Name " type="text" name="Teamleadname" value={formData.Teamleadname.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className=" grid-item">
-            <input className="input-cal input-base" id="input" placeholder="Enter Discount " type="text" name="discount" value={formData.discount.toUpperCase()} onChange={handleInputChange} required />
+            <label>Discount</label>
+            <input className="form-input-field" id="input" placeholder="Enter Discount " type="text" name="discount" value={formData.discount.toUpperCase()} onChange={handleInputChange} required />
           </div>
           <div className="relative grid-item">
             <label>Agreement Date</label>
-            <input className="input-cal input-base" id="input" placeholder="Enter Agreement Date" type="date" name="AgreementDate" value={formData.AgreementDate} onChange={handleInputChange} />
+            <input className="form-input-field" id="input" placeholder="Enter Agreement Date" type="date" name="AgreementDate" value={formData.AgreementDate} onChange={handleInputChange} />
           </div>
           <div className="relative grid-item">
             <label>Allotment Date</label>
-            <input className="input-cal input-base" id="input" placeholder="Allotment Date" type="date" name="AllotmentDate" value={formData.AllotmentDate} onChange={handleInputChange} />
+            <input className="form-input-field" id="input" placeholder="Allotment Date" type="date" name="AllotmentDate" value={formData.AllotmentDate} onChange={handleInputChange} />
           </div>
           <div className="relative grid-item">
             <label>Booking Date</label>
-            <input className="input-cal input-base" id="input" placeholder="Booking Date" type="date" name="bookingDate" value={formData.bookingDate} onChange={handleInputChange} />
+            <input className="form-input-field" id="input" placeholder="Booking Date" type="date" name="bookingDate" value={formData.bookingDate} onChange={handleInputChange} />
           </div>
           <div className="grid-item">
-            <select className="input-cal input-base" id="input" name="paymentPlan" value={formData.paymentPlan} onChange={handleInputChange} required >
+            <label>Plan</label>
+            <select className="form-input-field" id="input" name="paymentPlan" value={formData.paymentPlan} onChange={handleInputChange} required >
               <option value="">Select plan</option>
               {paymentPlans.map((plan, index) => (
                 <option key={index} value={plan.planName}>{plan.planName}</option>
@@ -545,48 +485,59 @@ const [showConfirm, setShowConfirm] = useState(false);
             </select>
           </div>
           <div className="grid-item">
-            <select className='input-select' onChange={(e) => handleClickProject(e.target.value)}>
+            <label>Project</label>
+            <select className='form-input-field' onChange={(e) => handleClickProject(e.target.value)}>
               <option value="">Select Project</option>
               {projects.map((project, index) => (
                 <option key={index} value={project._id}>{project.name}</option>
               ))}
             </select>
             {showBlocks && formData.selectedProjectId && (
-              <select className='input-select' onChange={(e) => handleClickBlock(e.target.value)} >
+              <div>
+              <label>Block</label>
+              <select className='form-input-field' onChange={(e) => handleClickBlock(e.target.value)} >
                 <option value="">Select Block</option>
                 {projects.find(project => project._id === formData.selectedProjectId)?.blocks.map((block, index) => (
                   <option key={index} value={block._id}>{block.name}</option>
                 ))}
-              </select>
+              </select></div>
             )}
             {showUnits && selectedBlockUnits.length > 0 && (
-              <select className='input-select' onChange={(e) => handleClickUnit(e.target.value)}>
+              <div>
+                <label>Unit</label>
+              <select className='form-input-field' onChange={(e) => handleClickUnit(e.target.value)}>
                 <option value="">Select Unit</option>
                 {selectedBlockUnits
                   .filter(unit => unit.status !== "sold" && unit.status !== "hold") 
                   .map((unit, index) => (
                     <option key={index} value={unit._id}>{unit.name}</option>
                   ))}
-              </select>
+              </select></div>
             )}
           </div>
           <div className=' grid-item'>
-            <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id="input" placeholder="Enter Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required />
+            <label>Plot Size</label>
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" id="input" placeholder="Enter Plot Size" value={plotSize} onChange={(e) => setPlotSize(e.target.value)} required />
           </div>
           <div className=' grid-item'>
-            <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id="input" placeholder="Enter Base Price" value={editedRate} onChange={(e) => setEditedRate(e.target.value)} required />
+            <label>Base Price</label>
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" id="input" placeholder="Enter Base Price" value={editedRate} onChange={(e) => setEditedRate(e.target.value)} required />
           </div>
           <div className=' grid-item'>
-            <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id="input" placeholder="Enter IDC Charges" value={editedIdcCharges} onChange={(e) => setEditedIdcCharges(e.target.value)} required />
+            <label>IDC Charge</label>
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" id="input" placeholder="Enter IDC Charges" value={editedIdcCharges} onChange={(e) => setEditedIdcCharges(e.target.value)} required />
           </div>
           <div className=' grid-item'>
-            <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id="input" placeholder="Enter Plc Charges" value={editedPlcCharges} onChange={(e) => setEditedPlcCharges(e.target.value)} required />
+            <label>PLC Charge</label>
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" id="input" placeholder="Enter Plc Charges" value={editedPlcCharges} onChange={(e) => setEditedPlcCharges(e.target.value)} required />
           </div>
           <div className=' grid-item'>
-            <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id="input" placeholder="Enter EDC Charges" value={editedEdcPrice} onChange={(e) => setEditedEdcPrice(e.target.value)} required />
+            <label>EDC Charge</label>
+            <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" id="input" placeholder="Enter EDC Charges" value={editedEdcPrice} onChange={(e) => setEditedEdcPrice(e.target.value)} required />
           </div>
           <div className='grid-item'>
-          <input type="number" onWheel={numberInputOnWheelPreventChange} className="input-cal input-base" id='input' placeholder="Total Price" value={editedtotalPrice} onChange={(e) => setEditedTotalPrice(e.target.value)}  />
+            <label>Total Price</label>
+          <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" id='input' placeholder="Total Price" value={editedtotalPrice} onChange={(e) => setEditedTotalPrice(e.target.value)}  />
         </div>
           {/* <div className="container mt-2 grid-item">
             <input
@@ -606,30 +557,26 @@ const [showConfirm, setShowConfirm] = useState(false);
             Send Email
           </div> */}
         </div>
-        <div className="relative mt-3">
-            <label>Tenure Date</label>
-            <DateRangePicker
+        <div className=" mt-3">
+            <h4 className='customerhead'><span>Tenure Date</span></h4>
+            <div className='center'>
+            <DateRangePicker 
         onChange={item => setState([item.selection])}
         showSelectionPreview={true}
         moveRangeOnFirstSelection={false}
-        months={2}
+        months={1}
         ranges={state}
         direction="horizontal"
-        required/>
+        required/></div>
           </div>
-        <div className='mt-4'>
+        <div className='center mt-4'>
           <button type="submit" className="addbutton " >Submit</button>
         </div>
-        <ConfirmationModal
-            show={showConfirm}
-            onClose={() => setShowConfirm(false)}
-            onConfirm={() => {
-              setShowConfirm(false);
-              handleSubmit();
-            }}
-            message="Are you sure you want to add this Customer?"
+        <ConfirmationModal show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => { setShowConfirm(false); handleSubmit(); }} message="Are you sure you want to add this Customer?"
           />
       </form>
+    </div>
+    </div>
     </div>
   );
 };

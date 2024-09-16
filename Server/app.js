@@ -7,7 +7,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Project = require('./Models/UploadProjects');
 const Customer = require('./Models/CastumerUpload')
-const PaymentPlan = require('./Models/PaymentPlan');
 const Payment = require('./Models/PaymentRecive')
 const pdfMakePrinter = require('pdfmake/src/printer');
 const nodemailer = require('nodemailer');
@@ -17,16 +16,25 @@ const fs = require('fs');
 const Post = require('./Models/CreatePost')
 const Blog = require('./Models/Createblog');
 const Installment = require('./Models/Duedate');
-const Expense = require('./Models/Expense')
 const ChanelPartner = require('./Models/ChanelPartner'); 
-
+const expenseRoutes = require('./Router/expenseRoutes'); 
+const paymentPlanRoutes = require('./Router/paymentPlanRoutes'); 
 const uploadProjects = multer({ dest: 'uploads/' });
-
+const installmentRoutes = require('./Router/installmentRoutes');
+const paymentDetailRoutes = require('./Router/paymentDetailRoutes');
+const customerRoutes = require('./Router/customerRoutes');
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(__dirname + '/uploads'));
 const { PORT, MONGODB_URI, JWT_SECRET } = process.env;
 app.use(express.json());
+
+
+app.use('/expenses', expenseRoutes);
+app.use('/paymentPlans', paymentPlanRoutes);
+app.use('/DueDate', installmentRoutes);
+app.use('/paymentDetails', paymentDetailRoutes)
+app.use('/customer', customerRoutes);
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.set("view engine", "ejs");
@@ -716,204 +724,8 @@ app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-app.post("/addCustomer", async (req, res) => {
-  const {
-    title,name,fatherOrHusbandName,address,aadharNumber,panNumber,mobileNumber,income,email,propertyType,selectedProject,selectedBlock,selectedUnit,discount,paymentPlan, bookingDate,bookingType,sendEmail,name2,fatherOrHusbandName2,address2,aadharNumber2,panNumber2,mobileNumber2,email2,name3,fatherOrHusbandName3,address3,aadharNumber3,panNumber3,mobileNumber3,email3,permanentaddress,EmployeeName,Teamleadname,DOB,DOB2,DOB3,AgreementDate,AllotmentDate,CreatedBy,TenureStartDate,TenureEndDate,Tenuredays
-  } = req.body;
-  try {
-    const scenarioNumber = await Customer.countDocuments() + 1;
-    const customerId = `WI0${scenarioNumber}`;
-    const newCustomer = await Customer.create({
-      customerId, title,name,fatherOrHusbandName,address,aadharNumber,panNumber,mobileNumber,income,email,propertyType,project: selectedProject,block: selectedBlock,plotOrUnit: selectedUnit,discount,paymentPlan,bookingDate,bookingType,sendEmail,name2,fatherOrHusbandName2,address2,aadharNumber2,panNumber2,mobileNumber2,email2,name3,fatherOrHusbandName3,address3,aadharNumber3,panNumber3,mobileNumber3,email3,permanentaddress,EmployeeName,Teamleadname,DOB,DOB2,DOB3,AgreementDate,AllotmentDate,CreatedBy,TenureStartDate,TenureEndDate,Tenuredays
-    });
-    res.status(201).json({ status: "ok", data: newCustomer });
-  } catch (error) {
-    console.error("Error adding customer:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.get('/Viewcustomer', async (req, res) => {
-  try {
-    const customers = await Customer.find();
-    res.json(customers);
-  } catch (error) {
-    console.error('Error fetching customers:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-app.get("/viewcustomer/:customerId", async (req, res) => {
-  try {
-    const { customerId } = req.params;
-    const customer = await Customer.findOne({ customerId });
-    if (!customer) {
-      return res.status(404).json({ error: "Customer not found" });
-    }
-    res.json(customer);
-  } catch (error) {
-    console.error("Error fetching customer:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.put("/editCustomer/:customerId", async (req, res) => {
-  const { customerId } = req.params;
 
-  try {
-    const existingCustomer = await Customer.findOne({ _id: customerId });
 
-    if (!existingCustomer) {
-      return res.status(404).json({ error: "Customer not found" });
-    }
-    const {
-      customerId: updatedCustomerId, title, name, fatherOrHusbandName, address, aadharNumber, panNumber, mobileNumber, email, propertyType, discount, paymentPlan, bookingDate, bookingType, sendEmail, name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2, name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, permanentaddress, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, email3
-    } = req.body;
-    Object.assign(existingCustomer, {
-      title, name, fatherOrHusbandName, address, aadharNumber, panNumber, mobileNumber, email, propertyType, discount, paymentPlan, bookingDate, bookingType, sendEmail, name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2, name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, permanentaddress, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, email3
-    });
-    const updatedCustomer = await existingCustomer.save();
-    res.json({ status: "ok", data: updatedCustomer });
-  } catch (error) {
-    console.error("Error updating customer:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.post('/DueDate', async (req, res) => {
-  const { dueDate, installment, customerId, amount } = req.body;
-
-  if (!dueDate || installment === undefined || customerId === undefined || amount === undefined) {
-    return res.status(400).json({ message: 'dueDate, installment, customerId, and amount are required.' });
-  }
-  try {
-    const formattedDueDate = new Date(dueDate).toISOString().split('T')[0];
-    const existingInstallment = await Installment.findOne({
-      dueDate: formattedDueDate, installment, customerId, amount
-    });
-    if (existingInstallment) {
-      return res.status(409).json({ message: 'Duplicate installment entry. This installment already exists.' });
-    }
-    const newInstallment = new Installment({
-      dueDate: formattedDueDate, installment, customerId, amount
-    });
-    await newInstallment.save();
-    res.status(201).json(newInstallment);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating installment', error });
-  }
-});
-app.get('/DueDate', async (req, res) => {
-  try {
-    const installments = await Installment.find();
-    res.json(installments);
-  } catch (error) {
-    res.status(500).json({ message: 'Error retrieving installments', error });
-  }
-});
-app.post('/createPaymentPlan', async (req, res) => {
-  try {
-    const { type, planName, numInstallments, installments } = req.body;
-    if (!type || !planName || !numInstallments || !installments) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
-    const paymentPlan = new PaymentPlan({
-      type: type,
-      planName: planName,
-      numInstallments: numInstallments,
-      installments: installments,
-    });
-    await paymentPlan.save();
-    res.status(201).json({ message: 'Payment plan created successfully', paymentPlan });
-  } catch (error) {
-    console.error('Error creating payment plan:', error);
-    res.status(500).json({ error: 'An error occurred while creating the payment plan' });
-  }
-});
-app.get('/paymentPlans', async (req, res) => {
-  try {
-    const paymentPlans = await PaymentPlan.find();
-    res.status(200).json({ paymentPlans });
-  } catch (error) {
-    console.error('Error fetching payment plans:', error);
-    res.status(500).json({ error: 'An error occurred while fetching payment plans' });
-  }
-});
-app.post("/paymentDetails", async (req, res) => {
-  const { customerId, paymentType, paymentMode, amount, reference, comment, aadharNumber, PaymentDate } = req.body;
-  try {
-    if (!paymentType || !reference || !customerId) {
-      return res.status(400).json({ error: "PaymentType, Reference, and CustomerId are required fields" });
-    }
-    const payment = await Payment.create({
-      customerId,
-      paymentType,
-      paymentMode,
-      amount,
-      reference,
-      comment,
-      aadharNumber,
-      PaymentDate,
-    });
-    res.status(201).json({ status: "ok", message: "Payment details added successfully", data: payment });
-  } catch (error) {
-    console.error("Error adding payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.get("/paymentDetails", async (req, res) => {
-  try {
-    const payments = await Payment.find();
-    res.status(200).json({ status: "ok", data: payments });
-  } catch (error) {
-    console.error("Error fetching payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.get("/paymentDetails/:customerId", async (req, res) => {
-  const { customerId } = req.params;
-  try {
-    const payments = await Payment.find({ customerId });
-    if (payments.length === 0) {
-      return res.status(404).json({ error: "No payments found for the specified Aadhar number" });
-    }
-    res.status(200).json({ status: "ok", data: payments });
-  } catch (error) {
-    console.error("Error fetching payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.put("/paymentDetails/:paymentId", async (req, res) => {
-  const { paymentId } = req.params;
-  const { customerId, paymentMode, amount, reference, comment, PaymentDate } = req.body;
-  try {
-    if ( !reference || !customerId) {
-      return res.status(400).json({ error: " Reference, and CustomerId are required fields" });
-    }
-    const updatedPayment = await Payment.findByIdAndUpdate(
-      paymentId,
-      { customerId, paymentMode, amount, reference, comment, PaymentDate,
-      },
-      { new: true }
-    );
-    if (!updatedPayment) {
-      return res.status(404).json({ error: "Payment not found" });
-    }
-    res.status(200).json({ status: "ok", message: "Payment details updated successfully", data: updatedPayment });
-  } catch (error) {
-    console.error("Error updating payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.delete("/paymentDetails/:paymentId", async (req, res) => {
-  const { paymentId } = req.params;
-  try {
-    const deletedPayment = await Payment.findByIdAndDelete(paymentId);
-    if (!deletedPayment) {
-      return res.status(404).json({ error: "Payment not found" });
-    }
-    res.status(200).json({ status: "ok", message: "Payment details deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
 const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, area, customerfather) => {
   const fonts = {
     Roboto: {
@@ -1121,58 +933,7 @@ app.get('/createblog', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-app.post('/expenses', async (req, res) => {
-  try {
-    const { teamLeadName, expenseSummary, amount, comment, Paydate } = req.body;
-    const newExpense = new Expense({ teamLeadName, expenseSummary, amount, comment, Paydate });
-    await newExpense.save();
-    res.status(201).json(newExpense);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create expense record' });
-  }
-});
-app.get('/expenses', async (req, res) => {
-  try {
-    const expenses = await Expense.find();
-    res.status(200).json(expenses);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch expense records' });
-  }
-});
-app.put('/expenses/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { teamLeadName, expenseSummary, amount, comment, Paydate } = req.body;
-    const updatedExpense = await Expense.findByIdAndUpdate(
-      id,
-      { teamLeadName, expenseSummary, amount, comment, Paydate },
-      { new: true } 
-    );
 
-    if (!updatedExpense) {
-      return res.status(404).json({ error: 'Expense record not found' });
-    }
-
-    res.status(200).json(updatedExpense);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to update expense record' });
-  }
-});
-app.delete('/expenses/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const deletedExpense = await Expense.findByIdAndDelete(id);
-
-    if (!deletedExpense) {
-      return res.status(404).json({ error: 'Expense record not found' });
-    }
-
-    res.status(200).json({ message: 'Expense record deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete expense record' });
-  }
-});
 app.post('/chanelpartner', async (req, res) => {
   try {
     const newChanelPartner = new ChanelPartner(req.body);
