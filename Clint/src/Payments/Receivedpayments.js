@@ -8,6 +8,7 @@ const Receivedpayments = () => {
   const [customerDetails, setCustomerDetails] = useState(null);
   const [error, setError] = useState(null);
   const [yourCustomerId, setYourCustomerId] = useState("");
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [submittedInstallments, setSubmittedInstallments] = useState([]);
   const [matchedPayments, setMatchedPayments] = useState([]);
   const [selectedPlanInstallments, setSelectedPlanInstallments] = useState([]);
@@ -27,17 +28,30 @@ const Receivedpayments = () => {
     reference: "",
     comment: "",
     PaymentDate: "",
+    // amounttoberecieved: "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
     setPayment({ ...payment, [name]: value });
   };
   const handleSubmit = async (e) => {
+    console.log("form submit successfully");
     try {
       if (customerId !== yourCustomerId) {
         setError("Entered Customer ID does not match the searched Customer ID");
         return;
       }
+      
+      console.log("Form Data:", {
+        paymentType: payment.paymentType,
+        paymentMode: payment.paymentMode,
+        amount: payment.amount,
+        reference: payment.reference,
+        comment: payment.comment,
+        customerId: yourCustomerId,
+        PaymentDate: payment.PaymentDate,
+        amounttoberecieved: payment.amounttoberecieved,
+      });
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/paymentDetails`,
         {
@@ -48,6 +62,7 @@ const Receivedpayments = () => {
           comment: payment.comment,
           customerId: yourCustomerId,
           PaymentDate: payment.PaymentDate,
+          // amounttoberecieved: payment.amounttoberecieved,
         }
       );
       setSubmittedInstallments([...submittedInstallments, payment.paymentType]);
@@ -59,6 +74,7 @@ const Receivedpayments = () => {
         reference: "",
         comment: "",
         PaymentDate: "",
+        // amounttoberecieved: "",
       });
       
       setError(null);
@@ -147,6 +163,7 @@ const Receivedpayments = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/paymentPlans`
         );
+        console.log(response)
         if (Array.isArray(response.data.paymentPlans)) {
           const modifiedPlans = response.data.paymentPlans.map(async (plan) => {
             const modifiedInstallments = await Promise.all(
@@ -155,12 +172,12 @@ const Receivedpayments = () => {
                   const installmentResponse = await axios.get(
                     `${process.env.REACT_APP_API_URL}/installmentDetails/${installment._id}`
                   );
-                  console.log(installmentResponse)
                   return {
                     ...installment,
                     amountRs: installmentResponse.data.amountRS,
                   };
                 } catch (error) {
+                  console.error("Error fetching installment details:", error);
                   return installment;
                 }
               })
@@ -168,7 +185,6 @@ const Receivedpayments = () => {
             return { ...plan, installments: modifiedInstallments };
           });
           const filteredPlans = await Promise.all(modifiedPlans);
-          console.log(filteredPlans)
           setPaymentPlans(filteredPlans);
         } else {
           console.error(
@@ -192,17 +208,14 @@ const Receivedpayments = () => {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/customer/${customerId}`
       );
+      console.log("Fetched customer details:", response.data);
       const customerDetails = response.data;
       const unitDetails = await fetchUnitDetails(
         customerDetails.project,
         customerDetails.block,
         customerDetails.plotOrUnit
       );
-      if (!customerDetails) {
-        setError("Customer details not found");
-        setCustomerDetails(null);
-        return;
-      }  
+      console.log(unitDetails)
       if (Array.isArray(unitDetails) && unitDetails.length > 0) {
         const matchedUnit = unitDetails.find(
           (unit) => unit.id === customerDetails.plotOrUnit
@@ -230,19 +243,81 @@ const Receivedpayments = () => {
         setCustomerDetails(customerDetails);
         setUnitData(null);
       }
+  
+      let installmentDueDates = [];
+      if (response.data.paymentPlan) {
+        const matchedPlan = paymentPlans.find(
+          (plan) => plan.planName === response.data.paymentPlan
+        );
+  
+        if (matchedPlan) {
+          setSelectedPlanInstallments(matchedPlan.installments);
+          const totalInstallments = matchedPlan.numInstallments;
+          const tenureDays = customerDetails.Tenuredays;
+          const installmentInterval = tenureDays / totalInstallments;
+  
+          installmentDueDates = matchedPlan.installments.map((installment, index) => {
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + installmentInterval * (index + 1));
+            
+            // Calculate the amount for this specific installment
+            const amount = (parseFloat(installment.amountRS) / 100) * 
+                           (parseFloat(unitDetails.plotSize) * parseFloat(unitDetails.rate));
+            
+            return {
+              installment: installment.installment,
+              dueDate: dueDate.toISOString().split('T')[0],
+              amount: amount,
+            };
+          });
+  
+          const disabledInstallments = matchedPlan.installments
+            .filter((installment) =>
+              submittedInstallments.includes(installment.installment)
+            )
+            .map((installment) => installment.installment);
+          setDisabledInstallments(disabledInstallments);
+        } else {
+          setSelectedPlanInstallments([]);
+        }
+      }
+      setCustomerDetails((prevDetails) => ({
+        ...prevDetails,
+        Duedates: installmentDueDates,
+      }));
+      for (let dueDate of installmentDueDates) {
+        try {
+          await axios.post(`${process.env.REACT_APP_API_URL}/DueDate`, {
+            dueDate: dueDate.dueDate,
+            installment: dueDate.installment,
+            amount: dueDate.amount,
+            customerId: customerId
+          });
+        } catch (error) {
+          if (error.response && error.response.status === 409) {
+            console.log(`Duplicate entry for installment ${dueDate.installment} on ${dueDate.dueDate}`);
+          } else {
+            console.error(`Error storing installment ${dueDate.installment} on ${dueDate.dueDate}:`, error);
+          }
+        }
+      }
+  
       setError(null);
       setShowCustomerDetails(true);
       setSelectedCustomerId(customerId);
+  
     } catch (error) {
       console.error("Error fetching customer details:", error);
-      setError("Customer not found. Please try again.");
+      setError("Customer not found");
       setCustomerDetails(null);
-      setShowCustomerDetails(false);
     }
   };
+  
+  
   const handleViewDetails = (customerDetails) => {
     setSelectedCustomer(customerDetails);
-  };  
+  };
+  
   const handleMakePayment = async () => {
     setIsPaymentClicked(true);
     try {
@@ -281,6 +356,7 @@ const Receivedpayments = () => {
         const unitData = response.data.data;
         return unitData;
       } catch (error) {
+        console.error("Error fetching unit details:", error);
         return null;
       }
     };
@@ -315,13 +391,11 @@ const Receivedpayments = () => {
       <h4 className="Headtext">Receive Payment from Customer</h4>
       <div className="d-flex">
         <form onSubmit={handleSearch}>
-          <div className="col-9">
+          <div className="col-8">
             <div className="whiteback">
               <label className="mt-3">Customer ID</label>
               <input className="form-input-field" type="text" placeholder="Enter Customer ID" value={customerId.toUpperCase()} onChange={(e) => setCustomerId(e.target.value)}/>
-              <div className="center"><button className="addbutton mt-3" type="submit">Search
-              </button></div>
-            
+              <button className="addbutton mt-3" type="submit">   {" "}  Search{" "}  </button>
             </div>
           </div>
         </form>
@@ -428,7 +502,7 @@ const Receivedpayments = () => {
                 <input required className="form-input-field" type="text" placeholder="Enter Your Customer ID" value={yourCustomerId.toUpperCase()} onChange={(e) => setYourCustomerId(e.target.value)} />
                 <label>Comment</label>
                 <input type="text" className="form-input-field" name="comment" placeholder="Enter comment regarding payment" value={payment.comment} onChange={handleChange} />
-                <button type="submit" className="addbutton mt-3">
+                <button type="submit" className="btn btn-primary mt-3">
                   Submit
                 </button>
                 <ConfirmationModal

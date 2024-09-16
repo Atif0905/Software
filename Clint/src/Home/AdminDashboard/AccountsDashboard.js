@@ -5,7 +5,7 @@ import AccountsProjects from './AccountsProjects';
 import Copyright from '../../Confirmation/Copyright';
 const AccountsDashboard = () => (
   <>
-    <AccountsSidebar />
+    {/* <AccountsSidebar /> */}
     <main className='main-content'>
       <div className='mt-5'>
       <AdminUploadProject />
