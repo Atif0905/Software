@@ -92,7 +92,7 @@ const Receivedpayments = () => {
     } catch (error) {
       console.error("Error fetching payment details:", error);
       throw new Error(
-        "Error fetching payment details. Please try again later."
+        // "Error fetching payment details. Please try again later."
       );
     }
   };
@@ -388,21 +388,24 @@ const Receivedpayments = () => {
     };
   return (
     <div className="main-content">
-      <h4 className="Headtext">Receive Payment from Customer</h4>
-      <div className="d-flex">
+      <div className="row ">
+      <div className="col-4">
         <form onSubmit={handleSearch}>
-          <div className="col-8">
-            <div className="whiteback">
-              <label className="mt-3">Customer ID</label>
+          <div className="formback1">
+          <label className="formhead ">Customer ID</label>
+            <div className="p-3">
+              
               <input className="form-input-field" type="text" placeholder="Enter Customer ID" value={customerId.toUpperCase()} onChange={(e) => setCustomerId(e.target.value)}/>
-              <button className="addbutton mt-3" type="submit">   {" "}  Search{" "}  </button>
+              <div className="center"><button className="addbutton mt-3" type="submit">   {" "}  Search{" "}  </button></div>
             </div>
-          </div>
+          </div>          
         </form>
-        {showCustomerDetails && error && <p>{error}</p>}
+        </div>
+        <div className="col-8">
         {showCustomerDetails && customerDetails && (
-          <div className="col-8 whiteback">
-            <div className="table-wrapper">
+          <div className="formback1">
+            <h3 className="formhead">Customer Details</h3>
+            <div className="table-wrapper p-3">
               <table className="fl-table d-flex">
                 <thead>
                   <tr><th>Name</th></tr>
@@ -421,22 +424,31 @@ const Receivedpayments = () => {
                   <tr><td>{customerDetails.mobileNumber}</td></tr>
                 </tbody>
               </table>
+              <div className="center"><button className="addbutton" onClick={handleMakePayment}> Add Payment </button></div>
             </div>
-            <h4 className="Headtext1" onClick={handleMakePayment}> <span className="makepayment">Add Payment</span> </h4>
-          </div>
+            </div>
         )}
+        </div>
       </div>
       {!isPaymentClicked && error && <p>{error}</p>}
       {isPaymentClicked && customerDetails && unitData && (
         <div>
-          <h4 className="Headtext">Post Payment of customers</h4>
+          <div className="formback2 mt-3">
+          <h4 className="formheadcenter">Post Payment of customers</h4>
+            <div className="p-2">
+          
           <h4 className="Headtext1">
             Name: {customerDetails.name.toUpperCase()}, Customer ID:{" "}
             {customerDetails.customerId} , Phone Number :{" "}
             {customerDetails.mobileNumber} , unitPrice : {unitData.totalPrice}
           </h4>
-          <div className="d-flex justify-content-between">
-            <div className="col-3 whiteback mt-4">
+          </div>
+          </div>
+          <div className="row">
+            <div className="col-4 mt-4">
+              <div className="formback1">
+                <h3 className="formhead">New Payment</h3>
+                <div className="p-3">
               <form onSubmit={handleSubmit1}>
                 <label>Select Installments</label>
                 <select
@@ -490,8 +502,6 @@ const Receivedpayments = () => {
                   <option>Online</option>
                   <option>commision Adjustment</option>
                 </select>
-                {/* <label>Amount To be Received</label>
-                <input type="number" className="form-input-field" name="amounttoberecieved" value={payment.amounttoberecieved} onChange={handleChange} /> */}
                 <label>Amount</label>
                 <input type="number" className="form-input-field" name="amount" value={payment.amount} onChange={handleChange} />
                 <label>Cheque/ Receipt/ No.</label>
@@ -502,9 +512,9 @@ const Receivedpayments = () => {
                 <input required className="form-input-field" type="text" placeholder="Enter Your Customer ID" value={yourCustomerId.toUpperCase()} onChange={(e) => setYourCustomerId(e.target.value)} />
                 <label>Comment</label>
                 <input type="text" className="form-input-field" name="comment" placeholder="Enter comment regarding payment" value={payment.comment} onChange={handleChange} />
-                <button type="submit" className="btn btn-primary mt-3">
+                <div className="center"><button type="submit" className="addbutton mt-3">
                   Submit
-                </button>
+                </button></div>
                 <ConfirmationModal
             show={showConfirm}
             onClose={() => setShowConfirm(false)}
@@ -515,22 +525,19 @@ const Receivedpayments = () => {
             message="Are you sure you want to add this block?"
           />
               </form>
+              </div>
+              </div>
             </div>
             <div className="col-8 mt-4">
-              <div className="whiteback">
-                <h2 className="head1">Total Due Till date : {totalDue}</h2>
-                <h4 className="Headtext1">Payment Plan Installments</h4>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Installment</th>
-                      <th>Due Date</th>
-                      <th>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+              <div className="formback1">
+                <h2 className="formhead">Payment Plan Installments</h2>
+                <div className='formtablehead1 d-flex justify-content-between'>
+                <th>Installment</th>
+                <th>Due Date</th>
+                <th>Amount</th>
+                </div>
                     {filteredPayments.map((payment, index) => (
-                      <tr key={index}>
+                      <div className='formtabletext d-flex justify-content-between' key={index}>
                         <td>
                           {payment.paymentType.startsWith("Possession Charges")
                             ? "Possession Charges"
@@ -552,10 +559,8 @@ const Receivedpayments = () => {
 
                         <td>{formatDate(payment.PaymentDate)}</td>
                         <td>{payment.amount}</td>
-                      </tr>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
               </div>
             </div>
           </div>

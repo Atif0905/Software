@@ -60,7 +60,7 @@
   font-weight: 300;
   line-height: 21.86px;
   text-align: left;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 .accountscolouredtext {
   margin-top: 10px;

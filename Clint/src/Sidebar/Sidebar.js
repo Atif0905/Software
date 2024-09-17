@@ -196,7 +196,7 @@ const Sidebar = () => {
             </div>
           </div>
         </div>
-        <div><img src='./sidebarimg.png' className='sidebarimg' alt=''/></div>
+        
     </div>
     <div className='center1'>
     <div className='sabove'>

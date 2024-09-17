@@ -101,17 +101,17 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
         <div className="col-11">
         <div className="payment-box  totalpaymentdiv">
       <h6 className="paymenttext">Total Payment</h6>
-      <p className="colouredtext1" onClick={() => toggleVisibility('totalPrice')}>{isVisible.totalPrice ? calculateTotalPriceOfAllUnits : '***********'}</p>
+      <p className="colouredtext1" >{isVisible.totalPrice ? calculateTotalPriceOfAllUnits : '***********'}</p>
       <BsArrowDownRightCircleFill className="arrowicon1 arrowicon" onClick={() => toggleVisibility('totalPrice')} />
       </div>
         <div className=" payment-box  receivepaymentdiv">
       <h6 className="paymenttext">Received Payment</h6>
-      <p className="colouredtext1" onClick={() => toggleVisibility('totalReceivedPayment')}>{isVisible.totalReceivedPayment ? calculateTotalAmountReceived : '***********'}</p>
+      <p className="colouredtext1" >{isVisible.totalReceivedPayment ? calculateTotalAmountReceived : '***********'}</p>
       <BsArrowDownRightCircleFill className="arrowicon2 arrowicon" onClick={() => toggleVisibility('totalReceivedPayment')} />
       </div>
       <div className=" payment-box duepaymentdiv">
       <h3 className="paymenttext">Due Payment</h3>
-      <p className="colouredtext1" onClick={() => toggleVisibility('duePayment')}>{isVisible.duePayment ? calculateDuePayment : '***********'}</p>
+      <p className="colouredtext1" >{isVisible.duePayment ? calculateDuePayment : '***********'}</p>
       <BsArrowDownRightCircleFill className="arrowicon3 arrowicon" onClick={() => toggleVisibility('duePayment')} />
       </div>
 
