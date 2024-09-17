@@ -1,0 +1,146 @@
+.sidehead{
+  color: white;
+  text-align: center;
+  font-size: 26px;
+  padding-top: 10px;
+}
+.nav1{
+  width: 100%;
+  background: linear-gradient(90deg, #222D32 41.26%, #678998 100%);
+  height: 50px;
+  position: fixed;
+  z-index: 999;
+}
+.nav{
+  width: 100%;
+  box-shadow: 0px 0 0px 0px #00000040;
+  height: 50px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+.sidebar {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 16%;
+  height: 100%;
+ background: linear-gradient(180deg, #222D32 38.44%, #678998 100%);
+  background-size: contain;
+  background-attachment: fixed ;
+  background-position: center;
+  position: fixed;
+  z-index: 2;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.logoo {
+  margin-left: 10%;
+  margin-top: 5%;
+  width:75%;
+  height: 65px;
+  margin-bottom: 10px;
+  object-fit: contain ;
+}
+.sidebar li a {
+  display: block;
+  color: rgb(184,199,206);
+  font-size: 14px;
+  padding: 8px 16px;
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+.mar{
+  margin-right: 8px;
+}
+.sidebar li a:hover {
+  background-color: rgb(30,40,44);
+  color: #fff;
+}
+.dropdown .dropdown-toggle {
+  color: rgb(184,199,206);
+  font-size: 14px;
+  padding: 8px 16px;
+  text-decoration: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.dropdown-toggle:hover{
+  background-color: rgb(30,40,44);
+  color: #fff;
+}
+.dropdown .dropdown-menu {
+  position: relative;
+  list-style-type: none; 
+  padding: 0;
+  margin-top: -10px;
+  opacity: 0;
+  transition: opacity 1.3s ease !important;
+}
+
+.dropdown .dropdown-menu.active {
+  display: block;
+  color: #fff;
+  opacity: 1 !important;
+  z-index: 0;
+}
+
+.dropdown .dropdown-item {
+  font-size: 14px !important;
+  line-height: 0px;
+  text-decoration: none;
+  background-color: rgb(44,59,65);
+}
+.dropdown-item:hover{
+  background-color: rgb(30,40,44);
+  color: #fff;
+}
+
+@media (max-width:1205px) {
+  .sidebar li a {
+    display: block;
+    color: white;
+    font-size: 13px;
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+.dropdown .dropdown-toggle {
+  color: white;
+  font-size: 13px;
+  margin-bottom: 10px;
+  padding: 8px 16px;
+  text-decoration: none;
+  cursor: pointer;
+}
+}
+@media (max-width:992px) {
+  .sidebar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 25%;
+    height: 100vh;
+    background-color: #343434;
+    background-size: contain;
+    background-attachment: fixed;
+    background-position: center;
+    position: fixed;
+    border-right: 2px solid #ADB3CC;
+}
+}
+@media (max-width:480px) {
+  .sidebar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 25%;
+    height: 100%;
+    background-color: #343434;
+    background-size: contain;
+    background-attachment: fixed;
+    background-position: center;
+    position: fixed;
+    border-right: 2px solid #ADB3CC;
+}
+}

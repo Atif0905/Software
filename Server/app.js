@@ -16,6 +16,9 @@ const Blog = require('./Models/Createblog');
 const ChanelPartner = require('./Models/ChanelPartner'); 
 const expenseRoutes = require('./Router/expenseRoutes'); 
 const paymentPlanRoutes = require('./Router/paymentPlanRoutes'); 
+const Installment = require('./Models/Duedate');
+const Expense = require('./Models/Expense')
+const ChannelPartner = require('./Models/ChanelPartner');
 const uploadProjects = multer({ dest: 'uploads/' });
 const installmentRoutes = require('./Router/installmentRoutes');
 const paymentDetailRoutes = require('./Router/paymentDetailRoutes');
@@ -828,11 +831,63 @@ app.get('/createblog', async (req, res) => {
 });
 
 app.post('/chanelpartner', async (req, res) => {
-  try {
-    const newChanelPartner = new ChanelPartner(req.body);
-    const savedChanelPartner = await newChanelPartner.save();
-    res.status(201).json(savedChanelPartner);
+
+    if (!updatedExpense) {
+      return res.status(404).json({ error: 'Expense record not found' });
+    }
+
+    res.status(200).json(updatedExpense);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ error: 'Failed to update expense record' });
   }
 });
+app.delete('/expenses/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const deletedExpense = await Expense.findByIdAndDelete(id);
+
+    if (!deletedExpense) {
+      return res.status(404).json({ error: 'Expense record not found' });
+    }
+
+    res.status(200).json({ message: 'Expense record deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete expense record' });
+  }
+});
+app.post('/channelpartner', async (req, res) => {
+  try {
+    const { customerFirstName, customerSecondName, customerEmail, gender, phoneNumber, referredBy } = req.body;
+    console.log(req.body);
+    const newChannelPartner = new ChannelPartner({
+      customerFirstName,
+      customerSecondName,
+      customerEmail,
+      gender,
+      phoneNumber,
+      referredBy,
+    });
+    const savedChannelPartner = await newChannelPartner.save();
+    res.status(201).json(savedChannelPartner);
+  } catch (error) {
+    console.error("Error creating Channel Partner: ", error);
+    if (error.code === 11000) {
+      res.status(400).json({ error: 'Email or Unique ID already exists' });
+    } else {
+      res.status(500).json({ error: 'Error creating Channel Partner' });
+    }
+  }
+});
+
+
+// Get all ChannelPartners
+app.get('/channelpartner', async (req, res) => {
+  try {
+    const channelPartners = await ChannelPartner.find();
+    res.status(200).json(channelPartners);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching Channel Partners' });
+  }
+});
+    
