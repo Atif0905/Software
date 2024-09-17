@@ -3,6 +3,8 @@ import axios from 'axios';
 import AdminDashboard from "../Home/AdminDashboard/AdminDashboard";
 import AccountsDashboard from "../Home/AdminDashboard/AccountsDashboard";
 import UserDashBoard from "../Home/UserDashboard/UserDashBoard";
+import Sidebar from "../Sidebar/Sidebar";
+import AccountsSidebar from "../Sidebar/AccountsSidebar";
 
 export default function UserDetails() {
   const [userData, setUserData] = useState(null);
@@ -32,10 +34,10 @@ export default function UserDetails() {
 
       switch (data.data?.userType) {
         case "Admin":
-          setDashboard(<AdminDashboard />);
+          setDashboard(<div><Sidebar/><AdminDashboard /></div>);
           break;
         case "Accounts":
-          setDashboard(<AccountsDashboard userData={data.data} />);
+          setDashboard(<div><AccountsSidebar/><AccountsDashboard userData={data.data}/></div> );
           break;
         case "User":
           setDashboard(<UserDashBoard userData={data.data} />);

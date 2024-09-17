@@ -3,7 +3,7 @@ import axios from 'axios';
 const BASE_URL = process.env.REACT_APP_API_URL;
 export const fetchCustomers = async () => {
   try {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
     return response.data;
   } catch (error) {
     throw new Error('Error fetching customers');
@@ -118,7 +118,7 @@ export const getUnitCount = async (projectId, blockId) => {
 };
 export const fetchCustomerDetails = async (customerId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/Viewcustomer`);
+    const response = await axios.get(`${BASE_URL}/customer`);
     return response.data.find(customer => customer._id === customerId);
   } catch (error) {
     console.error("Error fetching customer details:", error);

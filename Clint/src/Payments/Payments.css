@@ -1,4 +1,4 @@
-.head{
+.head1{
     margin-top: 20px;
     margin-bottom: 10px;
     font-size: 24px;    
@@ -10,12 +10,7 @@
     font-weight: normal;
     border: none;
     white-space: nowrap;
-    background-color: rgb(249,249,249);
-}
-.makepayment{
-    color: blue;
-    text-decoration: underline blue;
-    cursor: pointer;
+     background: #5687e170;
 }
 .fl-table td,
 .fl-table th {
@@ -23,10 +18,11 @@
     text-align: left;
     padding: 8px;
     border-bottom: none !important;
+    font-size: 12px;
 }
 .fl-table td {
     border-right: 1px solid #f8f8f8;
-    font-size: 14px;
+    font-size: 12px;
 }
 .butt{
     color: rgb(137, 204, 241);

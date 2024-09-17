@@ -6,9 +6,6 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Project = require('./Models/UploadProjects');
-const Customer = require('./Models/CastumerUpload')
-const PaymentPlan = require('./Models/PaymentPlan');
-const Payment = require('./Models/PaymentRecive')
 const pdfMakePrinter = require('pdfmake/src/printer');
 const nodemailer = require('nodemailer');
 const multer = require('multer');
@@ -16,17 +13,28 @@ const uploadMiddleware = multer({dest: 'uploads/'});
 const fs = require('fs');
 const Post = require('./Models/CreatePost')
 const Blog = require('./Models/Createblog');
+const ChanelPartner = require('./Models/ChanelPartner'); 
+const expenseRoutes = require('./Router/expenseRoutes'); 
+const paymentPlanRoutes = require('./Router/paymentPlanRoutes'); 
 const Installment = require('./Models/Duedate');
 const Expense = require('./Models/Expense')
 const ChannelPartner = require('./Models/ChanelPartner');
-
 const uploadProjects = multer({ dest: 'uploads/' });
-
+const installmentRoutes = require('./Router/installmentRoutes');
+const paymentDetailRoutes = require('./Router/paymentDetailRoutes');
+const customerRoutes = require('./Router/customerRoutes');
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(__dirname + '/uploads'));
 const { PORT, MONGODB_URI, JWT_SECRET } = process.env;
 app.use(express.json());
+
+
+app.use('/expenses', expenseRoutes);
+app.use('/paymentPlans', paymentPlanRoutes);
+app.use('/DueDate', installmentRoutes);
+app.use('/paymentDetails', paymentDetailRoutes)
+app.use('/customer', customerRoutes);
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.set("view engine", "ejs");
@@ -158,28 +166,6 @@ app.get("/paginatedUsers", async (req, res) => {
   results.result = allUser.slice(startIndex, lastIndex);
   res.json(results)
 });
-  // app.post("/uploadProject", async (req, res) => {
-  // const { name, description, totalLand, GST, Bsprate, AccountNo, Bank, IFSC, Payable ,CompanyName, Posessionfinaldate } = req.body;
-  //   try {
-  //     const project = await Project.create({ name,  description, totalLand, GST, AccountNo, Bank, IFSC, Payable ,CompanyName, Bsprate, Posessionfinaldate});
-  //     res.status(201).json({ status: "ok", data: project });
-  //   } catch (error) {
-  //     console.error("Error uploading project:", error);
-  //     res.status(500).json({ error: "Internal server error" });
-  //   }
-  // });
-
-
-
-
-
-
-
-
-
-
-
-
   app.post("/uploadProject", uploadProjects.single('file'), async (req, res) => {
     let {
       name,
@@ -194,15 +180,10 @@ app.get("/paginatedUsers", async (req, res) => {
       CompanyName,
       Posessionfinaldate
     } = req.body;
-  
-    // Check if a file is uploaded
-    if (req.file) {
+      if (req.file) {
       try {
-        // Read and parse the CSV file
         const csvFilePath = req.file.path;
         const fileContent = fs.readFileSync(csvFilePath, 'utf8');
-  
-        // Parse CSV content
         Papa.parse(fileContent, {
           header: true,
           skipEmptyLines: true,
@@ -223,17 +204,13 @@ app.get("/paginatedUsers", async (req, res) => {
             }
           }
         });
-  
-        // Delete the file after processing
         fs.unlinkSync(csvFilePath);
       } catch (error) {
         console.error("Error processing CSV file:", error);
         return res.status(500).json({ error: "Error processing CSV file" });
       }
-    }
-  
+    }  
     try {
-      // Create the project record in the database
       const project = await Project.create({
         name,
         description,
@@ -254,20 +231,6 @@ app.get("/paginatedUsers", async (req, res) => {
       res.status(500).json({ error: "Internal server error" });
     }
   });
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.get("/getAllProjects", async (req, res) => {
   try {
     const projects = await Project.find({});
@@ -347,68 +310,9 @@ app.put("/editProject/:projectId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-// app.post("/addBlock/:projectId", async (req, res) => {
-//   const { projectId } = req.params;
-//   const { name, totalPlotInBlock, plotSize, basicRateOfBlock, idcRateOfBlock, edcRateOfBlock } = req.body;
-//   try {
-//     const project = await Project.findById(projectId);
-//     if (!project) {
-//       return res.status(404).json({ error: "Project not found" });
-//     }
-//     const newBlock = {
-//       name,
-//       totalPlotInBlock,
-//       plotSize,
-//       basicRateOfBlock,
-//       idcRateOfBlock,
-//       edcRateOfBlock,
-//     };
-//     project.blocks.push(newBlock);
-//     await project.save();
-//     res.status(201).json({ status: "ok", data: project });
-//   } catch (error) {
-//     console.error("Error adding block:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-// app.post("/addUnit/:projectId/:blockId", async (req, res) => {
-//   const { projectId, blockId } = req.params;
-//   const { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice,edcPrice } = req.body;
-//   try {
-//     const project = await Project.findById(projectId);
-//     if (!project) {
-//       return res.status(404).json({ error: "Project not found" });
-//     }
-//     const block = project.blocks.id(blockId);
-//     if (!block) {
-//       return res.status(404).json({ error: "Block not found" });
-//     }
-//     const newUnit = {
-//       name,
-//       plotSize,
-//       sizeType,
-//       rate,
-//       idcCharges,
-//       plcCharges,
-//       totalPrice,
-//       edcPrice,
-//       status: 'available', 
-//     };
-//     block.units.push(newUnit);
-//     await project.save();
-//     res.status(201).json({ status: "ok", data: project });
-//   } catch (error) {
-//     console.error("Error adding unit:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
-
 app.post("/addBlock/:projectId", upload.single('file'), async (req, res) => {
   const { projectId } = req.params;
   let { name, totalPlotInBlock, plotSize, basicRateOfBlock, idcRateOfBlock, edcRateOfBlock } = req.body;
-
-  // Check if a CSV file is uploaded
   if (req.file) {
     try {
       const csvFilePath = req.file.path;
@@ -716,204 +620,8 @@ app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-app.post("/addCustomer", async (req, res) => {
-  const {
-    title,name,fatherOrHusbandName,address,aadharNumber,panNumber,mobileNumber,income,email,propertyType,selectedProject,selectedBlock,selectedUnit,discount,paymentPlan, bookingDate,bookingType,sendEmail,name2,fatherOrHusbandName2,address2,aadharNumber2,panNumber2,mobileNumber2,email2,name3,fatherOrHusbandName3,address3,aadharNumber3,panNumber3,mobileNumber3,email3,permanentaddress,EmployeeName,Teamleadname,DOB,DOB2,DOB3,AgreementDate,AllotmentDate,CreatedBy,TenureStartDate,TenureEndDate,Tenuredays
-  } = req.body;
-  try {
-    const scenarioNumber = await Customer.countDocuments() + 1;
-    const customerId = `WI0${scenarioNumber}`;
-    const newCustomer = await Customer.create({
-      customerId, title,name,fatherOrHusbandName,address,aadharNumber,panNumber,mobileNumber,income,email,propertyType,project: selectedProject,block: selectedBlock,plotOrUnit: selectedUnit,discount,paymentPlan,bookingDate,bookingType,sendEmail,name2,fatherOrHusbandName2,address2,aadharNumber2,panNumber2,mobileNumber2,email2,name3,fatherOrHusbandName3,address3,aadharNumber3,panNumber3,mobileNumber3,email3,permanentaddress,EmployeeName,Teamleadname,DOB,DOB2,DOB3,AgreementDate,AllotmentDate,CreatedBy,TenureStartDate,TenureEndDate,Tenuredays
-    });
-    res.status(201).json({ status: "ok", data: newCustomer });
-  } catch (error) {
-    console.error("Error adding customer:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.get('/Viewcustomer', async (req, res) => {
-  try {
-    const customers = await Customer.find();
-    res.json(customers);
-  } catch (error) {
-    console.error('Error fetching customers:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-app.get("/viewcustomer/:customerId", async (req, res) => {
-  try {
-    const { customerId } = req.params;
-    const customer = await Customer.findOne({ customerId });
-    if (!customer) {
-      return res.status(404).json({ error: "Customer not found" });
-    }
-    res.json(customer);
-  } catch (error) {
-    console.error("Error fetching customer:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.put("/editCustomer/:customerId", async (req, res) => {
-  const { customerId } = req.params;
 
-  try {
-    const existingCustomer = await Customer.findOne({ _id: customerId });
 
-    if (!existingCustomer) {
-      return res.status(404).json({ error: "Customer not found" });
-    }
-    const {
-      customerId: updatedCustomerId, title, name, fatherOrHusbandName, address, aadharNumber, panNumber, mobileNumber, email, propertyType, discount, paymentPlan, bookingDate, bookingType, sendEmail, name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2, name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, permanentaddress, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, email3
-    } = req.body;
-    Object.assign(existingCustomer, {
-      title, name, fatherOrHusbandName, address, aadharNumber, panNumber, mobileNumber, email, propertyType, discount, paymentPlan, bookingDate, bookingType, sendEmail, name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2, name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, permanentaddress, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, email3
-    });
-    const updatedCustomer = await existingCustomer.save();
-    res.json({ status: "ok", data: updatedCustomer });
-  } catch (error) {
-    console.error("Error updating customer:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.post('/DueDate', async (req, res) => {
-  const { dueDate, installment, customerId, amount } = req.body;
-
-  if (!dueDate || installment === undefined || customerId === undefined || amount === undefined) {
-    return res.status(400).json({ message: 'dueDate, installment, customerId, and amount are required.' });
-  }
-  try {
-    const formattedDueDate = new Date(dueDate).toISOString().split('T')[0];
-    const existingInstallment = await Installment.findOne({
-      dueDate: formattedDueDate, installment, customerId, amount
-    });
-    if (existingInstallment) {
-      return res.status(409).json({ message: 'Duplicate installment entry. This installment already exists.' });
-    }
-    const newInstallment = new Installment({
-      dueDate: formattedDueDate, installment, customerId, amount
-    });
-    await newInstallment.save();
-    res.status(201).json(newInstallment);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating installment', error });
-  }
-});
-app.get('/DueDate', async (req, res) => {
-  try {
-    const installments = await Installment.find();
-    res.json(installments);
-  } catch (error) {
-    res.status(500).json({ message: 'Error retrieving installments', error });
-  }
-});
-app.post('/createPaymentPlan', async (req, res) => {
-  try {
-    const { type, planName, numInstallments, installments } = req.body;
-    if (!type || !planName || !numInstallments || !installments) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
-    const paymentPlan = new PaymentPlan({
-      type: type,
-      planName: planName,
-      numInstallments: numInstallments,
-      installments: installments,
-    });
-    await paymentPlan.save();
-    res.status(201).json({ message: 'Payment plan created successfully', paymentPlan });
-  } catch (error) {
-    console.error('Error creating payment plan:', error);
-    res.status(500).json({ error: 'An error occurred while creating the payment plan' });
-  }
-});
-app.get('/paymentPlans', async (req, res) => {
-  try {
-    const paymentPlans = await PaymentPlan.find();
-    res.status(200).json({ paymentPlans });
-  } catch (error) {
-    console.error('Error fetching payment plans:', error);
-    res.status(500).json({ error: 'An error occurred while fetching payment plans' });
-  }
-});
-app.post("/paymentDetails", async (req, res) => {
-  const { customerId, paymentType, paymentMode, amount, reference, comment, aadharNumber, PaymentDate } = req.body;
-  try {
-    if (!paymentType || !reference || !customerId) {
-      return res.status(400).json({ error: "PaymentType, Reference, and CustomerId are required fields" });
-    }
-    const payment = await Payment.create({
-      customerId,
-      paymentType,
-      paymentMode,
-      amount,
-      reference,
-      comment,
-      aadharNumber,
-      PaymentDate,
-    });
-    res.status(201).json({ status: "ok", message: "Payment details added successfully", data: payment });
-  } catch (error) {
-    console.error("Error adding payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.get("/paymentDetails", async (req, res) => {
-  try {
-    const payments = await Payment.find();
-    res.status(200).json({ status: "ok", data: payments });
-  } catch (error) {
-    console.error("Error fetching payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.get("/paymentDetails/:customerId", async (req, res) => {
-  const { customerId } = req.params;
-  try {
-    const payments = await Payment.find({ customerId });
-    if (payments.length === 0) {
-      return res.status(404).json({ error: "No payments found for the specified Aadhar number" });
-    }
-    res.status(200).json({ status: "ok", data: payments });
-  } catch (error) {
-    console.error("Error fetching payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.put("/paymentDetails/:paymentId", async (req, res) => {
-  const { paymentId } = req.params;
-  const { customerId, paymentMode, amount, reference, comment, PaymentDate } = req.body;
-  try {
-    if ( !reference || !customerId) {
-      return res.status(400).json({ error: " Reference, and CustomerId are required fields" });
-    }
-    const updatedPayment = await Payment.findByIdAndUpdate(
-      paymentId,
-      { customerId, paymentMode, amount, reference, comment, PaymentDate,
-      },
-      { new: true }
-    );
-    if (!updatedPayment) {
-      return res.status(404).json({ error: "Payment not found" });
-    }
-    res.status(200).json({ status: "ok", message: "Payment details updated successfully", data: updatedPayment });
-  } catch (error) {
-    console.error("Error updating payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.delete("/paymentDetails/:paymentId", async (req, res) => {
-  const { paymentId } = req.params;
-  try {
-    const deletedPayment = await Payment.findByIdAndDelete(paymentId);
-    if (!deletedPayment) {
-      return res.status(404).json({ error: "Payment not found" });
-    }
-    res.status(200).json({ status: "ok", message: "Payment details deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting payment details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
 const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, area, customerfather) => {
   const fonts = {
     Roboto: {
@@ -1121,33 +829,8 @@ app.get('/createblog', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-app.post('/expenses', async (req, res) => {
-  try {
-    const { teamLeadName, expenseSummary, amount, comment, Paydate } = req.body;
-    const newExpense = new Expense({ teamLeadName, expenseSummary, amount, comment, Paydate });
-    await newExpense.save();
-    res.status(201).json(newExpense);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create expense record' });
-  }
-});
-app.get('/expenses', async (req, res) => {
-  try {
-    const expenses = await Expense.find();
-    res.status(200).json(expenses);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch expense records' });
-  }
-});
-app.put('/expenses/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { teamLeadName, expenseSummary, amount, comment, Paydate } = req.body;
-    const updatedExpense = await Expense.findByIdAndUpdate(
-      id,
-      { teamLeadName, expenseSummary, amount, comment, Paydate },
-      { new: true } 
-    );
+
+app.post('/chanelpartner', async (req, res) => {
 
     if (!updatedExpense) {
       return res.status(404).json({ error: 'Expense record not found' });

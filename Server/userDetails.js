@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
-
-const UserDetailsScehma = new mongoose.Schema(
+const UserDetailsSchema = new mongoose.Schema(
   {
     fname: String,
     lname: String,
@@ -9,8 +8,8 @@ const UserDetailsScehma = new mongoose.Schema(
     userType: String,
   },
   {
-    collection: "UserInfo",
+    collection: "UserInfo", // Specifies the collection name in the database
   }
 );
-
-mongoose.model("UserInfo", UserDetailsScehma);
+const User = mongoose.model("UserInfo", UserDetailsSchema);
+module.exports = User;

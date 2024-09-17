@@ -10,16 +10,18 @@ const ConfirmationModal = ({ show, onClose, onConfirm, message }) => {
   if (!show) return null;
 
   return (
+    <div className='confirm'>
     <div className="confirm-modal">
       <div 
         className="confirm-modal-content" 
-        data-aos="zoom-in"  // AOS zoom-in effect
+        data-aos="zoom-in"
       >
         <h3>Confirm</h3>
         <p>{message}</p>
         <button onClick={onConfirm} className='yesbutton'>Yes</button>
         <button onClick={onClose} className='nobutton'>No</button>
       </div>
+    </div>
     </div>
   );
 };

@@ -1,40 +1,68 @@
+
 import React,{useState} from 'react'
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import './Sidebar.css';
-import { MdLogout  } from "react-icons/md";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChalkboardUser, faMoneyBill , faClipboard , faChartBar, faFileInvoice   } from '@fortawesome/free-solid-svg-icons';
+import './Side.css';
+import { FaRegUser } from "react-icons/fa";
+import { MdPayments } from "react-icons/md";
+import { RiSecurePaymentLine } from "react-icons/ri";
+import { TfiUser } from "react-icons/tfi";
 import ConfirmationModal from '../Confirmation/ConfirmationModal';
+import { IoLogOutSharp } from "react-icons/io5";
+import { IoIosArrowDown } from "react-icons/io";
+import { AiOutlineFundProjectionScreen } from "react-icons/ai";
+import { RiDashboard3Line } from "react-icons/ri";
+import { MdOutlinePayments } from "react-icons/md";
 const AccountsSidebar = () => {
-    const [showConfirm, setShowConfirm] = useState(false);
-    const navigate = useNavigate();
-    const logOut = () => {
-        window.localStorage.clear();
-        navigate("/sign-in");
-    };
-  const handleSubmit =() => {
-    
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const handleDropdownToggle = (dropdownId) => {
+       setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
+     };
+  const [showConfirm, setShowConfirm] = useState(false);
+  const navigate = useNavigate();
+  const logOut = () => {
+    window.localStorage.clear();
+    navigate('/sign-in');
+  };
+
+  const handleSubmit = () => {
     setShowConfirm(true);
-  }
+  };
   return (
     <div>
-      <div className='nav1'> <h2 className='sidehead'>Womeki Tech Solutions</h2> </div>
-      <ul className="sidebar">
-        <div className='mt-5'>
-    <li className='Links mt-2'><Link to="/AccountsDashBoard"><FontAwesomeIcon icon={faChalkboardUser} className='mar'/>Dashboard</Link></li>
-    <li className='Links'><Link to="/PaymentPerUnit"><FontAwesomeIcon icon={faFileInvoice} className='mar'/>Payment Per Unit</Link></li>
-    <li className='Links'><Link to="/Stats"><FontAwesomeIcon icon={faChartBar} className='mar'/>Stats</Link></li>
-    <li className='Links'><Link to="/DirectorsReport"><FontAwesomeIcon icon={faClipboard} className='mar'/>Directors Report</Link></li>
-    <li className='Links'><Link to="/ExpenseForm"><FontAwesomeIcon icon={faMoneyBill} className='mar'/>Expenses</Link></li>
-    <li className='Links'><Link to="/Expensedetails"><FontAwesomeIcon icon={faMoneyBill} className='mar'/>Paid Expenses</Link></li>
-    <li className='Links' onClick={handleSubmit}><Link ><MdLogout />Logout</Link></li>
-      <ConfirmationModal  show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => { setShowConfirm(false); logOut(); }}
-        message="Are you sure you want to Logout?"/>
+    <div className='newside'>
+      <div className=''>
+        <img src='./WTSlogo.png' className='sidelogo' alt=''/>
       </div>
-    </ul>
-  </div>
+      <div className=''>
+      <Link to="/AccountsDashBoard"><div className='Sidelink'><RiDashboard3Line  className='svg-icon' />DashBoard</div></Link>
+      <Link to="/PaymentPerUnit"><div className='Sidelink'><FaRegUser  className='svg-icon' />Payment Per Unit</div></Link>
+      <Link to="/Stats"><div className='Sidelink'><FaRegUser  className='svg-icon' />Stats</div></Link>
+      <Link to="/ExpenseForm"><div className='Sidelink'><FaRegUser  className='svg-icon' />Expenses</div></Link>
+      <Link to="/Expensedetails"><div className='Sidelink'><FaRegUser  className='svg-icon' />Paid Expenses</div></Link>
+        <p className='Sidelink'></p>
+        </div>
+        <div><img src='./sidebarimg.png' className='sidebarimg' alt=''/></div>
+    </div>
+    <div className='center1'>
+    <div className='sabove'>
+      <div>
+        <img src='./userface.png' className='userface' alt='' />
+        
+      </div>
+      <div>
+      <IoLogOutSharp onClick={handleSubmit}/>
+
+<ConfirmationModal
+            show={showConfirm}
+            onClose={() => setShowConfirm(false)}
+            onConfirm={() => { setShowConfirm(false); logOut(); }}
+            message="Are you sure you want to Logout?"
+          />
+      </div>
+    </div>
+    </div>
+    </div>
   )
 }
-
 export default AccountsSidebar
