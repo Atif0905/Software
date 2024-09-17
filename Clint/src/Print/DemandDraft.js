@@ -22,7 +22,7 @@ const DemandDraft = () => {
         const projectsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/getallProjects`);
         const projectsData = projectsResponse.data.data || [];
         setProjects(projectsData);
-        const customerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+        const customerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
         const customerData = customerResponse.data;
         const Paymentresponse = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails`);
         const PaymentData = Paymentresponse.data.data || [];

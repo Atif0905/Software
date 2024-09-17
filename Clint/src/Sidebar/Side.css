@@ -140,7 +140,6 @@ a {
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
   }
-=======
 .newside{
     height: 100%;
     background: linear-gradient(180deg, #5651AB -26.59%, #232145 129.35%);
@@ -158,12 +157,12 @@ a {
 }
 .Sidelink{
     font-family: Kanit;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 400;
     line-height: 29.9px;
     text-align: left;
     color: #FFFFFF;    
-    padding-left: 40px;    
+    padding-left: 30px;    
     padding-top: 5px;
     padding-bottom: 5px;
 }

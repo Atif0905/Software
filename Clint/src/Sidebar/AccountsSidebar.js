@@ -42,7 +42,7 @@ const AccountsSidebar = () => {
       <Link to="/Expensedetails"><div className='Sidelink'><FaRegUser  className='svg-icon' />Paid Expenses</div></Link>
         <p className='Sidelink'></p>
         </div>
-        <div><img src='./sidebarimg.png' className='sidebarimg' alt=''/></div>
+        
     </div>
     <div className='center1'>
     <div className='sabove'>

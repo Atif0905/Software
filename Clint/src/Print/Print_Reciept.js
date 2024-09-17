@@ -71,7 +71,7 @@ const Print_reciept = () => {
         const projectsData = projectsResponse.data.data || [];
         setProjects(projectsData);
         const customerResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/Viewcustomer/${customerId}`
+          `${process.env.REACT_APP_API_URL}/customer/${customerId}`
         );
         if (customerResponse.data) {
           const matchedCustomer = customerResponse.data;

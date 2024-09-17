@@ -18,7 +18,7 @@ const Welcomeletter = () => {
         try {
           const projectsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/getallProjects`);
           const projectsData = projectsResponse.data.data || [];
-          const customerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+          const customerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
           const customerData = customerResponse.data;
           const foundCustomer = customerData.find(customer => customer._id === _id);
           setCustomerDetails(foundCustomer);

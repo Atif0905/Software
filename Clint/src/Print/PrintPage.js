@@ -69,8 +69,11 @@ const PrintPage = () => {
       </div>
       <h2 className='Headtext'>Expense Detail ({expense.amount})</h2>
       <div id='print-content' className=''>
-        <h4 className='text-center'>Womeki Investors Club</h4>
-        <h5 className='text-center'>Bhutani Alphathum Tower C 22nd floor Sector 90, Noida, Uttar Pradesh 201305 </h5>
+      <h4 className="text-center">EKAKSHAR BUILDTECH PRIVATE LIMITED</h4>
+        <h5 className="text-center">
+          UNIT NO-407, Sector-90 Alphathum Noida, Gautambuddha Nagar Uttar
+          Pradesh 201301.{" "}
+        </h5>
         {expense ? (
           <>
             <h5 className='mt-5'>Expense Paid to {expense.teamLeadName.toUpperCase()}</h5>
