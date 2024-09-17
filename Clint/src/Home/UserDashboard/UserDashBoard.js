@@ -2,11 +2,6 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faLocationDot, faTimes,} from "@fortawesome/free-solid-svg-icons";
-import {
-  faCaretDown,
-  faLocationDot,
-  faTimes,
-} from "@fortawesome/free-solid-svg-icons";
 import UserSidebar from "../../Sidebar/UserSidebar";
 const UserDashBoard = ({ userData }) => {
   const [projects, setProjects] = useState([]);
