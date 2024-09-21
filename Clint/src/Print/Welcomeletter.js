@@ -118,8 +118,9 @@ const Welcomeletter = () => {
   };
 
   return (
-    <div className="container">
-      <div className='button-group d-flex justify-content-end mt-5'>
+    <div className="white">
+    <div className="container ">
+      <div className='button-group d-flex justify-content-end'>
         <button onClick={handlePrint} className='print-button'>Print</button>
         <button className="Download" onClick={handleDownloadPDF}>
           <svg className="svgIcon" viewBox="0 0 384 512" height="1em" xmlns="http://www.w3.org/2000/svg">
@@ -158,6 +159,7 @@ const Welcomeletter = () => {
         <h5 className="mt-3">{projectdetails.CompanyName}</h5>
         </div>
       )}
+      </div>
       </div>
       </div>
   )

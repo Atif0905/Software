@@ -37,7 +37,29 @@ const projectSchema = new mongoose.Schema({
   Payable: String,
   CompanyName: String,
   Posessionfinaldate: String,
+  ProjectID: { type: String, unique: true },  // Unique ProjectID
   blocks: [blockSchema]
+});
+
+// Pre-save hook to auto-generate the ProjectID
+projectSchema.pre('save', async function (next) {
+  const project = this;
+
+  // Only generate ProjectID if it's a new document and ProjectID is not already set
+  if (!project.isNew || project.ProjectID) {
+    return next();
+  }
+
+  try {
+    // Count existing projects to determine the next ProjectID
+    const count = await mongoose.model('Project').countDocuments({});
+    const newProjectID = `PI${String(count + 1).padStart(2, '0')}`;  // Format as PI01, PI02, etc.
+    
+    project.ProjectID = newProjectID;
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Create the Project model using the schema

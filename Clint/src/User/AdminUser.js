@@ -50,20 +50,22 @@ const AdminUser = () => {
   }
   return (
     <div className=" back main-content" >
-      <h3 className="Headtext">Welcome Admin</h3>
-      <div className="whiteback table-container"  >        
-        <table  className="fixed-table" >
-          <thead>
-            <tr>
+      <div className="formback1 table-container"  > 
+      <h3 className="formhead">Welcome Admin</h3>  
+      <div className="p-3">
+      <div className="formback1">     
+            <table >
+              <thead className="formtablehead1">
+              <tr>
               <th>Name</th>
               <th>Email</th>
               <th>User Type</th>
               <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((i, index) => (
-              <tr key={index}>
+              </tr>
+              </thead>
+              <tbody>
+              {data.map((i, index) => (
+              <tr className='formtabletext' key={index}>
                 <td>{i.fname}</td>
                 <td>{i.email}</td>
                 <td>{i.userType}</td>
@@ -75,9 +77,11 @@ const AdminUser = () => {
                 </td>
               </tr>
             ))}
-          </tbody>
-        </table>
-        <ReactPaginate
+              </tbody>
+            </table>
+            </div>
+            </div>
+        {/* <ReactPaginate
           breakLabel="..."
           nextLabel="next >"
           onPageChange={handlePageClick}
@@ -95,9 +99,10 @@ const AdminUser = () => {
           nextLinkClassName="page-link"
           activeClassName="active"
           forcePage={currentPage.current - 1}
-        />
+        /> */}
+        <div className="center">
         <input placeholder="Limit" value={limit} onChange={e => setLimit(e.target.value)} />
-        <button onClick={changeLimit} className="setbutton">Set Limit</button>
+        <button onClick={changeLimit} className="setbutton">Set Limit</button></div>
       </div>
     </div>
   );

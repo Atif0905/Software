@@ -45,9 +45,9 @@ const Expensedetails = () => {
             <Loader />
           </div>
         ) : (
-          <div>
-            <h2 className='Headtext'>Expense Details</h2>
-            <div className='whiteback'>
+          <div className='formback'>
+            <h2 className='formhead'>Expense Details</h2>
+            <div className='p-3'>
               <table id='viewcustomertable'>
                 <thead>
                   <tr>

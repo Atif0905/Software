@@ -54,11 +54,12 @@ const CustomerList = () => {
 
   return (
     <div className='main-content'>
-      <h2 className='Headtext'>Customer List</h2>
-      <div className="table-wrapper whiteback">
-        <table id='viewcustomertable'>
+      <div className="table-wrapper formback1">
+      <h2 className='formhead'>Customer List</h2>
+      <div className='formback1'>
+        <table >
           <thead>
-            <tr>
+            <tr class="formtablehead1">
               <th>CUSTOMER ID</th>
               <th>NAME</th>
               <th>CONTACT NUMBER</th>
@@ -98,6 +99,7 @@ const CustomerList = () => {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

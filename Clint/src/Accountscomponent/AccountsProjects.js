@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes,} from "@fortawesome/free-solid-svg-icons";
-import "../../UpdateProjects/Projects.css";
-import "../AdminDashboard/Uploads/Coustmer";
-import { FaGreaterThan } from "react-icons/fa6";
+import { faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import { FaMoneyCheck } from "react-icons/fa6";
-const UploadedProjects = () => {
+import { FaGreaterThan } from "react-icons/fa6";
+import Loader from "../Confirmation/Loader";
+const AccountsProjects = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [selectedBlockId, setSelectedBlockId] = useState("null");
@@ -15,14 +15,17 @@ const UploadedProjects = () => {
   const [blockwiseUnitCounts, setBlockwiseUnitCounts] = useState({});
   const [blockwiseHoldUnitCounts, setBlockwiseHoldUnitCounts] = useState({});
   const [blockwiseSoldUnitCounts, setBlockwiseSoldUnitCounts] = useState({});
-  const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] =useState({});
+  const [blockwiseAvailableUnitCounts, setBlockwiseAvailableUnitCounts] =
+    useState({});
   const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const [UnitDropdown, setUnitDropdown] = useState(null);
   const [paymentDetails, setPaymentDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [customers, setCustomers] = useState([]);
-  useEffect(() => {fetchProjects();}, []);
+  useEffect(() => {
+    fetchProjects();
+  }, []);
   const DropdownToggle = (unitIndex) => {
     setUnitDropdown((prevIndex) =>
       prevIndex === unitIndex ? null : unitIndex
@@ -40,7 +43,9 @@ const UploadedProjects = () => {
     setBlockwiseUnitCounts(blockCounts);
   };
   const handleMarkUnitSold = async (projectId, blockId, unitId) => {
-    const isConfirmed = window.confirm("Are you sure you want to mark this unit as Sold?");
+    const isConfirmed = window.confirm(
+      "Are you sure you want to mark this unit as Sold?"
+    );
     if (isConfirmed) {
       try {
         const response = await axios.put(
@@ -105,6 +110,7 @@ const UploadedProjects = () => {
         const allProjectsResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/getAllProjects`
         );
+        console.log(allProjectsResponse);
         const allProjectsData = allProjectsResponse.data.data;
         const customersWithDetails = await Promise.all(
           viewCustomerData.map(async (customer) => {
@@ -248,9 +254,7 @@ const UploadedProjects = () => {
   };
   const fetchProjects = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/getAllProjects`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllProjects`);
       const data = response.data;
       if (response.status === 200 && data.status === "ok") {
         const projectsWithUnitCount = await Promise.all(
@@ -414,15 +418,13 @@ const UploadedProjects = () => {
   };
   const totalPriceSum = calculateTotalPriceSum();
   return (
-    <div className="main-content">
-
-      <div className="formback ">
-        <h4 className="formhead">Our Projects</h4>
-        <div className="p-3">
-        <div className="twogrid">
-        {projects.map((project, index) => (
+    <div className="">
+      {loading && <div className=""><Loader /></div>}
+      <div className="formback1 ">
+        <div className="p-3 mt-3">
+        {projects.slice(0, 3).map((project, index) => (
           <div key={index} className="">
-            <div className={`projectdiv ${index % 3 === 0 ? 'projectdiv1' : index % 3 === 1 ? 'projectdiv2' : 'projectdiv3'}`}>
+            <div className={` projectdiv ${index === 0 ? 'projectdiv1' : index === 1 ? 'projectdiv2' : 'projectdiv3'}`}>
               <div className="coloureddiv1">
                 <h3 className="colouredtext">{project.name.toUpperCase()}</h3>
                 <div className="upperconatiner">
@@ -433,13 +435,7 @@ const UploadedProjects = () => {
               </div>
             </div>
             {selectedProjectId === project._id && showBlocks && (
-              <div className="modal-wrapper">
-                <FontAwesomeIcon
-                  icon={faTimes}
-                  size="2x"
-                  className="closeicon"
-                  onClick={closeModal}
-                />
+              <div className="modal-wrapper"><FontAwesomeIcon icon={faTimes} size="2x" className="closeicon" onClick={closeModal}/>
                 <div className="modal-container">
                   <div className="flexy">
                     <div className="paymentmaindiv">
@@ -447,9 +443,7 @@ const UploadedProjects = () => {
                         <h3 className="colouredtext">Total Payment</h3>
                         <div className="d-flex justify-content-between">
                           <p className="colouredtext1">{totalPriceSum}</p>
-                          <h6 className="react-icon-red">
-                            <FaMoneyCheck />
-                          </h6>
+                          <h6 className="react-icon-red"> <FaMoneyCheck /> </h6>
                         </div>
                       </div>
                     </div>
@@ -525,7 +519,7 @@ const UploadedProjects = () => {
                     </thead>
                     <tbody>
                       {project.blocks.map((block, blockIndex) => (
-                          <tr key={blockIndex} onClick={() => handleClickBlock(block._id)} >
+                        <tr key={blockIndex} onClick={() => handleClickBlock(block._id)} >
                           <td>{blockIndex + 1}</td>
                           <td className="tablecursor">{block.name}</td>
                           <td className="tablecursor">
@@ -553,9 +547,7 @@ const UploadedProjects = () => {
                               <div className="row">
                                 {block.units.map((unit, unitIndex) => (
                                   <div className="col-1" key={unitIndex}>
-                                    <div
-                                      className="units-div"
-                                      style={{   backgroundColor:     unit.status === "hold" ? "#FEE69F" : unit.status === "sold" ? "#FE8B8B" : unit.status === "available" ? "#A6FFBF" : "#A6FFBF", }} onClick={() => DropdownToggle(unitIndex)}>
+                                    <div className="units-div" style={{  backgroundColor: unit.status === "hold" ? "#FEE69F" : unit.status === "sold" ? "#FE8B8B" : unit.status === "available" ? "#A6FFBF" : "#A6FFBF",}} onClick={() => DropdownToggle(unitIndex)}>
                                       <p className="unit-div">{unit.name}</p>
                                     </div>
                                     {UnitDropdown === unitIndex && (
@@ -563,22 +555,8 @@ const UploadedProjects = () => {
                                         {unit.status === "available" && <></>}
                                         {unit.status === "sold" && (
                                           <>
-                                            <button
-                                              className="hold-unit" onClick={() =>   handleMarkUnitHold(     project._id,     block._id,     unit._id   )   }   >
-                                              Hold
-                                            </button>
-                                            <button
-                                              className="available-unit"
-                                              style={{
-                                                backgroundColor: "#A6FFBF",
-                                              }}
-                                              onClick={() =>
-                                                handleMarkUnitAvailable(
-                                                  project._id,
-                                                  block._id,
-                                                  unit._id
-                                                )
-                                              }
+                                            <button  className="hold-unit"  onClick={() =>    handleMarkUnitHold(project._id,block._id, unit._id)  }>  Hold</button>
+                                            <button className="available-unit" style={{   backgroundColor: "#A6FFBF", }} onClick={() => handleMarkUnitAvailable( project._id, block._id, unit._id ) }
                                             >
                                               {" "}
                                               Available
@@ -620,16 +598,43 @@ const UploadedProjects = () => {
                                         )}
                                         {unit.status === "available" && (
                                           <>
-                                            <button className="hold-unit" onClick={() =>   handleMarkUnitHold(     project._id,     block._id,     unit._id   ) } >
+                                            <button
+                                              className="hold-unit"
+                                              onClick={() =>
+                                                handleMarkUnitHold(
+                                                  project._id,
+                                                  block._id,
+                                                  unit._id
+                                                )
+                                              }
+                                            >
                                               Hold
                                             </button>
-                                            <button className="sold-unit" onClick={() =>   handleMarkUnitSold(     project._id,     block._id,     unit._id   )   }   >
+                                            <button
+                                              className="sold-unit"
+                                              onClick={() =>
+                                                handleMarkUnitSold(
+                                                  project._id,
+                                                  block._id,
+                                                  unit._id
+                                                )
+                                              }
+                                            >
                                               {" "}
                                               Sold
                                             </button>
                                           </>
                                         )}
-                                        <button className="delete-unit" onClick={() =>   handleDeleteUnit(     project._id,     block._id,     unit._id   )   }   >
+                                        <button
+                                          className="delete-unit"
+                                          onClick={() =>
+                                            handleDeleteUnit(
+                                              project._id,
+                                              block._id,
+                                              unit._id
+                                            )
+                                          }
+                                        >
                                           {" "}
                                           Delete
                                         </button>
@@ -650,9 +655,8 @@ const UploadedProjects = () => {
           </div>
         ))}
         </div>
-       </div>
-    </div>
+      </div>
     </div>
   );
 };
-export default UploadedProjects;
+export default AccountsProjects;

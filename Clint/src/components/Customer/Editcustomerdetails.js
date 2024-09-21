@@ -93,11 +93,13 @@ const Editcustomerdetails = () => {
         <div className='main-content'>
             {customer && (
                  <form onSubmit={handleSubmit1}>
-                <div>
-                <h3 className='Headtext'>Update Customer {customer && customer.name && customer.name.toUpperCase()}- {customer && customer.customerId}</h3>
+                <div className='formback'>
+                <h3 className='formhead'>Update Customer {customer && customer.name && customer.name.toUpperCase()}- {customer && customer.customerId}</h3>
+                    <div className='p-3'>
                     <div className='gridcontainer'>
                     <div className='grid-item'>
-                    <select type='text' name='title' value={editedCustomer.title} onChange={handleChange} placeholder='Name' required>
+                        <label>Prefix</label>
+                    <select type='text' className='form-input-field' name='title' value={editedCustomer.title} onChange={handleChange} placeholder='Name' required>
                         <option>Select Option</option>
                         <option>MR.</option>
                         <option>Mrs.</option>
@@ -105,101 +107,119 @@ const Editcustomerdetails = () => {
                     </select>
                     </div>
                         <div className='grid-item'>
-                    <input type='text' name='name' value={editedCustomer.name} onChange={handleChange} placeholder='Name' required/>
+                        <label>Name</label>
+                    <input className='form-input-field' type='text' name='name' value={editedCustomer.name} onChange={handleChange} placeholder='Name' required/>
+                    </div>
+                    <div  className='grid-item'>
+                    <label>Father/Husband Name</label>
+                    <input className='form-input-field' type='text' name='fatherOrHusbandName' value={editedCustomer.fatherOrHusbandName} onChange={handleChange} placeholder='fatherOrHusbandName' required/>
                     </div>
                     <div className='grid-item'>
-                    <input type='text' name='fatherOrHusbandName' value={editedCustomer.fatherOrHusbandName} onChange={handleChange} placeholder='fatherOrHusbandName' required/>
+                        <label>Present Address</label>
+                    <input className='form-input-field' type='text' name='address' value={editedCustomer.address} onChange={handleChange} placeholder='address' required/>
                     </div>
                     <div className='grid-item'>
-                    <input type='text' name='address' value={editedCustomer.address} onChange={handleChange} placeholder='address' required/>
+                        <label>Aadhaar Number</label>
+                    <input className='form-input-field' type="number" name='aadharNumber' value={editedCustomer.aadharNumber} onChange={handleChange} placeholder='aadharNumber' required/>
                     </div>
                     <div className='grid-item'>
-                    <input type="number" name='aadharNumber' value={editedCustomer.aadharNumber} onChange={handleChange} placeholder='aadharNumber' required/>
+                        <label>E-mail</label>
+                    <input className='form-input-field' type="text" name='email' value={editedCustomer.email} onChange={handleChange} placeholder='email' required/>
                     </div>
                     <div className='grid-item'>
-                    <input type="text" name='email' value={editedCustomer.email} onChange={handleChange} placeholder='email' required/>
+                        <label>PAN Number</label>
+                    <input className='form-input-field' type='text' name='panNumber' value={editedCustomer.panNumber} onChange={handleChange} placeholder='panNumber' required/>
                     </div>
                     <div className='grid-item'>
-                    <input type='text' name='panNumber' value={editedCustomer.panNumber} onChange={handleChange} placeholder='panNumber' required/>
-                    </div>
-                    <div className='grid-item'>
-                    <input type="number" name='mobileNumber' value={editedCustomer.mobileNumber} onChange={handleChange} placeholder='mobileNumber' required/>
+                        <label>Mobile Number</label>
+                    <input className='form-input-field' type="number" name='mobileNumber' value={editedCustomer.mobileNumber} onChange={handleChange} placeholder='mobileNumber' required/>
                     </div>
                     <div className='grid-item'>
                     <label>DOB </label>
-                    <input type="date" className="input-cal input-base" name='DOB' value={editedCustomer.DOB} onChange={handleChange}  placeholder='DOB' />
+                    <input className='form-input-field' type="date" name='DOB' value={editedCustomer.DOB} onChange={handleChange}  placeholder='DOB' />
                     </div>
                     
                     <div className="relative grid-item">
             <label>Allotment Date</label>
-            <input className="input-cal input-base" id="input" placeholder="Allotment Date" type="date" name="AllotmentDate" value={editedCustomer.AllotmentDate} onChange={handleChange}
+            <input className='form-input-field' id="input" placeholder="Allotment Date" type="date" name="AllotmentDate" value={editedCustomer.AllotmentDate} onChange={handleChange}
             />
           </div>
                     <div className="relative grid-item">
             <label>Agreement Date</label>
-            <input className="input-cal input-base" id="input" placeholder="Enter Agreement Date" type="date" name="AgreementDate" value={editedCustomer.AgreementDate} onChange={handleChange} />
+            <input className='form-input-field' id="input" placeholder="Enter Agreement Date" type="date" name="AgreementDate" value={editedCustomer.AgreementDate} onChange={handleChange} />
           </div>
           <div className="relative grid-item">
             <label>Agreement Date</label>
-            <input className="input-cal input-base" id="input" placeholder="Enter Agreement Date" type="text" name="Teamleadname" value={editedCustomer.Teamleadname.toUpperCase()} onChange={handleChange} />
+            <input className='form-input-field' id="input" placeholder="Enter Agreement Date" type="text" name="Teamleadname" value={editedCustomer.Teamleadname.toUpperCase()} onChange={handleChange} />
           </div>
                     </div>
                     <h3 className='Headtext'>Second Customer</h3>
                     <div className='gridcontainer '>
                         <div className='grid-item'>
-                    <input type='text' name='name2' value={editedCustomer.name2} onChange={handleChange} placeholder='Name' />
+                            <label>Name</label>
+                    <input className='form-input-field' type='text' name='name2' value={editedCustomer.name2} onChange={handleChange} placeholder='Name' />
                     </div>
                     <div className='grid-item'>
-                    <input type='text' name='fatherOrHusbandName2' value={editedCustomer.fatherOrHusbandName2} onChange={handleChange} placeholder='fatherOrHusbandName' />
+                        <label>Father/Husband Name</label>
+                    <input className='form-input-field' type='text' name='fatherOrHusbandName2' value={editedCustomer.fatherOrHusbandName2} onChange={handleChange} placeholder='fatherOrHusbandName' />
                     </div>
                     <div className='grid-item'>
-                    <input type='text' name='address2' value={editedCustomer.address2} onChange={handleChange} placeholder='address' />
+                        <label>Address</label>
+                    <input className='form-input-field' type='text' name='address2' value={editedCustomer.address2} onChange={handleChange} placeholder='address' />
                     </div>
                     <div className='grid-item'>
-                    <input type="number" name='aadharNumber2' value={editedCustomer.aadharNumber2} onChange={handleChange} placeholder='aadharNumber' />
+                        <label>Aadhaar Number</label>
+                    <input className='form-input-field' type="number" name='aadharNumber2' value={editedCustomer.aadharNumber2} onChange={handleChange} placeholder='aadharNumber' />
                     </div>
                     <div className='grid-item'>
-                    <input type="text" name='email2' value={editedCustomer.email2} onChange={handleChange} placeholder='email' />
+                        <label>E-mail</label>
+                    <input className='form-input-field' type="text" name='email2' value={editedCustomer.email2} onChange={handleChange} placeholder='email' />
                     </div>
                     <div className='grid-item'>
-                    <input type='text' name='panNumber2' value={editedCustomer.panNumber2} onChange={handleChange} placeholder='panNumber' />
+                        <label>PAN Number</label>
+                    <input className='form-input-field' type='text' name='panNumber2' value={editedCustomer.panNumber2} onChange={handleChange} placeholder='panNumber' />
                     </div>
                     <div className='grid-item'>
-                    
-                    <input type="number" name='mobileNumber2' value={editedCustomer.mobileNumber2} onChange={handleChange} placeholder='mobileNumber' />
+                    <label>Mobile Number</label>
+                    <input className='form-input-field' type="number" name='mobileNumber2' value={editedCustomer.mobileNumber2} onChange={handleChange} placeholder='mobileNumber' />
                     </div>
                     </div>
                     <h3 className='Headtext'>Third Customer</h3>
                     <div className='gridcontainer'>
-                        <div className='grid-item'>
-                    <input type='text' name='name3' value={editedCustomer.name3} onChange={handleChange} placeholder='Name' />
+                    <div className='grid-item'>
+                    <label>Name</label>
+                    <input className='form-input-field' type='text' name='name3' value={editedCustomer.name3} onChange={handleChange} placeholder='Name' />
                     </div>
                     <div className='grid-item'>
-                    <input type='text' name='fatherOrHusbandName3' value={editedCustomer.fatherOrHusbandName3} onChange={handleChange} placeholder='fatherOrHusbandName' />
+                    <label>Father/Husband Name</label>
+                    <input className='form-input-field' type='text' name='fatherOrHusbandName3' value={editedCustomer.fatherOrHusbandName3} onChange={handleChange} placeholder='fatherOrHusbandName' />
                     </div>
                     <div className='grid-item'>
-                    <input type='text' name='address3' value={editedCustomer.address3} onChange={handleChange} placeholder='address' />
+                        <label>Address</label>
+                    <input className='form-input-field' type='text' name='address3' value={editedCustomer.address3} onChange={handleChange} placeholder='address' />
                     </div>
                     <div className='grid-item'>
-                    <input type="number" name='aadharNumber3' value={editedCustomer.aadharNumber3} onChange={handleChange} placeholder='aadharNumber' />
+                        <label>Aadhaar Number</label>
+                    <input className='form-input-field' type="number" name='aadharNumber3' value={editedCustomer.aadharNumber3} onChange={handleChange} placeholder='aadharNumber' />
                     </div>
                     <div className='grid-item'>
-                    <input type='text' name='email3' value={editedCustomer.email3} onChange={handleChange} placeholder='email' />
+                        <label>E-mail</label>
+                    <input className='form-input-field' type='text' name='email3' value={editedCustomer.email3} onChange={handleChange} placeholder='email' />
                     </div>
                     <div className='grid-item'>
-                    <input type='text' name='panNumber3' value={editedCustomer.panNumber3} onChange={handleChange} placeholder='panNumber' />
+                        <label>PAN Number</label>
+                    <input className='form-input-field' type='text' name='panNumber3' value={editedCustomer.panNumber3} onChange={handleChange} placeholder='panNumber' />
                     </div>
                     <div className='grid-item'>
-                    
-                    <input type="number" name='mobileNumber3' value={editedCustomer.mobileNumber3} onChange={handleChange} placeholder='mobileNumber' />
+                        <label>Mobile Number</label>
+                    <input className='form-input-field' type="number" name='mobileNumber3' value={editedCustomer.mobileNumber3} onChange={handleChange} placeholder='mobileNumber' />
                     </div>
 
                     </div>
                     {updateStatus === 'success' && <p>Customer updated successfully!</p>}
                 </div>
-                <button type="submit" className='btn btn-primary mt-4'>Update Customer</button>
-                <ConfirmationModal
-            show={showConfirm}
+                <div className='center'><button type="submit" className='addbutton mt-4'>Update Customer</button></div>
+                <ConfirmationModal show={showConfirm}
             onClose={() => setShowConfirm(false)}
             onConfirm={() => {
               setShowConfirm(false);
@@ -207,9 +227,12 @@ const Editcustomerdetails = () => {
             }}
             message="Are you sure you Update These details"
           />
+                </div>
+            
                 </form>
             )}
         </div>
+        
     );
 };
 

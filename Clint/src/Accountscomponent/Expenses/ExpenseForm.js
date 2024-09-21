@@ -54,12 +54,14 @@ const ExpenseForm = () => {
 
   return (
     <div className='main-content'>
-      <h2 className="Headtext">Add Expenses</h2>
-      <div className='row'>
-        <div className='col-6'>
-          <div className='whiteback'>
+            <div className='row'>
+            <div className='col-2'></div>
+            <div className='col-7'>
+      <div className='formback'>
+      <h2 className="formhead">Add Expenses</h2>
             <form onSubmit={handleSubmit1}>
-              <div>
+              <div className='p-3'>
+                <div>
                 <label htmlFor="teamLeadName" className='mt-3'>Team Lead Name:</label>
                 <select id="teamLeadName" className="form-input-field" value={teamLeadName} onChange={(e) => setTeamLeadName(e.target.value)} required>
                   <option value="">Select Team Lead</option>
@@ -67,7 +69,7 @@ const ExpenseForm = () => {
                     <option key={index} value={name}>{name.toUpperCase()}</option>
                   ))}
                 </select>
-              </div>
+                </div>
               <div>
                 <label htmlFor="expenseSummary" className='mt-3'>Expense Summary:</label>
                 <select id="expenseSummary" className="form-input-field" value={expenseSummary} onChange={(e) => setExpenseSummary(e.target.value)} required >
@@ -92,12 +94,12 @@ const ExpenseForm = () => {
               </div>
               <button className='addbutton mt-3' type="submit">Submit</button>
               <ConfirmationModal show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => {  setShowConfirm(false);  handleSubmit(); }} message="Are you sure you want to Submit this Expense" />
+              </div>
             </form>
           </div>
         </div>
-      </div>
-      
-    </div>
+        </div>
+        </div>
   );
 };
 

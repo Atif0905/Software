@@ -50,6 +50,7 @@ import Expensedetails from "./Accountscomponent/Expenses/Expensedetails";
 import ExpensePaidByteamLeader from "./Accountscomponent/Expenses/ExpensePaidByteamLeader";
 import EditExpense from "./Accountscomponent/Expenses/EditExpense";
 import ChanelPartnerForm from "./ChanelPartnerForm/ChanelPartnerForm";
+import AccountsProjects from "./Accountscomponent/AccountsProjects";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -111,6 +112,8 @@ function App() {
           <Route path="/Expensedetails" element={<AccountsSidebar/>}/>
           <Route path="/TotalExpensePaidByteamLeader/:_id" element={<AccountsSidebar/>}/>
           <Route path="/edit-expense" element={<AccountsSidebar />} />
+          <Route path="/AllProjects" element={<Sidebar/>} />
+          <Route path="/All-Projects" element={<AccountsSidebar/>} />
         </Routes>
 
         <Routes>
@@ -162,8 +165,9 @@ function App() {
           <Route path="FilteredPrintPage" element={<FilteredPrintPage/>}/>
           <Route path="/edit-expense" element={<EditExpense />} />
           <Route path="/Chanel-Partner-form" element={<ChanelPartnerForm/>} />
+          <Route path="/AllProjects" element={<div className=""><UploadedProjects/></div>} />
+          <Route path="/All-Projects" element={<div className="main-content"><AccountsProjects/></div>} />
         </Routes>
-        
       </div>
     </Router>
   );

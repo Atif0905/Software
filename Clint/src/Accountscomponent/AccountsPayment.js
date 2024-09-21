@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { fetchProjects, fetchCustomers, fetchPaymentDetails } from '../../../services/customerService'; // Import the services
-import '../AdminDashboard.css';
+import { fetchProjects, fetchCustomers, fetchPaymentDetails } from '../services/customerService'; // Import the services
 import { BsArrowDownRightCircleFill } from "react-icons/bs";
-import PasswordPrompt from "../../../Accountscomponent/PasswordPrompt";
-import Loader from '../../../Confirmation/Loader'
-import DashboardProjects from '../DashboardProjects'
-const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => {
+import PasswordPrompt from "./PasswordPrompt";
+import AccountsProjects from "./AccountsProjects";
+import Loader from "../Confirmation/Loader";
+const AccountsPayment = ({ projectsData, customersData, paymentDetailsData }) => {
   const [projects, setProjects] = useState(projectsData || []);
   const [customers, setCustomers] = useState(customersData || []);
   const [paymentDetails, setPaymentDetails] = useState(paymentDetailsData || []);
@@ -121,7 +120,7 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
         </div>
         </div>
       </div>
-      <div className="formback1"><DashboardProjects/><a href="/Allprojects"><p className="center seemore">See More &gt;</p></a></div>
+      <div className="formback1"><AccountsProjects/><a href="/All-projects"><p className="center seemore">See More &gt;</p></a></div>
       </div>
       )}
       {showPasswordPrompt && (
@@ -135,4 +134,4 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
   );
 };
 
-export default ProjectsUpload;
+export default AccountsPayment;

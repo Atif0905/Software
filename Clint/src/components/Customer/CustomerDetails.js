@@ -110,12 +110,12 @@ const CustomerDetails = () => {
 
   return (
     <div className="main-content">
-      <h2 className="Headtext">Customer Details</h2>
       {loading && <div className="mt-5"><Loader /></div>}
-      {error && <p>Error: {error}</p>}
-      <div className="table-wrapper whiteback">
+      <div className="table-wrapper formback1">
+      <h2 className="formhead">Customer Details</h2>
+        <div className="p-3">
         {data && (
-          <table id="firsttable">
+          <table className="fl-table ">
             <thead>
               <tr>
                 <th>NAME</th>
@@ -163,10 +163,12 @@ const CustomerDetails = () => {
           </table>
         )}
       </div>
+      </div>
       {data && (
-        <div className="payment-details">
-          <h3 className="Headtext mt-4">Payment Details</h3>
-          <div className="whiteback">
+        <div className="payment-details mt-4">
+          <div className="formback1">
+          <h3 className="formhead ">Payment Details</h3>
+            <div className="p-3">
             <table>
               <thead>
                 <tr>
@@ -211,6 +213,7 @@ const CustomerDetails = () => {
               <div className="demand"><a target="_blank" href={`/print_demand_datewise/${data._id}`}>Print Demand</a></div>
             </div>
           </div>
+        </div>
         </div>
       )}
       {showConfirm && (

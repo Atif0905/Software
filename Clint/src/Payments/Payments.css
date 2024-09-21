@@ -14,7 +14,6 @@
 }
 .fl-table td,
 .fl-table th {
-    width: 100%;
     text-align: left;
     padding: 8px;
     border-bottom: none !important;
