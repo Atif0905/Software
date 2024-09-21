@@ -132,12 +132,13 @@ const ExpensePaidByteamLeader = () => {
   };
   return (
     <div className='main-content'>
-      <h2 className='Headtext'>{expense ? expense.teamLeadName.toUpperCase() : ''} Expense Details</h2>
-      <div className='whiteback'>
+      <div className='formback1'>
+      <h2 className='formhead'>{expense ? expense.teamLeadName.toUpperCase() : ''} Expense Details</h2>
+      <div className='p-3'>
         {expense && (
-          <p>Total Expenses by {expense.teamLeadName.toUpperCase()} <strong>({calculateTotalAmount()})</strong></p>
+          <p >Total Expenses by {expense.teamLeadName.toUpperCase()} <strong>({calculateTotalAmount()})</strong></p>
         )}
-        <div className="filter-container d-flex justify-content-between">
+        <div className=" filter-container d-flex justify-content-between">
           <div>
             <label htmlFor="summaryFilter">Filter by Summary: </label>
             <select id="summaryFilter" className="filter-select" value={summaryFilter} onChange={(e) => setSummaryFilter(e.target.value)}>
@@ -205,7 +206,7 @@ const ExpensePaidByteamLeader = () => {
           <p>No expenses found for this filter criteria.</p>
         )}
       </div>
-      
+      </div>
     </div>
   );
 };

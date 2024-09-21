@@ -463,15 +463,15 @@ const [showConfirm, setShowConfirm] = useState(false);
             <label>Discount</label>
             <input className="form-input-field" id="input" placeholder="Enter Discount " type="text" name="discount" value={formData.discount.toUpperCase()} onChange={handleInputChange} required />
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <label>Agreement Date</label>
             <input className="form-input-field" id="input" placeholder="Enter Agreement Date" type="date" name="AgreementDate" value={formData.AgreementDate} onChange={handleInputChange} />
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <label>Allotment Date</label>
             <input className="form-input-field" id="input" placeholder="Allotment Date" type="date" name="AllotmentDate" value={formData.AllotmentDate} onChange={handleInputChange} />
           </div>
-          <div className="relative grid-item">
+          <div className=" grid-item">
             <label>Booking Date</label>
             <input className="form-input-field" id="input" placeholder="Booking Date" type="date" name="bookingDate" value={formData.bookingDate} onChange={handleInputChange} />
           </div>

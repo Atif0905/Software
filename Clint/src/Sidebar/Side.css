@@ -17,35 +17,13 @@ a {
   overflow-y: auto;
   scrollbar-width: none;
 }
-.Sidelink {
-  font-family: Kanit;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 29.9px;
-  color: #ffffff ;
-  padding-left: 30px;
-  padding-top: 5px;
-  padding-bottom: 10px;
-  padding-top: 10px;
-  text-decoration: none;    
-}
 .svg-icon{
     width: 20px;
     height: 20px;
     margin-top: -3px;
     margin-right: 10px;
 }
-.Sidelink:hover {
-  width: 100%;
-  background: #DFEBFB;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-  color: black;
-  margin-left: 15px;
-  padding-left: 15px;
-  cursor: pointer;
-  text-decoration: none;
-}
+
 .sidelogo {
   width: 177px;
   height: 117px;
@@ -172,19 +150,27 @@ a {
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     color: black;
-    margin-left: 20px;
-    padding-left: 20px;
+    margin-left: 15px;
+    padding-left: 15px;
+}
+.Sidelink.active {
+  width: 100%;
+  background-color: white;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  color: black;
+  margin-left: 15px;
+  padding-left: 15px;
 }
 .sidelogo{
     width: 177px;
 height: 117px;
 }
 .sabove{
-    width: 50%;
+    width: 70%;
 height: 48px;
-position: sticky;
 background-color: white;
-margin-left: 20px;
+margin-left: 15%;
 border-bottom-left-radius: 20px;
 border-bottom-right-radius: 20px;
 padding: 10px;

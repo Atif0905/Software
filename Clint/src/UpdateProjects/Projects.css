@@ -3,11 +3,19 @@
   font-weight: 300;
 }
 .projectdiv {
-  width: 320px;
-  height: 130px;
-  background-color: rgb(0, 192, 239);
-  box-shadow: rgba(0, 0, 0, 0.235) 4.95px 4.95px 2.6px;
-  border-radius: 10px;
+  width: 100%;
+  height: 100px;
+  margin-bottom: 5px;
+  padding: 10px 5px 0 10px;
+}
+.projectdiv1 {
+  background: #EAEBFF;
+}
+.projectdiv2 {
+  background: #F8E9FE;
+}
+.projectdiv3 {
+  background: #F0CFEE;
 }
 .react-icon{
   color: #3c8dbc;
@@ -15,16 +23,6 @@
   font-size: 70px;
   margin-top: -45px;
   transition: transform .7s  ;
-}
-.projectdiv:hover{
-  .react-icon{
-    transform: scale(1.2); 
-  }
-}
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 320px);
-  gap: 20px;
 }
 .modal-wrapper{
   position: fixed;
@@ -74,63 +72,50 @@
   width: 100%;
   height: auto;
   max-height: 120px;
-
-}
-.viewdetail-div{
-  width: 100%;
-  height: 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: rgba(0, 171, 215);
-  border-bottom-left-radius: 10px ;
-  border-bottom-right-radius: 10px ;
 }
 .coloureddiv1 {
   width: 100%;
-  height: 30px;
   text-align: left;
 }
-.viewbutton-div{
-  width: 100%;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
-  /* box-shadow: 0px 0px 4px 0px #00000040; */
-  cursor: pointer;
-}
-.moredetail-text{
-  font-size: 12px;
-  font-weight: 400;
-  color: white;
-  text-align: center;
-  margin-top: 10%;
-  margin-right: 2%;
-}
-.moredetail{
-  color: white;
+.seemore{
+  font-family: Kanit;
+font-size: 16px;
+font-weight: 400;
+line-height: 23.92px;
+text-align: left;
+color: black !important;
 }
 .colouredtext {
- padding-top: 2%;
- padding-left: 10px;
-  font-size: 20px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: 300;
-  line-height: 39px;
-  letter-spacing: 0em;
-  text-align: left;
-  color: white;
+ font-family: Kanit;
+font-size: 20px;
+font-weight: 400;
+line-height: 29.9px;
+text-align: left;
+
+}
+.datashow{
+  border-radius: 50%;
+  width: 40px;
+height: 39px;
+padding: 10px 8px 10px 10px;
+cursor: pointer;
+}
+.datashow1{
+  background: #9993FF;
+}
+.datashow2{
+  background: #D990F9;
+}
+.datashow3{
+  background: #F892BA;
 }
 .descriptiondiv {
- padding-top: 4%;
- padding-left: 10px;
+  font-family: Kanit;
   font-size: 12px;
-  font-family: Arial, Helvetica, sans-serif;
   font-weight: 300;
+  line-height: 17.94px;
   text-align: left;
-  color: white;
+  
 }
 .totalunitsdiv {
   background-color: #f4f3f3;
@@ -348,57 +333,4 @@ margin-top: 25%;
   height: auto;
   border: 1px solid #C0C0C0;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-}
-@media (min-width:1440px) {
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 30%);
-    gap: 20px;
-}
-  .projectdiv {
-    width: 100%;
-    height: auto;
-  }
-}
-@media (max-width:1205px) {
-  .projectdiv {
-    width: 100%;
-    height: auto;
-    background-color: rgb(0, 192, 239);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.45);
-}
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 48%);
-  gap: 20px;
-}
-}
-@media (max-width:992px) {
-  .projectdiv {
-    width: 100%;
-    height: auto;
-    background-color: rgb(0, 192, 239);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.45);
-}
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 48%);
-  gap: 15px;
-}
-}
-@media (max-width:767px) {
-  .react-icon{
-    display: none;
-  }
-  .colouredtext {
-    padding-top: 2%;
-    padding-left: 10px;
-     font-size: 12px;
-     font-family: Arial, Helvetica, sans-serif;
-     font-weight: 300;
-     line-height: 24px;
-     letter-spacing: 0em;
-     text-align: left;
-     color: white;
-   }
 }

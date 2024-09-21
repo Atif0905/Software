@@ -51,10 +51,14 @@ const ExpenseEdit = () => {
 
   return (
     <div className='main-content'>
-      <h2 className='Headtext'>Edit Expense</h2>
+      
       <form onSubmit={handleSubmit}>
-        <div className='col-6'>
-        <div className='whiteback'>
+        <div className='row'>
+        <div className='col-2'></div>
+        <div className='col-7'>
+        <div className='formback'>
+        <h2 className='formhead'>Edit Expense</h2>
+          <div className='p-3'>
         <div>
           <label>Team Lead Name:</label>
           <input type="text" className="form-input-field" value={teamLeadName} onChange={(e) => setTeamLeadName(e.target.value)} required />
@@ -79,7 +83,9 @@ const ExpenseEdit = () => {
           <input type="date" className="form-input-field" value={Paydate} onChange={(e) => setPaydate(e.target.value)} required
           />
         </div>
-        <button className='addbutton mt-3' type="submit">Edit</button>
+        <div className='center'><button className='addbutton mt-3' type="submit">Edit</button></div>
+        </div>
+        </div>
         </div>
         </div>
       </form>

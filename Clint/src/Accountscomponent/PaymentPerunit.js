@@ -50,9 +50,9 @@ const PaymentPerunit = () => {
           <Loader />
         </div>
       ) : (
-        <div>
-          <h2 className="Headtext">Payment Per Unit (Sold Unit)</h2>
-          <div className="table-wrapper whiteback1">
+        <div className='formback1'>
+          <h2 className="formhead">Payment Per Unit (Sold Unit)</h2>
+          <div className="table-wrapper formback2 ">
             <table id="viewcustomertable">
               <thead>
                 <tr>

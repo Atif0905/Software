@@ -137,7 +137,7 @@ const Stats = () => {
 
     return (
         <div className='main-content'>
-            <h2 className='Headtext'>Stats of All Directors</h2>
+            <h2 className='formhead'>Stats of All Directors</h2>
             <div className="chart-container mb-5">
                 <Line data={chartData} />
             </div>

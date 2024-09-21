@@ -23,7 +23,7 @@ const Ledger = () => {
             const projectsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/getallProjects`);
             const projectsData = projectsResponse.data.data || [];
             setProjects(projectsData);
-            const customerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+            const customerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
             const customerData = customerResponse.data;
             const Paymentresponse = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails`);
             const PaymentData = Paymentresponse.data.data || [];
@@ -153,6 +153,7 @@ const Ledger = () => {
       };
     
   return (
+    <div className="white">
     <div className="container ">
       <div className='button-group d-flex justify-content-end mt-5'>
         <button onClick={handlePrint} className='print-button'>Print</button>
@@ -228,6 +229,7 @@ const Ledger = () => {
         </div>
         </div>
         )}
+    </div>
     </div>
   )
 }

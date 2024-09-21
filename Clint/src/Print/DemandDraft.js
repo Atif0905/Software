@@ -167,6 +167,7 @@ const DemandDraft = () => {
 
 
   return (
+    <div className="white">
     <div id='print-content'>
             <div className='button-group d-flex justify-content-end mt-5'>
         <button onClick={handlePrint} className='print-button'>Print</button>
@@ -302,6 +303,7 @@ const DemandDraft = () => {
         )}
       </div>
       </div>
+    </div>
     </div>
     </div>
   );

@@ -446,7 +446,7 @@ const Receivedpayments = () => {
           </div>
           <div className="row">
             <div className="col-4 mt-4">
-              <div className="formback1">
+              <div className="formback3">
                 <h3 className="formhead">New Payment</h3>
                 <div className="p-3">
               <form onSubmit={handleSubmit1}>
@@ -531,13 +531,19 @@ const Receivedpayments = () => {
             <div className="col-8 mt-4">
               <div className="formback1">
                 <h2 className="formhead">Payment Plan Installments</h2>
-                <div className='formtablehead1 d-flex justify-content-between'>
+                  <div className="p-3">
+                  <div className="formback1">
+                <table >
+                  <thead className='formtablehead1 '>
+                    <tr>
                 <th>Installment</th>
                 <th>Due Date</th>
                 <th>Amount</th>
-                </div>
-                    {filteredPayments.map((payment, index) => (
-                      <div className='formtabletext d-flex justify-content-between' key={index}>
+                </tr>
+                </thead>
+                <tbody>
+                {filteredPayments.map((payment, index) => (
+                      <tr className='formtabletext ' key={index}>
                         <td>
                           {payment.paymentType.startsWith("Possession Charges")
                             ? "Possession Charges"
@@ -559,11 +565,15 @@ const Receivedpayments = () => {
 
                         <td>{formatDate(payment.PaymentDate)}</td>
                         <td>{payment.amount}</td>
-                      </div>
+                      </tr>
                     ))}
+                </tbody>
+                </table>
+                    </div>
               </div>
             </div>
           </div>
+        </div>
         </div>
       )}
     </div>
