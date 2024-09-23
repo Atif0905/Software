@@ -79,9 +79,11 @@ const Edit_Payment = () => {
     <div className="main-content">
       {error && <p className="error">{error}</p>}
       {paymentDetails ? (
-        <div className="row mt-5">
-          <div className="col-5">
-            <div className="whiteback">
+        <div className="row">
+          <div className="col-7">
+            <div className="formback">
+              <h4 className="formhead">Edit Details </h4>
+              <div className="p-3">
               <form onSubmit={handleSubmit1}>
                 <div>
                   <label>Payment Mode:</label>
@@ -151,7 +153,7 @@ const Edit_Payment = () => {
                     onChange={handleChange}
                   />
                 </div>
-                <button type="submit" className="btn btn-primary mt-3">Update </button>
+                <div className="center"><button type="submit" className="addbutton mt-3">Update </button></div>
                 <ConfirmationModal
             show={showConfirm}
             onClose={() => setShowConfirm(false)}
@@ -162,6 +164,7 @@ const Edit_Payment = () => {
             message="Are you sure you Edit These details"
           />
               </form>
+              </div>
             </div>
           </div>
         </div>
