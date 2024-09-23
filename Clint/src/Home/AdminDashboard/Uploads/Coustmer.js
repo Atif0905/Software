@@ -242,7 +242,7 @@ const [showConfirm, setShowConfirm] = useState(false);
         );
 
         const discountAmount = parseFloat(formData.discount) || 0;
-        const editedTotal = baseTotal - discountAmount;
+        const editedTotal = baseTotal - (baseTotal * (formData.discount / 100));
 
         console.log('Base Total:', baseTotal);
         console.log('Discount Amount:', discountAmount);
@@ -279,7 +279,7 @@ const [showConfirm, setShowConfirm] = useState(false);
   const calculateEditedTotalPrice = () => {
     const editedTotal =
       (parseFloat(editedRate) + parseFloat(editedPlcCharges) + parseFloat(editedIdcCharges) + parseFloat(editedEdcPrice)) * parseFloat(plotSize);
-    setEditedTotalPrice(editedTotal - formData.discount);
+      setEditedTotalPrice(editedTotal - (editedTotal * (formData.discount / 100)));
   };
   
   useEffect(() => {
@@ -461,28 +461,40 @@ const [showConfirm, setShowConfirm] = useState(false);
             <label>Created By</label>
             <select className="form-input-field" id="input" name="CreatedBy" value={formData.CreatedBy} onChange={handleInputChange} required >
               <option value="">Select Created By</option>
-              <option value="Mansi Chauhan">Manshi Chauhan</option>
-              <option value="Tannu Gupta">Tannu Gupta</option>
+              <option value="Vijeta">Vijeta </option>
+              <option value="Jyoti">Jyoti</option>
             </select>
           </div>
           <div className=" grid-item">
             <label>Director Name</label>
             <select className="form-input-field" id="input" name="EmployeeName" value={formData.EmployeeName} onChange={handleInputChange} required >
               <option value="">Select Director Name</option>
-              <option value="Sunny Singh">Sunny Singh</option>
-              <option value="Ankit Singhal">Ankit Singhal</option>
-              <option value="Paras Goel">Paras Goel</option>
-              <option value="Rohit Khari">Rohit Khari</option>
+              <option value="Shiv K. Singh">Shiv K. Singh</option>
             </select>
           </div>
           <div className=" grid-item">
             <label>Team lead Name </label>
             <input className="form-input-field" id="input" placeholder="Enter Teamlead Name " type="text" name="Teamleadname" value={formData.Teamleadname.toUpperCase()} onChange={handleInputChange} required />
           </div>
-          <div className=" grid-item">
-            <label>Discount</label>
-            <input className="form-input-field" id="input" placeholder="Enter Discount " type="text" name="discount" value={formData.discount.toUpperCase()} onChange={handleInputChange} required />
-          </div>
+          <div className="grid-item">
+  <label>Discount</label>
+  <input
+    className="form-input-field"
+    id="input"
+    placeholder="Enter Discount"
+    type="number"
+    name="discount"
+    value={formData.discount}
+    onChange={(e) => {
+      const value = Math.min(100, Math.max(0, e.target.value));
+      handleInputChange({ target: { name: e.target.name, value } });
+    }}
+    onWheel={(e) => e.target.blur()} // Prevents changing value on scroll
+    max="100"
+    min="0"
+    required
+  />
+</div>
           <div className="relative grid-item">
             <label>Agreement Date</label>
             <input className="form-input-field" id="input" placeholder="Enter Agreement Date" type="date" name="AgreementDate" value={formData.AgreementDate} onChange={handleInputChange} />

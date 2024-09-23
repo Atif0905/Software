@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import './Print.css';
+import "./Print.css";
 import Loader from "../Confirmation/Loader";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 const DemandDraft = () => {
   const { _id } = useParams();
   const [paymentDetails, setPaymentDetails] = useState([]);
   const [customerDetails, setCustomerDetails] = useState(null);
-  const [payment , setPayment] = useState(null);
+  const [payment, setPayment] = useState(null);
   const [projects, setProjects] = useState([]);
   const [projectdetails, setProjectdetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,25 +19,56 @@ const DemandDraft = () => {
     const fetchProjectsAndCustomer = async () => {
       setLoading(true);
       try {
-        const projectsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/getallProjects`);
+        const projectsResponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/getallProjects`
+        );
         const projectsData = projectsResponse.data.data || [];
         setProjects(projectsData);
-        const customerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
+        const customerResponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/customer`
+        );
         const customerData = customerResponse.data;
-        const Paymentresponse = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails`);
+        const Paymentresponse = await axios.get(
+          `${process.env.REACT_APP_API_URL}/paymentDetails`
+        );
         const PaymentData = Paymentresponse.data.data || [];
-        setPayment(PaymentData)
-        const foundCustomer = customerData.find(customer => customer._id === _id);
+        console.log(Paymentresponse.data.data);
+        setPayment(PaymentData);
+        const foundCustomer = customerData.find(
+          (customer) => customer._id === _id
+        );
         setCustomerDetails(foundCustomer);
-        const matchedProject = projectsData.find(project => project._id === foundCustomer.project);
+        const matchedProject = projectsData.find(
+          (project) => project._id === foundCustomer.project
+        );
         setProjectdetails(matchedProject || {});
-        const MatchedPayment = PaymentData.filter(payment => payment.customerId === foundCustomer.customerId)
+        const MatchedPayment = PaymentData.filter(
+          (payment) => payment.customerId === foundCustomer.customerId
+        );
         setPaymentDetails(MatchedPayment || {});
-        const projectName = await fetchName("getProject", foundCustomer.project);
-        const blockName = await fetchName("getBlock", foundCustomer.project, foundCustomer.block);
-        const unitName = await fetchName("getUnit", foundCustomer.project, foundCustomer.block, foundCustomer.plotOrUnit);
-        const unitDetails = await fetchUnitDetails(foundCustomer.project, foundCustomer.block, foundCustomer.plotOrUnit);
-        const paymentDetailsResponse = await fetchPaymentDetailsByCustomerId(foundCustomer.customerId);
+        const projectName = await fetchName(
+          "getProject",
+          foundCustomer.project
+        );
+        const blockName = await fetchName(
+          "getBlock",
+          foundCustomer.project,
+          foundCustomer.block
+        );
+        const unitName = await fetchName(
+          "getUnit",
+          foundCustomer.project,
+          foundCustomer.block,
+          foundCustomer.plotOrUnit
+        );
+        const unitDetails = await fetchUnitDetails(
+          foundCustomer.project,
+          foundCustomer.block,
+          foundCustomer.plotOrUnit
+        );
+        const paymentDetailsResponse = await fetchPaymentDetailsByCustomerId(
+          foundCustomer.customerId
+        );
         const updatedCustomer = {
           ...foundCustomer,
           projectName: projectName.toUpperCase(),
@@ -121,7 +152,11 @@ const DemandDraft = () => {
     : "0";
 
   const calculateTotalAmounts = (customerDetails) => {
-    if (customerDetails && customerDetails.paymentDetails && customerDetails.paymentDetails.length > 0) {
+    if (
+      customerDetails &&
+      customerDetails.paymentDetails &&
+      customerDetails.paymentDetails.length > 0
+    ) {
       return customerDetails.paymentDetails.reduce(
         (sum, payment) => sum + payment.amount,
         0
@@ -132,39 +167,42 @@ const DemandDraft = () => {
   };
 
   if (loading) {
-    return <div><Loader/></div>;
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
   }
-  var date = new Date;
-  var Year =  date.getFullYear();
-  var month = String(date.getMonth() +1).padStart(2, '0');
-  var todaydate = String(date.getDate()).padStart(2, '0');
-  var datepattern = todaydate + '-' + month + '-' + Year ;
+  var date = new Date();
+  var Year = date.getFullYear();
+  var month = String(date.getMonth() + 1).padStart(2, "0");
+  var todaydate = String(date.getDate()).padStart(2, "0");
+  var datepattern = todaydate + "-" + month + "-" + Year;
 
   const handlePrint = () => {
     window.print();
   };
 
   const handleDownloadPDF = async () => {
-    const input = document.getElementById('print-content');
+    const input = document.getElementById("print-content");
     const canvas = await html2canvas(input);
-    const imgData = canvas.toDataURL('image/png');
+    const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF();
     const imgWidth = 210; // A4 size width in mm
     const pageHeight = 295; // A4 size height in mm
-    const imgHeight = canvas.height * imgWidth / canvas.width;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
     let heightLeft = imgHeight;
 
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
     heightLeft -= pageHeight;
 
     while (heightLeft >= 0) {
       pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, -heightLeft, imgWidth, imgHeight);
+      pdf.addImage(imgData, "PNG", 0, -heightLeft, imgWidth, imgHeight);
       heightLeft -= pageHeight;
     }
-    pdf.save('Demand-draft.pdf');
+    pdf.save("Demand-draft.pdf");
   };
-
 
   return (
     <div className="white">

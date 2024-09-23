@@ -119,6 +119,7 @@ const Ledger = () => {
             parseFloat(customerDetails.edcPrice) +
             parseFloat(customerDetails.rate))
         : "0";
+        
       if (loading) {
         return <div><Loader/></div>;
       }
@@ -151,7 +152,9 @@ const Ledger = () => {
         }
         pdf.save('Ledger.pdf');
       };
-    
+    const totalwithoutdevcharges = ((total - total * (customerDetails.discount / 100)) - 
+        ((parseFloat(customerDetails.edcPrice) + parseFloat(customerDetails.idcCharges) + parseFloat(customerDetails.plcCharges)) * parseFloat(customerDetails.plotSize))
+      );
   return (
     <div className="white">
     <div className="container ">
@@ -215,7 +218,7 @@ const Ledger = () => {
             <div className="ledgerarea">
                 <p>Super Area ({customerDetails.sizeType}):</p> <p>{customerDetails.plotSize}</p>
                 <p>Rate (Rs/{customerDetails.sizeType})</p> <p>{customerDetails.rate}</p>
-                <h6 className="mt-3">Net Basic Price(Rs {customerDetails.rate}/{customerDetails.sizeType})</h6> <h6 className="d-flex justify-content-end mt-3">{customerDetails.rate * customerDetails.plotSize}</h6>
+                <h6 className="mt-3">Net Basic Price(Rs {customerDetails.rate}/{customerDetails.sizeType})</h6> <h6 className="d-flex justify-content-end mt-3">{totalwithoutdevcharges}</h6>
             </div>
             <h6 className="mt-3">Add:</h6>
             <div className="ledgerarea">
@@ -224,7 +227,7 @@ const Ledger = () => {
             </div>
             <p className="d-flex justify-content-end ">{(customerDetails.plcCharges * customerDetails.plotSize) + ((customerDetails.idcCharges * customerDetails.plotSize ) + (customerDetails.edcPrice * customerDetails.plotSize ))}</p>
             
-            <p className="d-flex justify-content-end ">{total}</p>
+            <p className="d-flex justify-content-end ">{total - (total * (customerDetails.discount/100))}</p>
             </div>
         </div>
         </div>

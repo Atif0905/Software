@@ -97,8 +97,11 @@ const CustomerDetails = () => {
   };
 
   const total = data
-    ? parseFloat(data.plotSize) * (parseFloat(data.idcCharges) + parseFloat(data.plcCharges) + parseFloat(data.edcPrice) + parseFloat(data.rate))
-    : "0";
+  ? parseFloat(data.plotSize) * (parseFloat(data.idcCharges) + parseFloat(data.plcCharges) + parseFloat(data.edcPrice) + parseFloat(data.rate))
+  : 0;
+
+const discount = data?.discount || 0; // Safely access 'discount', default to 0 if it's undefined
+const totalafterdiscount = total - total * (discount / 100);
 
   const calculateTotalAmounts = (data) => {
     if (data && data.paymentDetails && data.paymentDetails.length > 0) {
@@ -151,13 +154,13 @@ const CustomerDetails = () => {
                 <td><strong>EDC Charges</strong></td>
                 <td>{data.edcPrice * data.plotSize} INR / {data.edcPrice}</td>
                 <td><strong>Total Consideration</strong></td>
-                <td>{total}</td>
+                <td>{totalafterdiscount}</td>
               </tr>
               <tr>
                 <td><strong>Total Received Payment</strong></td>
                 <td>{calculateTotalAmounts(data) || 0}</td>
                 <td><strong>Balance</strong></td>
-                <td>{total - calculateTotalAmounts(data) || 0}</td>
+                <td>{totalafterdiscount - calculateTotalAmounts(data) || 0}</td>
               </tr>
             </tbody>
           </table>

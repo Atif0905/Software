@@ -478,8 +478,7 @@ const Receivedpayments = () => {
                             : `${ordinalSuffix(index)} Installment`}{" "}
                           -{" "}
                           {(parseFloat(installment.amountRS) / 100) *
-                            (parseFloat(unitData.plotSize) *
-                              parseFloat(unitData.rate))}
+                            (parseFloat(unitData.totalPrice) - (( parseFloat(unitData.plcCharges) + parseFloat(unitData.idcCharges) + parseFloat(unitData.edcPrice) ) * parseFloat(unitData.plotSize))  )}
                         </option>
                       )
                   )}

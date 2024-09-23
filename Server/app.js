@@ -63,6 +63,20 @@ const upload = multer({
   fileFilter: fileFilter
 });
 module.exports = upload;
+
+// Logging function
+const logChange = (action, userData) => {
+  const logEntry = {
+    timestamp: new Date(),
+    action,
+    user: userData.email || 'Unknown',
+    details: userData,
+  };
+
+  fs.appendFile(path.join(__dirname, 'changeLogs.txt'), JSON.stringify(logEntry) + '\n', (err) => {
+    if (err) console.error('Error writing log:', err);
+  });
+};
 app.post("/register", async (req, res) => {
   const { fname, lname, email, password, userType } = req.body;
   const encryptedPassword = await bcrypt.hash(password, 10);
@@ -700,7 +714,7 @@ app.post('/send-email', async (req, res) => {
       service: 'gmail',
       auth: {
         user: 'crm@wic.org.in',
-        pass: 'bpda usjb jbiz qrkb ' 
+        pass: 'bhnl dosk xiqs repp ' 
       }
     });
     const mailOptions = {
