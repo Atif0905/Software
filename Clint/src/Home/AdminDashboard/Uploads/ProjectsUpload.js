@@ -33,6 +33,7 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
         fetchPaymentDetails(),
       ]);
       setProjects(projects);
+      console.log(projects)
       setCustomers(customers);
       setPaymentDetails(paymentDetails);
     } catch (error) {
@@ -42,17 +43,19 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
     }
   };
 
-  const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize, edcPrice) => {
-    return (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges) + parseFloat(edcPrice)) * parseFloat(plotSize);
-  };
+  // Optionally remove if not needed
+  // const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize, edcPrice) => {
+  //   return (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges) + parseFloat(edcPrice)) * parseFloat(plotSize);
+  // };
 
   const calculateTotalPriceOfAllUnits = useMemo(() => {
     return projects.reduce((totalPrice, project) => {
-      return totalPrice + project.blocks.reduce((blockTotal, block) => {
-        return blockTotal + block.units.reduce((unitTotal, unit) => {
-          return unitTotal + calculatePerUnitPayment(unit.rate, unit.plcCharges, unit.idcCharges, unit.plotSize, unit.edcPrice);
-        }, 0);
-      }, 0);
+      return totalPrice + (project.blocks?.reduce((blockTotal, block) => {
+        return blockTotal + (block.units?.reduce((unitTotal, unit) => {
+          const unitPrice = parseFloat(unit.totalPrice) || 0;
+          return unitTotal + unitPrice;
+        }, 0));
+      }, 0) || 0);
     }, 0).toFixed(2);
   }, [projects]);
 
@@ -76,7 +79,7 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
   };
 
   const handlePasswordSubmit = (enteredPassword) => {
-    if (enteredPassword === "womeki") { 
+    if (enteredPassword === "Admin") { 
       setIsPasswordEntered((prevState) => ({ ...prevState, [showPasswordPrompt]: true }));
       setIsVisible((prevState) => ({ ...prevState, [showPasswordPrompt]: true }));
     } else {

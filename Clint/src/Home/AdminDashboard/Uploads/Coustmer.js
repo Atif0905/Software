@@ -20,6 +20,7 @@ const AddCustomerForm = () => {
   const [editedIdcCharges, setEditedIdcCharges] = useState('');
   const [editedEdcPrice, setEditedEdcPrice] = useState('');
   const [editedtotalPrice, setEditedTotalPrice] = useState();
+  // const [ dicsountPrice, setDiscountPrice  ] = useState();
   const [state, setState] = useState([
     {
       startDate: new Date(),
@@ -177,7 +178,8 @@ const [showConfirm, setShowConfirm] = useState(false);
               customerfather:formData.fatherOrHusbandName,
               unitName: selectedUnit.name, 
               unitArea: selectedUnit.plotSize, 
-              ProjectName: selectedProject
+              ProjectName: selectedProject,
+              blockName:selectedBlock
             };
             const sendEmailResponse = await axios.post(`${process.env.REACT_APP_API_URL}/send-email`, emailData);
 
@@ -218,24 +220,39 @@ const [showConfirm, setShowConfirm] = useState(false);
   };
   const handleClickUnit = (unitId) => {
     setFormData({ ...formData, selectedUnitId: unitId });
-  
+
     const selectedUnit = projects
-      .flatMap(project => project.blocks)
-      .flatMap(block => block.units)
-      .find(unit => unit._id === unitId);
-  
+        .flatMap(project => project.blocks)
+        .flatMap(block => block.units)
+        .find(unit => unit._id === unitId);
+
     if (selectedUnit) {
-      setPlotSize(selectedUnit?.plotSize || '');
-      setEditedRate(selectedUnit.rate || '');
-      setEditedPlcCharges(selectedUnit.plcCharges || '');
-      setEditedIdcCharges(selectedUnit.idcCharges || '');
-      setEditedEdcPrice(selectedUnit.edcPrice || '');
-      const editedTotal =
-        (parseFloat(selectedUnit.rate || 0) + parseFloat(selectedUnit.plcCharges || 0) + parseFloat(selectedUnit.idcCharges || 0) + parseFloat(selectedUnit.edcPrice || 0)) * parseFloat(plotSize);
-      setEditedTotalPrice(editedTotal);
+        setPlotSize(selectedUnit?.plotSize || '');
+        setEditedRate(selectedUnit.rate || '');
+        setEditedPlcCharges(selectedUnit.plcCharges || '');
+        setEditedIdcCharges(selectedUnit.idcCharges || '');
+        setEditedEdcPrice(selectedUnit.edcPrice || '');
+
+        const baseTotal = (
+            (parseFloat(selectedUnit.rate || 0) +
+             parseFloat(selectedUnit.plcCharges || 0) +
+             parseFloat(selectedUnit.idcCharges || 0) +
+             parseFloat(selectedUnit.edcPrice || 0)) * 
+            parseFloat(plotSize)
+        );
+
+        const discountAmount = parseFloat(formData.discount) || 0;
+        const editedTotal = baseTotal - discountAmount;
+
+        console.log('Base Total:', baseTotal);
+        console.log('Discount Amount:', discountAmount);
+        console.log('Edited Total:', editedTotal);
+
+        setEditedTotalPrice(editedTotal);
     }
-  };
-  
+};
+
+
   const handleEditUnit = async () => {
     try {
       const { selectedProjectId, selectedBlockId, selectedUnitId } = formData;
@@ -262,7 +279,7 @@ const [showConfirm, setShowConfirm] = useState(false);
   const calculateEditedTotalPrice = () => {
     const editedTotal =
       (parseFloat(editedRate) + parseFloat(editedPlcCharges) + parseFloat(editedIdcCharges) + parseFloat(editedEdcPrice)) * parseFloat(plotSize);
-    setEditedTotalPrice(editedTotal);
+    setEditedTotalPrice(editedTotal - formData.discount);
   };
   
   useEffect(() => {
@@ -444,15 +461,18 @@ const [showConfirm, setShowConfirm] = useState(false);
             <label>Created By</label>
             <select className="form-input-field" id="input" name="CreatedBy" value={formData.CreatedBy} onChange={handleInputChange} required >
               <option value="">Select Created By</option>
-              <option value="Vijeta">Vijeta</option>
-              <option value="Jyoti">Jyoti</option>
+              <option value="Mansi Chauhan">Manshi Chauhan</option>
+              <option value="Tannu Gupta">Tannu Gupta</option>
             </select>
           </div>
           <div className=" grid-item">
-            <label>Employee Name</label>
+            <label>Director Name</label>
             <select className="form-input-field" id="input" name="EmployeeName" value={formData.EmployeeName} onChange={handleInputChange} required >
-              <option value="">Select Employee Name</option>
-              <option value="Ankit Tonger">Ankit Tonger</option>
+              <option value="">Select Director Name</option>
+              <option value="Sunny Singh">Sunny Singh</option>
+              <option value="Ankit Singhal">Ankit Singhal</option>
+              <option value="Paras Goel">Paras Goel</option>
+              <option value="Rohit Khari">Rohit Khari</option>
             </select>
           </div>
           <div className=" grid-item">
@@ -463,15 +483,15 @@ const [showConfirm, setShowConfirm] = useState(false);
             <label>Discount</label>
             <input className="form-input-field" id="input" placeholder="Enter Discount " type="text" name="discount" value={formData.discount.toUpperCase()} onChange={handleInputChange} required />
           </div>
-          <div className=" grid-item">
+          <div className="relative grid-item">
             <label>Agreement Date</label>
             <input className="form-input-field" id="input" placeholder="Enter Agreement Date" type="date" name="AgreementDate" value={formData.AgreementDate} onChange={handleInputChange} />
           </div>
-          <div className=" grid-item">
+          <div className="relative grid-item">
             <label>Allotment Date</label>
             <input className="form-input-field" id="input" placeholder="Allotment Date" type="date" name="AllotmentDate" value={formData.AllotmentDate} onChange={handleInputChange} />
           </div>
-          <div className=" grid-item">
+          <div className="relative grid-item">
             <label>Booking Date</label>
             <input className="form-input-field" id="input" placeholder="Booking Date" type="date" name="bookingDate" value={formData.bookingDate} onChange={handleInputChange} />
           </div>
@@ -539,7 +559,7 @@ const [showConfirm, setShowConfirm] = useState(false);
             <label>Total Price</label>
           <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" id='input' placeholder="Total Price" value={editedtotalPrice} onChange={(e) => setEditedTotalPrice(e.target.value)}  />
         </div>
-          {/* <div className="container mt-2 grid-item">
+          <div className="container mt-2 grid-item">
             <input
               type="checkbox"
               id="cbx2"
@@ -555,7 +575,7 @@ const [showConfirm, setShowConfirm] = useState(false);
               </svg>
             </label>
             Send Email
-          </div> */}
+          </div>
         </div>
         <div className=" mt-3">
             <h4 className='customerhead'><span>Tenure Date</span></h4>
