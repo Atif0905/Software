@@ -179,7 +179,7 @@ const [showConfirm, setShowConfirm] = useState(false);
               unitName: selectedUnit.name, 
               unitArea: selectedUnit.plotSize, 
               ProjectName: selectedProject,
-              blockName:selectedBlock
+              blockName:selectedBlock.name
             };
             const sendEmailResponse = await axios.post(`${process.env.REACT_APP_API_URL}/send-email`, emailData);
 

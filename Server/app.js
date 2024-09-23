@@ -1,66 +1,66 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Project = require('./Models/UploadProjects');
-const pdfMakePrinter = require('pdfmake/src/printer');
-const nodemailer = require('nodemailer');
-const multer = require('multer');
-const uploadMiddleware = multer({dest: 'uploads/'});
-const fs = require('fs');
-const Post = require('./Models/CreatePost')
-const Blog = require('./Models/Createblog');
-const ChanelPartner = require('./Models/ChanelPartner'); 
-const expenseRoutes = require('./Router/expenseRoutes'); 
-const paymentPlanRoutes = require('./Router/paymentPlanRoutes'); 
-const uploadProjects = multer({ dest: 'uploads/' });
-const installmentRoutes = require('./Router/installmentRoutes');
-const paymentDetailRoutes = require('./Router/paymentDetailRoutes');
-const customerRoutes = require('./Router/customerRoutes');
+const Project = require("./Models/UploadProjects");
+const pdfMakePrinter = require("pdfmake/src/printer");
+const nodemailer = require("nodemailer");
+const multer = require("multer");
+const uploadMiddleware = multer({ dest: "uploads/" });
+const fs = require("fs");
+const Post = require("./Models/CreatePost");
+const Blog = require("./Models/Createblog");
+const ChanelPartner = require("./Models/ChanelPartner");
+const expenseRoutes = require("./Router/expenseRoutes");
+const paymentPlanRoutes = require("./Router/paymentPlanRoutes");
+const uploadProjects = multer({ dest: "uploads/" });
+const installmentRoutes = require("./Router/installmentRoutes");
+const paymentDetailRoutes = require("./Router/paymentDetailRoutes");
+const customerRoutes = require("./Router/customerRoutes");
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(__dirname + '/uploads'));
+app.use("/uploads", express.static(__dirname + "/uploads"));
 const { PORT, MONGODB_URI, JWT_SECRET } = process.env;
 app.use(express.json());
 
-
-app.use('/expenses', expenseRoutes);
-app.use('/paymentPlans', paymentPlanRoutes);
-app.use('/DueDate', installmentRoutes);
-app.use('/paymentDetails', paymentDetailRoutes)
-app.use('/customer', customerRoutes);
+app.use("/expenses", expenseRoutes);
+app.use("/paymentPlans", paymentPlanRoutes);
+app.use("/DueDate", installmentRoutes);
+app.use("/paymentDetails", paymentDetailRoutes);
+app.use("/customer", customerRoutes);
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.set("view engine", "ejs");
-mongoose.set('strictQuery', false);
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
+mongoose.set("strictQuery", false);
+mongoose
+  .connect(MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
-    console.log("DB Connected")
+    console.log("DB Connected");
   })
   .catch((e) => console.log(e));
 require("./userDetails");
 const User = mongoose.model("UserInfo");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
+    cb(null, Date.now() + "-" + file.originalname);
+  },
 });
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/webp') {
+  if (file.mimetype === "image/webp") {
     cb(null, true);
   } else {
-    cb(new Error('Only .webp files are allowed'));
+    cb(new Error("Only .webp files are allowed"));
   }
 };
-const upload = multer({ 
+const upload = multer({
   storage: storage,
-  fileFilter: fileFilter
+  fileFilter: fileFilter,
 });
 module.exports = upload;
 
@@ -69,13 +69,17 @@ const logChange = (action, userData) => {
   const logEntry = {
     timestamp: new Date(),
     action,
-    user: userData.email || 'Unknown',
+    user: userData.email || "Unknown",
     details: userData,
   };
 
-  fs.appendFile(path.join(__dirname, 'changeLogs.txt'), JSON.stringify(logEntry) + '\n', (err) => {
-    if (err) console.error('Error writing log:', err);
-  });
+  fs.appendFile(
+    path.join(__dirname, "changeLogs.txt"),
+    JSON.stringify(logEntry) + "\n",
+    (err) => {
+      if (err) console.error("Error writing log:", err);
+    }
+  );
 };
 app.post("/register", async (req, res) => {
   const { fname, lname, email, password, userType } = req.body;
@@ -131,7 +135,7 @@ app.post("/userData", async (req, res) => {
       .catch((error) => {
         res.send({ status: "error", data: error });
       });
-  } catch (error) { }
+  } catch (error) {}
 });
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
@@ -157,28 +161,73 @@ app.post("/deleteUser", async (req, res) => {
 });
 app.get("/paginatedUsers", async (req, res) => {
   const allUser = await User.find({});
-  const page = parseInt(req.query.page)
-  const limit = parseInt(req.query.limit)
-  const startIndex = (page - 1) * limit
-  const lastIndex = (page) * limit
-  const results = {}
+  const page = parseInt(req.query.page);
+  const limit = parseInt(req.query.limit);
+  const startIndex = (page - 1) * limit;
+  const lastIndex = page * limit;
+  const results = {};
   results.totalUser = allUser.length;
   results.pageCount = Math.ceil(allUser.length / limit);
   if (lastIndex < allUser.length) {
     results.next = {
       page: page + 1,
-    }
+    };
   }
   if (startIndex > 0) {
     results.prev = {
       page: page - 1,
-    }
+    };
   }
   results.result = allUser.slice(startIndex, lastIndex);
-  res.json(results)
+  res.json(results);
 });
-  app.post("/uploadProject", uploadProjects.single('file'), async (req, res) => {
-    let {
+app.post("/uploadProject", uploadProjects.single("file"), async (req, res) => {
+  let {
+    name,
+    description,
+    totalLand,
+    GST,
+    Bsprate,
+    AccountNo,
+    Bank,
+    IFSC,
+    Payable,
+    CompanyName,
+    Posessionfinaldate,
+  } = req.body;
+  if (req.file) {
+    try {
+      const csvFilePath = req.file.path;
+      const fileContent = fs.readFileSync(csvFilePath, "utf8");
+      Papa.parse(fileContent, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          if (results.data && results.data.length > 0) {
+            const projectData = results.data[0]; // Assuming a single project per CSV file
+            name = projectData.name || name;
+            description = projectData.description || description;
+            totalLand = projectData.totalLand || totalLand;
+            GST = projectData.GST || GST;
+            Bsprate = projectData.Bsprate || Bsprate;
+            AccountNo = projectData.AccountNo || AccountNo;
+            Bank = projectData.Bank || Bank;
+            IFSC = projectData.IFSC || IFSC;
+            Payable = projectData.Payable || Payable;
+            CompanyName = projectData.CompanyName || CompanyName;
+            Posessionfinaldate =
+              projectData.Posessionfinaldate || Posessionfinaldate;
+          }
+        },
+      });
+      fs.unlinkSync(csvFilePath);
+    } catch (error) {
+      console.error("Error processing CSV file:", error);
+      return res.status(500).json({ error: "Error processing CSV file" });
+    }
+  }
+  try {
+    const project = await Project.create({
       name,
       description,
       totalLand,
@@ -189,59 +238,15 @@ app.get("/paginatedUsers", async (req, res) => {
       IFSC,
       Payable,
       CompanyName,
-      Posessionfinaldate
-    } = req.body;
-      if (req.file) {
-      try {
-        const csvFilePath = req.file.path;
-        const fileContent = fs.readFileSync(csvFilePath, 'utf8');
-        Papa.parse(fileContent, {
-          header: true,
-          skipEmptyLines: true,
-          complete: function (results) {
-            if (results.data && results.data.length > 0) {
-              const projectData = results.data[0]; // Assuming a single project per CSV file
-              name = projectData.name || name;
-              description = projectData.description || description;
-              totalLand = projectData.totalLand || totalLand;
-              GST = projectData.GST || GST;
-              Bsprate = projectData.Bsprate || Bsprate;
-              AccountNo = projectData.AccountNo || AccountNo;
-              Bank = projectData.Bank || Bank;
-              IFSC = projectData.IFSC || IFSC;
-              Payable = projectData.Payable || Payable;
-              CompanyName = projectData.CompanyName || CompanyName;
-              Posessionfinaldate = projectData.Posessionfinaldate || Posessionfinaldate;
-            }
-          }
-        });
-        fs.unlinkSync(csvFilePath);
-      } catch (error) {
-        console.error("Error processing CSV file:", error);
-        return res.status(500).json({ error: "Error processing CSV file" });
-      }
-    }  
-    try {
-      const project = await Project.create({
-        name,
-        description,
-        totalLand,
-        GST,
-        Bsprate,
-        AccountNo,
-        Bank,
-        IFSC,
-        Payable,
-        CompanyName,
-        Posessionfinaldate
-      });
-  
-      res.status(201).json({ status: "ok", data: project });
-    } catch (error) {
-      console.error("Error uploading project:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
+      Posessionfinaldate,
+    });
+
+    res.status(201).json({ status: "ok", data: project });
+  } catch (error) {
+    console.error("Error uploading project:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 app.get("/getAllProjects", async (req, res) => {
   try {
     const projects = await Project.find({});
@@ -321,13 +326,20 @@ app.put("/editProject/:projectId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-app.post("/addBlock/:projectId", upload.single('file'), async (req, res) => {
+app.post("/addBlock/:projectId", upload.single("file"), async (req, res) => {
   const { projectId } = req.params;
-  let { name, totalPlotInBlock, plotSize, basicRateOfBlock, idcRateOfBlock, edcRateOfBlock } = req.body;
+  let {
+    name,
+    totalPlotInBlock,
+    plotSize,
+    basicRateOfBlock,
+    idcRateOfBlock,
+    edcRateOfBlock,
+  } = req.body;
   if (req.file) {
     try {
       const csvFilePath = req.file.path;
-      const fileContent = fs.readFileSync(csvFilePath, 'utf8');
+      const fileContent = fs.readFileSync(csvFilePath, "utf8");
 
       Papa.parse(fileContent, {
         header: true,
@@ -342,7 +354,7 @@ app.post("/addBlock/:projectId", upload.single('file'), async (req, res) => {
             idcRateOfBlock = blockData.idcRateOfBlock || idcRateOfBlock;
             edcRateOfBlock = blockData.edcRateOfBlock || edcRateOfBlock;
           }
-        }
+        },
       });
 
       fs.unlinkSync(csvFilePath);
@@ -377,55 +389,12 @@ app.post("/addBlock/:projectId", upload.single('file'), async (req, res) => {
   }
 });
 
-
-
-app.post("/addUnit/:projectId/:blockId", upload.single('file'), async (req, res) => {
-  const { projectId, blockId } = req.params;
-  let { name, plotSize, sizeType, rate, idcCharges, plcCharges, totalPrice, edcPrice } = req.body;
-
-  // Check if a CSV file is uploaded
-  if (req.file) {
-    try {
-      const csvFilePath = req.file.path;
-      const fileContent = fs.readFileSync(csvFilePath, 'utf8');
-
-      Papa.parse(fileContent, {
-        header: true,
-        skipEmptyLines: true,
-        complete: function (results) {
-          if (results.data && results.data.length > 0) {
-            const unitData = results.data[0]; // Assuming a single unit per CSV file
-            name = unitData.name || name;
-            plotSize = unitData.plotSize || plotSize;
-            sizeType = unitData.sizeType || sizeType;
-            rate = unitData.rate || rate;
-            idcCharges = unitData.idcCharges || idcCharges;
-            plcCharges = unitData.plcCharges || plcCharges;
-            totalPrice = unitData.totalPrice || totalPrice;
-            edcPrice = unitData.edcPrice || edcPrice;
-          }
-        }
-      });
-
-      fs.unlinkSync(csvFilePath);
-    } catch (error) {
-      console.error("Error processing CSV file:", error);
-      return res.status(500).json({ error: "Error processing CSV file" });
-    }
-  }
-
-  try {
-    const project = await Project.findById(projectId);
-    if (!project) {
-      return res.status(404).json({ error: "Project not found" });
-    }
-
-    const block = project.blocks.id(blockId);
-    if (!block) {
-      return res.status(404).json({ error: "Block not found" });
-    }
-
-    const newUnit = {
+app.post(
+  "/addUnit/:projectId/:blockId",
+  upload.single("file"),
+  async (req, res) => {
+    const { projectId, blockId } = req.params;
+    let {
       name,
       plotSize,
       sizeType,
@@ -434,27 +403,85 @@ app.post("/addUnit/:projectId/:blockId", upload.single('file'), async (req, res)
       plcCharges,
       totalPrice,
       edcPrice,
-      status: 'available',
-    };
+    } = req.body;
 
-    block.units.push(newUnit);
-    await project.save();
+    // Check if a CSV file is uploaded
+    if (req.file) {
+      try {
+        const csvFilePath = req.file.path;
+        const fileContent = fs.readFileSync(csvFilePath, "utf8");
 
-    res.status(201).json({ status: "ok", data: project });
-  } catch (error) {
-    console.error("Error adding unit:", error);
-    res.status(500).json({ error: "Internal server error" });
+        Papa.parse(fileContent, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function (results) {
+            if (results.data && results.data.length > 0) {
+              const unitData = results.data[0]; // Assuming a single unit per CSV file
+              name = unitData.name || name;
+              plotSize = unitData.plotSize || plotSize;
+              sizeType = unitData.sizeType || sizeType;
+              rate = unitData.rate || rate;
+              idcCharges = unitData.idcCharges || idcCharges;
+              plcCharges = unitData.plcCharges || plcCharges;
+              totalPrice = unitData.totalPrice || totalPrice;
+              edcPrice = unitData.edcPrice || edcPrice;
+            }
+          },
+        });
+
+        fs.unlinkSync(csvFilePath);
+      } catch (error) {
+        console.error("Error processing CSV file:", error);
+        return res.status(500).json({ error: "Error processing CSV file" });
+      }
+    }
+
+    try {
+      const project = await Project.findById(projectId);
+      if (!project) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+
+      const block = project.blocks.id(blockId);
+      if (!block) {
+        return res.status(404).json({ error: "Block not found" });
+      }
+
+      const newUnit = {
+        name,
+        plotSize,
+        sizeType,
+        rate,
+        idcCharges,
+        plcCharges,
+        totalPrice,
+        edcPrice,
+        status: "available",
+      };
+
+      block.units.push(newUnit);
+      await project.save();
+
+      res.status(201).json({ status: "ok", data: project });
+    } catch (error) {
+      console.error("Error adding unit:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
-});
+);
 
 app.put("/editUnit/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
-  const {  rate, idcCharges, plcCharges, totalPrice, edcPrice } = req.body;
+  const { rate, idcCharges, plcCharges, totalPrice, edcPrice } = req.body;
   try {
-    if (!mongoose.Types.ObjectId.isValid(projectId) ||
-        !mongoose.Types.ObjectId.isValid(blockId) ||
-        !mongoose.Types.ObjectId.isValid(unitId)) {
-      return res.status(400).json({ error: "Invalid project, block, or unit ID" });
+    if (
+      !mongoose.Types.ObjectId.isValid(projectId) ||
+      !mongoose.Types.ObjectId.isValid(blockId) ||
+      !mongoose.Types.ObjectId.isValid(unitId)
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Invalid project, block, or unit ID" });
     }
     const project = await Project.findById(projectId);
     if (!project) {
@@ -474,7 +501,13 @@ app.put("/editUnit/:projectId/:blockId/:unitId", async (req, res) => {
     unit.totalPrice = totalPrice;
     unit.edcPrice = edcPrice;
     await project.save();
-    res.status(200).json({ status: "ok", message: "Unit updated successfully", data: project });
+    res
+      .status(200)
+      .json({
+        status: "ok",
+        message: "Unit updated successfully",
+        data: project,
+      });
   } catch (error) {
     console.error("Error editing unit:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -569,7 +602,9 @@ app.delete("/deleteProject/:projectId", async (req, res) => {
       return res.status(404).json({ error: "Project not found" });
     }
     await project.remove();
-    res.status(200).json({ status: "ok", message: "Project deleted successfully" });
+    res
+      .status(200)
+      .json({ status: "ok", message: "Project deleted successfully" });
   } catch (error) {
     console.error("Error deleting project:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -584,7 +619,9 @@ app.delete("/deleteBlock/:projectId/:blockId", async (req, res) => {
     }
     project.blocks.id(blockId).remove();
     await project.save();
-    res.status(200).json({ status: "ok", message: "Block deleted successfully" });
+    res
+      .status(200)
+      .json({ status: "ok", message: "Block deleted successfully" });
   } catch (error) {
     console.error("Error deleting block:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -605,7 +642,9 @@ app.delete("/deleteUnit/:projectId/:blockId/:unitId", async (req, res) => {
 
     await project.save();
 
-    res.status(200).json({ status: "ok", message: "Unit deleted successfully" });
+    res
+      .status(200)
+      .json({ status: "ok", message: "Unit deleted successfully" });
   } catch (error) {
     console.error("Error deleting unit:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -632,98 +671,148 @@ app.get("/getUnitCount/:projectId/:blockId", async (req, res) => {
   }
 });
 
+const generatePdf = async (
+  customerName,
+  customerAddress,
+  unitName,
+  ProjectName,
+  area,
+  blockName
+) => {
+  const projectNameStr = String(ProjectName);
 
-const generatePdf = async (customerName, customerAddress, unitNo, ProjectName, area, customerfather) => {
   const fonts = {
     Roboto: {
-      normal: 'node_modules/roboto-font/fonts/Roboto/roboto-regular-webfont.ttf',
-      bold: 'node_modules/roboto-font/fonts/Roboto/roboto-bold-webfont.ttf',
-      italics: 'node_modules/roboto-font/fonts/Roboto/roboto-italic-webfont.ttf',
-      bolditalics: 'node_modules/roboto-font/fonts/Roboto/roboto-bolditalic-webfont.ttf'
-    }
+      normal:
+        "node_modules/roboto-font/fonts/Roboto/roboto-regular-webfont.ttf",
+      bold: "node_modules/roboto-font/fonts/Roboto/roboto-bold-webfont.ttf",
+      italics:
+        "node_modules/roboto-font/fonts/Roboto/roboto-italic-webfont.ttf",
+      bolditalics:
+        "node_modules/roboto-font/fonts/Roboto/roboto-bolditalic-webfont.ttf",
+    },
   };
   const printer = new pdfMakePrinter(fonts);
   const docDefinition = {
     content: [
-      { image: './logo.png', width: 160, height: 90 },
-      { text: 'WELCOME LETTER', style: 'header' },
-      { text: '\n' },
-      { text: `To,\nMr / Mrs : ${customerName}`, style: 'normal' },
-      { text: `Date : ${new Date().toLocaleDateString()}`, style: 'headerDate' },
-      { text: `${customerfather} ${customerAddress}` },
-      { text: `Unit No. : ${unitNo}\nArea : ${area} sqyd (Approx)\n\n`, style: 'normal' },
-      { text: 'RE: Thank you for your Patronage!\n', style: 'headersub' },
-      { text: `On behalf of WOMEKI INVESTORS CLUB Private Limited, we truly appreciate your recent association with us for your booking of a unit in our project ${ProjectName}`, style: 'normal' },
-      { text: 'We value your trust in our company, and we will do our best to meet your service expectations. Rest assured, with its location advantage and a truly low price at the moment, you will receive good appreciation on your purchase. My staff will always extend all its help to increase your customer experience and to make sure that you have a very good experience dealing with us.\n\n', style: 'normal' },
-      { text: `Your association is absolutely valued and we definitely look forward to your patronage. Also, any references from you would be great support and will help us give you an amazingly good neighborhood at “${ProjectName}”\n\n`, style: 'normal' },
-      { text: 'Thank you once again, for your booking. If you have any queries, please don’t hesitate to call us on +91-9871127024\n\n', style: 'normal' },
-      { text: 'Sincerely,\n\n', style: 'normal' },
-      { text: 'WOMEKI INVESTORS CLUB Private Limited\n', style: 'normal' }
+      { image: "./logo.png", width: 160, height: 90 },
+      { text: "WELCOME LETTER", style: "header" },
+      { text: "\n" },
+      { text: `To,\nMr / Mrs : ${customerName}`, style: "normal" },
+      {
+        text: `Date : ${new Date().toLocaleDateString()}`,
+        style: "headerDate",
+      },
+      { text: ` ${customerAddress}` },
+      {
+        text: `${blockName} Block Unit No. : ${unitName}\nArea : ${area} sqyd (Approx)\n\n`,
+        style: "normal",
+      },
+      { text: "RE: Thank you for your Patronage!\n", style: "headersub" },
+      {
+        text: `On behalf of WOMEKI INVESTORS CLUB Private Limited, we truly appreciate your recent association with us for your booking of a unit in our project ${projectNameStr}`,
+        style: "normal",
+      },
+      {
+        text: "We value your trust in our company, and we will do our best to meet your service expectations. Rest assured, with its location advantage and a truly low price at the moment, you will receive good appreciation on your purchase. My staff will always extend all its help to increase your customer experience and to make sure that you have a very good experience dealing with us.\n\n",
+        style: "normal",
+      },
+      {
+        text: `Your association is absolutely valued and we definitely look forward to your patronage. Also, any references from you would be great support and will help us give you an amazingly good neighborhood at “${projectNameStr}”\n\n`,
+        style: "normal",
+      },
+      {
+        text: "Thank you once again, for your booking. If you have any queries, please don’t hesitate to call us on +91-9871127024\n\n",
+        style: "normal",
+      },
+      { text: "Sincerely,\n\n", style: "normal" },
+      { text: "WOMEKI INVESTORS CLUB Private Limited\n", style: "normal" },
     ],
     styles: {
       header: {
-        alignment: 'center',
+        alignment: "center",
         fontSize: 14,
         fonts: "Roboto",
         bold: true,
-        decoration: 'underline',
-        margin: [0, 10, 0, 20]
+        decoration: "underline",
+        margin: [0, 10, 0, 20],
       },
       headerDate: {
-        alignment: 'right',
+        alignment: "right",
         fontSize: 14,
         fonts: "Roboto",
         bold: true,
       },
       headersub: {
-        alignment: 'left',
+        alignment: "left",
         fontSize: 14,
         fonts: "Roboto",
         bold: true,
-        margin: [0, 10, 0, 20]
+        margin: [0, 10, 0, 20],
       },
       normal: {
         fontSize: 12,
         fonts: "Roboto",
-        margin: [0, 0, 0, 10]
-      }
-    }
+        margin: [0, 0, 0, 10],
+      },
+    },
   };
   const pdfDoc = printer.createPdfKitDocument(docDefinition);
   const chunks = [];
   return new Promise((resolve, reject) => {
-    pdfDoc.on('data', (chunk) => {
+    pdfDoc.on("data", (chunk) => {
       chunks.push(chunk);
     });
-    pdfDoc.on('end', () => {
+    pdfDoc.on("end", () => {
       const result = Buffer.concat(chunks);
       resolve(result);
     });
-    pdfDoc.on('error', (err) => {
+    pdfDoc.on("error", (err) => {
       reject(err);
     });
     pdfDoc.end();
   });
 };
-app.post('/send-email', async (req, res) => {
+app.post("/send-email", async (req, res) => {
   try {
-    const { to, subject, customerName, customerAddress, unitName, unitArea,ProjectName } = req.body;
-    console.log(customerName)
-    const pdfBuffer = await generatePdf(customerName, customerAddress, unitName, unitArea);
+    const {
+      to,
+      subject,
+      customerName,
+      customerAddress,
+      unitName,
+      unitArea,
+      ProjectName,
+      blockName,
+    
+    } = req.body;
+
+    // Check if ProjectName is an object and extract the name
+    const projectName = typeof ProjectName === 'object' ? ProjectName.name : ProjectName;
+    // const BlockName = typeof  blockName === 'object' ? blockName.name : BlockName ;
+    console.log(customerName);
+    const pdfBuffer = await generatePdf(
+      customerName,
+      customerAddress,
+      unitName,
+      projectName,  // Pass the extracted project name
+      unitArea,
+      blockName,
+    );
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
-        user: 'crm@wic.org.in',
-        pass: 'bhnl dosk xiqs repp' 
-      }
+        user: "crm@wic.org.in",
+        pass: "bhnl dosk xiqs repp",
+      },
     });
     const mailOptions = {
-      from: 'crm@wic.org.in',
+      from: "crm@wic.org.in",
       to,
       subject,
       text: `Dear ${customerName},
 
-      We are delighted to welcome you to our Project ${ProjectName} ! Thank you for
+      We are delighted to welcome you to our Project ${projectName} ! Thank you for
       booking a plot in our project and trusting us with your dream of owning a
       property in our township. We promise to make your experience with us a
       delightful one.
@@ -750,28 +839,29 @@ app.post('/send-email', async (req, res) => {
       
       WOMEKI INVESTORS CLUB Pvt Ltd
       CRM HEAD
-      Anjali Bhardwaj
+      Vijeta
       +91-9911140024
       `,
       attachments: [
         {
-          filename: 'welcome_letter.pdf', 
-          content: pdfBuffer, 
-          contentType: 'application/pdf'
-        }
-      ]
+          filename: "welcome_letter.pdf",
+          content: pdfBuffer,
+          contentType: "application/pdf",
+        },
+      ],
     };
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent:', info.response);
+    console.log("Email sent:", info.response);
     res.sendStatus(200);
   } catch (error) {
-    console.error('Error sending email:', error);
-    res.status(500).send('Failed to send email');
+    console.error("Error sending email:", error);
+    res.status(500).send("Failed to send email");
   }
 });
-app.post('/createpost', upload.array('files', 5), async (req, res) => {
-  const files = req.files.map(file => file.path);
-  const { projectname, address, content, category, subcategory, price, type } = req.body;
+app.post("/createpost", upload.array("files", 5), async (req, res) => {
+  const files = req.files.map((file) => file.path);
+  const { projectname, address, content, category, subcategory, price, type } =
+    req.body;
   const postDoc = await Post.create({
     projectname,
     address,
@@ -780,68 +870,90 @@ app.post('/createpost', upload.array('files', 5), async (req, res) => {
     subcategory,
     price,
     type,
-    files: files, 
+    files: files,
   });
   res.json(postDoc);
 });
-app.get('/createpost', async(req, res) => {
+app.get("/createpost", async (req, res) => {
   res.json(await Post.find());
 });
-app.put('/editpost/:postId', uploadMiddleware.single('cover'), async (req, res) => {
-  try {
+app.put(
+  "/editpost/:postId",
+  uploadMiddleware.single("cover"),
+  async (req, res) => {
+    try {
       const postId = req.params.postId;
       const { title, summary, content, category } = req.body;
       let cover = req.file ? req.file.path : undefined;
 
       const updatedPost = await Post.findByIdAndUpdate(
-          postId,
-          { title, summary, content, category, cover },
-          { new: true }
+        postId,
+        { title, summary, content, category, cover },
+        { new: true }
       );
 
       res.json(updatedPost);
+    } catch (error) {
+      console.error("Error editing post:", error);
+      res.status(500).send("Error editing post");
+    }
+  }
+);
+app.delete("/deletepost/:postId", async (req, res) => {
+  try {
+    const postId = req.params.postId;
+
+    await Post.findByIdAndDelete(postId);
+
+    res.send("Post deleted successfully");
   } catch (error) {
-      console.error('Error editing post:', error);
-      res.status(500).send('Error editing post');
+    console.error("Error deleting post:", error);
+    res.status(500).send("Error deleting post");
   }
 });
-app.delete('/deletepost/:postId', async (req, res) => {
+app.post("/createblog", upload.array("files", 5), async (req, res) => {
   try {
-      const postId = req.params.postId;
+    const files = req.files.map((file) => file.path);
+    const {
+      name,
+      description,
+      content1,
+      content2,
+      content3,
+      content4,
+      content5,
+      category,
+    } = req.body;
 
-      await Post.findByIdAndDelete(postId);
-
-      res.send('Post deleted successfully');
-  } catch (error) {
-      console.error('Error deleting post:', error);
-      res.status(500).send('Error deleting post');
-  }
-});
-app.post('/createblog', upload.array('files', 5), async (req, res) => {
-  try {
-    const files = req.files.map(file => file.path);
-    const { name, description, content1, content2, content3, content4, content5, category } = req.body;
-
-    const blogDoc = await Blog.create({ name, description, content1, content2, content3, content4, content5, category, files: files,
+    const blogDoc = await Blog.create({
+      name,
+      description,
+      content1,
+      content2,
+      content3,
+      content4,
+      content5,
+      category,
+      files: files,
     });
 
     res.json(blogDoc);
   } catch (error) {
-    console.error('Error creating blog:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error creating blog:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
-app.get('/createblog', async (req, res) => {
+app.get("/createblog", async (req, res) => {
   try {
     const blogs = await Blog.find();
     res.json(blogs);
   } catch (error) {
-    console.error('Error fetching blogs:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching blogs:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-app.post('/chanelpartner', async (req, res) => {
+app.post("/chanelpartner", async (req, res) => {
   try {
     const newChanelPartner = new ChanelPartner(req.body);
     const savedChanelPartner = await newChanelPartner.save();
