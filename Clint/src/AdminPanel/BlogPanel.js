@@ -63,29 +63,29 @@ const BlogPanel = () => {
   }
 }
   return (
-    <div className='container'>
-     <div className='d-flex form-nav mt-4'>
-      </div>
-      <h2 className='text-center'>Create Blog</h2>
+    <div className='formback mt-5'>
+      <h2 className='formhead'>Create Blog</h2>
+      <div className='p-3'>
     <form onSubmit={createNewBlog}>
-      <input className='mt-3' type='title' placeholder='Enter Blog Name ' value={name} onChange={ev => setName(ev.target.value)} /><br/>
-      <textarea className='mt-3' placeholder='Enter Description' value={description} onChange={ev => setDescription(ev.target.value)}></textarea><br/>
-      <input className='mt-3' type='file' onChange={ev => setFiles([...ev.target.files])} accept='.webp' multiple /><br />
-      <select className='mb-3'  value={category} onChange={ev => setCategory(ev.target.value)}>
+      <div><input className="form-input-field" type='title' placeholder='Enter Blog Name ' value={name} onChange={ev => setName(ev.target.value)} /></div>
+      <div><textarea className="form-input-field" placeholder='Enter Description' value={description} onChange={ev => setDescription(ev.target.value)}></textarea></div>
+      <div><input className="form-input-field" type='file' onChange={ev => setFiles([...ev.target.files])} accept='.webp' multiple /></div>
+      <div><select className="form-input-field"  value={category} onChange={ev => setCategory(ev.target.value)}>
       <option>Select Option</option>
       <option>Womeki Group</option>
       <option>WIC</option>
       <option>Womeki Infra</option>
       <option>Womeki Tech</option>
       <option>Womeki holiday club</option>
-      </select>
-     <ReactQuill value={content1} onChange={newValue => setContent1(newValue)}/><br/>
-     <ReactQuill value={content2} onChange={newValue => setContent2(newValue)}/><br/>
-     <ReactQuill value={content3} onChange={newValue => setContent3(newValue)}/><br/>
-     <ReactQuill value={content4} onChange={newValue => setContent4(newValue)}/><br/>
-     <ReactQuill value={content5} onChange={newValue => setContent5(newValue)}/><br/>
-     <button className='mt-3'>Create Post</button>
+      </select></div>
+     <div><ReactQuill value={content1} onChange={newValue => setContent1(newValue)}/></div>
+     <div><ReactQuill value={content2} onChange={newValue => setContent2(newValue)}/></div>
+     <div><ReactQuill value={content3} onChange={newValue => setContent3(newValue)}/></div>
+     <div><ReactQuill value={content4} onChange={newValue => setContent4(newValue)}/></div>
+     <div><ReactQuill value={content5} onChange={newValue => setContent5(newValue)}/></div>
+     <div className='center'><button className="addbutton">Create Post</button></div>
     </form>
+  </div>
   </div>
   )
 }

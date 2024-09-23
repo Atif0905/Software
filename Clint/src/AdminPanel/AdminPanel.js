@@ -65,15 +65,16 @@ const AdminPanel = () => {
   }
 
   return (
-    <div className='container'>
-      <h2 className='text-center'>Create Project</h2>
+    <div className='formback mt-5'>
+      <h2 className='formhead'>Create Project</h2>
+      <div className='p-3'>
       <form onSubmit={createNewPost}>
-        <input className='mt-3' type='text' placeholder='Enter Project Name' value={projectname} onChange={ev => setProjectname(ev.target.value)} /><br />
-        <textarea className='mt-3' placeholder='Enter the Address' value={address} onChange={ev => setAddress(ev.target.value)}></textarea><br />
+        <input  className="form-input-field" type='text'   placeholder='Enter Project Name' value={projectname} onChange={ev => setProjectname(ev.target.value)} /><br />
+        <textarea  className="form-input-field" placeholder='Enter the Address' value={address} onChange={ev => setAddress(ev.target.value)}></textarea><br />
 
-        <input className='mt-3' type='file' onChange={ev => setFiles([...ev.target.files])} accept='.webp' multiple /><br />
+        <input  className="form-input-field" type='file' onChange={ev => setFiles([...ev.target.files])} accept='.webp' multiple /><br />
         <ReactQuill value={content} onChange={newValue => setContent(newValue)} /><br />
-        <label className='mt-3'>Category</label><br />
+        <label  className="form-input-field">Category</label><br />
         <select value={category} onChange={ev => setCategory(ev.target.value)} >
           <option>Select Option</option>
           <option>Womeki Group</option>
@@ -82,7 +83,7 @@ const AdminPanel = () => {
           <option>Womeki Tech</option>
           <option>Womeki holiday club</option>
         </select><br />
-        <label className='mt-3'>Subcategory</label><br />
+        <label  className="form-input-field">Subcategory</label><br />
         <select className='mb-3' value={subcategory} onChange={ev => setSubcategory(ev.target.value)} >
           <option>Select Option</option>
           <option>Recent</option>
@@ -103,13 +104,14 @@ const AdminPanel = () => {
           <option>Shop</option>
           <option>flat</option>
         </select><br />
-        <label className='mt-3'>Select Price Option</label><br />
+        <label  className="form-input-field">Select Price Option</label><br />
         <select value={price} onChange={ev => setPrice(ev.target.value)}>
           <option>select option</option>
           <option>Price on request</option>
         </select><br />
-        <button className='mt-3'>Create Post</button>
+        <div className='center'><button  className="addbutton">Create Post</button></div>
       </form>
+      </div>
     </div>
   );
 }
