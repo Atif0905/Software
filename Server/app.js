@@ -714,7 +714,7 @@ app.post('/send-email', async (req, res) => {
       service: 'gmail',
       auth: {
         user: 'crm@wic.org.in',
-        pass: 'bhnl dosk xiqs repp ' 
+        pass: 'bhnl dosk xiqs repp' 
       }
     });
     const mailOptions = {
