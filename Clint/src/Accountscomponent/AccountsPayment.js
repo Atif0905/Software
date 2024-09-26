@@ -75,7 +75,7 @@ const AccountsPayment = ({ projectsData, customersData, paymentDetailsData }) =>
   };
 
   const handlePasswordSubmit = (enteredPassword) => {
-    if (enteredPassword === "womeki") { 
+    if (enteredPassword === "Admin") { 
       setIsPasswordEntered((prevState) => ({ ...prevState, [showPasswordPrompt]: true }));
       setIsVisible((prevState) => ({ ...prevState, [showPasswordPrompt]: true }));
     } else {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Payments.css";
-import ConfirmationModal from "../Confirmation/ConfirmationModal";
+import ConfirmationModal from "../Confirmation/ConfirmationModal"; 
 const PayInterestAmount = () => {
   const [customerId, setCustomerId] = useState("");
   const [selectedCustomerId, setSelectedCustomerId] = useState("");
@@ -48,6 +48,7 @@ const PayInterestAmount = () => {
         comment: payment.comment,
         customerId: yourCustomerId,
         PaymentDate: payment.PaymentDate,
+        amounttoberecieved: payment.amounttoberecieved,
       });
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/paymentDetails`,
@@ -75,7 +76,7 @@ const PayInterestAmount = () => {
       setError(null);
     } catch (error) {
       console.error("Error submitting payment:", error);
-      setError("Error submitting payment. Please try again later."); // Set error message for display
+      setError("Error submitting payment. Please try again later.");
     }
   };
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
@@ -87,7 +88,6 @@ const PayInterestAmount = () => {
     } catch (error) {
       console.error("Error fetching payment details:", error);
       throw new Error(
-        "Error fetching payment details. Please try again later."
       );
     }
   };
@@ -108,7 +108,7 @@ const PayInterestAmount = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-         const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+         const response = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
         const customersWithDetails = await Promise.all(
           response.data.map(async (customer) => {
             const projectName = await fetchName("getProject", customer.project);
@@ -158,6 +158,7 @@ const PayInterestAmount = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/paymentPlans`
         );
+        console.log(response)
         if (Array.isArray(response.data.paymentPlans)) {
           const modifiedPlans = response.data.paymentPlans.map(async (plan) => {
             const modifiedInstallments = await Promise.all(
@@ -200,14 +201,16 @@ const PayInterestAmount = () => {
     }
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/viewcustomer/${customerId}`
+        `${process.env.REACT_APP_API_URL}/customer/${customerId}`
       );
+      console.log("Fetched customer details:", response.data);
       const customerDetails = response.data;
       const unitDetails = await fetchUnitDetails(
         customerDetails.project,
         customerDetails.block,
         customerDetails.plotOrUnit
       );
+      console.log(unitDetails)
       if (Array.isArray(unitDetails) && unitDetails.length > 0) {
         const matchedUnit = unitDetails.find(
           (unit) => unit.id === customerDetails.plotOrUnit
@@ -234,7 +237,66 @@ const PayInterestAmount = () => {
       } else {
         setCustomerDetails(customerDetails);
         setUnitData(null);
-      }  
+      }
+  
+      let installmentDueDates = [];
+      if (response.data.paymentPlan) {
+        const matchedPlan = paymentPlans.find(
+          (plan) => plan.planName === response.data.paymentPlan
+        );
+  
+        if (matchedPlan) {
+          setSelectedPlanInstallments(matchedPlan.installments);
+          const totalInstallments = matchedPlan.numInstallments;
+          const tenureDays = customerDetails.Tenuredays;
+          const installmentInterval = tenureDays / totalInstallments;
+  
+          installmentDueDates = matchedPlan.installments.map((installment, index) => {
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + installmentInterval * (index + 1));
+            
+            // Calculate the amount for this specific installment
+            const amount = (parseFloat(installment.amountRS) / 100) * 
+                           (parseFloat(unitDetails.plotSize) * parseFloat(unitDetails.rate));
+            
+            return {
+              installment: installment.installment,
+              dueDate: dueDate.toISOString().split('T')[0],
+              amount: amount,
+            };
+          });
+  
+          const disabledInstallments = matchedPlan.installments
+            .filter((installment) =>
+              submittedInstallments.includes(installment.installment)
+            )
+            .map((installment) => installment.installment);
+          setDisabledInstallments(disabledInstallments);
+        } else {
+          setSelectedPlanInstallments([]);
+        }
+      }
+      setCustomerDetails((prevDetails) => ({
+        ...prevDetails,
+        Duedates: installmentDueDates,
+      }));
+      for (let dueDate of installmentDueDates) {
+        try {
+          await axios.post(`${process.env.REACT_APP_API_URL}/DueDate`, {
+            dueDate: dueDate.dueDate,
+            installment: dueDate.installment,
+            amount: dueDate.amount,
+            customerId: customerId
+          });
+        } catch (error) {
+          if (error.response && error.response.status === 409) {
+            console.log(`Duplicate entry for installment ${dueDate.installment} on ${dueDate.dueDate}`);
+          } else {
+            console.error(`Error storing installment ${dueDate.installment} on ${dueDate.dueDate}:`, error);
+          }
+        }
+      }
+  
       setError(null);
       setShowCustomerDetails(true);
       setSelectedCustomerId(customerId);
@@ -245,10 +307,15 @@ const PayInterestAmount = () => {
       setCustomerDetails(null);
     }
   };
+  
+  
+  const handleViewDetails = (customerDetails) => {
+    setSelectedCustomer(customerDetails);
+  };
+  
   const handleMakePayment = async () => {
     setIsPaymentClicked(true);
     try {
-      // Use the previously fetched unit data (unitData) directly here, or fetch again if needed
       const response = await fetchUnitDetails(
         customerDetails.project,
         customerDetails.block,
@@ -258,6 +325,11 @@ const PayInterestAmount = () => {
     } catch (error) {
       console.error("Error making payment:", error);
     }
+  };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    return date.toLocaleDateString("en-US", options);
   };
   const fetchName = async (endpoint, ...ids) => {
     try {
@@ -285,6 +357,13 @@ const PayInterestAmount = () => {
     };
     fetchUnitDetails();
   }, [customerDetails]);
+  const filteredPayments = matchedPayments.filter(
+    (payment) => payment.customerId === selectedCustomerId
+  );
+  let totalDue = unitData && unitData.totalPrice ? unitData.totalPrice : 0;
+  filteredPayments.forEach((payment) => {
+    totalDue -= parseFloat(payment.amount);
+  });
   function ordinalSuffix(number) {
     const suffixes = ["th", "st", "nd", "rd"];
     const v = number % 100;
@@ -302,58 +381,31 @@ const PayInterestAmount = () => {
       e.preventDefault();
       setShowConfirm(true);
     };
-
   return (
     <div className="main-content">
-      <h4 className="Headtext">Receive Interest Payment from Customer</h4>
-      <div className="d-flex">
+      <div className="row ">
+      <div className="col-4">
         <form onSubmit={handleSearch}>
-          <div className="col-8">
-            <div className="whiteback">
-              <label className="mt-3">Customer ID</label>
+          <div className="formback1">
+          <label className="formhead ">Customer ID</label>
+            <div className="p-3">
+              
               <input className="form-input-field" type="text" placeholder="Enter Customer ID" value={customerId.toUpperCase()} onChange={(e) => setCustomerId(e.target.value)}/>
-              <button className="add-buttons mt-3" type="submit">   {" "}  Search{" "}  </button>
+              <div className="center"><button className="addbutton mt-3" type="submit">   {" "}  Search{" "}  </button></div>
             </div>
-          </div>
+          </div>          
         </form>
-        {showCustomerDetails && error && <p>{error}</p>}
-        {showCustomerDetails && customerDetails && (
-          <div className="col-8 whiteback">
-            <div className="table-wrapper">
-              <table className="fl-table d-flex">
-                <thead>
-                  <tr><th>Name</th></tr>
-                  <tr><th>Father/Husband Name</th></tr> 
-                  <tr><th>Address</th></tr>
-                  <tr><th>Customer ID</th></tr>
-                  <tr><th>Pan Number</th></tr>
-                  <tr><th>Mobile Number</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>{customerDetails.name.toUpperCase()}</td></tr>
-                  <tr><td>{customerDetails.fatherOrHusbandName.toUpperCase()}</td></tr>
-                  <tr><td>{customerDetails.address.toUpperCase()}</td></tr>
-                  <tr><td>{customerDetails.customerId}</td></tr>
-                  <tr><td>{customerDetails.panNumber.toUpperCase()}</td></tr>
-                  <tr><td>{customerDetails.mobileNumber}</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <h4 className="Headtext1" onClick={handleMakePayment}> <span className="makepayment">Add Payment</span> </h4>
-          </div>
-        )}
+        </div>
+        
       </div>
       {!isPaymentClicked && error && <p>{error}</p>}
       {isPaymentClicked && customerDetails && unitData && (
         <div>
-          <h4 className="Headtext">Pay Interest Amount</h4>
-          <h4 className="Headtext1">
-            Name: {customerDetails.name}, Customer ID:{" "}
-            {customerDetails.customerId} , Phone Number :{" "}
-            {customerDetails.mobileNumber} , unitPrice : {unitData.totalPrice}
-          </h4>
-          <div className="d-flex justify-content-between">
-            <div className="col-3 whiteback mt-4">
+          <div className="row">
+            <div className="col-4 mt-4">
+              <div className="formback3">
+                <h3 className="formhead">New Payment</h3>
+                <div className="p-3">
               <form onSubmit={handleSubmit1}>
                 <label>Select Installments</label>
                 <select
@@ -383,8 +435,7 @@ const PayInterestAmount = () => {
                             : `${ordinalSuffix(index)} Installment`}{" "}
                           -{" "}
                           {(parseFloat(installment.amountRS) / 100) *
-                            (parseFloat(unitData.plotSize) *
-                              parseFloat(unitData.rate))}
+                            (parseFloat(unitData.totalPrice) - (( parseFloat(unitData.plcCharges) + parseFloat(unitData.idcCharges) + parseFloat(unitData.edcPrice) ) * parseFloat(unitData.plotSize))  )}
                         </option>
                       )
                   )}
@@ -417,9 +468,9 @@ const PayInterestAmount = () => {
                 <input required className="form-input-field" type="text" placeholder="Enter Your Customer ID" value={yourCustomerId.toUpperCase()} onChange={(e) => setYourCustomerId(e.target.value)} />
                 <label>Comment</label>
                 <input type="text" className="form-input-field" name="comment" placeholder="Enter comment regarding payment" value={payment.comment} onChange={handleChange} />
-                <button type="submit" className="btn btn-primary mt-3">
+                <div className="center"><button type="submit" className="addbutton mt-3">
                   Submit
-                </button>
+                </button></div>
                 <ConfirmationModal
             show={showConfirm}
             onClose={() => setShowConfirm(false)}
@@ -430,8 +481,55 @@ const PayInterestAmount = () => {
             message="Are you sure you want to add this block?"
           />
               </form>
+              </div>
+              </div>
+            </div>
+            <div className="col-8 mt-4">
+              <div className="formback1">
+                <h2 className="formhead">Payment Plan Installments</h2>
+                  <div className="p-3">
+                  <div className="formback1">
+                <table >
+                  <thead className='formtablehead1 '>
+                    <tr>
+                <th>Installment</th>
+                <th>Due Date</th>
+                <th>Amount</th>
+                </tr>
+                </thead>
+                <tbody>
+                {filteredPayments.map((payment, index) => (
+                      <tr className='formtabletext ' key={index}>
+                        <td>
+                          {payment.paymentType.startsWith("Possession Charges")
+                            ? "Possession Charges"
+                            : isNaN(payment.paymentType)
+                            ? payment.paymentType
+                            : payment.paymentType === "1"
+                            ? "Booking"
+                            : payment.paymentType === "2"
+                            ? "1st Installment"
+                            : payment.paymentType === "3"
+                            ? "2nd Installment"
+                            : payment.paymentType === "4"
+                            ? "3rd Installment"
+                            : parseInt(payment.paymentType) -
+                              1 +
+                              ordinalSuffix(parseInt(payment.paymentType) - 1) +
+                              " Installment"}
+                        </td>
+
+                        <td>{formatDate(payment.PaymentDate)}</td>
+                        <td>{payment.amount}</td>
+                      </tr>
+                    ))}
+                </tbody>
+                </table>
+                    </div>
+              </div>
             </div>
           </div>
+        </div>
         </div>
       )}
     </div>

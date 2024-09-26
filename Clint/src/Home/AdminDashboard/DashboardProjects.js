@@ -106,7 +106,7 @@ const DashboardProjects = () => {
     const fetchCustomers = async () => {
       try {
         const viewCustomerResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/Viewcustomer`
+          `${process.env.REACT_APP_API_URL}/customer`
         );
         const viewCustomerData = viewCustomerResponse.data;
         const allProjectsResponse = await axios.get(
