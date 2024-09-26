@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Payments.css";
-import ConfirmationModal from "../Confirmation/ConfirmationModal";
+import ConfirmationModal from "../Confirmation/ConfirmationModal"; 
 const Receivedpayments = () => {
   const [customerId, setCustomerId] = useState("");
   const [selectedCustomerId, setSelectedCustomerId] = useState("");
   const [customerDetails, setCustomerDetails] = useState(null);
   const [error, setError] = useState(null);
   const [yourCustomerId, setYourCustomerId] = useState("");
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [projectdetails, setProjectdetails] = useState(null);
   const [submittedInstallments, setSubmittedInstallments] = useState([]);
   const [matchedPayments, setMatchedPayments] = useState([]);
   const [selectedPlanInstallments, setSelectedPlanInstallments] = useState([]);
@@ -28,7 +28,6 @@ const Receivedpayments = () => {
     reference: "",
     comment: "",
     PaymentDate: "",
-    // amounttoberecieved: "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,17 +40,6 @@ const Receivedpayments = () => {
         setError("Entered Customer ID does not match the searched Customer ID");
         return;
       }
-      
-      console.log("Form Data:", {
-        paymentType: payment.paymentType,
-        paymentMode: payment.paymentMode,
-        amount: payment.amount,
-        reference: payment.reference,
-        comment: payment.comment,
-        customerId: yourCustomerId,
-        PaymentDate: payment.PaymentDate,
-        amounttoberecieved: payment.amounttoberecieved,
-      });
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/paymentDetails`,
         {
@@ -62,7 +50,6 @@ const Receivedpayments = () => {
           comment: payment.comment,
           customerId: yourCustomerId,
           PaymentDate: payment.PaymentDate,
-          // amounttoberecieved: payment.amounttoberecieved,
         }
       );
       setSubmittedInstallments([...submittedInstallments, payment.paymentType]);
@@ -74,7 +61,6 @@ const Receivedpayments = () => {
         reference: "",
         comment: "",
         PaymentDate: "",
-        // amounttoberecieved: "",
       });
       
       setError(null);
@@ -88,26 +74,23 @@ const Receivedpayments = () => {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`
       );
+      console.log(response)
       return response.data.data;
     } catch (error) {
       console.error("Error fetching payment details:", error);
       throw new Error(
-        // "Error fetching payment details. Please try again later."
       );
     }
   };
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const paymentDetails = await fetchPaymentDetailsByCustomerId(
-          customerId
-        );
+        const paymentDetails = await fetchPaymentDetailsByCustomerId(customerId);
         setMatchedPayments(paymentDetails);
       } catch (error) {
         setError(error.message);
       }
     };
-
     fetchData();
   }, [customerId]);
   useEffect(() => {
@@ -117,18 +100,9 @@ const Receivedpayments = () => {
         const customersWithDetails = await Promise.all(
           response.data.map(async (customer) => {
             const projectName = await fetchName("getProject", customer.project);
-            const blockName = await fetchName(
-              "getBlock",
-              customer.project,
-              customer.block
-            );
-            const unitName = await fetchName(
-              "getUnit", 
-              customer.project, customer.block, customer.plotOrUnit
-            );
-            const unitDetails = await fetchUnitDetails(
-              customer.project,customer.block,customer.plotOrUnit
-            );
+            const blockName = await fetchName("getBlock", customer.project, customer.block);
+            const unitName = await fetchName("getUnit", customer.project, customer.block, customer.plotOrUnit);
+            const unitDetails = await fetchUnitDetails(customer.project,customer.block,customer.plotOrUnit);
             return {
               ...customer, projectName: projectName.toUpperCase(), blockName: blockName.toUpperCase(), unitName: unitName.toUpperCase(),
               ...unitDetails,
@@ -147,9 +121,7 @@ const Receivedpayments = () => {
   }, []);
   const fetchUnitDetails = async (projectId, blockId, unitId) => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
       const unitData = response.data.data;
       return unitData;
     } catch (error) {
@@ -160,10 +132,7 @@ const Receivedpayments = () => {
   useEffect(() => {
     const fetchPaymentPlans = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/paymentPlans`
-        );
-        console.log(response)
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
         if (Array.isArray(response.data.paymentPlans)) {
           const modifiedPlans = response.data.paymentPlans.map(async (plan) => {
             const modifiedInstallments = await Promise.all(
@@ -208,14 +177,14 @@ const Receivedpayments = () => {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/customer/${customerId}`
       );
-      console.log("Fetched customer details:", response.data);
       const customerDetails = response.data;
-      const unitDetails = await fetchUnitDetails(
-        customerDetails.project,
-        customerDetails.block,
-        customerDetails.plotOrUnit
+      const projectsResponse = await axios.get( `${process.env.REACT_APP_API_URL}/getallProjects`);
+      const projectsData = projectsResponse.data.data || [];
+      const matchedProject = projectsData.find((project) => project._id === customerDetails.project);
+      console.log(matchedProject)
+      setProjectdetails(matchedProject || {});
+      const unitDetails = await fetchUnitDetails( customerDetails.project, customerDetails.block, customerDetails.plotOrUnit
       );
-      console.log(unitDetails)
       if (Array.isArray(unitDetails) && unitDetails.length > 0) {
         const matchedUnit = unitDetails.find(
           (unit) => unit.id === customerDetails.plotOrUnit
@@ -248,8 +217,7 @@ const Receivedpayments = () => {
       if (response.data.paymentPlan) {
         const matchedPlan = paymentPlans.find(
           (plan) => plan.planName === response.data.paymentPlan
-        );
-  
+        );  
         if (matchedPlan) {
           setSelectedPlanInstallments(matchedPlan.installments);
           const totalInstallments = matchedPlan.numInstallments;
@@ -259,18 +227,13 @@ const Receivedpayments = () => {
           installmentDueDates = matchedPlan.installments.map((installment, index) => {
             const dueDate = new Date();
             dueDate.setDate(dueDate.getDate() + installmentInterval * (index + 1));
-            
-            // Calculate the amount for this specific installment
-            const amount = (parseFloat(installment.amountRS) / 100) * 
-                           (parseFloat(unitDetails.plotSize) * parseFloat(unitDetails.rate));
-            
+            const amount = (parseFloat(installment.amountRS) / 100) * (parseFloat(unitDetails.totalPrice) - (( parseFloat(unitDetails.plcCharges) + parseFloat(unitDetails.idcCharges) + parseFloat(unitDetails.edcPrice) ) * parseFloat(unitDetails.plotSize)));
             return {
               installment: installment.installment,
               dueDate: dueDate.toISOString().split('T')[0],
               amount: amount,
             };
-          });
-  
+          });  
           const disabledInstallments = matchedPlan.installments
             .filter((installment) =>
               submittedInstallments.includes(installment.installment)
@@ -301,7 +264,6 @@ const Receivedpayments = () => {
           }
         }
       }
-  
       setError(null);
       setShowCustomerDetails(true);
       setSelectedCustomerId(customerId);
@@ -312,12 +274,9 @@ const Receivedpayments = () => {
       setCustomerDetails(null);
     }
   };
-  
-  
   const handleViewDetails = (customerDetails) => {
     setSelectedCustomer(customerDetails);
   };
-  
   const handleMakePayment = async () => {
     setIsPaymentClicked(true);
     try {
@@ -330,11 +289,6 @@ const Receivedpayments = () => {
     } catch (error) {
       console.error("Error making payment:", error);
     }
-  };
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-    return date.toLocaleDateString("en-US", options);
   };
   const fetchName = async (endpoint, ...ids) => {
     try {
@@ -350,9 +304,7 @@ const Receivedpayments = () => {
   useEffect(() => {
     const fetchUnitDetails = async (projectId, blockId, unitId) => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`
-        );
+        const response = await axios.get( `${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}` );
         const unitData = response.data.data;
         return unitData;
       } catch (error) {
@@ -376,16 +328,17 @@ const Receivedpayments = () => {
   }
   const possessionCharges = unitData
     ? (
-        (parseFloat(unitData.idcCharges) +
-          parseFloat(unitData.plcCharges) +
-          parseFloat(unitData.edcPrice)) *
-        parseFloat(unitData.plotSize)
-      ).toFixed(2)
-    : "";
+        (parseFloat(unitData.idcCharges) + parseFloat(unitData.plcCharges) + parseFloat(unitData.edcPrice)) * parseFloat(unitData.plotSize)).toFixed(2) : "";
     const handleSubmit1 = (e) => {
       e.preventDefault();
       setShowConfirm(true);
     };
+    const possessionPayments = filteredPayments
+  .filter(payment => payment.paymentType === `Possession Charges - ${possessionCharges}`);
+const totalAmount = possessionPayments.reduce((acc, payment) => {
+  return acc + payment.amount;
+}, 0);
+const balance = possessionCharges - totalAmount;
   return (
     <div className="main-content">
       <div className="row ">
@@ -393,8 +346,7 @@ const Receivedpayments = () => {
         <form onSubmit={handleSearch}>
           <div className="formback1">
           <label className="formhead ">Customer ID</label>
-            <div className="p-3">
-              
+            <div className="p-3">              
               <input className="form-input-field" type="text" placeholder="Enter Customer ID" value={customerId.toUpperCase()} onChange={(e) => setCustomerId(e.target.value)}/>
               <div className="center"><button className="addbutton mt-3" type="submit">   {" "}  Search{" "}  </button></div>
             </div>
@@ -452,45 +404,35 @@ const Receivedpayments = () => {
               <form onSubmit={handleSubmit1}>
                 <label>Select Installments</label>
                 <select
-                  className="select-buttons ps-1"
-                  name="paymentType"
-                  value={payment.paymentType}
-                  onChange={handleChange}
-                >
-                  <option>Select</option>
-                  {selectedPlanInstallments.map(
-                    (installment, index) =>
-                      !submittedInstallments.includes(
-                        installment.installment
-                      ) &&
-                      installment.installment !== payment.paymentType && (
-                        <option
-                          key={index}
-                          value={installment.installment}
-                          disabled={
-                            disabledInstallments.includes(
-                              installment.installment
-                            ) || installment.installment === payment.paymentType
-                          }
-                        >
-                          {index === 0
-                            ? "Booking"
-                            : `${ordinalSuffix(index)} Installment`}{" "}
-                          -{" "}
-                          {(parseFloat(installment.amountRS) / 100) *
-                            (parseFloat(unitData.totalPrice) - (( parseFloat(unitData.plcCharges) + parseFloat(unitData.idcCharges) + parseFloat(unitData.edcPrice) ) * parseFloat(unitData.plotSize))  )}
-                        </option>
-                      )
-                  )}
-                  {!submittedInstallments.includes("Possession Charges") && (
-                    <option
-                      disabled={payment.paymentType === "Possession Charges"}
-                    >
-                      Possession Charges - {possessionCharges}
-                    </option>
-                  )}
-                </select>
+  className="select-buttons ps-1"
+  name="paymentType"
+  value={payment.paymentType}
+  onChange={handleChange}
+>
+  <option>Select</option>
+  {customerDetails.Duedates.map((due, index) => {
+    const matchingPayments = filteredPayments.filter(payment => payment.paymentType == due.installment);
+    const paymentAmount = matchingPayments.reduce((total, payment) => total + payment.amount, 0);
+    const balance1 = due.amount - paymentAmount;
 
+    return (
+      <option key={index} value={due.installment} disabled={balance1 === 0}>
+        {due.installment === 1
+          ? 'Booking'
+          : `${ordinalSuffix(index)} Installment`}
+        {" - "} {balance1}
+      </option>
+    );
+  })}
+  {!submittedInstallments.includes("Possession Charges") && (
+    <option
+      value="Possession Charges"
+      disabled={balance === 0 || payment.paymentType === "Possession Charges"}
+    >
+      Possession Charges - {possessionCharges}
+    </option>
+  )}
+</select>
                 <label>Select Payment Mode</label>
                 <select className="select-buttons ps-1" name="paymentMode" value={payment.paymentMode} onChange={handleChange} >
                   <option>Select</option>
@@ -532,42 +474,64 @@ const Receivedpayments = () => {
                 <h2 className="formhead">Payment Plan Installments</h2>
                   <div className="p-3">
                   <div className="formback1">
-                <table >
-                  <thead className='formtablehead1 '>
-                    <tr>
-                <th>Installment</th>
-                <th>Due Date</th>
-                <th>Amount</th>
-                </tr>
-                </thead>
-                <tbody>
-                {filteredPayments.map((payment, index) => (
-                      <tr className='formtabletext ' key={index}>
-                        <td>
-                          {payment.paymentType.startsWith("Possession Charges")
-                            ? "Possession Charges"
-                            : isNaN(payment.paymentType)
-                            ? payment.paymentType
-                            : payment.paymentType === "1"
-                            ? "Booking"
-                            : payment.paymentType === "2"
-                            ? "1st Installment"
-                            : payment.paymentType === "3"
-                            ? "2nd Installment"
-                            : payment.paymentType === "4"
-                            ? "3rd Installment"
-                            : parseInt(payment.paymentType) -
-                              1 +
-                              ordinalSuffix(parseInt(payment.paymentType) - 1) +
-                              " Installment"}
-                        </td>
+                  <div>
+              
+                  <table>
+  <thead>
+    <tr className="formtablehead1">
+      <th>Installment</th>
+      <th>Due Date</th>
+      <th>Installment Amount</th>
+      <th>Paid Amount</th>
+      <th>Balance</th>
+    </tr>
+  </thead>
+  <tbody>
+    {customerDetails.Duedates.map((due, index) => {
+      const matchingPayments = filteredPayments.filter(payment => payment.paymentType == due.installment);
+      const paymentAmount = matchingPayments.reduce((total, payment) => total + payment.amount, 0);
+      
+      const balance1 = due.amount - paymentAmount;
+      const rowStyle = {
+        backgroundColor: balance1 === 0 ? 'green' : 'red',
+        color: '#fff', 
+      };
 
-                        <td>{formatDate(payment.PaymentDate)}</td>
-                        <td>{payment.amount}</td>
-                      </tr>
-                    ))}
-                </tbody>
-                </table>
+      return (
+        <tr key={index} style={rowStyle}>
+          <td>{due.installment === 1 
+    ? 'Booking' 
+    : `${ordinalSuffix(index)} Installment`
+  }</td>
+          <td>{due.dueDate}</td>
+          <td>{due.amount}</td>
+          <td>{paymentAmount}</td>
+          <td>{balance1}</td> 
+        </tr>
+      );
+    })}
+    {
+  possessionPayments.length > 0 ? (
+    <tr className="tr1" style={{ backgroundColor: balance === 0 ? 'green' : 'red' }}>
+      <td>Possession</td>
+      <td>{projectdetails.Posessionfinaldate}</td>
+      <td>{possessionCharges}</td>
+      <td>{totalAmount}</td>
+      <td>{balance}</td>
+    </tr>
+  ) : (
+    <tr className="tr1" style={{ backgroundColor: balance === 0 ? 'green' : 'red' }}>
+      <td>Possession</td>
+      <td>{projectdetails.Posessionfinaldate}</td>
+      <td>{possessionCharges}</td>
+      <td>0</td>
+      <td>{possessionCharges}</td>
+    </tr>
+  )
+}
+  </tbody>
+</table>
+            </div>
                     </div>
               </div>
             </div>

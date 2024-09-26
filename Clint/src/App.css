@@ -637,13 +637,22 @@ padding-right: 10px;
   color: white;
   padding: 5px 30px;
 }
+.tr1{
+  color: white;
+}
 .table {
   display: grid;
   grid-template-columns: repeat(10, 1fr); /* 10 columns */
   gap: 15px;
   width: 100%;
 }
-
+.formtabletext1 {
+  width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  margin: 10px 0;
+  padding: 0 35px;
+  border-radius: 20px;
+}
 .table-header {
   background: linear-gradient(90deg, #06133D 0%, #1033A3 100%);
   color: white;

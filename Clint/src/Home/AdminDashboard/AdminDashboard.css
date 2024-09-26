@@ -25,13 +25,13 @@
 }
 .flexy {
   display: grid;
-  grid-template-columns: repeat(3, 320px);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 .paymentmaindiv {
   height: 130px;
-  width: 320px;
-  background-color: rgb(244, 91, 105);
+  width: 100%;
+  background-color: #FF6384;
   box-shadow: rgba(0, 0, 0, 0.235) 4.95px 4.95px 2.6px;
   border-radius: 10px;
 }
@@ -102,7 +102,6 @@
   .paymentmaindiv {
     height: 120px;
     width: 100%;
-    background-color: rgb(221, 76, 57);
   }
   .flexy {
     display: grid;

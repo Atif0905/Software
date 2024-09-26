@@ -76,7 +76,7 @@ function App() {
       <div className="App">        
         <Routes>
           {/* Sidebar routes */}
-          <Route path="/" element={<Navigate to="/DashBoard" />} /> 
+          <Route path="/" element={<Navigate to="/sign-in" />} /> 
           {/* <Route path="/userDetails" element={<Sidebar />} /> */}
           <Route path="/AdminDashboard/*" element={<Sidebar />} />
           <Route path="/uploaded-projects" element={<Sidebar />} />

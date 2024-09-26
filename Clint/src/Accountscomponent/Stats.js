@@ -1,182 +1,93 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
-import { setCustomers, setError, setLoading } from '../Actions/Actions';
-import Loader from '../Confirmation/Loader';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, Title, Tooltip, Legend, PointElement } from 'chart.js';
+import React, { useState, useEffect, useMemo } from "react";
+import { fetchProjects, fetchCustomers, fetchPaymentDetails } from '../services/customerService';
+import Loader from "../Confirmation/Loader";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, Title, Tooltip, Legend, PointElement);
+const Stats = ({ projectsData, customersData, paymentDetailsData }) => {
+  const [projects, setProjects] = useState(projectsData || []);
+  const [customers, setCustomers] = useState(customersData || []);
+  const [paymentDetails, setPaymentDetails] = useState(paymentDetailsData || []);
+  const [loading, setLoading] = useState(!projectsData || !customersData || !paymentDetailsData);
+  const [error, setError] = useState(null);
 
-const Stats = () => {
-    const { customers, loading, error } = useSelector(state => state.customer);
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        const fetchCustomers = async () => {
-            try {
-                dispatch(setLoading(true)); // Start loading
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
-                const customersWithDetails = await Promise.all(response.data.map(async (customer) => {
-                    const projectName = await fetchName('getProject', customer.project);
-                    const blockName = await fetchName('getBlock', customer.project, customer.block);
-                    const unitName = await fetchName('getUnit', customer.project, customer.block, customer.plotOrUnit);
-                    const unitDetails = await fetchUnitDetails(customer.project, customer.block, customer.plotOrUnit);
-                    const paymentDetails = await fetchPaymentDetailsByCustomerId(customer.customerId);
-
-                    return {
-                        ...customer,
-                        projectName: projectName.toUpperCase(),
-                        blockName: blockName.toUpperCase(),
-                        unitName: unitName.toUpperCase(),
-                        ...unitDetails,
-                        paymentDetails: paymentDetails.data,
-                        paymentDate: paymentDetails.data.length ? paymentDetails.data[0].PaymentDate : 'N/A'
-                    };
-                }));
-
-                dispatch(setCustomers(customersWithDetails));
-            } catch (error) {
-                dispatch(setError('Error fetching customers. Please try again later.'));
-            } finally {
-                dispatch(setLoading(false)); // Stop loading
-            }
-        };
-
-        fetchCustomers();
-    }, [dispatch]);
-
-    const fetchPaymentDetailsByCustomerId = async (customerId) => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching payment details:', error);
-            return { data: [] };
-        }
-    };
-
-    const fetchName = async (endpoint, ...ids) => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join('/')}`);
-            return response.data.data.name;
-        } catch (error) {
-            console.error(`Error fetching ${endpoint} name:`, error);
-            return 'Unknown';
-        }
-    };
-
-    const fetchUnitDetails = async (projectId, blockId, unitId) => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`);
-            const unitData = response.data.data;
-            return {
-                unitPrice: unitData.totalPrice,
-                idcCharges: unitData.idcCharges,
-                plcCharges: unitData.plcCharges,
-                plotSize: unitData.plotSize,
-                sizeType: unitData.sizeType,
-                rate: unitData.rate,
-                edcPrice: unitData.edcPrice
-            };
-        } catch (error) {
-            console.error('Error fetching unit details:', error);
-            return {
-                unitPrice: 'Unknown',
-                idcCharges: 'Unknown',
-                plcCharges: 'Unknown',
-                plotSize: 'Unknown',
-                sizeType: 'Unknown',
-                rate: 'Unknown',
-                edcPrice: 'Unknown'
-            };
-        }
-    };
-
-
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-      return date.toLocaleDateString("en-US", options);
-    };
-    const chartData = {
-        labels: customers.map(customer => formatDate(customer.paymentDate)),
-        datasets: [
-            {
-                label: 'Payment Received',
-                data: customers.map(customer => 
-                    (customer.paymentDetails || []).reduce((sum, payment) => sum + payment.amount, 0)
-                ),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: false
-            },
-            {
-                label: 'Due Amount',
-                data: customers.map(customer => 
-                    customer.unitPrice - (customer.paymentDetails || []).reduce((sum, payment) => sum + payment.amount, 0)
-                ),
-                borderColor: 'rgba(255, 99, 132, 1)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                fill: false
-            },
-            {
-                label: 'Total Price',
-                data: customers.map(customer => customer.unitPrice),
-                borderColor: 'rgba(153, 102, 255, 1)',
-                backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                fill: false
-            }
-        ]
-    };
-    
-
-    if (loading) {
-        return <div><Loader/></div>;
+  useEffect(() => {
+    if (!projectsData || !customersData || !paymentDetailsData) {
+      fetchData();
     }
+  }, []);
 
-    return (
-        <div className='main-content'>
-            <h2 className='formhead'>Stats of All Directors</h2>
-            <div className="chart-container mb-5">
-                <Line data={chartData} />
-            </div>
-            {/* <div className="table-wrapper whiteback">
-                <table id='viewcustomertable'>
-                    <thead>
-                        <tr>
-                            <th>Director Name</th> 
-                            <th>Team Lead Name</th> 
-                            <th>PROJECT Name</th>
-                            <th>BLOCK-PLOT</th>
-                            <th>UNIT NO</th>
-                            <th>UNIT PRICE</th>
-                            <th>PAYMENT RECEIVED</th>
-                            <th>BALANCE</th>
-                            <th>Payment Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-    {customers.map((customer, index) => (
-        <tr key={index}>
-            <td>{customer.EmployeeName.toUpperCase()}</td>
-            <td>{customer.Teamleadname.toUpperCase()}</td>
-            <td>{customer.projectName}</td>
-            <td>{customer.blockName}</td>
-            <td>{customer.unitName}</td>
-            <td>{customer.unitPrice}</td>
-            <td>{(customer.paymentDetails || []).reduce((sum, payment) => sum + payment.amount, 0)}</td>
-            <td>{customer.unitPrice - (customer.paymentDetails || []).reduce((sum, payment) => sum + payment.amount, 0)}</td>
-            <td>{formatDate(customer.paymentDate)}</td>
-        </tr>
-    ))}
-</tbody>
+  const fetchData = async () => {
+    try {
+      const [projects, customers, paymentDetails] = await Promise.all([
+        fetchProjects(),
+        fetchCustomers(),
+        fetchPaymentDetails(),
+      ]);
+      setProjects(projects);
+      setCustomers(customers);
+      setPaymentDetails(paymentDetails);
+    } catch (error) {
+      setError("Error fetching data. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                </table>
-            </div> */}
-            
+  const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize, edcPrice) => {
+    return (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges) + parseFloat(edcPrice)) * parseFloat(plotSize);
+  };
+
+  const calculateTotalPriceOfAllUnits = useMemo(() => {
+    return projects.reduce((totalPrice, project) => {
+      return totalPrice + project.blocks.reduce((blockTotal, block) => {
+        return blockTotal + block.units.reduce((unitTotal, unit) => {
+          return unitTotal + calculatePerUnitPayment(unit.rate, unit.plcCharges, unit.idcCharges, unit.plotSize, unit.edcPrice);
+        }, 0);
+      }, 0);
+    }, 0).toFixed(2);
+  }, [projects]);
+
+  const calculateTotalAmountReceived = useMemo(() => {
+    if (!Array.isArray(paymentDetails) || paymentDetails.length === 0) {
+      return '0.00';
+    }
+    return paymentDetails.reduce((sum, payment) => sum + parseFloat(payment.amount || 0), 0).toFixed(2);
+  }, [paymentDetails]);
+
+  const calculateDuePayment = useMemo(() => {
+    return (parseFloat(calculateTotalPriceOfAllUnits) - parseFloat(calculateTotalAmountReceived)).toFixed(2);
+  }, [calculateTotalPriceOfAllUnits, calculateTotalAmountReceived]);
+
+  // Prepare data for the chart
+  const chartData = [
+    { name: 'Total Price', value: parseFloat(calculateTotalPriceOfAllUnits) },
+    { name: 'Total Amount Received', value: parseFloat(calculateTotalAmountReceived) },
+    { name: 'Due Payment', value: parseFloat(calculateDuePayment) }
+  ];
+
+  return (
+    <div className="main-content">
+      {loading ? (
+        <Loader/>
+      ) : (
+        <div>
+            <h3 className="formhead">Stats</h3>
+            <div className="p-5">
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="value" stroke="#ff7927" activeDot={{ r: 8 }} />
+            </LineChart>
+          </ResponsiveContainer>
+          </div>
         </div>
-    );
-}
+      )}
+    </div>
+  );
+};
 
 export default Stats;

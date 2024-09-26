@@ -33,7 +33,7 @@ const Viewplan = () => {
                 </div>
               {paymentPlans.map((plan, index) => (
                 <React.Fragment key={index}>
-                  <div className='formtabletext d-flex justify-content-between'>
+                  <div className='formtabletext1 d-flex justify-content-between'>
                     <td>{index + 1}</td> 
                     <td>{plan.planName}</td>
                     <td>
@@ -55,7 +55,7 @@ const Viewplan = () => {
             <th>Percentage:</th>
           </div>
           {selectedPlan.installments.map((installmentObj, index) => (
-            <div className='formtabletext d-flex justify-content-between' key={index}>
+            <div className='formtabletext1 d-flex justify-content-between' key={index}>
               <td>{installmentObj.installment}</td>
               <td>{installmentObj.daysFromBooking}</td>
               <td>{installmentObj.amountRS}</td>

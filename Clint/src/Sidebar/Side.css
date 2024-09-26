@@ -118,6 +118,15 @@ a {
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
   }
+  .dropdown-item.active {
+    width: 100%;
+    background-color: #DFEBFB;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    color: black;
+    margin-left: 15px;
+    padding-left: 15px;
+  }
 .newside{
     height: 100%;
     background: linear-gradient(180deg, #5651AB -26.59%, #232145 129.35%);
@@ -139,14 +148,14 @@ a {
     font-weight: 400;
     line-height: 29.9px;
     text-align: left;
-    color: #FFFFFF;    
+    color: #DFEBFB;    
     padding-left: 30px;    
     padding-top: 5px;
     padding-bottom: 5px;
 }
 .Sidelink:hover{
     width: 100%;
-    background-color: white;
+    background-color: #DFEBFB;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     color: black;
@@ -155,7 +164,7 @@ a {
 }
 .Sidelink.active {
   width: 100%;
-  background-color: white;
+  background-color: #DFEBFB;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
   color: black;

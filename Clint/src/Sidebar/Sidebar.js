@@ -123,7 +123,7 @@
 
 // export default Sidebar;
 import React,{useState} from 'react'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import './Side.css';
 import { FaRegUser } from "react-icons/fa";
@@ -143,6 +143,7 @@ const Sidebar = () => {
      };
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation(); 
   const logOut = () => {
     window.localStorage.clear();
     navigate('/sign-in');
@@ -158,8 +159,8 @@ const Sidebar = () => {
         <img src='./WTSlogo.png' className='sidelogo' alt=''/>
       </div>
       <div className=''>
-      <Link to="/AdminDashboard"><div className='Sidelink'><RiDashboard3Line  className='svg-icon' />DashBoard</div></Link>
-      <Link to="/Adminuser"><div className='Sidelink'><FaRegUser  className='svg-icon' />User</div></Link>
+      <Link to="/AdminDashboard"><div className={`Sidelink ${location.pathname === '/AdminDashboard' ? 'active' : ''}`}><RiDashboard3Line  className='svg-icon' />DashBoard</div></Link>
+      <Link to="/Adminuser"><div className={`Sidelink ${location.pathname === '/Adminuser' ? 'active' : ''}`}><FaRegUser  className='svg-icon' />User</div></Link>
         <div className="dropdown">
             <div className="dropdown-toggle" onClick={() => handleDropdownToggle('projectMaster')}><AiOutlineFundProjectionScreen  className='svg-icon' />Project Master <IoIosArrowDown /></div>
             <div className={`dropdown-menu ${activeDropdown === 'projectMaster' ? 'active' : ''}`} aria-labelledby="dropdownMenuButton">
