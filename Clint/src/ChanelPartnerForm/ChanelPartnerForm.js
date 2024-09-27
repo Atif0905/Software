@@ -16,34 +16,47 @@ const ChanelPartnerForm = () => {
   
   const [error, setError] = useState('');
   const [showConfirm, setShowConfirm] = useState(false); 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+ // Handle input changes
+ const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData({
+    ...formData,
+    [name]: value,
+  });
+};
 
-  const handleSubmit = async (e) => {
-  
-    console.log('Form Data: ', formData);
-  
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/channelpartner`, formData);
-      setError('');
-    } catch (err) {
-      console.error("Error response from server: ", err);
-      if (err.response && err.response.status === 400) {
-        setError(err.response.data.error);
-      } else {
-        setError('Error creating Channel Partner');
-      }
+// Handle form submission confirmation
+const handleSubmit1 = (e) => {
+  e.preventDefault();
+  setShowConfirm(true); // Show the confirmation modal
+};
+
+// Handle actual submission to the server
+const handleSubmit = async () => {
+  console.log('Form Data: ', formData); // Log form data for debugging
+
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/chanelpartner`, formData);
+    setError(""); // Clear any existing errors
+    console.log("Form submitted successfully:", response.data);
+    // Reset form after successful submission
+    setFormData({
+      customerFirstName: "",
+      customerSecondName: "",
+      customerEmail: "",
+      phoneNumber: ""
+    });
+    setShowConfirm(false); // Close confirmation modal
+  } catch (err) {
+    console.error("Error response from server: ", err);
+    if (err.response && err.response.status === 400) {
+      setError(err.response.data.error || "Invalid data");
+    } else {
+      setError("Error creating Channel Partner");
     }
-  };
-  const handleSubmit1 = (e) => {
-    e.preventDefault();
-    setShowConfirm(true);
-  };
+  }
+};
+  
 
   return (
     <div>
@@ -52,7 +65,6 @@ const ChanelPartnerForm = () => {
         <h1 className="head">CHANNEL PARTNER REGISTRATION</h1>
         <h2 className="head2">Building Success Together - Become Our Channel Partner</h2>
       </div>
-
       <div className="back1">
         <div className="container">
           <div className="formcontainer">

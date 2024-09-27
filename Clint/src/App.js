@@ -73,6 +73,8 @@ function App() {
   }, [userData]);
   return (
     <Router>
+                <Route path="/ChanelPartnerform" element={<ChanelPartnerForm/>} />
+
       <div className="App">        
         <Routes>
           {/* Sidebar routes */}
@@ -164,7 +166,6 @@ function App() {
           <Route path="print-page" element={<PrintPage/>}/>
           <Route path="FilteredPrintPage" element={<FilteredPrintPage/>}/>
           <Route path="/edit-expense" element={<EditExpense />} />
-          <Route path="/Chanel-Partner-form" element={<ChanelPartnerForm/>} />
           <Route path="/AllProjects" element={<div className=""><UploadedProjects/></div>} />
           <Route path="/All-Projects" element={<div className="main-content"><AccountsProjects/></div>} />
         </Routes>

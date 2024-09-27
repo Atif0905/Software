@@ -13,7 +13,7 @@ const uploadMiddleware = multer({ dest: "uploads/" });
 const fs = require("fs");
 const Post = require("./Models/CreatePost");
 const Blog = require("./Models/Createblog");
-const ChanelPartner = require("./Models/ChanelPartner");
+const ChannelPartner = require("./Models/ChanelPartner");
 const expenseRoutes = require("./Router/expenseRoutes");
 const paymentPlanRoutes = require("./Router/paymentPlanRoutes");
 const uploadProjects = multer({ dest: "uploads/" });
@@ -953,12 +953,56 @@ app.get("/createblog", async (req, res) => {
   }
 });
 
-app.post("/chanelpartner", async (req, res) => {
+// POST /chanelpartner - Create a new ChannelPartner
+app.post('/chanelpartner', async (req, res) => {
   try {
-    const newChanelPartner = new ChanelPartner(req.body);
-    const savedChanelPartner = await newChanelPartner.save();
-    res.status(201).json(savedChanelPartner);
+    const { customerFirstName, customerSecondName, customerEmail, gender, phoneNumber, referredBy } = req.body;
+
+    // Basic validation
+    if (!customerFirstName || !customerSecondName || !customerEmail || !gender || !phoneNumber || !referredBy) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const newChannelPartner = new ChannelPartner(req.body);
+    const savedChannelPartner = await newChannelPartner.save();
+
+    res.status(201).json(savedChannelPartner);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error creating Channel Partner:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
+
+
+
+
+
+// GET /chanelpartner - Get all ChannelPartners
+app.get('/chanelpartner', async (req, res) => {
+  try {
+    const partners = await ChannelPartner.find();
+    res.status(200).json(partners);
+  } catch (error) {
+    console.error('Error fetching Channel Partners:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET /chanelpartner/:uniqueId - Get a ChannelPartner by uniqueId
+app.get('/chanelpartner/:uniqueId', async (req, res) => {
+  try {
+    const { uniqueId } = req.params;
+    const partner = await ChannelPartner.findOne({ uniqueId });
+
+    if (!partner) {
+      return res.status(404).json({ error: 'Channel Partner not found' });
+    }
+
+    res.status(200).json(partner);
+  } catch (error) {
+    console.error('Error fetching Channel Partner:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+

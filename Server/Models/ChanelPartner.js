@@ -1,6 +1,6 @@
 // /models/channelPartner.js
 const mongoose = require('mongoose');
-const { sendPartnerEmail } = require('../services/emailService'); // Import the email service
+// const { sendPartnerEmail } = require('../services/emailService'); // Import the email service
 
 // ChannelPartner Schema
 const ChannelPartnerSchema = new mongoose.Schema({
@@ -67,15 +67,15 @@ ChannelPartnerSchema.pre('save', async function (next) {
 });
 
 // Post-save middleware to send an email
-ChannelPartnerSchema.post('save', async function (doc, next) {
-  try {
-    await sendPartnerEmail(doc); // Call the email sending function
-    next();
-  } catch (error) {
-    console.error('Error sending email:', error);
-    next(error);
-  }
-});
+// ChannelPartnerSchema.post('save', async function (doc, next) {
+//   try {
+//     await sendPartnerEmail(doc); // Call the email sending function
+//     next();
+//   } catch (error) {
+//     console.error('Error sending email:', error);
+//     next(error);
+//   }
+// });
 
 const ChannelPartner = mongoose.model('ChannelPartner', ChannelPartnerSchema);
 
