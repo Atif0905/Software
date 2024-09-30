@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTimes,} from "@fortawesome/free-solid-svg-icons";
 import "../../UpdateProjects/Projects.css";
 import "../AdminDashboard/Uploads/Coustmer";
 import { FaMoneyCheck } from "react-icons/fa6";
@@ -112,7 +111,6 @@ const DashboardProjects = () => {
         const allProjectsResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/getAllProjects`
         );
-        console.log(allProjectsResponse);
         const allProjectsData = allProjectsResponse.data.data;
         const customersWithDetails = await Promise.all(
           viewCustomerData.map(async (customer) => {
@@ -423,17 +421,17 @@ const DashboardProjects = () => {
     <div className="">
       {loading && <div className=""><Loader /></div>}
       <div className="formback1 ">
-        <div className="p-3 mt-3">
+        <div className="p-2 ">
         {projects.slice(0, 3).map((project, index) => (
           <div key={index} className="">
             <div className={` projectdiv ${index === 0 ? 'projectdiv1' : index === 1 ? 'projectdiv2' : 'projectdiv3'}`}>
               <div className="coloureddiv1">
                 <h3 className="colouredtext">{project.name.toUpperCase()}</h3>
                 <div className="upperconatiner">
-                <p className="descriptiondiv">
+                <h3 className="descriptiondiv">
                   {project.description.toUpperCase()}
-                </p>
-                <p className="pright mt-2" onClick={() => handleClickProject(project._id)}><FaGreaterThan className={`datashow ${index === 0 ? 'datashow1' : index === 1 ? 'datashow2' : 'datashow3'}`} /></p></div>
+                </h3>
+                <h3 className="pright " onClick={() => handleClickProject(project._id)}><FaGreaterThan className={`datashow ${index === 0 ? 'datashow1' : index === 1 ? 'datashow2' : 'datashow3'}`} /></h3></div>
               </div>
             </div>
             {selectedProjectId === project._id && showBlocks && (
@@ -558,43 +556,14 @@ const DashboardProjects = () => {
                                         {unit.status === "sold" && (
                                           <>
                                             <button  className="hold-unit"  onClick={() =>    handleMarkUnitHold(project._id,block._id, unit._id)  }>  Hold</button>
-                                            <button className="available-unit" style={{   backgroundColor: "#A6FFBF", }} onClick={() => handleMarkUnitAvailable( project._id, block._id, unit._id ) }
-                                            >
-                                              {" "}
-                                              Available
-                                            </button>
-                                          </>
+                                            <button className="available-unit" style={{   backgroundColor: "#A6FFBF", }} onClick={() => handleMarkUnitAvailable( project._id, block._id, unit._id ) }>{" "}Available</button> </>
                                         )}
                                         {unit.status === "hold" && (
                                           <>
                                             <button
-                                              className="available-unit"
-                                              style={{
-                                                backgroundColor: "#A6FFBF",
-                                              }}
-                                              onClick={() =>
-                                                handleMarkUnitAvailable(
-                                                  project._id,
-                                                  block._id,
-                                                  unit._id
-                                                )
-                                              }
-                                            >
-                                              {" "}
-                                              Available
+                                              className="available-unit" style={{   backgroundColor: "#A6FFBF", }} onClick={() =>   handleMarkUnitAvailable(project._id, block._id, unit._id    )  }> {" "} Available
                                             </button>
-                                            <button
-                                              className="sold-unit"
-                                              onClick={() =>
-                                                handleMarkUnitSold(
-                                                  project._id,
-                                                  block._id,
-                                                  unit._id
-                                                )
-                                              }
-                                            >
-                                              {" "}
-                                              Sold
+                                            <button className="sold-unit" onClick={() =>   handleMarkUnitSold(     project._id,     block._id,     unit._id   ) } > {" "} Sold
                                             </button>
                                           </>
                                         )}

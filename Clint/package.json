@@ -39,6 +39,7 @@
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0",
     "styled-components": "^5.3.6",
+    "vara": "^1.4.1",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },

@@ -91,7 +91,6 @@ export const fetchProjects = async () => {
 export const fetchPaymentDetails = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/paymentDetails`);
-    console.log(response)
     if (response.status === 200) {
       return response.data.data;
     } else {

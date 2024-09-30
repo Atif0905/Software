@@ -1,98 +1,159 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [clicked, setClicked] = useState(false);
   const navigate = useNavigate();
-  function handleSubmit(e) {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post(
+    if (!email || !password) {
+      setError("Please enter a valid Email ID and Password.");
+      return;
+    }
+
+    try {
+      const { data } = await axios.post(
         `${process.env.REACT_APP_API_URL}/login-user`,
         { email, password },
         {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            "Access-Control-Allow-Origin": "*",
           },
         }
-      )
-      .then((response) => {
-        const data = response.data;
-        if (data.status === "ok") {
-          setSuccess("Login successful");
-          setError("");
-          window.localStorage.setItem("token", data.data);
-          window.localStorage.setItem("loggedIn", true);
-          setTimeout(() => {
-            navigate("/DashBoard");
-          }, 2000);
-        } else { setError(data.error || "Login failed"); setSuccess("");}
-      })
-      .catch((error) => { console.error("Error logging in:", error); setError("An error occurred. Please try again later."); setSuccess("");});
-  }
+      );
+
+      if (data.status === "ok") {
+        setSuccess("Login successful");
+        setError("");
+        window.localStorage.setItem("token", data.data);
+        window.localStorage.setItem("email", email);
+        window.localStorage.setItem("loggedIn", true);
+        setTimeout(() => navigate("/DashBoard"), 2000);
+      } else {
+        setError(data.error === "Invalid email" ? "Please enter the correct email" : "Enter the correct password");
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again later.");
+    }
+  };
+
+  const handleClick = () => setClicked(true);
 
   return (
-    <div className="background  ">
-      <div className="container">
-        <div className="auth-wrapper">
-          <div className="">
-            
-            <form onSubmit={handleSubmit} className="login">
-            {error && (
-              <div className=".confirm-modal modalbox error animate mb-3">
-                <h1>Oh no!</h1>
-                <p> Oops! Something went wrong,<br /> you should try again.</p>
-              </div>
-            )}
-            {success && (
-              <div className=" .confirm-modal modalbox success animate mb-3">
-                <div className="icon">
-                  <span className="glyphicon glyphicon-ok"></span>
-                </div>
-                <h1>Success!</h1>
-                <p>You have Logged in Successfully</p>
-              </div>
-            )}
-              <h3>Sign In</h3>
-              <div className="mb-3">
-                <label>Email address</label>
-                <input type="email" className="form-control" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)}/>
-              </div>
-              <div className="mb-3 position-relative">
-                <label>Password</label>
-                <input type={showPassword ? "text" : "password"} className="form-control" placeholder="Enter password" onChange={(e) => setPassword(e.target.value)} id="myInput" />
-                <span className="position-absolute" style={{ right: "10px", top: "33px", cursor: "pointer",}} onClick={() => setShowPassword((prev) => !prev)}>
-                  {showPassword ? <svg className="eye-slash" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512"><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c8.4-19.3 10.6-41.4 4.8-63.3c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zM373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5L373 389.9z"></path></svg> : <svg className="eye" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512"><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"></path></svg>}
-                </span>
-              </div>
-              <div className="mb-3">
-              <div className="checkbox-wrapper-33">
-              <label className="checkbox">
-              <input className="checkbox__trigger visuallyhidden" type="checkbox" />
-    <span span className="checkbox__symbol">
-      <svg aria-hidden="true" className="icon-checkbox" width="28px" height="28px" viewBox="0 0 28 28" version="1" xmlns="http://www.w3.org/2000/svg" >
-        <path d="M4 14l8 7L24 7"></path>
-      </svg>
-    </span>
-    <p className="checkbox__textwrapper">Remember Me</p>
-  </label>
-</div>
-</div>
-              <div className="d-grid">
-                <button type="submit" className="loginbutt">
-                  Submit
-                </button>
-              </div>
-            </form>
+    <div className="white1">
+      <div>
+        <img
+          src="./signinimg.webp"
+          className={`background ${clicked ? "clicked" : ""}`}
+          alt="CRM background"
+        />
+        <div className="container">
+          <h3 className={`loginhead ${clicked ? "clicked" : ""}`}>CRM</h3>
+          <h3 className={`loginsubhead ${clicked ? "clicked" : ""}`}>
+            Customer Relationship Management
+          </h3>
+          <p className={`logintext ${clicked ? "clicked" : ""}`}>
+            A CRM system helps businesses manage customer interactions, track
+            sales, and streamline operations. It improves relationships, boosts
+            efficiency, and drives growth by centralizing customer data.
+          </p>
+          <p className={`clickhere ${clicked ? "clicked" : ""}`}>
+            Click Here &gt;&gt;
+          </p>
+        </div>
+        <div className={`auth-wrapper ${clicked ? "clicked" : ""}`}>
+          <div className="slidewhite">
+            <div className="slideblue">
+              <img
+                src="./Trust.webp"
+                className={`slidingimg ${clicked ? "rotate" : ""}`}
+                alt="Trust"
+                onClick={handleClick}
+              />
+            </div>
           </div>
         </div>
       </div>
+      <div className="offset-6 col-6">
+        <form onSubmit={handleSubmit} className={`login ${clicked ? "clicked" : ""}`}>
+          {error && (
+            <MessageBox message={error} type="error" />
+          )}
+          {success && (
+            <MessageBox message="You have Logged in Successfully" type="success" />
+          )}
+          <h3 className="welcomehead1">WELCOME USER</h3>
+          <div className="mb-3">
+            <input
+              type="email"
+              className="login-input"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3 position-relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              className="login-input"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <span
+              className="position-absolute"
+              style={{ right: "15px", top: "8px", cursor: "pointer" }}
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
+            </span>
+          </div>
+          <div className="mb-3">
+            <div className="checkbox-wrapper-33">
+              <label className="checkbox">
+                <input className="checkbox__trigger visuallyhidden" type="checkbox" />
+                <span className="checkbox__symbol">
+                  <svg aria-hidden="true" className="icon-checkbox" width="28px" height="28px" viewBox="0 0 28 28">
+                    <path d="M4 14l8 7L24 7"></path>
+                  </svg>
+                </span>
+                <p className="checkbox__textwrapper">Remember Me</p>
+              </label>
+            </div>
+          </div>
+
+          <div className="center">
+            <button type="submit" className="loginbutt">Submit</button>
+          </div>
+        </form>
+      </div>
     </div>
+  );
+}
+function MessageBox({ message, type }) {
+  return (
+    <div className={`.confirm-modal modalbox ${type} animate mb-3`}>
+      <h5>{message}</h5>
+    </div>
+  );
+}
+function EyeIcon() {
+  return (
+    <svg className="eye" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512"><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"></path></svg>
+  );
+}
+function EyeSlashIcon() {
+  return (
+    <svg className="eye-slash" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512"><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c8.4-19.3 10.6-41.4 4.8-63.3c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zM373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5L373 389.9z"></path></svg>
   );
 }

@@ -489,7 +489,7 @@ const [showConfirm, setShowConfirm] = useState(false);
       const value = Math.min(100, Math.max(0, e.target.value));
       handleInputChange({ target: { name: e.target.name, value } });
     }}
-    onWheel={(e) => e.target.blur()} // Prevents changing value on scroll
+    onWheel={(e) => e.target.blur()}
     max="100"
     min="0"
     required
@@ -572,13 +572,7 @@ const [showConfirm, setShowConfirm] = useState(false);
           <input type="number" onWheel={numberInputOnWheelPreventChange} className="form-input-field" id='input' placeholder="Total Price" value={editedtotalPrice} onChange={(e) => setEditedTotalPrice(e.target.value)}  />
         </div>
           <div className="container mt-2 grid-item">
-            <input
-              type="checkbox"
-              id="cbx2"
-              name="sendEmail"
-              checked={formData.sendEmail}
-              onChange={handleCheckboxChange}
-              style={{ display: 'none' }}
+            <input type="checkbox" id="cbx2" name="sendEmail" checked={formData.sendEmail} onChange={handleCheckboxChange} style={{ display: 'none' }}
             />
             <label htmlFor="cbx2" className="check">
               <svg width="18px" height="18px" viewBox="0 0 18 18">
@@ -592,14 +586,7 @@ const [showConfirm, setShowConfirm] = useState(false);
         <div className=" mt-3">
             <h4 className='customerhead'><span>Tenure Date</span></h4>
             <div className='center'>
-            <DateRangePicker 
-        onChange={item => setState([item.selection])}
-        showSelectionPreview={true}
-        moveRangeOnFirstSelection={false}
-        months={1}
-        ranges={state}
-        direction="horizontal"
-        required/></div>
+            <DateRangePicker onChange={item => setState([item.selection])}showSelectionPreview={true}moveRangeOnFirstSelection={false}months={1}ranges={state}direction="horizontal"required/></div>
           </div>
         <div className='center mt-4'>
           <button type="submit" className="addbutton " >Submit</button>
