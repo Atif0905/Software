@@ -102,18 +102,14 @@ body {
   z-index: 999;
 }
 .confirm-modal-content {
-  /* background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  text-align: center; */
+
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
+  margin: 15% auto; 
   padding: 20px;
   border: 1px solid #888;
 }
 .main-content {
-  margin-left: 17%;
+  margin-left: 16%;
   padding: 16px;
   background-color: #DFEBFB !important;
   min-height: 100vh;

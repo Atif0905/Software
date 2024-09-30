@@ -33,7 +33,6 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
         fetchPaymentDetails(),
       ]);
       setProjects(projects);
-      console.log(projects)
       setCustomers(customers);
       setPaymentDetails(paymentDetails);
     } catch (error) {
@@ -124,7 +123,7 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
         </div>
         </div>
       </div>
-      <div className="formback1"><DashboardProjects/><a href="/Allprojects"><p className="center seemore">See More &gt;</p></a></div>
+      <div className="formback1"><DashboardProjects/><a href="/Allprojects"><h4 className="center seemore">See More &gt;</h4></a></div>
       </div>
       )}
       {showPasswordPrompt && (

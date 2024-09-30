@@ -41,7 +41,7 @@ export default function SignUp() {
     }
   };
   return (
-    <div className="auth-wrapper">
+    <div className="p-5">
       <div className="auth-inner">
         <form onSubmit={handleSubmit}>
           <h3>Sign Up</h3>

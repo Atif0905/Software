@@ -98,7 +98,6 @@ const AccountsProjects = () => {
         const allProjectsResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/getAllProjects`
         );
-        console.log(allProjectsResponse);
         const allProjectsData = allProjectsResponse.data.data;
         const customersWithDetails = await Promise.all(
           viewCustomerData.map(async (customer) => {
@@ -355,7 +354,8 @@ const AccountsProjects = () => {
     <div className="">
       {loading && <div className=""><Loader /></div>}
       <div className="formback1 ">
-        <div className="p-3 mt-3">
+        
+        <div className="p-2 ">
         {projects.slice(0, 3).map((project, index) => (
           <div key={index} className="">
             <div className={` projectdiv ${index === 0 ? 'projectdiv1' : index === 1 ? 'projectdiv2' : 'projectdiv3'}`}>
