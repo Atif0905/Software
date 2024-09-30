@@ -389,8 +389,7 @@ app.post("/addBlock/:projectId", upload.single("file"), async (req, res) => {
   }
 });
 
-app.post(
-  "/addUnit/:projectId/:blockId",
+app.post("/addUnit/:projectId/:blockId",
   upload.single("file"),
   async (req, res) => {
     const { projectId, blockId } = req.params;
@@ -802,12 +801,12 @@ app.post("/send-email", async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "crm@wic.org.in",
-        pass: "bhnl dosk xiqs repp",
+        user: "atif123n@gmail.com",  // Your email address
+        pass: "pudn xzbg yfdj qozn",
       },
     });
     const mailOptions = {
-      from: "crm@wic.org.in",
+      from: "atif123n@gmail.com",
       to,
       subject,
       text: `Dear ${customerName},
@@ -1006,3 +1005,42 @@ app.get('/chanelpartner/:uniqueId', async (req, res) => {
 });
 
 
+app.post('/reminder-email', (req, res) => {
+  console.log('Request received:', req.body);  // Log the request body
+  
+  const { email } = req.body;
+  
+  // Step 1: Validate the request
+  if (!email) {
+    console.log('Missing email, subject, or message');
+    return res.status(400).send({ error: 'Missing required fields' });
+  }
+
+  // Step 2: Create the Nodemailer transporter
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "atif123n@gmail.com",  // Your email address
+      pass: "pudn xzbg yfdj qozn",  // App-specific password for the email account
+    },
+  });
+
+  // Step 3: Configure the email options
+  const mailOptions = {
+    from: 'atif123n@gmail.com',      // Sender's email
+    to: email,                   // Recipient's email (from frontend)
+    subject: "Payment reminder " ,            // Subject of the email (from frontend)
+    text: "Kindly pay your installement on time"                // Email message (from frontend)
+  };
+
+  // Step 4: Send the email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log('Error sending email:', error);  // Log error
+      return res.status(500).send({ error: 'Error sending email' });
+    } else {
+      console.log('Email sent:', info.response);   // Log successful response
+      res.status(200).send({ success: 'Email sent successfully', info });
+    }
+  });
+});

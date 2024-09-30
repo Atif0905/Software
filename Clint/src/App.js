@@ -51,6 +51,7 @@ import ExpensePaidByteamLeader from "./Accountscomponent/Expenses/ExpensePaidByt
 import EditExpense from "./Accountscomponent/Expenses/EditExpense";
 import ChanelPartnerForm from "./ChanelPartnerForm/ChanelPartnerForm";
 import AccountsProjects from "./Accountscomponent/AccountsProjects";
+import SendEmail from "./Reminder/Sendmail";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -168,6 +169,7 @@ function App() {
           <Route path="/AllProjects" element={<div className=""><UploadedProjects/></div>} />
           <Route path="/ChanelPartnerform" element={<ChanelPartnerForm/>} />
           <Route path="/All-Projects" element={<div className="main-content"><AccountsProjects/></div>} />
+          <Route path="/reminder" element={<SendEmail/>} />
         </Routes>
       </div>
     </Router>
