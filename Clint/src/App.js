@@ -52,6 +52,7 @@ import EditExpense from "./Accountscomponent/Expenses/EditExpense";
 import ChanelPartnerForm from "./ChanelPartnerForm/ChanelPartnerForm";
 import AccountsProjects from "./Accountscomponent/AccountsProjects";
 import SendEmail from "./Reminder/Sendmail";
+import DueDateModal from "./Reminder/DueDateModal";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -116,6 +117,7 @@ function App() {
           <Route path="/edit-expense" element={<AccountsSidebar />} />
           <Route path="/AllProjects" element={<Sidebar/>} />
           <Route path="/All-Projects" element={<AccountsSidebar/>} />
+          <Route path="/reminder" element={<Sidebar/>} />
         </Routes>
 
         <Routes>

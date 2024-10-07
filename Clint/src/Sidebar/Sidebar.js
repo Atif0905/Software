@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import './Side.css';
-import { FaRegUser } from "react-icons/fa";
-import { MdPayments } from "react-icons/md";
+import { FaRegUser, FaRegBell, FaBell } from "react-icons/fa";
 import { RiSecurePaymentLine } from "react-icons/ri";
 import { TfiUser } from "react-icons/tfi";
 import ConfirmationModal from '../Confirmation/ConfirmationModal';
@@ -12,6 +11,7 @@ import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { RiDashboard3Line } from "react-icons/ri";
 import { MdOutlinePayments } from "react-icons/md";
 import axios from 'axios';
+import DueDateModal from '../Reminder/DueDateModal';
 
 const Sidebar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -20,6 +20,10 @@ const Sidebar = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const [bellClicked, setBellClicked] = useState(false);
+  const dropdownRef = useRef(null);
+  const bellIconRef = useRef(null);  // New reference for the bell icon
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -37,7 +41,6 @@ const Sidebar = () => {
         console.error("Error fetching user data:", error);
       }
     };
-    
     fetchUserData();
   }, []);
 
@@ -58,10 +61,31 @@ const Sidebar = () => {
     setShowConfirm(true);
   };
 
+  const toggleBellIcon = () => {
+    setBellClicked(!bellClicked);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        bellIconRef.current &&
+        !bellIconRef.current.contains(event.target)
+      ) {
+        setBellClicked(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div>
       <div className='newside'>
-        <div>
+      <div>
           <img src='./WTSlogo.png' className='sidelogo' alt='' />
         </div>
         <div>
@@ -169,7 +193,8 @@ const Sidebar = () => {
       <div className='center1'>
         <div className='sabove'>
           <div className='d-flex'>
-            <img src='./userface.png' className='userface' alt='' />{user && (
+            <img src='./userface.png' className='userface' alt='' />
+            {user && (
               <div>
                 <p className='loginname'>{user.fname} {user.lname}</p>
               </div>
@@ -188,6 +213,19 @@ const Sidebar = () => {
             />
           </div>
           
+          <div
+            className='bellicondiv'
+            onClick={toggleBellIcon}
+            ref={bellIconRef}  // Reference for the bell icon
+          >
+            {bellClicked ? <FaBell className='bellicon' /> : <FaRegBell className='bellicon' />}
+          </div>
+
+          {bellClicked && (
+            <div className={`duedate-dropdown roll-in`} ref={dropdownRef}>
+              <DueDateModal />
+            </div>
+          )}
         </div>
       </div>
     </div>

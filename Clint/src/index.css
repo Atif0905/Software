@@ -20,8 +20,6 @@ html,
 #root,
 
 .navbar-light {
-  /* background-color: #ffffff; */
-  box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
 }
 
 .auth-inner {
@@ -59,6 +57,15 @@ td {
   border: none;
   background: radial-gradient(50% 50% at 50% 50%, #01509D 0%, #001C37 100%);
   color: white;
+}
+.loginbutt1 {
+  width: 120px;
+  height: 30px;
+  border-radius: 23px ;
+  border: none;
+  background: radial-gradient(50% 50% at 50% 50%, #01509D 0%, #001C37 100%);
+  color: white;
+  margin-left: -5px;
 }
 .checkbox-wrapper-33 {
   --s-xsmall: 0.625em;
