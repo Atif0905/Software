@@ -187,6 +187,26 @@ const Sidebar = () => {
               </Link>
             </div>
           </div>
+          <div className="dropdown">
+            <div
+              className="dropdown-toggle"
+              onClick={() => handleDropdownToggle('Ass')}
+            >
+              <MdOutlinePayments className='svg-icon' /> ASSG <IoIosArrowDown />
+            </div>
+            <div
+              className={`dropdown-menu ${
+                activeDropdown === 'Ass' || isDropdownActive(['/Register-User-Admin', '/AssgProject']) ? 'active' : ''
+              }`}
+            >
+              <Link to='/Register-User-Admin'>
+                <li className={`dropdown-item ${location.pathname === '/Register-User-Admin' ? 'active' : ''}`}>Add User</li>
+              </Link>
+              <Link to='/AssgProject'>
+                <li className={`dropdown-item ${location.pathname === '/AssgProject' ? 'active' : ''}`}>Assg project </li>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 

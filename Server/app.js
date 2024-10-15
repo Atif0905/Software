@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const SubAdmin = require('./Models/SubAdmin');
 const Project = require("./Models/UploadProjects");
 const pdfMakePrinter = require("pdfmake/src/printer");
 const nodemailer = require("nodemailer");
@@ -20,6 +21,7 @@ const uploadProjects = multer({ dest: "uploads/" });
 const installmentRoutes = require("./Router/installmentRoutes");
 const paymentDetailRoutes = require("./Router/paymentDetailRoutes");
 const customerRoutes = require("./Router/customerRoutes");
+// const SubAdmin = require("./Router/SubAdmin");
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(__dirname + "/uploads"));
@@ -117,25 +119,32 @@ app.post("/login-user", async (req, res) => {
 });
 app.post("/userData", async (req, res) => {
   const { token } = req.body;
+
   try {
-    const user = jwt.verify(token, JWT_SECRET, (err, res) => {
-      if (err) {
-        return "token expired";
-      }
-      return res;
-    });
-    if (user == "token expired") {
+    // Verify the token
+    const user = jwt.verify(token, JWT_SECRET);
+    const useremail = user.email;
+
+    // Check both User and SubAdmin collections
+    const [userData, subAdminData] = await Promise.all([
+      User.findOne({ email: useremail }),
+      SubAdmin.findOne({ email: useremail }),
+    ]);
+
+    // Determine which user data to return
+    const data = userData || subAdminData;
+    if (!data) {
+      return res.status(404).send({ status: "error", data: "User not found" });
+    }
+
+    res.send({ status: "ok", data: data });
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
       return res.send({ status: "error", data: "token expired" });
     }
-    const useremail = user.email;
-    User.findOne({ email: useremail })
-      .then((data) => {
-        res.send({ status: "ok", data: data });
-      })
-      .catch((error) => {
-        res.send({ status: "error", data: error });
-      });
-  } catch (error) {}
+    console.error("Error in /userData:", error);
+    res.status(500).send({ status: "error", data: "Internal Server Error" });
+  }
 });
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
@@ -388,7 +397,6 @@ app.post("/addBlock/:projectId", upload.single("file"), async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 app.post("/addUnit/:projectId/:blockId",
   upload.single("file"),
   async (req, res) => {
@@ -468,7 +476,6 @@ app.post("/addUnit/:projectId/:blockId",
     }
   }
 );
-
 app.put("/editUnit/:projectId/:blockId/:unitId", async (req, res) => {
   const { projectId, blockId, unitId } = req.params;
   const { rate, idcCharges, plcCharges, totalPrice, edcPrice } = req.body;
@@ -951,7 +958,6 @@ app.get("/createblog", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 // POST /chanelpartner - Create a new ChannelPartner
 app.post('/chanelpartner', async (req, res) => {
   try {
@@ -971,11 +977,6 @@ app.post('/chanelpartner', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
-
-
-
-
 // GET /chanelpartner - Get all ChannelPartners
 app.get('/chanelpartner', async (req, res) => {
   try {
@@ -986,7 +987,6 @@ app.get('/chanelpartner', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 // GET /chanelpartner/:uniqueId - Get a ChannelPartner by uniqueId
 app.get('/chanelpartner/:uniqueId', async (req, res) => {
   try {
@@ -1003,8 +1003,6 @@ app.get('/chanelpartner/:uniqueId', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
-
 app.post('/reminder-email', (req, res) => {
   console.log('Request received:', req.body);  // Log the request body
   
@@ -1043,4 +1041,86 @@ app.post('/reminder-email', (req, res) => {
       res.status(200).send({ success: 'Email sent successfully', info });
     }
   });
+});
+// POST: Register a new SubAdmin
+app.post('/SubAdminRegister', async (req, res) => {
+  try {
+    const { fname, lname, email, password, userType, AssgProject } = req.body;
+
+    if (!fname || !lname || !email || !password || !userType || !AssgProject) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    const existingSubAdmin = await SubAdmin.findOne({ email });
+    if (existingSubAdmin) {
+      return res.status(400).json({ message: 'Email already in use.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newSubAdmin = new SubAdmin({
+      fname,
+      lname,
+      email,
+      password: hashedPassword,
+      userType,
+      AssgProject,
+    });
+
+    await newSubAdmin.save();
+    res.status(201).json({ message: 'SubAdmin created successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error.' });
+  }
+});
+
+// POST: Login SubAdmin
+app.post('/SubAdminLogin', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and Password are required.' });
+    }
+
+    const subAdmin = await SubAdmin.findOne({ email });
+    if (!subAdmin) {
+      return res.status(400).json({ message: 'Invalid email or password.' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, subAdmin.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+
+    const token = jwt.sign(
+      { id: subAdmin._id, email: subAdmin.email, userType: subAdmin.userType },
+      process.env.JWT_SECRET || 'default_secret',
+      { expiresIn: '1d' }
+    );
+
+    res.json({ token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error.' });
+  }
+});
+
+
+app.post("/SubAdminLogin", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const subAdmin = await SubAdmin.findOne({ email });
+    if (!subAdmin) return res.status(404).json({ status: "error", error: "SubAdmin not found" });
+
+    const isMatch = await bcrypt.compare(password, subAdmin.password);
+    if (!isMatch) return res.json({ status: "error", error: "Incorrect password" });
+
+    const token = jwt.sign({ email: subAdmin.email }, JWT_SECRET, { expiresIn: '1d' });
+    res.json({ status: "ok", data: { token } });
+  } catch (error) {
+    res.json({ status: "error", error: "Login failed" });
+  }
 });

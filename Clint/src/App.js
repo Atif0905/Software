@@ -53,6 +53,8 @@ import ChanelPartnerForm from "./ChanelPartnerForm/ChanelPartnerForm";
 import AccountsProjects from "./Accountscomponent/AccountsProjects";
 import SendEmail from "./Reminder/Sendmail";
 import DueDateModal from "./Reminder/DueDateModal";
+import CreateUser from "./AdminUsers/CreateUser";
+import AssgProject from "./AdminUsers/AssgProject";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -118,6 +120,8 @@ function App() {
           <Route path="/AllProjects" element={<Sidebar/>} />
           <Route path="/All-Projects" element={<AccountsSidebar/>} />
           <Route path="/reminder" element={<Sidebar/>} />
+          <Route path="/Register-User-Admin" element={<Sidebar/>}/>
+          <Route path="/AssgProject" element={<Sidebar/>} />
         </Routes>
 
         <Routes>
@@ -172,6 +176,8 @@ function App() {
           <Route path="/ChanelPartnerform" element={<ChanelPartnerForm/>} />
           <Route path="/All-Projects" element={<div className="main-content"><AccountsProjects/></div>} />
           <Route path="/reminder" element={<SendEmail/>} />
+          <Route path="/Register-User-Admin" element={<CreateUser/>}/>
+          <Route path="/AssgProject" element={<AssgProject/>} />
         </Routes>
       </div>
     </Router>
