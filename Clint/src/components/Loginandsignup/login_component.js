@@ -15,8 +15,7 @@ export default function Login() {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}${url}`,
-        console.log(response.data),
-        { email, password },
+        { email, password }, // Fix: Correct payload structure
         {
           headers: {
             "Content-Type": "application/json",
@@ -24,6 +23,7 @@ export default function Login() {
           },
         }
       );
+      console.log(response.data); // Debugging response
       return response.data;
     } catch (err) {
       if (err.response) {
@@ -35,7 +35,7 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError("");
     setSuccess("");
 
     if (!email || !password) {
@@ -44,6 +44,7 @@ export default function Login() {
     }
 
     const loginUserResponse = await attemptLogin("/login-user");
+
     if (loginUserResponse.status !== "ok") {
       const subAdminResponse = await attemptLogin("/SubAdminLogin");
       handleResponse(subAdminResponse);
@@ -83,8 +84,7 @@ export default function Login() {
           </h3>
           <p className={`logintext ${clicked ? "clicked" : ""}`}>
             A CRM system helps businesses manage customer interactions, track
-            sales, and streamline operations. It improves relationships, boosts
-            efficiency, and drives growth by centralizing customer data.
+            sales, and streamline operations.
           </p>
           <p className={`clickhere ${clicked ? "clicked" : ""}`}>
             Click Here &gt;&gt;
@@ -104,7 +104,10 @@ export default function Login() {
         </div>
       </div>
       <div className="offset-6 col-6">
-        <form onSubmit={handleSubmit} className={`login ${clicked ? "clicked" : ""}`}>
+        <form
+          onSubmit={handleSubmit}
+          className={`login ${clicked ? "clicked" : ""}`}
+        >
           {error && <MessageBox message={error} type="error" />}
           {success && <MessageBox message={success} type="success" />}
           <h3 className="welcomehead1">WELCOME USER</h3>
@@ -158,7 +161,9 @@ export default function Login() {
             </div>
           </div>
           <div className="center">
-            <button type="submit" className="loginbutt">Submit</button>
+            <button type="submit" className="loginbutt">
+              Submit
+            </button>
           </div>
         </form>
       </div>
@@ -176,15 +181,25 @@ function MessageBox({ message, type }) {
 
 function EyeIcon() {
   return (
-    <svg className="eye" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
-      <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0z" />
+    <svg
+      className="eye"
+      xmlns="http://www.w3.org/2000/svg"
+      height="1em"
+      viewBox="0 0 576 512"
+    >
+      <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32z" />
     </svg>
   );
 }
 
 function EyeSlashIcon() {
   return (
-    <svg className="eye-slash" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512">
+    <svg
+      className="eye-slash"
+      xmlns="http://www.w3.org/2000/svg"
+      height="1em"
+      viewBox="0 0 640 512"
+    >
       <path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4..." />
     </svg>
   );

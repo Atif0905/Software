@@ -21,8 +21,8 @@ const uploadProjects = multer({ dest: "uploads/" });
 const installmentRoutes = require("./Router/installmentRoutes");
 const paymentDetailRoutes = require("./Router/paymentDetailRoutes");
 const customerRoutes = require("./Router/customerRoutes");
-// const SubAdmin = require("./Router/SubAdmin");
-app.use(cors());
+// const cors = require('cors');
+app.use(cors()); // Allows all origins
 app.use(express.json());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 const { PORT, MONGODB_URI, JWT_SECRET } = process.env;
@@ -103,49 +103,8 @@ app.post("/register", async (req, res) => {
     res.send({ status: "error" });
   }
 });
-app.post("/login-user", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.json({ error: "User Not found" });
-  }
-  if (await bcrypt.compare(password, user.password)) {
-    const token = jwt.sign({ email: user.email }, JWT_SECRET, {
-      expiresIn: "1h", // Token expires in  1h
-    });
-    return res.json({ status: "ok", data: token });
-  }
-  res.json({ status: "error", error: "Invalid Password" });
-});
-app.post("/userData", async (req, res) => {
-  const { token } = req.body;
 
-  try {
-    // Verify the token
-    const user = jwt.verify(token, JWT_SECRET);
-    const useremail = user.email;
 
-    // Check both User and SubAdmin collections
-    const [userData, subAdminData] = await Promise.all([
-      User.findOne({ email: useremail }),
-      SubAdmin.findOne({ email: useremail }),
-    ]);
-
-    // Determine which user data to return
-    const data = userData || subAdminData;
-    if (!data) {
-      return res.status(404).send({ status: "error", data: "User not found" });
-    }
-
-    res.send({ status: "ok", data: data });
-  } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      return res.send({ status: "error", data: "token expired" });
-    }
-    console.error("Error in /userData:", error);
-    res.status(500).send({ status: "error", data: "Internal Server Error" });
-  }
-});
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
@@ -1076,51 +1035,111 @@ app.post('/SubAdminRegister', async (req, res) => {
 });
 
 // POST: Login SubAdmin
-app.post('/SubAdminLogin', async (req, res) => {
-  try {
-    const { email, password } = req.body;
+// app.post('/SubAdminLogin', async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and Password are required.' });
-    }
+//     if (!email || !password) {
+//       return res.status(400).json({ message: 'Email and Password are required.' });
+//     }
 
-    const subAdmin = await SubAdmin.findOne({ email });
-    if (!subAdmin) {
-      return res.status(400).json({ message: 'Invalid email or password.' });
-    }
+//     const subAdmin = await SubAdmin.findOne({ email });
+//     if (!subAdmin) {
+//       return res.status(400).json({ message: 'Invalid email or password.' });
+//     }
 
-    const isPasswordValid = await bcrypt.compare(password, subAdmin.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid email or password.' });
-    }
+//     const isPasswordValid = await bcrypt.compare(password, subAdmin.password);
+//     if (!isPasswordValid) {
+//       return res.status(401).json({ message: 'Invalid email or password.' });
+//     }
 
-    const token = jwt.sign(
-      { id: subAdmin._id, email: subAdmin.email, userType: subAdmin.userType },
-      process.env.JWT_SECRET || 'default_secret',
-      { expiresIn: '1d' }
-    );
+//     const token = jwt.sign(
+//       { id: subAdmin._id, email: subAdmin.email, userType: subAdmin.userType },
+//       process.env.JWT_SECRET || 'default_secret',
+//       { expiresIn: '1d' }
+//     );
 
-    res.json({ token });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error.' });
-  }
-});
+//     res.json({ token });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Internal Server Error.' });
+//   }
+// });
 
-
+// Sub-Admin Login Route
 app.post("/SubAdminLogin", async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const subAdmin = await SubAdmin.findOne({ email });
-    if (!subAdmin) return res.status(404).json({ status: "error", error: "SubAdmin not found" });
+    if (!subAdmin) 
+      return res.status(404).json({ status: "error", error: "SubAdmin not found" });
 
     const isMatch = await bcrypt.compare(password, subAdmin.password);
-    if (!isMatch) return res.json({ status: "error", error: "Incorrect password" });
+    if (!isMatch) 
+      return res.status(401).json({ status: "error", error: "Incorrect password" });
 
     const token = jwt.sign({ email: subAdmin.email }, JWT_SECRET, { expiresIn: '1d' });
-    res.json({ status: "ok", data: { token } });
+
+    res.json({ status: "ok", data: { token } }); // Consistent token structure
   } catch (error) {
-    res.json({ status: "error", error: "Login failed" });
+    console.error('Error in /SubAdminLogin:', error);
+    res.status(500).json({ status: "error", error: "Login failed" });
+  }
+});
+
+// User Login Route
+app.post("/login-user", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) 
+      return res.status(404).json({ status: "error", error: "User Not found" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) 
+      return res.status(401).json({ status: "error", error: "Invalid Password" });
+
+    const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: "1h" });
+
+    res.json({ status: "ok", data: { token } }); // Consistent token structure
+  } catch (error) {
+    console.error('Error in /login-user:', error);
+    res.status(500).json({ status: "error", error: "Login failed" });
+  }
+});
+
+// User Data Route
+app.post('/userData', async (req, res) => {
+  const { token } = req.body;
+
+  console.log('Token received:', token); // Debugging
+
+  if (!token) {
+    return res.status(400).json({ status: 'error', data: 'Token not provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const userEmail = decoded.email;
+
+    const [userData, subAdminData] = await Promise.all([
+      User.findOne({ email: userEmail }),
+      SubAdmin.findOne({ email: userEmail }),
+    ]);
+
+    const data = userData || subAdminData;
+    if (!data) {
+      return res.status(404).json({ status: 'error', data: 'User not found' });
+    }
+
+    res.json({ status: 'ok', data });
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.json({ status: 'error', data: 'Token expired' });
+    }
+    console.error('Error in /userData:', error);
+    res.status(500).json({ status: 'error', data: 'Internal Server Error' });
   }
 });
