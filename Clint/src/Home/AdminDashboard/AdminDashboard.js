@@ -1,6 +1,6 @@
-import React from 'react'
-import AdminUploadProject from './Uploads/ProjectsUpload'
-import './AdminDashboard.css'
+import React from 'react';
+import AdminUploadProject from './Uploads/ProjectsUpload';
+import './AdminDashboard.css';
 const AdminDashboard = () => {
   return (
     <>

@@ -6,6 +6,7 @@ import UserDashBoard from "../Home/UserDashboard/UserDashBoard";
 import Sidebar from "../Sidebar/Sidebar";
 import AccountsSidebar from "../Sidebar/AccountsSidebar";
 import SubAdminDash from "../Home/SubAdminDashboard/SubAdminDash";
+import SubAdmin from "../Sidebar/SubAdmin";
 
 export default function UserDetails() {
   const [userData, setUserData] = useState(null);
@@ -44,7 +45,7 @@ export default function UserDetails() {
           setDashboard(<UserDashBoard userData={data.data} />);
           break;
           case "SubAdmin":
-          setDashboard(<SubAdminDash userData={data.data} />);
+          setDashboard(<div><SubAdmin/><SubAdminDash userData={data.data} /></div>);
           break;
         default:
           console.error("Unknown userType:", data.data?.userType);
