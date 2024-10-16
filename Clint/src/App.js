@@ -55,6 +55,8 @@ import SendEmail from "./Reminder/Sendmail";
 import DueDateModal from "./Reminder/DueDateModal";
 import CreateUser from "./AdminUsers/CreateUser";
 import AssgProject from "./AdminUsers/AssgProject";
+import SubAdminDash from "./Home/SubAdminDashboard/SubAdminDash";
+import SubAdmin from "./Sidebar/SubAdmin";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -84,6 +86,7 @@ function App() {
           <Route path="/" element={<Navigate to="/sign-in" />} /> 
           {/* <Route path="/userDetails" element={<Sidebar />} /> */}
           <Route path="/AdminDashboard/*" element={<Sidebar />} />
+
           <Route path="/uploaded-projects" element={<Sidebar />} />
           <Route path="/project/:projectId" element={<Sidebar />} />
           <Route path="/user" element={<Sidebar/>} />
@@ -120,8 +123,9 @@ function App() {
           <Route path="/AllProjects" element={<Sidebar/>} />
           <Route path="/All-Projects" element={<AccountsSidebar/>} />
           <Route path="/reminder" element={<Sidebar/>} />
-          <Route path="/Register-User-Admin" element={<Sidebar/>}/>
-          <Route path="/AssgProject" element={<Sidebar/>} />
+          <Route path="/Register-User-Admin" element={<SubAdmin/>}/>
+          <Route path="/AssgProject" element={<SubAdmin/>} />
+          <Route path="/Sub-Admin-Dashboard" element={<SubAdmin/>}/>
         </Routes>
 
         <Routes>
@@ -178,6 +182,7 @@ function App() {
           <Route path="/reminder" element={<SendEmail/>} />
           <Route path="/Register-User-Admin" element={<CreateUser/>}/>
           <Route path="/AssgProject" element={<AssgProject/>} />
+          <Route path="/Sub-Admin-Dashboard" element={<SubAdminDash/>} />
         </Routes>
       </div>
     </Router>

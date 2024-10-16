@@ -1114,7 +1114,7 @@ app.post("/login-user", async (req, res) => {
 app.post('/userData', async (req, res) => {
   const { token } = req.body;
 
-  console.log('Token received:', token); // Debugging
+  // console.log('Token received:', token); // Debugging
 
   if (!token) {
     return res.status(400).json({ status: 'error', data: 'Token not provided' });
