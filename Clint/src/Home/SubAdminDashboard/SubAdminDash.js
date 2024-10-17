@@ -5,6 +5,7 @@ import PasswordPrompt from "../../Accountscomponent/PasswordPrompt";
 import Loader from '../../Confirmation/Loader';
 import DashboardProjects from '../../Home/AdminDashboard/DashboardProjects';
 import "./SubAdmin.css"
+import SubadminDashboardproject from "../../SubAdmincomponent/SubadminDashboardproject";
 
 const SubAdminDash = ({ projectsData, customersData, paymentDetailsData }) => {
   const [projects, setProjects] = useState(projectsData || []);
@@ -83,12 +84,10 @@ const SubAdminDash = ({ projectsData, customersData, paymentDetailsData }) => {
     }
     setShowPasswordPrompt(null);
   };
-
-  // Check if assigned project exists
   const assignedProject = projects.find((project) => project.name === assgProject);
 
   return (
-    <div className="">
+    <div className="main-content">
       {loading ? (
         <Loader />
       ) : (
@@ -127,22 +126,9 @@ const SubAdminDash = ({ projectsData, customersData, paymentDetailsData }) => {
             </div>
           </div>
           
-          {/* Display assigned project details or message */}
-          {assignedProject ? (
-            <div className="assigned-project">
-              <h4>Assigned Project: {assignedProject.name}</h4>
-              <p>Description: {assignedProject.description}</p>
-              {/* You can add more details as needed */}
-            </div>
-          ) : (
-            <div className="no-project-assigned">
-              <h4>No project assigned</h4>
-            </div>
-          )}
 
           <div className="formback1">
-            <DashboardProjects />
-            <a href="/Allprojects"><h4 className="center seemore">See More &gt;</h4></a>
+            <SubadminDashboardproject />
           </div>
         </div>
       )}

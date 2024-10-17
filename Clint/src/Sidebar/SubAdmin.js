@@ -10,40 +10,17 @@ import { IoIosArrowDown } from "react-icons/io";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { RiDashboard3Line } from "react-icons/ri";
 import { MdOutlinePayments } from "react-icons/md";
-import axios from 'axios';
 import DueDateModal from '../Reminder/DueDateModal';
-
+import useFetchUser from '../hooks/useFetchUser';
 const SubAdmin = () => {
     const [activeDropdown, setActiveDropdown] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [user, setUser] = useState(null);
-  const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const [bellClicked, setBellClicked] = useState(false);
   const dropdownRef = useRef(null);
-  const bellIconRef = useRef(null);  // New reference for the bell icon
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const storedEmail = window.localStorage.getItem("email");
-        if (storedEmail) {
-          setEmail(storedEmail);
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllUser`);
-          const users = response.data.data;
-          const matchedUser = users.find(user => user.email === storedEmail);
-          if (matchedUser) {
-            setUser(matchedUser);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-    fetchUserData();
-  }, []);
-
+  const bellIconRef = useRef(null);  
+  const { subAdmin, loading: userLoading } = useFetchUser();
   const handleDropdownToggle = (dropdownId) => {
     setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
   };
@@ -94,13 +71,6 @@ const SubAdmin = () => {
               <RiDashboard3Line className='svg-icon' /> DashBoard
             </div>
           </Link>
-
-          <Link to="/Adminuser">
-            <div className={`Sidelink ${location.pathname === '/Adminuser' ? 'active' : ''}`}>
-              <FaRegUser className='svg-icon' /> User
-            </div>
-          </Link>
-
           <div className="dropdown">
             <div
               className="dropdown-toggle"
@@ -155,14 +125,14 @@ const SubAdmin = () => {
             </div>
             <div
               className={`dropdown-menu ${
-                activeDropdown === 'customer' || isDropdownActive(['/Addcustomer', '/ViewCustomer']) ? 'active' : ''
+                activeDropdown === 'customer' || isDropdownActive(['/Sub-Admin-Add-customer', '/Sub-Admin-View-customer']) ? 'active' : ''
               }`}
             >
-              <Link to='/Addcustomer'>
-                <li className={`dropdown-item ${location.pathname === '/Addcustomer' ? 'active' : ''}`}>Add Customer</li>
+              <Link to='/Sub-Admin-Add-customer'>
+                <li className={`dropdown-item ${location.pathname === '/Sub-Admin-Add-customer' ? 'active' : ''}`}>Add Customer</li>
               </Link>
-              <Link to='/ViewCustomer'>
-                <li className={`dropdown-item ${location.pathname === '/ViewCustomer' ? 'active' : ''}`}>View Customer</li>
+              <Link to='/Sub-Admin-View-customer'>
+                <li className={`dropdown-item ${location.pathname === '/Sub-Admin-View-customer' ? 'active' : ''}`}>View Customer</li>
               </Link>
             </div>
           </div>
@@ -194,9 +164,9 @@ const SubAdmin = () => {
         <div className='sabove'>
           <div className='d-flex'>
             <img src='./userface.png' className='userface' alt='' />
-            {user && (
+            {subAdmin && (
               <div>
-                <p className='loginname'>{user.fname} {user.lname}</p>
+                <p className='loginname'>{subAdmin.fname} {subAdmin.lname}</p>
               </div>
             )}
           </div>

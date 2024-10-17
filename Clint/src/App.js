@@ -52,11 +52,14 @@ import EditExpense from "./Accountscomponent/Expenses/EditExpense";
 import ChanelPartnerForm from "./ChanelPartnerForm/ChanelPartnerForm";
 import AccountsProjects from "./Accountscomponent/AccountsProjects";
 import SendEmail from "./Reminder/Sendmail";
-import DueDateModal from "./Reminder/DueDateModal";
 import CreateUser from "./AdminUsers/CreateUser";
 import AssgProject from "./AdminUsers/AssgProject";
 import SubAdminDash from "./Home/SubAdminDashboard/SubAdminDash";
 import SubAdmin from "./Sidebar/SubAdmin";
+import Subadminviewcustomer from "./SubAdmincomponent/Subadminviewcustomer";
+import SubadminCustomerdetail from "./SubAdmincomponent/SubadminCustomerdetail";
+import Subadmincustomeredit from "./SubAdmincomponent/Subadmincustomeredit";
+import SubAdminAddcustomer from "./SubAdmincomponent/SubAdmincustomer";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -126,6 +129,11 @@ function App() {
           <Route path="/Register-User-Admin" element={<SubAdmin/>}/>
           <Route path="/AssgProject" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-Dashboard" element={<SubAdmin/>}/>
+          <Route path="/Sub-Admin-View-customer" element={<SubAdmin/>} />
+          <Route path="/Sub-Admin-customer-details/:_id" element={<SubAdmin/>} />
+          <Route path="/Sub-Admin-Edit-customer-details/:_id" element={<SubAdmin/>} />
+          <Route path="/Sub-Admin-Add-customer" element={<SubAdmin/>} />
+          
         </Routes>
 
         <Routes>
@@ -183,6 +191,10 @@ function App() {
           <Route path="/Register-User-Admin" element={<CreateUser/>}/>
           <Route path="/AssgProject" element={<AssgProject/>} />
           <Route path="/Sub-Admin-Dashboard" element={<SubAdminDash/>} />
+          <Route path="/Sub-Admin-View-customer" element={<Subadminviewcustomer/>} />
+          <Route path="/Sub-Admin-customer-details/:_id" element={<SubadminCustomerdetail/>} />
+          <Route path="/Sub-Admin-Edit-customer-details/:_id" element={<Subadmincustomeredit/>} />
+          <Route path="/Sub-Admin-Add-customer" element={<SubAdminAddcustomer/>} />
         </Routes>
       </div>
     </Router>

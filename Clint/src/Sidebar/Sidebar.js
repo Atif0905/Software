@@ -10,40 +10,17 @@ import { IoIosArrowDown } from "react-icons/io";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { RiDashboard3Line } from "react-icons/ri";
 import { MdOutlinePayments } from "react-icons/md";
-import axios from 'axios';
 import DueDateModal from '../Reminder/DueDateModal';
-
+import useFetchUser from '../hooks/useFetchUser';
 const Sidebar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [user, setUser] = useState(null);
-  const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const [bellClicked, setBellClicked] = useState(false);
   const dropdownRef = useRef(null);
   const bellIconRef = useRef(null);  // New reference for the bell icon
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const storedEmail = window.localStorage.getItem("email");
-        if (storedEmail) {
-          setEmail(storedEmail);
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllUser`);
-          const users = response.data.data;
-          const matchedUser = users.find(user => user.email === storedEmail);
-          if (matchedUser) {
-            setUser(matchedUser);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-    fetchUserData();
-  }, []);
-
+  const { user , loading: userLoading } = useFetchUser();
   const handleDropdownToggle = (dropdownId) => {
     setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
   };

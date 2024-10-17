@@ -5,34 +5,12 @@ import { FaRegUser } from "react-icons/fa";
 import { RiDashboard3Line } from "react-icons/ri";
 import ConfirmationModal from '../Confirmation/ConfirmationModal';
 import { IoLogOutSharp } from "react-icons/io5";
-import axios from 'axios';
+import useFetchUser from '../hooks/useFetchUser';
 const AccountsSidebar = () => {
-  const [activeDropdown, setActiveDropdown] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); 
-  const [user, setUser] = useState(null);
-  const [email, setEmail] = useState("");
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const storedEmail = window.localStorage.getItem("email");
-        if (storedEmail) {
-          setEmail(storedEmail);
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/getAllUser`);
-          const users = response.data.data;
-          const matchedUser = users.find(user => user.email === storedEmail);
-          if (matchedUser) {
-            setUser(matchedUser);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-    
-    fetchUserData();
-  }, []);
+  const { user , loading: userLoading } = useFetchUser();
   const logOut = () => {
     window.localStorage.clear();
     navigate('/sign-in');

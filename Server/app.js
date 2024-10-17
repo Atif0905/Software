@@ -110,12 +110,25 @@ app.listen(PORT, () => {
 });
 app.get("/getAllUser", async (req, res) => {
   try {
-    const allUser = await User.find({});
-    res.send({ status: "ok", data: allUser });
+    // Fetch all users
+    const allUsers = await User.find({});
+    
+    // Fetch all sub-admins
+    const allSubAdmins = await SubAdmin.find({});
+
+    // Combine both user and subadmin data
+    const combinedData = {
+      users: allUsers,
+      subAdmins: allSubAdmins
+    };
+
+    res.send({ status: "ok", data: combinedData });
   } catch (error) {
-    console.log(error);
+    console.error('Error fetching users and subadmins:', error);
+    res.status(500).send({ status: "error", error: "Failed to fetch details" });
   }
 });
+
 app.post("/deleteUser", async (req, res) => {
   const { userid } = req.body;
   try {
@@ -1033,40 +1046,6 @@ app.post('/SubAdminRegister', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error.' });
   }
 });
-
-// POST: Login SubAdmin
-// app.post('/SubAdminLogin', async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     if (!email || !password) {
-//       return res.status(400).json({ message: 'Email and Password are required.' });
-//     }
-
-//     const subAdmin = await SubAdmin.findOne({ email });
-//     if (!subAdmin) {
-//       return res.status(400).json({ message: 'Invalid email or password.' });
-//     }
-
-//     const isPasswordValid = await bcrypt.compare(password, subAdmin.password);
-//     if (!isPasswordValid) {
-//       return res.status(401).json({ message: 'Invalid email or password.' });
-//     }
-
-//     const token = jwt.sign(
-//       { id: subAdmin._id, email: subAdmin.email, userType: subAdmin.userType },
-//       process.env.JWT_SECRET || 'default_secret',
-//       { expiresIn: '1d' }
-//     );
-
-//     res.json({ token });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Internal Server Error.' });
-//   }
-// });
-
-// Sub-Admin Login Route
 app.post("/SubAdminLogin", async (req, res) => {
   const { email, password } = req.body;
 
