@@ -1,8 +1,5 @@
-// src/components/ExpenseEdit.js
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
 const ExpenseEdit = () => {
   const [expense, setExpense] = useState(null);
   const [teamLeadName, setTeamLeadName] = useState('');
@@ -11,9 +8,7 @@ const ExpenseEdit = () => {
   const [comment, setComment] = useState('');
   const [Paydate, setPaydate] = useState('');
   const [error, setError] = useState(null);
-
   useEffect(() => {
-    // Retrieve expense data from localStorage or state
     const expenseData = JSON.parse(localStorage.getItem('editExpense'));
     if (expenseData) {
       setExpense(expenseData);
