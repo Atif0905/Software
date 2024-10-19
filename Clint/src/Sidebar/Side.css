@@ -216,8 +216,6 @@ position: absolute;
   position: relative;
   display: inline-block;
 }
-
-/* Roll-in keyframes */
 @keyframes rollIn {
   0% {
     transform: translateY(-200px) rotateX(-180deg);

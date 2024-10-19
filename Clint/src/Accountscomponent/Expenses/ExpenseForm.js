@@ -14,7 +14,7 @@ const ExpenseForm = () => {
   useEffect(() => {
     const fetchTeamLeadNames = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Viewcustomer`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
         const teamLeadNamesData = response.data.map(customer => customer.Teamleadname);
         const uniqueTeamLeadNames = [...new Set(teamLeadNamesData)];
         setTeamLeadNames(uniqueTeamLeadNames);

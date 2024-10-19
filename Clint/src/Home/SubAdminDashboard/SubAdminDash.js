@@ -3,7 +3,6 @@ import { fetchProjects, fetchCustomers, fetchPaymentDetails } from '../../servic
 import { BsArrowDownRightCircleFill } from "react-icons/bs";
 import PasswordPrompt from "../../Accountscomponent/PasswordPrompt";
 import Loader from '../../Confirmation/Loader';
-import DashboardProjects from '../../Home/AdminDashboard/DashboardProjects';
 import "./SubAdmin.css"
 import SubadminDashboardproject from "../../SubAdmincomponent/SubadminDashboardproject";
 

@@ -60,6 +60,7 @@ import Subadminviewcustomer from "./SubAdmincomponent/Subadminviewcustomer";
 import SubadminCustomerdetail from "./SubAdmincomponent/SubadminCustomerdetail";
 import Subadmincustomeredit from "./SubAdmincomponent/Subadmincustomeredit";
 import SubAdminAddcustomer from "./SubAdmincomponent/SubAdmincustomer";
+import SubadminRecivecustomer from "./SubAdmincomponent/SubadminRecivecustomer";
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -82,14 +83,10 @@ function App() {
   }, [userData]);
   return (
     <Router>
-
       <div className="App">        
         <Routes>
-          {/* Sidebar routes */}
-          <Route path="/" element={<Navigate to="/sign-in" />} /> 
-          {/* <Route path="/userDetails" element={<Sidebar />} /> */}
+          <Route path="/" element={<Navigate to="/sign-in" />} />
           <Route path="/AdminDashboard/*" element={<Sidebar />} />
-
           <Route path="/uploaded-projects" element={<Sidebar />} />
           <Route path="/project/:projectId" element={<Sidebar />} />
           <Route path="/user" element={<Sidebar/>} />
@@ -133,9 +130,8 @@ function App() {
           <Route path="/Sub-Admin-customer-details/:_id" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-Edit-customer-details/:_id" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-Add-customer" element={<SubAdmin/>} />
-          
+          <Route path="/Sub-Admin-Receive-customer" element={<SubAdmin/>} />
         </Routes>
-
         <Routes>
           <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
           <Route path="/sign-in" element={<Login />} />
@@ -195,6 +191,7 @@ function App() {
           <Route path="/Sub-Admin-customer-details/:_id" element={<SubadminCustomerdetail/>} />
           <Route path="/Sub-Admin-Edit-customer-details/:_id" element={<Subadmincustomeredit/>} />
           <Route path="/Sub-Admin-Add-customer" element={<SubAdminAddcustomer/>} />
+          <Route path="/Sub-Admin-Receive-customer" element={<SubadminRecivecustomer/>} />
         </Routes>
       </div>
     </Router>

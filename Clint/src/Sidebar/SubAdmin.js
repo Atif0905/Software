@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import './Side.css';
-import { FaRegUser, FaRegBell, FaBell } from "react-icons/fa";
-import { RiSecurePaymentLine } from "react-icons/ri";
+import { FaRegBell, FaBell } from "react-icons/fa";
 import { TfiUser } from "react-icons/tfi";
 import ConfirmationModal from '../Confirmation/ConfirmationModal';
 import { IoLogOutSharp } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
-import { AiOutlineFundProjectionScreen } from "react-icons/ai";
-import { RiDashboard3Line } from "react-icons/ri";
 import { MdOutlinePayments } from "react-icons/md";
-import DueDateModal from '../Reminder/DueDateModal';
+import { RiDashboard3Line } from "react-icons/ri";
 import useFetchUser from '../hooks/useFetchUser';
 const SubAdmin = () => {
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -19,46 +16,20 @@ const SubAdmin = () => {
   const location = useLocation();
   const [bellClicked, setBellClicked] = useState(false);
   const dropdownRef = useRef(null);
-  const bellIconRef = useRef(null);  
   const { subAdmin, loading: userLoading } = useFetchUser();
   const handleDropdownToggle = (dropdownId) => {
     setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
   };
-
   const isDropdownActive = (routes) => {
     return routes.some((route) => location.pathname.includes(route));
   };
-
   const logOut = () => {
     window.localStorage.clear();
     navigate('/sign-in');
   };
-
   const handleSubmit = () => {
     setShowConfirm(true);
   };
-
-  const toggleBellIcon = () => {
-    setBellClicked(!bellClicked);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target) &&
-        bellIconRef.current &&
-        !bellIconRef.current.contains(event.target)
-      ) {
-        setBellClicked(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   return (
     <div>
       <div className='newside'>
@@ -71,7 +42,7 @@ const SubAdmin = () => {
               <RiDashboard3Line className='svg-icon' /> DashBoard
             </div>
           </Link>
-          <div className="dropdown">
+          {/* <div className="dropdown">
             <div
               className="dropdown-toggle"
               onClick={() => handleDropdownToggle('projectMaster')}
@@ -94,7 +65,6 @@ const SubAdmin = () => {
               </Link>
             </div>
           </div>
-
           <div className="dropdown">
             <div
               className="dropdown-toggle"
@@ -114,8 +84,7 @@ const SubAdmin = () => {
                 <li className={`dropdown-item ${location.pathname === '/ViewPlan' ? 'active' : ''}`}>View Plan</li>
               </Link>
             </div>
-          </div>
-
+          </div> */}
           <div className="dropdown">
             <div
               className="dropdown-toggle"
@@ -136,8 +105,12 @@ const SubAdmin = () => {
               </Link>
             </div>
           </div>
-
-          <div className="dropdown">
+          <Link to="/Sub-Admin-Receive-customer">
+            <div className={`Sidelink ${location.pathname === '/Sub-Admin-Receive-customer' ? 'active' : ''}`}>
+              <MdOutlinePayments className='svg-icon' /> Receive Payments
+            </div>
+          </Link>
+          {/* <div className="dropdown">
             <div
               className="dropdown-toggle"
               onClick={() => handleDropdownToggle('Payments')}
@@ -156,7 +129,7 @@ const SubAdmin = () => {
                 <li className={`dropdown-item ${location.pathname === '/PayInterestAmount' ? 'active' : ''}`}>Pay Interest Amount</li>
               </Link>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -182,20 +155,6 @@ const SubAdmin = () => {
               message="Are you sure you want to Logout?"
             />
           </div>
-          
-          <div
-            className='bellicondiv'
-            onClick={toggleBellIcon}
-            ref={bellIconRef}  // Reference for the bell icon
-          >
-            {bellClicked ? <FaBell className='bellicon' /> : <FaRegBell className='bellicon' />}
-          </div>
-
-          {bellClicked && (
-            <div className={`duedate-dropdown roll-in`} ref={dropdownRef}>
-              <DueDateModal />
-            </div>
-          )}
         </div>
       </div>
     </div>
