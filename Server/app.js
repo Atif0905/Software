@@ -1052,7 +1052,7 @@ app.post("/SubAdminLogin", async (req, res) => {
   try {
     const subAdmin = await SubAdmin.findOne({ email });
     if (!subAdmin) 
-      return res.status(404).json({ status: "error", error: "SubAdmin not found" });
+      return res.status(404).json({ status: "error", error: "" });
 
     const isMatch = await bcrypt.compare(password, subAdmin.password);
     if (!isMatch) 
