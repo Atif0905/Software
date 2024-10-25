@@ -1,157 +1,112 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import './Print.css';
 import Loader from "../Confirmation/Loader";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import {
+  fetchProjects,
+  fetchCustomers,
+  fetchPaymentDetails,
+  fetchName,
+  fetchUnitDetails,
+  fetchPaymentDetailsByCustomerId,
+} from '../services/customerService'; // Adjust the path as necessary
+
 const Ledger = () => {
     const { _id } = useParams();
     const [paymentDetails, setPaymentDetails] = useState([]);
     const [customerDetails, setCustomerDetails] = useState(null);
-    const [payment , setPayment] = useState(null);
+    const [payment, setPayment] = useState(null);
     const [projects, setProjects] = useState([]);
     const [projectdetails, setProjectdetails] = useState(null);
-    const [date, setDate] = useState(new Date());
+    const [date] = useState(new Date());
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchProjectsAndCustomer = async () => {
-          setLoading(true);
-          try {
-            const projectsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/getallProjects`);
-            const projectsData = projectsResponse.data.data || [];
-            setProjects(projectsData);
-            const customerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
-            const customerData = customerResponse.data;
-            const Paymentresponse = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails`);
-            const PaymentData = Paymentresponse.data.data || [];
-            setPayment(PaymentData)
-            const foundCustomer = customerData.find(customer => customer._id === _id);
-            setCustomerDetails(foundCustomer);
-            console.log(foundCustomer)
-            const matchedProject = projectsData.find(project => project._id === foundCustomer.project);
-            console.log(matchedProject)
-            setProjectdetails(matchedProject || {});
-            const MatchedPayment = PaymentData.filter(payment => payment.customerId === foundCustomer.customerId)
-            setPaymentDetails(MatchedPayment || {});
-            console.log(MatchedPayment)
-            const projectName = await fetchName("getProject", foundCustomer.project);
-            const blockName = await fetchName("getBlock", foundCustomer.project, foundCustomer.block);
-            const unitName = await fetchName("getUnit", foundCustomer.project, foundCustomer.block, foundCustomer.plotOrUnit);
-            const unitDetails = await fetchUnitDetails(foundCustomer.project, foundCustomer.block, foundCustomer.plotOrUnit);
-            const paymentDetailsResponse = await fetchPaymentDetailsByCustomerId(foundCustomer.customerId);
-            const updatedCustomer = {
-              ...foundCustomer,
-              projectName: projectName.toUpperCase(),
-              blockName: blockName.toUpperCase(),
-              unitName: unitName.toUpperCase(),
-              paymentDetails: paymentDetailsResponse.data,
-              ...unitDetails,
-            };
-            setCustomerDetails(updatedCustomer);
-    
-            setLoading(false);
-          } catch (error) {
-            setError("Error fetching data");
-            setLoading(false);
-          }
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const projectsData = await fetchProjects();
+                setProjects(projectsData);
+                const customerData = await fetchCustomers();
+                const paymentData = await fetchPaymentDetails();
+                setPayment(paymentData);
+
+                const foundCustomer = customerData.find(customer => customer._id === _id);
+                setCustomerDetails(foundCustomer);
+                const matchedProject = projectsData.find(project => project._id === foundCustomer.project);
+                setProjectdetails(matchedProject || {});
+
+                const matchedPayment = paymentData.filter(payment => payment.customerId === foundCustomer.customerId);
+                setPaymentDetails(matchedPayment || []);
+                
+                // Fetch additional details
+                const projectName = await fetchName("getProject", foundCustomer.project);
+                const blockName = await fetchName("getBlock", foundCustomer.project, foundCustomer.block);
+                const unitName = await fetchName("getUnit", foundCustomer.project, foundCustomer.block, foundCustomer.plotOrUnit);
+                const unitDetails = await fetchUnitDetails(foundCustomer.project, foundCustomer.block, foundCustomer.plotOrUnit);
+                const paymentDetailsResponse = await fetchPaymentDetailsByCustomerId(foundCustomer.customerId);
+
+                const updatedCustomer = {
+                    ...foundCustomer,
+                    projectName: projectName.toUpperCase(),
+                    blockName: blockName.toUpperCase(),
+                    unitName: unitName.toUpperCase(),
+                    paymentDetails: paymentDetailsResponse.data,
+                    ...unitDetails,
+                };
+                setCustomerDetails(updatedCustomer);
+                setLoading(false);
+            } catch (error) {
+                setError("Error fetching data");
+                setLoading(false);
+            }
         };
-    
-        fetchProjectsAndCustomer();
-      }, [_id]);
-    
-      const fetchName = async (endpoint, ...ids) => {
-        try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join("/")}`
-          );
-          return response.data.data.name;
-        } catch (error) {
-          return "Unknown";
-        }
-      };
-    
-      const fetchUnitDetails = async (projectId, blockId, unitId) => {
-        try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`
-          );
-          const unitData = response.data.data;
-          return {
-            unitPrice: unitData.totalPrice,
-            idcCharges: unitData.idcCharges,
-            plcCharges: unitData.plcCharges,
-            plotSize: unitData.plotSize,
-            sizeType: unitData.sizeType,
-            rate: unitData.rate,
-            edcPrice: unitData.edcPrice,
-          };
-        } catch (error) {
-          return {
-            unitPrice: "Unknown",
-            idcCharges: "Unknown",
-            plcCharges: "Unknown",
-            plotSize: "Unknown",
-            sizeType: "Unknown",
-            rate: "Unknown",
-            edcPrice: "Unknown",
-          };
-        }
-      };
-    
-      const fetchPaymentDetailsByCustomerId = async (customerId) => {
-        try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`
-          );
-          return response.data;
-        } catch (error) {
-          return { data: [] };
-        }
-      };
-    
-      const total = customerDetails
+
+        fetchData();
+    }, [_id]);
+
+    const total = customerDetails
         ? parseFloat(customerDetails.plotSize) *
           (parseFloat(customerDetails.idcCharges) +
             parseFloat(customerDetails.plcCharges) +
             parseFloat(customerDetails.edcPrice) +
             parseFloat(customerDetails.rate))
         : "0";
-        
-      if (loading) {
-        return <div><Loader/></div>;
-      }
-      const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-        return date.toLocaleDateString("en-US", options);
-      };
-      const handlePrint = () => {
+
+    if (loading) {
+        return <div><Loader /></div>;
+    }
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+      return date.toLocaleDateString("en-US", options);
+    };
+    const handlePrint = () => {
         window.print();
-      };
-    
-      const handleDownloadPDF = async () => {
+    };
+
+    const handleDownloadPDF = async () => {
         const input = document.getElementById('print-content');
         const canvas = await html2canvas(input);
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF();
         const imgWidth = 210; // A4 size width in mm
         const pageHeight = 295; // A4 size height in mm
-        const imgHeight = canvas.height * imgWidth / canvas.width;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
         let heightLeft = imgHeight;
-    
+
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
         heightLeft -= pageHeight;
-    
+
         while (heightLeft >= 0) {
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, -heightLeft, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, -heightLeft, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
         }
         pdf.save('Ledger.pdf');
-      };
+    };
     const totalwithoutdevcharges = ((total - total * (customerDetails.discount / 100)) - 
         ((parseFloat(customerDetails.edcPrice) + parseFloat(customerDetails.idcCharges) + parseFloat(customerDetails.plcCharges)) * parseFloat(customerDetails.plotSize))
       );

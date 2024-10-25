@@ -12,6 +12,7 @@ import { RiDashboard3Line } from "react-icons/ri";
 import { MdOutlinePayments } from "react-icons/md";
 import DueDateModal from '../Reminder/DueDateModal';
 import useFetchUser from '../hooks/useFetchUser';
+import { BsInfoSquare } from "react-icons/bs";
 const Sidebar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -184,6 +185,11 @@ const Sidebar = () => {
               </Link>
             </div>
           </div>
+          <Link to="/Info">
+            <div className={`Sidelink ${location.pathname === '/Info' ? 'active' : ''}`}>
+              <BsInfoSquare  className='svg-icon' /> Info
+            </div>
+          </Link>
         </div>
       </div>
 

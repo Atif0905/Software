@@ -1,124 +1,73 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import "./Print.css"
 import Loader from "../Confirmation/Loader";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { fetchProjects, fetchCustomers, fetchName, fetchUnitDetails} from '../services/customerService';
 const Welcomeletter = () => {
     const { _id } = useParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [customerDetails, setCustomerDetails] = useState(null);
     const [projectdetails, setProjectdetails] = useState(null);
-    const [date, setDate] = useState(new Date());
+    const [date] = useState(new Date());
     useEffect(() => {
-      const fetchProjectsAndCustomer = async () => {
-        setLoading(true);
-        try {
-          const projectsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/getallProjects`);
-          const projectsData = projectsResponse.data.data || [];
-          const customerResponse = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
-          const customerData = customerResponse.data;
-          const foundCustomer = customerData.find(customer => customer._id === _id);
-          setCustomerDetails(foundCustomer);
-          console.log(foundCustomer)
-          const matchedProject = projectsData.find(project => project._id === foundCustomer.project);
-          setProjectdetails(matchedProject || {});
-          const projectName = await fetchName("getProject", foundCustomer.project);
-          const blockName = await fetchName("getBlock", foundCustomer.project, foundCustomer.block);
-          const unitName = await fetchName("getUnit", foundCustomer.project, foundCustomer.block, foundCustomer.plotOrUnit);
-          const unitDetails = await fetchUnitDetails(foundCustomer.project, foundCustomer.block, foundCustomer.plotOrUnit);
-          const updatedCustomer = {
-            ...foundCustomer,
-            projectName: projectName.toUpperCase(),
-            blockName: blockName.toUpperCase(),
-            unitName: unitName.toUpperCase(),
-            ...unitDetails,
-          };
-          setCustomerDetails(updatedCustomer);
-  
-          setLoading(false);
-        } catch (error) {
-          setError("Error fetching data");
-          console.error("Error fetching data:", error);
-          setLoading(false);
-        }
-      };
-  
-      fetchProjectsAndCustomer();
+        const fetchProjectsAndCustomer = async () => {
+            setLoading(true);
+            try {
+                const projectsData = await fetchProjects();
+                const customerData = await fetchCustomers();
+                const foundCustomer = customerData.find(customer => customer._id === _id);
+                setCustomerDetails(foundCustomer);
+                const matchedProject = projectsData.find(project => project._id === foundCustomer.project);
+                setProjectdetails(matchedProject || {});
+                const projectName = await fetchName("getProject", foundCustomer.project);
+                const blockName = await fetchName("getBlock", foundCustomer.project, foundCustomer.block);
+                const unitName = await fetchName("getUnit", foundCustomer.project, foundCustomer.block, foundCustomer.plotOrUnit);
+                const unitDetails = await fetchUnitDetails(foundCustomer.project, foundCustomer.block, foundCustomer.plotOrUnit);
+                const updatedCustomer = {
+                    ...foundCustomer,
+                    projectName: projectName.toUpperCase(),
+                    blockName: blockName.toUpperCase(),
+                    unitName: unitName.toUpperCase(),
+                    ...unitDetails,
+                };
+                setCustomerDetails(updatedCustomer);
+                setLoading(false);
+            } catch (error) {
+                setError("Error fetching data");
+                console.error("Error fetching data:", error);
+                setLoading(false);
+            }
+        };
+        fetchProjectsAndCustomer();
     }, [_id]);
-    
-  const fetchName = async (endpoint, ...ids) => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/${endpoint}/${ids.join("/")}`
-      );
-      return response.data.data.name;
-    } catch (error) {
-      console.error(`Error fetching ${endpoint} name:`, error);
-      return "Unknown";
+    if (loading) {
+        return <div><Loader /></div>;
     }
-  };
-
-  const fetchUnitDetails = async (projectId, blockId, unitId) => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/getUnit/${projectId}/${blockId}/${unitId}`
-      );
-      const unitData = response.data.data;
-      return {
-        unitPrice: unitData.totalPrice,
-        idcCharges: unitData.idcCharges,
-        plcCharges: unitData.plcCharges,
-        plotSize: unitData.plotSize,
-        sizeType: unitData.sizeType,
-        rate: unitData.rate,
-        edcPrice: unitData.edcPrice,
-      };
-    } catch (error) {
-      console.error("Error fetching unit details:", error);
-      return {
-        unitPrice: "Unknown",
-        idcCharges: "Unknown",
-        plcCharges: "Unknown",
-        plotSize: "Unknown",
-        sizeType: "Unknown",
-        rate: "Unknown",
-        edcPrice: "Unknown",
-      };
-    }
-  };
-  if (loading) {
-    return <div><Loader/></div>;
-  }
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleDownloadPDF = async () => {
-    const input = document.getElementById('print-content');
-    const canvas = await html2canvas(input);
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF();
-    const imgWidth = 210; // A4 size width in mm
-    const pageHeight = 295; // A4 size height in mm
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-    let heightLeft = imgHeight;
-
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft >= 0) {
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, -heightLeft, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-    pdf.save('Welcomeletter.pdf');
-  };
-
+    const handlePrint = () => {
+        window.print();
+    };
+    const handleDownloadPDF = async () => {
+        const input = document.getElementById('print-content');
+        const canvas = await html2canvas(input);
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+        const imgWidth = 210; 
+        const pageHeight = 295; 
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        while (heightLeft >= 0) {
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, -heightLeft, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+        pdf.save('Welcomeletter.pdf');
+    };
   return (
-    <div className="white">
+    <div className="white p-3">
     <div className="container ">
       <div className='button-group d-flex justify-content-end'>
         <button onClick={handlePrint} className='print-button'>Print</button>
@@ -164,5 +113,4 @@ const Welcomeletter = () => {
       </div>
   )
 }
-
 export default Welcomeletter
