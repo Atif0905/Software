@@ -125,4 +125,12 @@ export const fetchCustomerDetails = async (customerId) => {
     throw error;
   }
 };
-
+export const fetchCustomerDetailsById = async (customerId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/customer/${customerId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching customer details:", error);
+    return null;
+  }
+};

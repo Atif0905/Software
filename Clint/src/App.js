@@ -61,6 +61,13 @@ import SubadminCustomerdetail from "./SubAdmincomponent/SubadminCustomerdetail";
 import Subadmincustomeredit from "./SubAdmincomponent/Subadmincustomeredit";
 import SubAdminAddcustomer from "./SubAdmincomponent/SubAdmincustomer";
 import SubadminRecivecustomer from "./SubAdmincomponent/SubadminRecivecustomer";
+import Info from "./Info/Info";
+
+function ProtectedRoute({ element: Component, ...rest }) {
+  const isLoggedIn = window.localStorage.getItem("loggedIn") === "true";
+  return isLoggedIn ? <Component {...rest} /> : <Navigate to="/sign-in" />;
+} 
+
 function App() {
   const isLoggedIn = window.localStorage.getItem("loggedIn");
   const [userData, setUserData] = useState({});
@@ -123,76 +130,94 @@ function App() {
           <Route path="/AllProjects" element={<Sidebar/>} />
           <Route path="/All-Projects" element={<AccountsSidebar/>} />
           <Route path="/reminder" element={<Sidebar/>} />
-          <Route path="/Register-User-Admin" element={<SubAdmin/>}/>
-          <Route path="/AssgProject" element={<SubAdmin/>} />
+          <Route path="/Register-User-Admin" element={<Sidebar/>}/>
+          <Route path="/AssgProject" element={<Sidebar/>} />
           <Route path="/Sub-Admin-Dashboard" element={<SubAdmin/>}/>
           <Route path="/Sub-Admin-View-customer" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-customer-details/:_id" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-Edit-customer-details/:_id" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-Add-customer" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-Receive-customer" element={<SubAdmin/>} />
+          <Route path="/Info" element={<Sidebar/>} />
         </Routes>
         <Routes>
-          <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
-          <Route path="/sign-in" element={<Login />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/DashBoard" element={<UserDetails />} />
-          <Route path="/AdminDashboard" element={<AdminDashboard />} />
-          <Route path="/uploaded-projects" element={<UploadedProjects />} />
-          <Route path="/project/:projectId" element={<ProjectDetails />} />
-          <Route path="/Adminuser" element={<AdminUser />} />
-          <Route path="/Projects" element={<Projects />} />
-          <Route path="/Reports" element={<Reports />} />
-          <Route path="/Users-Projects" element={<Projects />} />
-          <Route path="/Users-Reports" element={<Reports />} />
-          <Route path="/Addblock" element={<AdditionBlock/>}/>
-          <Route path="/Addunit" element={<AdditionUnit/>}/>
-          <Route path="/Addcustomer" element={<AddCustomerForm/>}/>
-          <Route path="/ViewCustomer" element={<ViewCastumer/>} />
-          <Route path="/AddPlan" element={<Addplan/>} />
-          <Route path='/ViewPlan' element={<Viewplan/>} />
-          <Route path="/Incentiveplan" element={<Incentiveplan/>} />
-          <Route path="/ReceivedPayments" element={<Receivedpayments/>} />
-          <Route path="/PayInterestAmount" element={<PayInterestAmount/>} />
-          <Route path="/Addkhata" element={<Addkhata/>}/>
-          <Route path="/Addkhasra" element={<Addkhasra/>}/>
-          <Route path="/Viewkhata" element={<ViewKhata/>} />
-          <Route path="/PaymentPage/:id" element={<PaymentPage/>}/>
-          <Route path="/Viewkhasra" element={<Viewkhasra/>}/>
-          <Route path="/AdminPanel" element={<AdminPanel/>}/>
-          <Route path="/BlogPanel" element={<BlogPanel/>}/>
-          <Route path='/MasterAdmin' element={<MasterAdmin/>}/>
-          <Route path="/Customer_Details/:_id" element={<CustomerDetails/>}/>
-          <Route path="/Edit_Customer_Details/:_id" element={<Editcustomerdetails/>}/>
-          <Route path="/print_reciept/:_id" element={<Print_reciept/>}/>
-          <Route path="/edit_payment/:_id" element={<Edit_Payment/>}/>
-          <Route path="/print_demand_datewise/:_id" element={<DemandDraft/>}/>
-          <Route path="/welcomeletter/:_id" element={<Welcomeletter/>}/>
-          <Route path="/ledger/:_id" element={<Ledger/>}/>
-          <Route path="/AccountsDashBoard" element={<AccountsDashboard/>}/>
-          <Route path="/PaymentPerUnit" element={<PaymentPerunit/>}/>
-          <Route path="/Stats" element={<Stats/>}/>
-          <Route path="/DirectorsReport" element={<DirectorsReport/>}/>
-          <Route path="/DirectorDetails/:_id" element={<DirectorDetails/>}/>
-          <Route path="/ExpenseForm" element={<ExpenseForm/>}/>
-          <Route path="/Expensedetails" element={<Expensedetails/>}/>
-          <Route path="/TotalExpensePaidByteamLeader/:_id" element={<ExpensePaidByteamLeader/>}/>
-          <Route path="print-page" element={<PrintPage/>}/>
-          <Route path="FilteredPrintPage" element={<FilteredPrintPage/>}/>
-          <Route path="/edit-expense" element={<EditExpense />} />
-          <Route path="/AllProjects" element={<div className=""><UploadedProjects/></div>} />
-          <Route path="/ChanelPartnerform" element={<ChanelPartnerForm/>} />
-          <Route path="/All-Projects" element={<div className="main-content"><AccountsProjects/></div>} />
-          <Route path="/reminder" element={<SendEmail/>} />
-          <Route path="/Register-User-Admin" element={<CreateUser/>}/>
-          <Route path="/AssgProject" element={<AssgProject/>} />
-          <Route path="/Sub-Admin-Dashboard" element={<SubAdminDash/>} />
-          <Route path="/Sub-Admin-View-customer" element={<Subadminviewcustomer/>} />
-          <Route path="/Sub-Admin-customer-details/:_id" element={<SubadminCustomerdetail/>} />
-          <Route path="/Sub-Admin-Edit-customer-details/:_id" element={<Subadmincustomeredit/>} />
-          <Route path="/Sub-Admin-Add-customer" element={<SubAdminAddcustomer/>} />
-          <Route path="/Sub-Admin-Receive-customer" element={<SubadminRecivecustomer/>} />
-        </Routes>
+        <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
+    <Route path="/sign-in" element={<Login />} />
+    <Route path="/sign-up" element={<SignUp />} />
+
+    {/* Admin Dashboard Routes */}
+    <Route path="/DashBoard" element={<ProtectedRoute element={UserDetails} />} />
+    <Route path="/AdminDashboard" element={<ProtectedRoute element={AdminDashboard} />} />
+    <Route path="/Adminuser" element={<ProtectedRoute element={AdminUser} />} />
+    <Route path="/AccountsDashBoard" element={<ProtectedRoute element={AccountsDashboard} />} />
+    <Route path="/Register-User-Admin" element={<ProtectedRoute element={CreateUser} />} />
+    <Route path="/AssgProject" element={<ProtectedRoute element={AssgProject} />} />
+    <Route path="/uploaded-projects" element={<ProtectedRoute element={UploadedProjects} />} />
+    <Route path="/project/:projectId" element={<ProtectedRoute element={ProjectDetails} />} />
+    <Route path="/Projects" element={<ProtectedRoute element={Projects} />} />
+    <Route path="/AllProjects" element={<ProtectedRoute element={UploadedProjects} />} />
+    <Route path="/All-Projects" element={<ProtectedRoute element={AccountsProjects} />} />
+    <Route path="/Info" element={<ProtectedRoute element={Info} />} />
+    
+    {/* User Projects and Reports */}
+    <Route path="/Users-Projects" element={<ProtectedRoute element={Projects} />} />
+    <Route path="/Users-Reports" element={<ProtectedRoute element={Reports} />} />
+    
+    {/* Customer Management */}
+    <Route path="/Addcustomer" element={<ProtectedRoute element={AddCustomerForm} />} />
+    <Route path="/ViewCustomer" element={<ProtectedRoute element={ViewCastumer} />} />
+    <Route path="/Customer_Details/:_id" element={<ProtectedRoute element={CustomerDetails} />} />
+    <Route path="/Edit_Customer_Details/:_id" element={<ProtectedRoute element={Editcustomerdetails} />} />
+    
+    {/* Payment & Receipt Related */}
+    <Route path="/ReceivedPayments" element={<ProtectedRoute element={Receivedpayments} />} />
+    <Route path="/PayInterestAmount" element={<ProtectedRoute element={PayInterestAmount} />} />
+    <Route path="/PaymentPage/:id" element={<ProtectedRoute element={PaymentPage} />} />
+    <Route path="/print_reciept/:_id" element={<ProtectedRoute element={Print_reciept} />} />
+
+    {/* Khata/Khasra Related */}
+    <Route path="/Addkhata" element={<ProtectedRoute element={Addkhata} />} />
+    <Route path="/Addkhasra" element={<ProtectedRoute element={Addkhasra} />} />
+    <Route path="/Viewkhata" element={<ProtectedRoute element={ViewKhata} />} />
+    <Route path="/Viewkhasra" element={<ProtectedRoute element={Viewkhasra} />} />
+
+    {/* Admin Panel and Blog */}
+    <Route path="/MasterAdmin" element={<MasterAdmin/>}/>
+    <Route path="/AdminPanel" element={<AdminPanel />} />
+    <Route path="/BlogPanel" element={<BlogPanel />} />
+
+    {/* Other Routes */}
+    <Route path="/Addblock" element={<ProtectedRoute element={AdditionBlock} />} />
+    <Route path="/Addunit" element={<ProtectedRoute element={AdditionUnit} />} />
+    <Route path="/AddPlan" element={<ProtectedRoute element={Addplan} />} />
+    <Route path="/ViewPlan" element={<ProtectedRoute element={Viewplan} />} />
+    <Route path="/Incentiveplan" element={<ProtectedRoute element={Incentiveplan} />} />
+    <Route path="/Stats" element={<ProtectedRoute element={Stats} />} />
+    <Route path="/DirectorsReport" element={<ProtectedRoute element={DirectorsReport} />} />
+    <Route path="/DirectorDetails/:_id" element={<ProtectedRoute element={DirectorDetails} />} />
+    <Route path="/ExpenseForm" element={<ProtectedRoute element={ExpenseForm} />} />
+    <Route path="/Expensedetails" element={<ProtectedRoute element={Expensedetails} />} />
+    <Route path="/TotalExpensePaidByteamLeader/:_id" element={<ProtectedRoute element={ExpensePaidByteamLeader} />} />
+
+    {/* Sub-Admin Routes */}
+    <Route path="/Sub-Admin-Dashboard" element={<ProtectedRoute element={SubAdminDash} />} />
+    <Route path="/Sub-Admin-View-customer" element={<ProtectedRoute element={Subadminviewcustomer} />} />
+    <Route path="/Sub-Admin-customer-details/:_id" element={<ProtectedRoute element={SubadminCustomerdetail} />} />
+    <Route path="/Sub-Admin-Edit-customer-details/:_id" element={<ProtectedRoute element={Subadmincustomeredit} />} />
+    <Route path="/Sub-Admin-Add-customer" element={<ProtectedRoute element={SubAdminAddcustomer} />} />
+    <Route path="/Sub-Admin-Receive-customer" element={<ProtectedRoute element={SubadminRecivecustomer} />} />
+    
+    {/* Receipts Pages */}
+    <Route path="/print_demand_datewise/:_id" element={<ProtectedRoute element={DemandDraft} />} />
+    <Route path="/welcomeletter/:_id" element={<ProtectedRoute element={Welcomeletter} />} />
+    <Route path="/ledger/:_id" element={<ProtectedRoute element={Ledger} />} />
+    <Route path="/PaymentPerUnit" element={<ProtectedRoute element={PaymentPerunit} />} />
+    <Route path="/ChanelPartnerform" element={<ChanelPartnerForm/>}/>
+    <Route path="/reminder" element={<ProtectedRoute element={SendEmail} />} />
+    {/*Accouts Print Pages */}
+    <Route path="print-page" element={<ProtectedRoute element={PrintPage} />} />
+    <Route path="FilteredPrintPage" element={<ProtectedRoute element={FilteredPrintPage} />} />
+    <Route path="/edit-expense" element={<ProtectedRoute element={EditExpense} />} /></Routes>
       </div>
     </Router>
   );
