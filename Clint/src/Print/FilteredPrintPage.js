@@ -77,7 +77,7 @@ const FilteredPrintPage = () => {
       </div>
       <div id='print-content' className='print-content'>
         <h2 className='Headtext'>Expense Details <span>(₹{totalAmount})</span></h2>
-        <h4 className='text-center'>Womeki Investors Club</h4>
+        <h4 className='text-center'>tTest</h4>
         <h5 className='text-center'>
           Bhutani Alphathum Tower C, 22nd floor, Sector 90, Noida, Uttar Pradesh 201305
         </h5>

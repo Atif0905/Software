@@ -247,12 +247,12 @@ const DemandDraft = () => {
             )}
             <p className="mt-3">*GST as applicable will be charged extra.</p>
             <p>
-              You are requested to kindly clear above mentioned dues by demand/ Draft/ RTGS drawn in favour of <strong> “Womeki Investors Club Private Limited" A/c No. -{projectdetails.AccountNo}, BANK- {projectdetails.Bank},  IFSC-{projectdetails.IFSC} payable at {projectdetails.Payable}</strong> at the earliest to avoid further levy the interest charges.
+              You are requested to kindly clear above mentioned dues by demand/ Draft/ RTGS drawn in favour of <strong> “Test" A/c No. -{projectdetails.AccountNo}, BANK- {projectdetails.Bank},  IFSC-{projectdetails.IFSC} payable at {projectdetails.Payable}</strong> at the earliest to avoid further levy the interest charges.
             </p>
             <p>Interest for all delayed payments will be charged at the rate & on term strictly in accordance to duly executed Agreement</p>
             <p className="mt-5">We thank you for your understanding and cooperation.<br/>Thanking you & assuring you of our best Services always.</p>
             <div className="text-center">
-              <p><strong>From Womeki Investors Club Private Limited</strong></p>
+              <p><strong>From Test</strong></p>
               <p><strong>Authorised Signatory</strong></p>
             </div>
             <p>*** This is system generated and doesn't require any signature.</p>

@@ -465,7 +465,7 @@ const [showConfirm, setShowConfirm] = useState(false);
             <label>Director Name</label>
             <select className="form-input-field" id="input" name="EmployeeName" value={formData.EmployeeName} onChange={handleInputChange} required >
               <option value="">Select Director Name</option>
-              <option value="Shiv K. Singh">Shiv K. Singh</option>
+              <option value="Director 1">Director 1</option>
             </select>
           </div>
           <div className=" grid-item">

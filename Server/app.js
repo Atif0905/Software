@@ -688,7 +688,7 @@ const generatePdf = async (
       },
       { text: "RE: Thank you for your Patronage!\n", style: "headersub" },
       {
-        text: `On behalf of WOMEKI INVESTORS CLUB Private Limited, we truly appreciate your recent association with us for your booking of a unit in our project ${projectNameStr}`,
+        text: `On behalf of Test  Private Limited, we truly appreciate your recent association with us for your booking of a unit in our project ${projectNameStr}`,
         style: "normal",
       },
       {
@@ -815,9 +815,9 @@ app.post("/send-email", async (req, res) => {
       
       
       
-      WOMEKI INVESTORS CLUB Pvt Ltd
+      Test Pvt Ltd
       CRM HEAD
-      Vijeta
+      Dummy
       +91-9911140024
       `,
       attachments: [

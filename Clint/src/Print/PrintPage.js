@@ -63,7 +63,7 @@ const PrintPage = () => {
       </div>
       <h2 className="heading">Expense Detail ({expense.amount})</h2>
       <div id="print-content">
-        <h4 className="company-name">WOMEKI INVESTORS CLUB PRIVATE LIMITED</h4>
+        <h4 className="company-name">Test</h4>
         <h5 className="company-address">
         TOWER C 22ND FLOOR NOIDA BHUTANI ALPHATHUM
         </h5>

@@ -125,7 +125,7 @@ const Print_reciept = () => {
           <div className="printarea4">
             <h6>Customer Copy</h6>
             <p>
-              Womeki Investors Club Private Limited 25 floor, Tower B, Bhutani
+             Test 25 floor, Tower B, Bhutani
               Alphathum Sector-90, Noida, 201305.
               <br />
               GSTIN: 09AADCW1980H1Z2
@@ -180,7 +180,7 @@ const Print_reciept = () => {
             <li>Acceptance of this payment won't guarantee transfer of ownership of unit final payment is received</li>
             <li>This receipt is subject to realization of cheque / draft</li>
           </ul>
-          <h5>For Womeki Investors Club Private Limited</h5>
+          <h5>For Test</h5>
           <h6 className="signarea">Authorised Signatory</h6>
         </div>
       </div>

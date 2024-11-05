@@ -111,8 +111,8 @@ const Projects = () => {
               <label htmlFor="GST" className="ml">Company Name</label>
               <select type="text" className='form-input-field' id="CompanyName" value={CompanyName} onChange={(e) => setCompanyName(e.target.value)} required >
                 <option>Select Company</option>
-                <option>WOMEKI INVESTORS CLUB Pvt Ltd</option>
-                <option>WOMEKI INFRA  </option>
+                <option>Test 1</option>
+                <option>Test 2  </option>
               </select>
             </div>
             <div className="form-group col-6">

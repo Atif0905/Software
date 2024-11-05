@@ -10,7 +10,7 @@ export default function SignUp() {
   const [secretKey, setSecretKey] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (userType === "Admin" && secretKey !== "Womeki") {
+    if (userType === "Admin" && secretKey !== "Admin") {
       alert("Invalid Admin");
     } else {
       axios.post(`${process.env.REACT_APP_API_URL}/register`, {
