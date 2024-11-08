@@ -62,6 +62,8 @@ import Subadmincustomeredit from "./SubAdmincomponent/Subadmincustomeredit";
 import SubAdminAddcustomer from "./SubAdmincomponent/SubAdmincustomer";
 import SubadminRecivecustomer from "./SubAdmincomponent/SubadminRecivecustomer";
 import Info from "./Info/Info";
+import ChannelForm from "./ChannelForm/ChannelForm";
+import ChannelList from "./ChannelForm/ChannelList";
 
 function ProtectedRoute({ element: Component, ...rest }) {
   const isLoggedIn = window.localStorage.getItem("loggedIn") === "true";
@@ -139,13 +141,14 @@ function App() {
           <Route path="/Sub-Admin-Add-customer" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-Receive-customer" element={<SubAdmin/>} />
           <Route path="/Info" element={<Sidebar/>} />
+          <Route path="/channel" element={<Sidebar/>} />
+          <Route path="/channel-list" element={<Sidebar/>}/>
         </Routes>
         <Routes>
         <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
     <Route path="/sign-in" element={<Login />} />
     <Route path="/sign-up" element={<SignUp />} />
 
-    {/* Admin Dashboard Routes */}
     <Route path="/DashBoard" element={<ProtectedRoute element={UserDetails} />} />
     <Route path="/AdminDashboard" element={<ProtectedRoute element={AdminDashboard} />} />
     <Route path="/Adminuser" element={<ProtectedRoute element={AdminUser} />} />
@@ -158,6 +161,8 @@ function App() {
     <Route path="/AllProjects" element={<ProtectedRoute element={UploadedProjects} />} />
     <Route path="/All-Projects" element={<ProtectedRoute element={AccountsProjects} />} />
     <Route path="/Info" element={<ProtectedRoute element={Info} />} />
+    <Route path="/channel" element={<ProtectedRoute element={ChannelForm}/>} />
+    <Route path="/channel-list" element={<ProtectedRoute element={ChannelList}/>}/>
     
     {/* User Projects and Reports */}
     <Route path="/Users-Projects" element={<ProtectedRoute element={Projects} />} />

@@ -15,6 +15,7 @@ const fs = require("fs");
 const Post = require("./Models/CreatePost");
 const Blog = require("./Models/Createblog");
 const ChannelPartner = require("./Models/ChanelPartner");
+const Channel = require("./Models/Channel");
 const expenseRoutes = require("./Router/expenseRoutes");
 const paymentPlanRoutes = require("./Router/paymentPlanRoutes");
 const uploadProjects = multer({ dest: "uploads/" });
@@ -1120,5 +1121,44 @@ app.post('/userData', async (req, res) => {
     }
     console.error('Error in /userData:', error);
     res.status(500).json({ status: 'error', data: 'Internal Server Error' });
+  }
+});
+
+app.post('/cp', async (req, res) => {
+  try {
+    const { name, assign } = req.body;
+
+    if (!name || !assign) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+   
+    const latestChannel = await Channel.findOne().sort({ id: -1 }); // Get the most recent document
+    const latestId = latestChannel ? latestChannel.id : null; // Get the latest ID (or null if no channels exist)
+
+    const newId = latestId
+      ? `ch-${String(parseInt(latestId.split('-')[1]) + 1).padStart(2, '0')}`
+      : 'ch-01'; 
+
+  
+    const newChannel = new Channel({ ...req.body, id: newId });
+
+    const savedChannel = await newChannel.save();
+
+    res.status(201).json(savedChannel);
+  } catch (error) {
+    console.error('Error creating Channel Partner:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+app.get('/cp', async (req, res) => {
+  try {
+    const channel = await Channel.find();
+    res.status(200).json(channel);
+  } catch (error) {
+    console.error('Error fetching Channel :', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });

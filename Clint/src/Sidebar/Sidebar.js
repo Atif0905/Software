@@ -190,6 +190,26 @@ const Sidebar = () => {
               <BsInfoSquare  className='svg-icon' /> Info
             </div>
           </Link>
+          <div className="dropdown">
+            <div
+              className="dropdown-toggle"
+              onClick={() => handleDropdownToggle('Chh')}
+            >
+              <MdOutlinePayments className='svg-icon' />Channel<IoIosArrowDown />
+            </div>
+            <div
+              className={`dropdown-menu ${
+                activeDropdown === 'Chh' || isDropdownActive(['/channel', '/channel-list']) ? 'active' : ''
+              }`}
+            >
+              <Link to='/channel'>
+                <li className={`dropdown-item ${location.pathname === '/channel' ? 'active' : ''}`}>Channel Form</li>
+              </Link>
+              <Link to='/channel-list'>
+                <li className={`dropdown-item ${location.pathname === '/channel-list' ? 'active' : ''}`}>Channel List </li>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
