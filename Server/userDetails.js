@@ -6,6 +6,7 @@ const UserDetailsSchema = new mongoose.Schema(
     email: { type: String, unique: true },
     password: String,
     userType: String,
+    UniqueID: String,
   },
   {
     collection: "UserInfo", // Specifies the collection name in the database
