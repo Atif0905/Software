@@ -21,6 +21,10 @@ const uploadProjects = multer({ dest: "uploads/" });
 const installmentRoutes = require("./Router/installmentRoutes");
 const paymentDetailRoutes = require("./Router/paymentDetailRoutes");
 const customerRoutes = require("./Router/customerRoutes");
+const { getDatabaseURI, connectToDatabase } = require("./db");
+
+
+
 // const cors = require('cors');
 app.use(cors()); // Allows all origins
 app.use(express.json());
@@ -83,28 +87,6 @@ const logChange = (action, userData) => {
     }
   );
 };
-app.post("/register", async (req, res) => {
-  const { fname, lname, email, password, userType } = req.body;
-  const encryptedPassword = await bcrypt.hash(password, 10);
-  try {
-    const oldUser = await User.findOne({ email });
-    if (oldUser) {
-      return res.json({ error: "User Exists" });
-    }
-    await User.create({
-      fname,
-      lname,
-      email,
-      password: encryptedPassword,
-      userType,
-    });
-    res.send({ status: "ok" });
-  } catch (error) {
-    res.send({ status: "error" });
-  }
-});
-
-
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
@@ -1014,22 +996,159 @@ app.post('/reminder-email', (req, res) => {
     }
   });
 });
-// POST: Register a new SubAdmin
+
+
+app.post("/register", async (req, res) => {
+  const { companyName, fname, lname, email, password, userType, UniqueID } = req.body;
+
+  if (!companyName) {
+    return res.status(400).json({ error: "Company name is required" });
+  }
+
+  try {
+    const encryptedPassword = await bcrypt.hash(password, 10);
+
+    // Dynamically connect to the company's database
+    const databaseName = companyName.toLowerCase().replace(/\s+/g, "-");
+    await connectToDatabase(databaseName);
+
+    // Use existing 'User' model if already compiled
+    const CompanyUser =
+      mongoose.models.UserInfo || // Check if 'User' model exists
+      mongoose.model(
+        "UserInfo",
+        new mongoose.Schema({
+          fname: String,
+          lname: String,
+          email: { type: String, unique: true },
+          password: String,
+          userType: String,
+          UniqueID: String,
+        })
+      );
+
+    // Check if the user already exists
+    const oldUser = await CompanyUser.findOne({ email });
+    if (oldUser) {
+      return res.status(400).json({ error: "User already exists in this company" });
+    }
+
+    // Create the user in the company-specific database
+    await CompanyUser.create({
+      fname,
+      lname,
+      email,
+      password: encryptedPassword,
+      userType,
+      UniqueID,
+    });
+
+    res.status(201).send({
+      status: "ok",
+      message: `User registered successfully in database: ${databaseName}`,
+    });
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res.status(500).send({
+      status: "error",
+      message: "Registration failed. See server logs for details.",
+    });
+  }
+});
+
+// User Login Route
+app.post("/login-user", async (req, res) => {
+  const { email, password, companyName } = req.body;
+
+  try {
+    // Connect to the company's database
+    await connectToDatabase(companyName);
+
+    // Perform the login logic
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ status: "error", error: "User not found" });
+    }
+
+    // Check password and generate token
+    // (Add your login logic here)
+
+    res.json({ status: "ok", data: { message: "Login successful!" } });
+  } catch (error) {
+    console.error("Error in /login-user:", error);
+    res.status(500).json({ status: "error", error: "Login failed" });
+  }
+});
+
+
+app.post("/SubAdminLogin", async (req, res) => {
+  const { email, password, companyName } = req.body;
+
+  try {
+    // Ensure companyName is provided
+    if (!companyName) {
+      return res.status(400).json({ status: "error", error: "Company name is required" });
+    }
+
+    // Connect to the specific company's database
+    const dbConnection = await connectToDatabase(companyName);
+
+    // Define the SubAdmin schema and model dynamically
+    const SubAdmin = dbConnection.model(
+      "SubAdmin",
+      new mongoose.Schema({
+        email: { type: String, required: true, unique: true },
+        password: { type: String, required: true },
+      })
+    );
+
+    // Find SubAdmin by email
+    const subAdmin = await SubAdmin.findOne({ email });
+    if (!subAdmin) {
+      return res.status(404).json({ status: "error", error: "SubAdmin not found" });
+    }
+
+    // Compare the password with the hashed password
+    const isMatch = await bcrypt.compare(password, subAdmin.password);
+    if (!isMatch) {
+      return res.status(401).json({ status: "error", error: "Incorrect password" });
+    }
+
+    // Generate a JWT token
+    const token = jwt.sign(
+      { email: subAdmin.email, companyName },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    // Respond with the token
+    res.json({ status: "ok", data: { token } });
+  } catch (error) {
+    console.error("Error in /SubAdminLogin:", error);
+    res.status(500).json({ status: "error", error: "Login failed" });
+  }
+});
+
+// SubAdmin Register
 app.post('/SubAdminRegister', async (req, res) => {
   try {
     const { fname, lname, email, password, userType, AssgProject } = req.body;
 
+    // Validate all required fields
     if (!fname || !lname || !email || !password || !userType || !AssgProject) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
 
+    // Check if SubAdmin already exists
     const existingSubAdmin = await SubAdmin.findOne({ email });
     if (existingSubAdmin) {
       return res.status(400).json({ message: 'Email already in use.' });
     }
 
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create and save a new SubAdmin
     const newSubAdmin = new SubAdmin({
       fname,
       lname,
@@ -1042,65 +1161,24 @@ app.post('/SubAdminRegister', async (req, res) => {
     await newSubAdmin.save();
     res.status(201).json({ message: 'SubAdmin created successfully.' });
   } catch (error) {
-    console.error(error);
+    console.error('Error in /SubAdminRegister:', error);
     res.status(500).json({ message: 'Internal Server Error.' });
   }
 });
-app.post("/SubAdminLogin", async (req, res) => {
-  const { email, password } = req.body;
 
-  try {
-    const subAdmin = await SubAdmin.findOne({ email });
-    if (!subAdmin) 
-      return res.status(404).json({ status: "error", error: "" });
 
-    const isMatch = await bcrypt.compare(password, subAdmin.password);
-    if (!isMatch) 
-      return res.status(401).json({ status: "error", error: "Incorrect password" });
+app.post("/userData", async (req, res) => {
+  const token = req.body.token;
 
-    const token = jwt.sign({ email: subAdmin.email }, JWT_SECRET, { expiresIn: '1d' });
-
-    res.json({ status: "ok", data: { token } }); // Consistent token structure
-  } catch (error) {
-    console.error('Error in /SubAdminLogin:', error);
-    res.status(500).json({ status: "error", error: "Login failed" });
-  }
-});
-
-// User Login Route
-app.post("/login-user", async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-    if (!user) 
-      return res.status(404).json({ status: "error", error: "User Not found" });
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) 
-      return res.status(401).json({ status: "error", error: "Invalid Password" });
-
-    const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: "1h" });
-
-    res.json({ status: "ok", data: { token } }); // Consistent token structure
-  } catch (error) {
-    console.error('Error in /login-user:', error);
-    res.status(500).json({ status: "error", error: "Login failed" });
-  }
-});
-
-// User Data Route
-app.post('/userData', async (req, res) => {
-  const { token } = req.body;
-
-  // console.log('Token received:', token); // Debugging
+  console.log("Token received:", token); // Debugging log for token
 
   if (!token) {
-    return res.status(400).json({ status: 'error', data: 'Token not provided' });
+    return res.status(400).json({ status: "error", data: "Token not provided" });
   }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+    console.log("Decoded token:", decoded); // Debugging log for decoded token
     const userEmail = decoded.email;
 
     const [userData, subAdminData] = await Promise.all([
@@ -1110,15 +1188,16 @@ app.post('/userData', async (req, res) => {
 
     const data = userData || subAdminData;
     if (!data) {
-      return res.status(404).json({ status: 'error', data: 'User not found' });
+      return res.status(404).json({ status: "error", data: "User not found" });
     }
 
-    res.json({ status: 'ok', data });
+    res.json({ status: "ok", data });
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return res.json({ status: 'error', data: 'Token expired' });
+    console.error("JWT Error:", error.message);
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ status: "error", data: "Token expired" });
     }
-    console.error('Error in /userData:', error);
-    res.status(500).json({ status: 'error', data: 'Internal Server Error' });
+    res.status(500).json({ status: "error", data: "Internal Server Error" });
   }
 });
+

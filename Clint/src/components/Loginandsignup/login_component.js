@@ -5,66 +5,71 @@ import axios from "axios";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [companyName, setCompanyName] = useState(""); // State for company name
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [clicked, setClicked] = useState(false);
   const navigate = useNavigate();
 
+  // Unified login API call
   const attemptLogin = async (url) => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}${url}`,
-        { email, password }, // Fix: Correct payload structure
+        { email, password, companyName },
         {
           headers: {
             "Content-Type": "application/json",
-            Accept: "application/json",
-          },
+          }
         }
       );
-      console.log(response.data); // Debugging response
+      console.log("API Response:", response.data);
       return response.data;
     } catch (err) {
-      if (err.response) {
-        return { status: "error", error: err.response.data.error };
-      }
-      return { status: "error", error: "Network error. Please try again." };
+      console.error("API Error:", err);
+      const errorMsg = err.response?.data?.error || "Network error. Please try again.";
+      return { status: "error", error: errorMsg };
     }
   };
 
+  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!email || !password) {
-      setError("Please enter a valid Email ID and Password.");
+    // Validation for missing fields
+    if (!email || !password || !companyName) {
+      setError("Please fill in all fields.");
       return;
     }
 
-    const loginUserResponse = await attemptLogin("/login-user");
-
-    if (loginUserResponse.status !== "ok") {
-      const subAdminResponse = await attemptLogin("/SubAdminLogin");
-      handleResponse(subAdminResponse);
+    // First attempt login for users
+    const userResponse = await attemptLogin("/login-user");
+    if (userResponse.status === "ok") {
+      handleLoginSuccess(userResponse);
     } else {
-      handleResponse(loginUserResponse);
+      // If user login fails, try SubAdmin login
+      const subAdminResponse = await attemptLogin("/SubAdminLogin");
+      if (subAdminResponse.status === "ok") {
+        handleLoginSuccess(subAdminResponse);
+      } else {
+        setError(subAdminResponse.error || "Invalid credentials.");
+      }
     }
   };
 
-  const handleResponse = (data) => {
-    console.log(data); // Debugging: Inspect response structure
+  // Handle successful login
+  const handleLoginSuccess = (data) => {
+    setSuccess("Login successful");
+    localStorage.setItem("token", data.data.token);
+    localStorage.setItem("email", email);
+    localStorage.setItem("companyName", companyName);
+    localStorage.setItem("loggedIn", true);
 
-    if (data.status === "ok" && data.data?.token) {
-      setSuccess("Login successful");
-      window.localStorage.setItem("token", data.data.token);
-      window.localStorage.setItem("email", email);
-      window.localStorage.setItem("loggedIn", true);
-      setTimeout(() => navigate("/DashBoard"), 2000);
-    } else {
-      setError(data.error || "Enter the correct password.");
-    }
+    // Navigate to the dashboard after 2 seconds
+    setTimeout(() => navigate("/DashBoard"), 2000);
   };
 
   const handleClick = () => setClicked(true);
@@ -111,6 +116,16 @@ export default function Login() {
           {error && <MessageBox message={error} type="error" />}
           {success && <MessageBox message={success} type="success" />}
           <h3 className="welcomehead1">WELCOME USER</h3>
+          <div className="mb-3">
+            <input
+              type="text"
+              className="login-input"
+              placeholder="Enter Company Name"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              required
+            />
+          </div>
           <div className="mb-3">
             <input
               type="email"
@@ -181,9 +196,12 @@ function MessageBox({ message, type }) {
 
 function EyeIcon() {
   return (
-    <svg fill="#000000" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21.92,11.6C19.9,6.91,16.1,4,12,4S4.1,6.91,2.08,11.6a1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20s7.9-2.91,9.92-7.6A1,1,0,0,0,21.92,11.6ZM12,18c-3.17,0-6.17-2.29-7.9-6C5.83,8.29,8.83,6,12,6s6.17,2.29,7.9,6C18.17,15.71,15.17,18,12,18ZM12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Z"/></svg>
+    <svg fill="#000000" width="20px" height="20px" viewBox="0 0 24 24">
+      <path d="M21.92,11.6C19.9,6.91,16.1,4,12,4S4.1,6.91,2.08,11.6a1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20s7.9-2.91,9.92-7.6A1,1,0,0,0,21.92,11.6ZM12,18c-3.17,0-6.17-2.29-7.9-6C5.83,8.29,8.83,6,12,6s6.17,2.29,7.9,6C18.17,15.71,15.17,18,12,18ZM12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Z"/>
+    </svg>
   );
 }
+
 
 function EyeSlashIcon() {
   return (
