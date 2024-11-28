@@ -505,7 +505,7 @@ const Receivedpayments = () => {
                       onChange={handleChange}
                     >
                       <option>Select</option>
-                      {customerDetails.Duedates.map((due, index) => {
+                      {customerDetails?.Duedates?.map((due, index) => {
                         const matchingPayments = filteredPayments.filter(
                           (payment) => payment.paymentType == due.installment
                         );
@@ -634,7 +634,7 @@ const Receivedpayments = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {customerDetails.Duedates.map((due, index) => {
+                        {customerDetails?.Duedates?.map((due, index) => {
                             const matchingPayments = filteredPayments.filter(
                               (payment) =>
                                 payment.paymentType == due.installment
