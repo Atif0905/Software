@@ -22,6 +22,7 @@ const installmentRoutes = require("./Router/installmentRoutes");
 const paymentDetailRoutes = require("./Router/paymentDetailRoutes");
 const customerRoutes = require("./Router/customerRoutes");
 const { getDatabaseURI, connectToDatabase } = require("./db");
+const path = require("path");
 
 
 
@@ -1064,21 +1065,34 @@ app.post("/login-user", async (req, res) => {
     // Connect to the company's database
     await connectToDatabase(companyName);
 
-    // Perform the login logic
+    // Find the user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ status: "error", error: "User not found" });
     }
 
-    // Check password and generate token
-    // (Add your login logic here)
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ status: "error", error: "Invalid Password" });
+    }
 
-    res.json({ status: "ok", data: { message: "Login successful!" } });
+    // Generate token
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || "ADDaDmininWomeki", {
+      expiresIn: "1h",
+    });
+
+    // Log login
+    logChange("login", { email });
+
+    // Respond with token
+    return res.json({ status: "ok", data: { token, message: "Login successful!" } });
   } catch (error) {
     console.error("Error in /login-user:", error);
     res.status(500).json({ status: "error", error: "Login failed" });
   }
 });
+
 
 
 app.post("/SubAdminLogin", async (req, res) => {
@@ -1169,35 +1183,31 @@ app.post('/SubAdminRegister', async (req, res) => {
 
 app.post("/userData", async (req, res) => {
   const token = req.body.token;
-
-  console.log("Token received:", token); // Debugging log for token
-
   if (!token) {
-    return res.status(400).json({ status: "error", data: "Token not provided" });
+    return res.status(400).json({ status: "error", message: "Token not provided" });
   }
-
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    console.log("Decoded token:", decoded); // Debugging log for decoded token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "ADDaDmininWomeki");
     const userEmail = decoded.email;
-
     const [userData, subAdminData] = await Promise.all([
       User.findOne({ email: userEmail }),
       SubAdmin.findOne({ email: userEmail }),
     ]);
-
     const data = userData || subAdminData;
     if (!data) {
-      return res.status(404).json({ status: "error", data: "User not found" });
+      return res.status(404).json({ status: "error", message: "User not found" });
     }
-
     res.json({ status: "ok", data });
   } catch (error) {
     console.error("JWT Error:", error.message);
     if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ status: "error", data: "Token expired" });
+      return res.status(401).json({ status: "error", message: "Token expired" });
     }
-    res.status(500).json({ status: "error", data: "Internal Server Error" });
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ status: "error", message: "Invalid token" });
+    }
+    res.status(500).json({ status: "error", message: "Internal Server Error" });
   }
 });
+
 

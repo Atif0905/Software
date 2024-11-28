@@ -8,6 +8,9 @@ import { Link } from 'react-router-dom';
 const CustomerList = () => {
   const { customers, loading, error } = useSelector((state) => state.customer);
   const dispatch = useDispatch();
+  
+  const [selectedProject, setSelectedProject] = useState(''); // State for selected project
+  const [projectNames, setProjectNames] = useState([]); // State to store unique project names
 
   useEffect(() => {
     const getCustomers = async () => {
@@ -33,6 +36,8 @@ const CustomerList = () => {
           })
         );
 
+        const uniqueProjectNames = [...new Set(customersWithDetails.map(c => c.projectName))]; // Extract unique project names
+        setProjectNames(uniqueProjectNames);
         dispatch(setCustomers(customersWithDetails));
       } catch (error) {
         dispatch(setError('Error fetching customers. Please try again later.'));
@@ -44,6 +49,15 @@ const CustomerList = () => {
     getCustomers();
   }, [dispatch]);
 
+  const filteredCustomers = selectedProject
+    ? customers.filter(customer => customer.projectName === selectedProject)
+    : customers;
+
+  const totalPayment = filteredCustomers.reduce(
+    (sum, customer) => sum + (customer.paymentDetails ? customer.paymentDetails.reduce((subSum, payment) => subSum + payment.amount, 0) : 0),
+    0
+  );
+
   if (loading) {
     return (
       <div>
@@ -52,8 +66,25 @@ const CustomerList = () => {
     );
   }
 
+
   return (
     <div className='main-content'>
+      <div className="filter-section">
+          <select
+          className='filter-select'
+            id="projectFilter"
+            value={selectedProject}
+            onChange={(e) => setSelectedProject(e.target.value)}
+          >
+            <option value="">All Projects</option>
+            {projectNames.map((name, index) => (
+              <option key={index} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <h3>Total Payment for Selected Project: {totalPayment}</h3>
+        </div>
       <div className="table-wrapper formback1">
       <h2 className='formhead'>Customer List</h2>
       <div className='formback1'>
