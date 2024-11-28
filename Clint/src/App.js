@@ -168,7 +168,7 @@ function App() {
     <Route path="/ViewCustomer" element={<ProtectedRoute element={ViewCastumer} />} />
     <Route path="/Customer_Details/:_id" element={<ProtectedRoute element={CustomerDetails} />} />
     <Route path="/Edit_Customer_Details/:_id" element={<ProtectedRoute element={Editcustomerdetails} />} />
-    
+    <Route path="/edit_payment/:_id" element={<ProtectedRoute element={Edit_Payment} />} /> 
     {/* Payment & Receipt Related */}
     <Route path="/ReceivedPayments" element={<ProtectedRoute element={Receivedpayments} />} />
     <Route path="/PayInterestAmount" element={<ProtectedRoute element={PayInterestAmount} />} />
