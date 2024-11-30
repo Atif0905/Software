@@ -72,11 +72,7 @@ const BlogPanel = () => {
       <div><input className="form-input-field" type='file' onChange={ev => setFiles([...ev.target.files])} accept='.webp' multiple /></div>
       <div><select className="form-input-field"  value={category} onChange={ev => setCategory(ev.target.value)}>
       <option>Select Option</option>
-      <option>Womeki Group</option>
-      <option>WIC</option>
-      <option>Womeki Infra</option>
-      <option>Womeki Tech</option>
-      <option>Womeki holiday club</option>
+      <option>Ekakshar Buildtech</option>
       </select></div>
      <div><ReactQuill value={content1} onChange={newValue => setContent1(newValue)}/></div>
      <div><ReactQuill value={content2} onChange={newValue => setContent2(newValue)}/></div>

@@ -14,6 +14,7 @@ const uploadMiddleware = multer({ dest: "uploads/" });
 const fs = require("fs");
 const Post = require("./Models/CreatePost");
 const Blog = require("./Models/Createblog");
+const Logo = require("./Models/Companylogo");
 const ChannelPartner = require("./Models/ChanelPartner");
 const expenseRoutes = require("./Router/expenseRoutes");
 const paymentPlanRoutes = require("./Router/paymentPlanRoutes");
@@ -23,7 +24,7 @@ const paymentDetailRoutes = require("./Router/paymentDetailRoutes");
 const customerRoutes = require("./Router/customerRoutes");
 const { getDatabaseURI, connectToDatabase } = require("./db");
 const path = require("path");
-
+const Mailcontent = require('./Models/MailContent');
 
 
 // const cors = require('cors');
@@ -103,7 +104,7 @@ app.get("/getAllUser", async (req, res) => {
     const combinedData = {
       users: allUsers,
       subAdmins: allSubAdmins
-    };
+    };  
 
     res.send({ status: "ok", data: combinedData });
   } catch (error) {
@@ -773,7 +774,7 @@ app.post("/send-email", async (req, res) => {
       subject,
       text: `Dear ${customerName},
 
-      We are delighted to welcome you to our Project ${projectName} ! Thank you for
+      We are delighted to welcome you to our Project  ${projectName} ! Thank you for
       booking a plot in our project and trusting us with your dream of owning a
       property in our township. We promise to make your experience with us a
       delightful one.
@@ -1210,4 +1211,79 @@ app.post("/userData", async (req, res) => {
   }
 });
 
+app.post('/logo', upload.array('files', 1), async (req, res) => {
+  try {
+    const existingLogo = await Logo.findOne();
+    if (existingLogo) {
+      return res.status(400).json({ error: 'A logo already exists. Use PUT to update it.' });
+    }
 
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+    const files = req.files.map((file) => file.path);
+    const logoDoc = await Logo.create({ files });
+    res.json(logoDoc);
+  } catch (error) {
+    console.error('Error uploading logo:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+app.get('/logo', async (req, res) => {
+  try {
+    const logoDoc = await Logo.findOne(); 
+    res.json(logoDoc); 
+  } catch (error) {
+    console.error('Error fetching logo:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.put('/logo', upload.single('files'), async (req, res) => {
+  try {
+    let filePath = req.file ? req.file.path : 'public/default.jpg';
+
+    const logoDoc = await Logo.findOneAndUpdate(
+      {},
+      { files: [filePath] },
+      { new: true, upsert: true } 
+    );
+
+    res.json(logoDoc);
+  } catch (error) {
+    console.error('Error updating logo:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+app.get('/Mailcontent', async (req, res) => {
+  try {
+    const mailContent = await Mailcontent.findOne({});
+    if (!mailContent) {
+      return res.status(404).json({ error: 'Mail content not found.' });
+    }
+    res.json(mailContent);
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching the mail content.' });
+  }
+});
+app.put('/Mailcontent', async (req, res) => {
+  const { Subject, Body, Lastdata } = req.body;
+
+  // Validate required fields
+  if (!Subject || !Body || !Lastdata) {
+    return res.status(400).json({ error: 'Subject, Body, and Lastdata are required fields.' });
+  }
+
+  try {
+    // Update or create the single document
+    const updatedMailcontent = await Mailcontent.findOneAndUpdate(
+      {}, // No filter to ensure a singleton document
+      { Subject, Body, Lastdata },
+      { new: true, upsert: true } // Create if it doesn't exist
+    );
+
+    res.json({ message: 'Mail content updated successfully', mailContent: updatedMailcontent });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while updating the mail content.' });
+  }
+});

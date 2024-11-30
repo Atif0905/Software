@@ -1,40 +1,25 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import AdminDashboard from "../Home/AdminDashboard/AdminDashboard";
-import AccountsDashboard from "../Home/AdminDashboard/AccountsDashboard";
-import UserDashBoard from "../Home/UserDashboard/UserDashBoard";
-import Sidebar from "../Sidebar/Sidebar";
-import AccountsSidebar from "../Sidebar/AccountsSidebar";
-import SubAdminDash from "../Home/SubAdminDashboard/SubAdminDash";
-import SubAdmin from "../Sidebar/SubAdmin";
+import { useNavigate } from "react-router-dom";
 
 export default function UserDetails() {
   const [userData, setUserData] = useState(null);
-  const [dashboard, setDashboard] = useState(null); // Track which dashboard to show
+  const navigate = useNavigate(); // Initialize the navigation hook
 
   useEffect(() => {
-    // Get the token from localStorage
     const token = window.localStorage.getItem("token");
 
-    console.log("Token from localStorage:", token); // Log the token for debugging
-
-    // Check if the token is available
     if (!token) {
-      console.error("No token found in localStorage.");
       alert("Token is missing or invalid. Please log in again.");
       window.localStorage.clear();
-      window.location.href = "./sign-in"; // Redirect to login if no token
+      navigate("/sign-in"); // Redirect to login page
       return;
     }
 
-    // If token is available, log it
-    console.log("Token being sent:", token); // Log token before making request
-
-    // Make the API request with the token
     axios
       .post(
         `${process.env.REACT_APP_API_URL}/userData`,
-        { token }, // Sending token in request body
+        { token },
         {
           headers: {
             "Content-Type": "application/json",
@@ -45,70 +30,45 @@ export default function UserDetails() {
       .then((response) => {
         const data = response.data;
 
-        // Handle expired token or invalid session
         if (data.data === "Token expired") {
-          console.warn("Token expired detected from server response.");
           alert("Token expired, please log in again.");
           window.localStorage.clear();
-          window.location.href = "./sign-in"; // Redirect to login page
+          navigate("/sign-in"); // Redirect to login page
           return;
         }
 
-        // Set the user data and determine the appropriate dashboard
         setUserData(data.data);
 
-        // Log the received user data for debugging
-        console.log("User data received from API:", data.data);
-
-        // Set the appropriate dashboard based on user type
+        // Redirect based on userType
         switch (data.data?.userType) {
           case "Admin":
-            setDashboard(
-              <div>
-                <Sidebar />
-                <AdminDashboard />
-              </div>
-            );
+            navigate("/AdminDashboard");
             break;
           case "Accounts":
-            setDashboard(
-              <div>
-                <AccountsSidebar />
-                <AccountsDashboard userData={data.data} />
-              </div>
-            );
+            navigate("/AccountsDashboard");
             break;
           case "User":
-            setDashboard(<UserDashBoard userData={data.data} />);
+            navigate("/UserDashboard");
             break;
           case "SubAdmin":
-            setDashboard(
-              <div>
-                <SubAdmin />
-                <SubAdminDash userData={data.data} />
-              </div>
-            );
+            navigate("/SubAdminDashboard");
             break;
           default:
             console.error("Unknown userType received:", data.data?.userType);
+            alert("Unauthorized access.");
+            navigate("/sign-in"); // Redirect to login page for safety
         }
       })
       .catch((error) => {
-        // Check for errors and log them
         if (error.response) {
           console.error("Error response from API:", error.response.data);
         } else {
           console.error("Error making request:", error.message);
         }
-
-        // Provide user-friendly error message
         alert("There was an error fetching your data. Please try again.");
+        navigate("/sign-in"); // Redirect to login page
       });
-  }, []); // Empty array means this effect runs only once after the first render
+  }, [navigate]); // Add navigate to dependencies
 
-  if (!userData) {
-    return null; // Show nothing while data is being fetched
-  }
-
-  return dashboard; // Render the appropriate dashboard based on user type
+  return null; // No UI needed here as redirection handles everything
 }

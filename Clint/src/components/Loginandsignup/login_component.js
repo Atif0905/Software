@@ -24,10 +24,10 @@ export default function Login() {
           }
         }
       );
-      console.log("API Response:", response.data);
+      // console.log("API Response:", response.data);
       return response.data;
     } catch (err) {
-      console.error("API Error:", err);
+      // console.error("API Error:", err);
       const errorMsg = err.response?.data?.error || "Network error. Please try again.";
       return { status: "error", error: errorMsg };
     }

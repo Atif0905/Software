@@ -1,0 +1,117 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const MailContentPage = () => {
+  const [mailContent, setMailContent] = useState({
+    Subject: '',
+    Body: '',
+    Lastdata: '',
+  });
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Fetch default mail content on page load
+  useEffect(() => {
+    const fetchMailContent = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Mailcontent`);
+        setMailContent(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching mail content:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchMailContent();
+  }, []);
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setMailContent((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission for updates
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsUpdating(true);
+
+    try {
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/Mailcontent`, mailContent);
+      alert('Mail content updated successfully!');
+      setMailContent(response.data.mailContent);
+    } catch (error) {
+      console.error('Error updating mail content:', error);
+      alert('Failed to update mail content.');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  if (isLoading) return <p>Loading...</p>;
+
+  return (
+    <div style={{ maxWidth: '600px', margin: 'auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+      <h1>Update Mail Content</h1>
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '20px' }}>
+          <label htmlFor="Subject" style={{ display: 'block', marginBottom: '5px' }}>Subject:</label>
+          <input
+            type="text"
+            id="Subject"
+            name="Subject"
+            placeholder='Enter Your Subject For Mail'
+            value={mailContent.Subject}
+            onChange={handleChange}
+            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+          />
+        </div>
+        <div style={{ marginBottom: '20px' }}>
+          <label htmlFor="Body" style={{ display: 'block', marginBottom: '5px' }}>Body:</label>
+          <textarea
+            id="Body"
+            name="Body"
+            value={mailContent.Body}
+            onChange={handleChange}
+            placeholder='Enter Your Body For Mail'
+            rows="5"
+            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+          ></textarea>
+        </div>
+        <div style={{ marginBottom: '20px' }}>
+          <label htmlFor="Lastdata" style={{ display: 'block', marginBottom: '5px' }}>Lastdata:</label>
+          <input
+            type="text"
+            id="Lastdata"
+            name="Lastdata"
+            placeholder='Enter Your Signature For Mail'
+            value={mailContent.Lastdata}
+            onChange={handleChange}
+            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={isUpdating}
+          style={{
+            padding: '10px 20px',
+            fontSize: '16px',
+            backgroundColor: '#007BFF',
+            color: '#fff',
+            border: 'none',
+            cursor: isUpdating ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {isUpdating ? 'Updating...' : 'Update'}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default MailContentPage;

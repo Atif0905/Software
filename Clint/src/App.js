@@ -62,6 +62,8 @@ import Subadmincustomeredit from "./SubAdmincomponent/Subadmincustomeredit";
 import SubAdminAddcustomer from "./SubAdmincomponent/SubAdmincustomer";
 import SubadminRecivecustomer from "./SubAdmincomponent/SubadminRecivecustomer";
 import Info from "./Info/Info";
+import UpdateLogoPage from "./Sidebar/UpdateLogoPage";
+import MailContentPage from "./MailData/MailContentPage";
 
 function ProtectedRoute({ element: Component, ...rest }) {
   const isLoggedIn = window.localStorage.getItem("loggedIn") === "true";
@@ -157,7 +159,7 @@ function App() {
     <Route path="/Projects" element={<ProtectedRoute element={Projects} />} />
     <Route path="/AllProjects" element={<ProtectedRoute element={UploadedProjects} />} />
     <Route path="/All-Projects" element={<ProtectedRoute element={AccountsProjects} />} />
-    <Route path="/Info" element={<ProtectedRoute element={Info} />} />
+    <Route path="/Info" element={<ProtectedRoute element={MailContentPage} />} />
     
     {/* User Projects and Reports */}
     <Route path="/Users-Projects" element={<ProtectedRoute element={Projects} />} />
@@ -167,6 +169,7 @@ function App() {
     <Route path="/Addcustomer" element={<ProtectedRoute element={AddCustomerForm} />} />
     <Route path="/ViewCustomer" element={<ProtectedRoute element={ViewCastumer} />} />
     <Route path="/Customer_Details/:_id" element={<ProtectedRoute element={CustomerDetails} />} />
+    <Route path="/Admin_details" element={<ProtectedRoute element={UpdateLogoPage} />} />
     <Route path="/Edit_Customer_Details/:_id" element={<ProtectedRoute element={Editcustomerdetails} />} />
     <Route path="/edit_payment/:_id" element={<ProtectedRoute element={Edit_Payment} />} /> 
     {/* Payment & Receipt Related */}
@@ -212,7 +215,7 @@ function App() {
     <Route path="/welcomeletter/:_id" element={<ProtectedRoute element={Welcomeletter} />} />
     <Route path="/ledger/:_id" element={<ProtectedRoute element={Ledger} />} />
     <Route path="/PaymentPerUnit" element={<ProtectedRoute element={PaymentPerunit} />} />
-    <Route path="/ChanelPartnerform" element={<ChanelPartnerForm/>}/>
+    {/* <Route path="/ChanelPartnerform" element={<ChanelPartnerForm/>}/> */}
     <Route path="/reminder" element={<ProtectedRoute element={SendEmail} />} />
     {/*Accouts Print Pages */}
     <Route path="print-page" element={<ProtectedRoute element={PrintPage} />} />
