@@ -38,10 +38,8 @@ const [showConfirm, setShowConfirm] = useState(false);
     const fetchPaymentPlans = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
-        console.log(response)
         setPaymentPlans(response.data.paymentPlans);
       } catch (error) {
-        console.error('Error fetching payment plans:', error);
       }
     };
     fetchPaymentPlans();
@@ -240,14 +238,8 @@ const [showConfirm, setShowConfirm] = useState(false);
              parseFloat(selectedUnit.edcPrice || 0)) * 
             parseFloat(plotSize)
         );
-
         const discountAmount = parseFloat(formData.discount) || 0;
         const editedTotal = baseTotal - (baseTotal * (formData.discount / 100));
-
-        console.log('Base Total:', baseTotal);
-        console.log('Discount Amount:', discountAmount);
-        console.log('Edited Total:', editedTotal);
-
         setEditedTotalPrice(editedTotal);
     }
 };

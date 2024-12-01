@@ -13,15 +13,19 @@ import { MdOutlinePayments } from "react-icons/md";
 import DueDateModal from '../Reminder/DueDateModal';
 import useFetchUser from '../hooks/useFetchUser';
 import { BsInfoSquare } from "react-icons/bs";
+import axios from 'axios';
+
 const Sidebar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [logoFiles, setLogoFiles] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const [bellClicked, setBellClicked] = useState(false);
   const dropdownRef = useRef(null);
-  const bellIconRef = useRef(null);  // New reference for the bell icon
-  const { user , loading: userLoading } = useFetchUser();
+  const bellIconRef = useRef(null);
+  const { user, loading: userLoading } = useFetchUser();
+
   const handleDropdownToggle = (dropdownId) => {
     setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
   };
@@ -60,25 +64,47 @@ const Sidebar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/logo`);
+        if (response.data && response.data.files && response.data.files.length > 0) {
+          setLogoFiles(response.data.files);
+        } else {
+          setLogoFiles([]); // Set to an empty array if response.data is null or no files exist
+        }
+      } catch (error) {
+        // console.error('Error fetching logo:', error);
+        setLogoFiles([]); // Set to an empty array on error
+      }
+    };
+    fetchLogo();
+  }, []);
+
   return (
     <div>
       <div className='newside'>
-      <div>
-          <img src='./WTSlogo.png' className='sidelogo' alt='' />
+        <div className='center mt-3'>
+        <a href='/Admin_details'>
+  <img 
+    src={logoFiles.length > 0 ? `${process.env.REACT_APP_API_URL}/${logoFiles[0]}` : './Defaultlogo.jpg'} 
+    className='sidelogo' 
+    alt='Logo' 
+  />
+</a>
+
         </div>
-        <div>
+        <div className='mt-3'>
           <Link to="/AdminDashboard">
             <div className={`Sidelink ${location.pathname === '/AdminDashboard' ? 'active' : ''}`}>
               <RiDashboard3Line className='svg-icon' /> DashBoard
             </div>
           </Link>
-
           <Link to="/Adminuser">
             <div className={`Sidelink ${location.pathname === '/Adminuser' ? 'active' : ''}`}>
               <FaRegUser className='svg-icon' /> User
             </div>
           </Link>
-
           <div className="dropdown">
             <div
               className="dropdown-toggle"
@@ -102,7 +128,6 @@ const Sidebar = () => {
               </Link>
             </div>
           </div>
-
           <div className="dropdown">
             <div
               className="dropdown-toggle"
@@ -192,7 +217,6 @@ const Sidebar = () => {
           </Link>
         </div>
       </div>
-
       <div className='center1'>
         <div className='sabove'>
           <div className='d-flex'>
@@ -215,15 +239,13 @@ const Sidebar = () => {
               message="Are you sure you want to Logout?"
             />
           </div>
-          
           <div
             className='bellicondiv'
             onClick={toggleBellIcon}
-            ref={bellIconRef}  // Reference for the bell icon
+            ref={bellIconRef} // Reference for the bell icon
           >
             {bellClicked ? <FaBell className='bellicon' /> : <FaRegBell className='bellicon' />}
           </div>
-
           {bellClicked && (
             <div className={`duedate-dropdown roll-in`} ref={dropdownRef}>
               <DueDateModal />
