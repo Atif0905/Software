@@ -14,7 +14,7 @@ export default function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (userType === "Admin" && secretKey !== "Admin") {
+    if ((userType === "Admin" || userType === "SuperAdmin") && secretKey !== "Admin") {
       alert("Invalid Admin");
     } else if (!companyName.trim()) {
       alert("Company name is required");
@@ -75,9 +75,13 @@ export default function SignUp() {
                 <input type="radio" name="UserType" value="Admin" onChange={(e) => setUserType(e.target.value)} />
                 Admin
               </div>
+              <div>
+                <input type="radio" name="UserType" value="SuperAdmin" onChange={(e) => setUserType(e.target.value)} />
+                SuperAdmin
+              </div>
             </div>
           </div>
-          {userType === "Admin" && (
+          {(userType === "Admin" || userType === "SuperAdmin") && (
             <div className="mb-3">
               <label>Secret Key</label>
               <input type="text" className="form-control" placeholder="Secret Key" value={secretKey} onChange={(e) => setSecretKey(e.target.value)} />

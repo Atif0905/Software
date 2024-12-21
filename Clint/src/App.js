@@ -64,6 +64,8 @@ import SubadminRecivecustomer from "./SubAdmincomponent/SubadminRecivecustomer";
 import Info from "./Info/Info";
 import UpdateLogoPage from "./Sidebar/UpdateLogoPage";
 import MailContentPage from "./MailData/MailContentPage";
+import Superadmindashboard from "./SuperAdmin/Superadmindashboard";
+import Superadminsidebar from "./Sidebar/Superadminsidebar";
 
 function ProtectedRoute({ element: Component, ...rest }) {
   const isLoggedIn = window.localStorage.getItem("loggedIn") === "true";
@@ -141,6 +143,7 @@ function App() {
           <Route path="/Sub-Admin-Add-customer" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-Receive-customer" element={<SubAdmin/>} />
           <Route path="/Info" element={<Sidebar/>} />
+          <Route path="/SuperAdminDashboard" element={<Superadminsidebar/>}/>
         </Routes>
         <Routes>
         <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
@@ -215,12 +218,17 @@ function App() {
     <Route path="/welcomeletter/:_id" element={<ProtectedRoute element={Welcomeletter} />} />
     <Route path="/ledger/:_id" element={<ProtectedRoute element={Ledger} />} />
     <Route path="/PaymentPerUnit" element={<ProtectedRoute element={PaymentPerunit} />} />
-    {/* <Route path="/ChanelPartnerform" element={<ChanelPartnerForm/>}/> */}
     <Route path="/reminder" element={<ProtectedRoute element={SendEmail} />} />
     {/*Accouts Print Pages */}
     <Route path="print-page" element={<ProtectedRoute element={PrintPage} />} />
     <Route path="FilteredPrintPage" element={<ProtectedRoute element={FilteredPrintPage} />} />
-    <Route path="/edit-expense" element={<ProtectedRoute element={EditExpense} />} /></Routes>
+    <Route path="/edit-expense" element={<ProtectedRoute element={EditExpense} />} />
+    
+    {/* SuperAdmin Pages */}
+    
+    <Route path="/SuperAdminDashboard" element={<ProtectedRoute element={Superadmindashboard}/>}/>
+
+    </Routes>
       </div>
     </Router>
   );

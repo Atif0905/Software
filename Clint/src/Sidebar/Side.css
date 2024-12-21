@@ -25,8 +25,8 @@ a {
 }
 
 .sidelogo {
-  width: 90%;
-  height: 120px;
+  width: 100%;
+  height: 80px;
   object-fit: contain;
 }
 .sabove {
@@ -46,8 +46,13 @@ a {
   justify-content: center;
 }
 .userface {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
+  font-size: 1.9vw;
+  color: #CED4DA;
+  position: relative;
+  top: 3px;
+  right: 2px;
 }
 .logouticon {
   width: 25px;
@@ -55,32 +60,28 @@ a {
   cursor: pointer;
 }
 .dropdown .dropdown-toggle {
-  font-family: Kanit;
+  width: 90%;
+  font-family: "Inter";
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 600;
   line-height: 29.9px;
-  color: #ffffff;
+  color: #545658;
   cursor: pointer;
-  padding-left: 30px;
-  padding-top: 10px;
+  padding-left: 10px;
+  padding-top: 5px;
   padding-bottom: 10px;
   transition: all 0.5s ease; /* Added transition */
 }
 
 .dropdown-toggle:hover {
-  background: #DFEBFB;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-  color: black;
-  margin-left: 15px;
-  padding-left: 15px;
-  transition: all 0.5s ease; /* Smooth hover transition */
+  width: 95%;
+  background: #F5F2FF;
+  border-radius: 10px;
+  color: #725ab3;
 }
 
 .dropdown-toggle::after {
   display: none;
-  margin-left: .255em;
-  vertical-align: .255em;
   content: "";
   border-top: .3em solid;
   border-right: .3em solid transparent;
@@ -94,7 +95,6 @@ a {
   background: transparent;
   padding: 0;
   margin-top: -10px;
-  margin-left: 20%;
   opacity: 0;
   transition: opacity 1.3s ease, margin-left 0.5s ease; /* Smooth opacity and margin-left transition */
   list-style-type: circle;
@@ -102,75 +102,67 @@ a {
 
 .dropdown .dropdown-menu.active {
   display: block;
-  color: #fff;
+  color: #ced4da;
   opacity: 1 !important;
   z-index: 0;
   border-radius: 0;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
+  border-radius: 10px;
   transition: opacity 1.3s ease, margin-left 0.5s ease; /* Smooth active state transition */
 }
 
 .dropdown .dropdown-item {
   margin-top: 10px;
   font-size: 16px;
+  font-weight: 600;
   text-decoration: none;
   padding-left: 10%;
-  color: white;
+  color: #545658;
   list-style-type: circle;
   transition: all 0.5s ease; /* Added transition for dropdown items */
 }
 
 .dropdown-item:hover {
-  background: #DFEBFB;
-  color: black;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
+  width: 90%;
+  background: #F5F2FF;
+  color: #725ab3;
+  border-radius: 10px;
   transition: all 0.5s ease; /* Smooth hover transition */
 }
 
 .dropdown-item.active {
-  width: 100%;
-  background-color: #DFEBFB;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  color: black;
+  width: 90%;
+  background-color: #F5F2FF;
+  border-radius: 10px;
+  color: #725ab3;
   margin-left: 15px;
   padding-left: 15px;
   transition: all 0.5s ease; /* Smooth active state transition */
 }
 .Sidelink {
-  font-family: Kanit;
-  font-size: 16px;
-  font-weight: 400;
+  font-family: "Inter";
+  font-size: 1.2vw;
+  font-weight: 600;
   line-height: 29.9px;
   text-align: left;
-  color: #DFEBFB;    
-  padding-left: 30px;    
+  color: #545658;
+  padding-left: 10px;
   padding-top: 5px;
   padding-bottom: 5px;
-  transition: all 0.5s ease; /* Added transition */
+  transition: all 0.5s ease;
+  margin-top: 10px;
 }
 
 .Sidelink:hover {
   width: 100%;
-  background-color: #DFEBFB;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  color: black;
-  margin-left: 15px;
-  padding-left: 15px;
-  transition: all 0.5s ease;
+  background: #F5F2FF;
+  border-radius: 10px;
+  color: #725ab3;
 }
 
 .Sidelink.active {
   width: 100%;
-  background-color: #DFEBFB;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  color: black;
-  margin-left: 15px;
-  padding-left: 15px;
+  background: #F5F2FF;
+  color: #725ab3;
 }
 .sabove{
     width: 70%;

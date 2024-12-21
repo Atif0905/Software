@@ -1,0 +1,92 @@
+.side {
+  height: 100%;
+  background-color: white;
+  margin: 0;
+  padding: 0;
+  width: 20%;
+  background-size: contain;
+  background-position: center;
+  position: fixed;
+  z-index: 999;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: 0% 1%;
+}
+.sideabove {
+    width: 100%;
+    height: 90px;
+    position: sticky;
+    background-color: white;
+    margin-left: 17%;
+    padding: 0 1%;
+    margin-left: 20%;
+    top: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+  }
+  .bellicondiv1{
+    cursor: pointer;
+    position: relative;
+    right: 10px;
+    color: #CED4DA;
+    font-size: 1.5vw;
+  }
+  .navsearch{
+    width: 70%;
+    height: 40px;
+    border: none;
+    background-color: #F8F8F9;
+    border-radius: 10px;
+    padding-left: 40px;
+    color: #CED4DA;
+    font-family: "Inter";
+    font-size: 1vw;
+  }
+  .navsearch:focus{
+    outline: none;
+  }
+  .searchicon{
+    position: absolute;
+    font-size: 1.8vw;
+    top: 8px;
+    left: 10px;
+    color: #CED4DA;
+  }
+.newSidelink {
+  font-family: "Inter";
+  font-size: 1.2vw;
+  font-weight: 600;
+  line-height: 29.9px;
+  text-align: left;
+  color: #545658;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  transition: all 0.5s ease;
+  margin-top: 10px;
+}
+.newSidelink:hover {
+  width: 100%;
+  background: #F5F2FF;
+  border-radius: 10px;
+  color: rgb(84, 67, 129);
+}
+
+.newSidelink.active {
+  width: 100%;
+  background-color: #F5F2FF;
+  border-radius: 10px;
+  color: rgb(84, 67, 129);
+}
+.newmain-content{
+    margin-left: 21.5%;
+    margin-top: 1%;
+}
+.loginname1 {
+    text-align: left;
+    color: #000000;
+    margin-left: 5px;
+    font-size: 1.5vw;
+    font-weight: 600;
+}
