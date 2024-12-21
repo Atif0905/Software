@@ -1,7 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 body {
   margin: 0;
   overflow-x: hidden;
-  background-color: #DFEBFB !important;
+  background-color: #F8F8F9 !important;
+}
+.relative {
+  position: relative;
+}
+.right1{
+  display: flex;
+  justify-content: end;
 }
 @keyframes fall-in {
   0% {
@@ -112,10 +120,10 @@ body {
   align-items: center;
 }
 .main-content {
-  margin-left: 16%;
-  padding: 16px;
-  background-color: #DFEBFB !important;
+  margin-left: 21.5%;
+  margin-top: 1%;
   min-height: 100vh;
+  background-color: #F8F8F9 !important;
 }
 .user-profile{
 text-align: right;

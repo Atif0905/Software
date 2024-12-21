@@ -31,7 +31,7 @@
 .paymentmaindiv {
   height: 130px;
   width: 100%;
-  background-color: #FF6384;
+  background-color: #ff6384;
   box-shadow: rgba(0, 0, 0, 0.235) 4.95px 4.95px 2.6px;
   border-radius: 10px;
 }
@@ -129,97 +129,173 @@
   }
 }
 .paymentdiv {
-    width: 95%;
-    height: 400px;
-    background-color: white;
-    border-radius: 20px;
-  }
-  
-  .upperconatiner {
-    display: grid;
-    grid-template-columns: 1.3fr 0.7fr;
-  }
-  
-  .payment-box {
-    width: 90%;
-    height: 90px;
-    padding: 20px 5px 20px 20px;
-    border-radius: 20px;
-    margin-left: 5%;
-    margin-bottom: 20px;
-  }
-  .twogrid{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 20px;
-  }
-  .totalpaymentdiv {
-    background-color: #eaebff;
-  }
-  
-  .receivepaymentdiv {
-    background-color: #f8e9fe;
-  }
-  
-  .duepaymentdiv {
-    background-color: #ffeaf1;
-  }
-  
-  .paymenttext {
-    font-family: Kanit, sans-serif;
-    font-size: 24px;
-    font-weight: 300;
-    line-height: 21.86px;
-    text-align: left;
-  }
-  
-  .circle {
-    height: 110px;
-    margin-left: 20px;
-  }
-  
-  .paymentcircle {
-    width: 25px;
-    height: 25px;
-    background: #454189;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  
-  .paymentcircle1 {
-    width: 40px;
-    height: 40px;
-    border: 2px solid #454189;
-    border-radius: 50%;
-    margin-left: 3%;
-    margin-top: 4%;
-    position: relative;
-  }
-  
-  .arrowicon {
-    width: 40px;
-    height: 39px;
-    transition: transform 1s;
-    cursor: pointer;
-  }
-  
-  .arrowicon1 {
-    color: #9993ff;
-  }
-  
-  .arrowicon2 {
-    color: #d990f9;
-  }
-  
-  .arrowicon3 {
-    color: #f892ba;
-  }
-  
-  .arrowicon:hover {
-    transform: scale(1.2) rotate(180deg);
-    /* rotate: 180deg; */
-  }
-  
+  width: 95%;
+  height: 400px;
+  background-color: white;
+  border-radius: 20px;
+}
+.paymentdiv1 {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  grid-gap: 30px;
+}
+.paymentdiv2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 30px;
+}
+.payment-box1 {
+  width: 100%;
+  height: 90px;
+  padding: 20px 5px 20px 20px;
+  border-radius: 20px;
+  background-color: white;
+}
+.payment-box3 {
+  width: 100%;
+  height: 100%;
+  padding: 20px 5px 20px 20px;
+  border-radius: 20px;
+  background-color: white;
+}
+.projecticon {
+  font-size: 3vw;
+  color: rgba(162, 128, 255, 1);
+  margin-right: 10px;
+}
+.dashboardprojecttext{
+font-family: "Inter";
+font-size: 1.1vw;
+font-weight: 600;
+line-height: 16px;
+text-align: left;
+margin-top: 15px;
+}
+.dashboardprojectsec{
+  display: flex;
+  align-items: center;
+}
+.paymenttext1 {
+  font-family: "Inter";
+  font-size: 1vw;
+  font-weight: 600;
+  line-height: 21.86px;
+  text-align: left;
+  color: #6c757d;
+  margin-top: 4px;
+  margin-left: 5px;
+}
+.colouredtext {
+  font-family: "Inter";
+  font-size: 2vw;
+  font-weight: 300;
+  line-height: 21.86px;
+  text-align: left;
+}
+.dashboardicondiv {
+  padding-left: 4px;
+  background-color: #f5f2ff;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  color: #a280ff;
+  font-size: 1.8vw;
+}
+.payment-box2 {
+  width: 90%;
+  height: 100%;
+  padding: 20px 5px 20px 20px;
+  border-radius: 20px;
+  margin-left: 5%;
+  margin-bottom: 20px;
+  background-color: white;
+}
+.upperconatiner {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+}
+
+.payment-box {
+  width: 90%;
+  height: 90px;
+  padding: 20px 5px 20px 20px;
+  border-radius: 20px;
+  margin-left: 5%;
+  margin-bottom: 20px;
+}
+.twogrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+}
+.totalpaymentdiv {
+  background-color: #eaebff;
+}
+
+.receivepaymentdiv {
+  background-color: #f8e9fe;
+}
+
+.duepaymentdiv {
+  background-color: #ffeaf1;
+}
+
+.paymenttext {
+  font-family: Kanit, sans-serif;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 21.86px;
+  text-align: left;
+}
+
+.circle {
+  height: 110px;
+  margin-left: 20px;
+}
+
+.paymentcircle {
+  width: 25px;
+  height: 25px;
+  background: #454189;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.paymentcircle1 {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #454189;
+  border-radius: 50%;
+  margin-left: 3%;
+  margin-top: 4%;
+  position: relative;
+}
+
+.arrowicon {
+  width: 40px;
+  height: 39px;
+  transition: transform 1s;
+  cursor: pointer;
+}
+
+.arrowicon1 {
+  color: #9993ff;
+}
+
+.arrowicon2 {
+  color: #d990f9;
+}
+
+.arrowicon3 {
+  color: #f892ba;
+}
+
+.arrowicon:hover {
+  transform: scale(1.2) rotate(180deg);
+  /* rotate: 180deg; */
+}

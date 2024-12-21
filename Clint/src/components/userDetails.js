@@ -4,18 +4,16 @@ import { useNavigate } from "react-router-dom";
 
 export default function UserDetails() {
   const [userData, setUserData] = useState(null);
-  const navigate = useNavigate(); // Initialize the navigation hook
-
+  const navigate = useNavigate(); 
   useEffect(() => {
     const token = window.localStorage.getItem("token");
 
     if (!token) {
       alert("Token is missing or invalid. Please log in again.");
       window.localStorage.clear();
-      navigate("/sign-in"); // Redirect to login page
+      navigate("/sign-in"); 
       return;
     }
-
     axios
       .post(
         `${process.env.REACT_APP_API_URL}/userData`,
@@ -33,13 +31,10 @@ export default function UserDetails() {
         if (data.data === "Token expired") {
           alert("Token expired, please log in again.");
           window.localStorage.clear();
-          navigate("/sign-in"); // Redirect to login page
+          navigate("/sign-in"); 
           return;
         }
-
         setUserData(data.data);
-
-        // Redirect based on userType
         switch (data.data?.userType) {
           case "Admin":
             navigate("/AdminDashboard");
@@ -53,10 +48,13 @@ export default function UserDetails() {
           case "SubAdmin":
             navigate("/SubAdminDashboard");
             break;
+            case "SuperAdmin":
+            navigate("/SuperAdminDashboard");
+            break;
           default:
             console.error("Unknown userType received:", data.data?.userType);
             alert("Unauthorized access.");
-            navigate("/sign-in"); // Redirect to login page for safety
+            navigate("/sign-in");
         }
       })
       .catch((error) => {
@@ -66,9 +64,9 @@ export default function UserDetails() {
           console.error("Error making request:", error.message);
         }
         alert("There was an error fetching your data. Please try again.");
-        navigate("/sign-in"); // Redirect to login page
+        navigate("/sign-in");
       });
-  }, [navigate]); // Add navigate to dependencies
+  }, [navigate]); 
 
-  return null; // No UI needed here as redirection handles everything
+  return null; 
 }

@@ -1,0 +1,10 @@
+{"timestamp":"2024-12-21T05:50:32.086Z","action":"login","user":"test@gmail.com","details":{"email":"test@gmail.com"}}
+{"timestamp":"2024-12-21T05:52:34.396Z","action":"login","user":"Superadmin@gmail.com","details":{"email":"Superadmin@gmail.com"}}
+{"timestamp":"2024-12-21T06:28:34.541Z","action":"login","user":"Superadmin@gmail.com","details":{"email":"Superadmin@gmail.com"}}
+{"timestamp":"2024-12-21T06:28:34.542Z","action":"login","user":"Superadmin@gmail.com","details":{"email":"Superadmin@gmail.com"}}
+{"timestamp":"2024-12-21T06:31:12.062Z","action":"login","user":"Superadmin@gmail.com","details":{"email":"Superadmin@gmail.com"}}
+{"timestamp":"2024-12-21T08:09:04.464Z","action":"login","user":"Superadmin@gmail.com","details":{"email":"Superadmin@gmail.com"}}
+{"timestamp":"2024-12-21T10:16:59.146Z","action":"login","user":"Superadmin@gmail.com","details":{"email":"Superadmin@gmail.com"}}
+{"timestamp":"2024-12-21T10:52:29.374Z","action":"login","user":"Superadmin@gmail.com","details":{"email":"Superadmin@gmail.com"}}
+{"timestamp":"2024-12-21T12:24:57.301Z","action":"login","user":"Superadmin@gmail.com","details":{"email":"Superadmin@gmail.com"}}
+{"timestamp":"2024-12-21T12:29:05.861Z","action":"login","user":"test@gmail.com","details":{"email":"test@gmail.com"}}

@@ -83,7 +83,7 @@ const Sidebar = () => {
 
   return (
     <div>
-      <div className='newside'>
+      <div className='side'>
         <div className='center mt-3'>
         <a href='/Admin_details'>
   <img 
