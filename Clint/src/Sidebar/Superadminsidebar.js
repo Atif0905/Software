@@ -99,13 +99,13 @@ const Superadminsidebar = () => {
               <GoHomeFill className='svg-icon' /> DashBoard
             </div>
           </Link>
-          <Link to="/SuperAdminDashboard">
-            <div className={`newSidelink ${location.pathname === '/' ? 'active' : ''}`}>
+          <Link to="/Product">
+            <div className={`newSidelink ${location.pathname === '/Product' ? 'active' : ''}`}>
               <PiHandbagFill className='svg-icon' /> Product
             </div>
           </Link>
-          <Link to="/SuperAdminDashboard">
-            <div className={`newSidelink ${location.pathname === '/' ? 'active' : ''}`}>
+          <Link to="/Sales-Analytics">
+            <div className={`newSidelink ${location.pathname === '/Sales-Analytics' ? 'active' : ''}`}>
               <HiChartPie className='svg-icon' /> Sales Analytics
             </div>
           </Link>

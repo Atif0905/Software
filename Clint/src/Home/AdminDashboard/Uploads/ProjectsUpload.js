@@ -5,6 +5,11 @@ import { BsArrowDownRightCircleFill } from "react-icons/bs";
 import PasswordPrompt from "../../../Accountscomponent/PasswordPrompt";
 import Loader from '../../../Confirmation/Loader'
 import DashboardProjects from '../DashboardProjects'
+import { MdAccountBalanceWallet } from "react-icons/md";
+import { FaUsers } from "react-icons/fa";
+import { CgNotes } from "react-icons/cg";
+import { GoProjectRoadmap } from "react-icons/go";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => {
   const [projects, setProjects] = useState(projectsData || []);
   const [customers, setCustomers] = useState(customersData || []);
@@ -86,52 +91,117 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
     }
     setShowPasswordPrompt(null);
   };
+    const paymentDataByDate = useMemo(() => {
+      if (!Array.isArray(paymentDetails)) return [];
+  
+      const grouped = paymentDetails.reduce((acc, payment) => {
+        const date = payment.PaymentDate.split("T")[0]; // Extract date (e.g., "2024-12-21")
+        const amount = parseFloat(payment.amount) || 0;
+  
+        if (!acc[date]) {
+          acc[date] = { date, totalAmount: 0 };
+        }
+        acc[date].totalAmount += amount;
+  
+        return acc;
+      }, {});
+  
+      return Object.values(grouped).sort((a, b) => new Date(a.date) - new Date(b.date));
+    }, [paymentDetails]);
   return (
     <div className="">
        {loading ? (
         <Loader/>
       ) : (
-      <div className="upperconatiner">
-      <div className="paymentdiv">
-        <h3 className="text-center mt-3">PAYMENT </h3>
-        <div className="row">
-        <div className="col-1 mt-3">
-        <div className="circle"><div className="paymentcircle1"><div className="paymentcircle"></div></div></div>
-        <div className="circle"><div className="paymentcircle1"><div className="paymentcircle"></div></div></div>
-        <div className="circle"><div className="paymentcircle1"><div className="paymentcircle"></div></div></div>
-        </div>
-        <div className="col-11">
-        <div className="payment-box totalpaymentdiv">
-      <h6 className="paymenttext">Total Payment</h6>
-      <div className="d-flex justify-content-between">
-      <p className="colouredtext1" >{isVisible.totalPrice ? calculateTotalPriceOfAllUnits : '***********'}</p>
-      <BsArrowDownRightCircleFill className="arrowicon1 arrowicon" onClick={() => toggleVisibility('totalPrice')} /></div>
+      <div className="">
+      <div className="">
+      {loading ? (
+        <Loader />
+      ) : (
+        <div>
+          <h3 className="pagehead mt-3">Dashboard</h3>
+          <div className="paymentdiv1">
+        <div>
+        <div className="paymentdiv2">
+        <div className="payment-box1 ">
+        <div className="d-flex " > <div className="dashboardicondiv"><MdAccountBalanceWallet/> </div><h6 className="paymenttext1"> Total Payment</h6></div>
+      <p className="colouredtext" >{ calculateTotalPriceOfAllUnits }</p>
       </div>
-        <div className=" payment-box  receivepaymentdiv">
-      <h6 className="paymenttext">Received Payment</h6>
-      <div className="d-flex justify-content-between">
-      <p className="colouredtext1" >{isVisible.totalReceivedPayment ? calculateTotalAmountReceived : '***********'}</p>
-      <BsArrowDownRightCircleFill className="arrowicon2 arrowicon" onClick={() => toggleVisibility('totalReceivedPayment')} /></div>
+        <div className=" payment-box1  ">
+      <div className="d-flex"><div className="dashboardicondiv"><FaUsers/> </div><h6 className="paymenttext1">Received Payment</h6></div>
+      <p className="colouredtext">{calculateTotalAmountReceived}</p>
       </div>
-      <div className=" payment-box duepaymentdiv">
-      <h3 className="paymenttext">Due Payment</h3>
-      <div className="d-flex justify-content-between">
-      <p className="colouredtext1" >{isVisible.duePayment ? calculateDuePayment : '***********'}</p>
-      <BsArrowDownRightCircleFill className="arrowicon3 arrowicon" onClick={() => toggleVisibility('duePayment')} /></div>
+      <div className=" payment-box1 ">
+      <div className="d-flex"><div className="dashboardicondiv"><CgNotes/> </div><h3 className="paymenttext1"> Due Payment</h3></div>
+      <p className="colouredtext" >{calculateDuePayment}</p>
       </div>
+      <div className=" payment-box1 ">
+      <div className="d-flex"><div className="dashboardicondiv"><CgNotes/> </div><h3 className="paymenttext1"> Total Customer</h3></div>
+      <p className="colouredtext" >{customers.length}</p>
+      </div>
+      </div>
+      <div className="">
+      <div className=" payment-box1 mt-3">
+      <div className="d-flex"><div className="dashboardicondiv"><CgNotes/> </div><h3 className="paymenttext1"> Total projects</h3></div>
+      <p className="colouredtext">{projects.length }</p>
+      </div>
+      </div>
+      </div>
+      <div className=" payment-box2 ">
+      
+      </div>
+      </div>
+          <div className="paymentdiv1 mt-3">
+            <div className="payment-box3">
+            <ResponsiveContainer width="100%" height={400}>
+              <AreaChart data={paymentDataByDate}>
+              <defs>
+                  <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="rgba(162, 128, 255, 0.32)" stopOpacity={1} />
+                    <stop offset="100%" stopColor="rgba(162, 128, 255, 0)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Area
+                  type="monotone"
+                  dataKey="totalAmount"
+                  stroke="#A280FF"
+                  fill="url(#colorUv)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+            </div>
+            <div className="payment-box2">
+            <h3>Our Projects</h3>
+            { projects.map((project, Index) =>{
+              return(
+              <div key={Index}>
+                <div className="dashboardprojectsec">
+                  <GoProjectRoadmap className="projecticon"/><p className="dashboardprojecttext">{project.name.toUpperCase()}</p>
+                </div>
+              </div>
+              )
+            })
 
+            }
+            </div>
+          </div>
         </div>
-        </div>
-      </div>
-      <div className="formback1"><DashboardProjects/><a href="/Allprojects"><h4 className="center seemore">See More &gt;</h4></a></div>
+      )}
+    </div>
+      {/* <div className="formback1"><DashboardProjects/><a href="/Allprojects"><h4 className="center seemore">See More &gt;</h4></a></div> */}
       </div>
       )}
-      {showPasswordPrompt && (
+      {/* {showPasswordPrompt && (
         <PasswordPrompt
           onSubmit={handlePasswordSubmit}
           onClose={() => setShowPasswordPrompt(null)}
         />
-      )}
+      )} */}
 
     </div>
   );

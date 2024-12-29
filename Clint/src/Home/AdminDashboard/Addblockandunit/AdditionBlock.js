@@ -163,7 +163,7 @@ const AdditionBlock = () => {
               <option value="">Select Project</option>
               {projects.map((project, index) => (
                 <option key={index} value={project._id}>
-                  {project.name}
+                  {project.name.toUpperCase()}
                 </option>
               ))}
             </select>

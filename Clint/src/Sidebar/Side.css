@@ -60,7 +60,7 @@ a {
   cursor: pointer;
 }
 .dropdown .dropdown-toggle {
-  width: 90%;
+  width: 10  0%;
   font-family: "Inter";
   font-size: 16px;
   font-weight: 600;
@@ -163,6 +163,7 @@ a {
   width: 100%;
   background: #F5F2FF;
   color: #725ab3;
+  border-radius: 10px;
 }
 .sabove{
     width: 70%;

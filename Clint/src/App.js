@@ -66,6 +66,8 @@ import UpdateLogoPage from "./Sidebar/UpdateLogoPage";
 import MailContentPage from "./MailData/MailContentPage";
 import Superadmindashboard from "./SuperAdmin/Superadmindashboard";
 import Superadminsidebar from "./Sidebar/Superadminsidebar";
+import ProductPage from "./SuperAdmin/ProductPage";
+import Superadminstats from "./SuperAdmin/Superadminstats";
 
 function ProtectedRoute({ element: Component, ...rest }) {
   const isLoggedIn = window.localStorage.getItem("loggedIn") === "true";
@@ -144,6 +146,8 @@ function App() {
           <Route path="/Sub-Admin-Receive-customer" element={<SubAdmin/>} />
           <Route path="/Info" element={<Sidebar/>} />
           <Route path="/SuperAdminDashboard" element={<Superadminsidebar/>}/>
+          <Route path="/Product" element={<Superadminsidebar/>} />
+          <Route path="/Sales-Analytics" element={<Superadminsidebar/>}/>
         </Routes>
         <Routes>
         <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
@@ -227,7 +231,8 @@ function App() {
     {/* SuperAdmin Pages */}
     
     <Route path="/SuperAdminDashboard" element={<ProtectedRoute element={Superadmindashboard}/>}/>
-
+    <Route path="/Product" element={<ProtectedRoute element={ProductPage}/>}/>
+    <Route path="/Sales-Analytics" element={<ProtectedRoute element={Superadminstats}/>}/>
     </Routes>
       </div>
     </Router>

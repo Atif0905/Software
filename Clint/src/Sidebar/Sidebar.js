@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import './Side.css';
-import { FaRegUser, FaRegBell, FaBell } from "react-icons/fa";
+import { PiBellBold , PiBellFill} from "react-icons/pi";
+import { FaRegUser } from "react-icons/fa";
 import { RiSecurePaymentLine } from "react-icons/ri";
 import { TfiUser } from "react-icons/tfi";
 import ConfirmationModal from '../Confirmation/ConfirmationModal';
@@ -14,7 +15,8 @@ import DueDateModal from '../Reminder/DueDateModal';
 import useFetchUser from '../hooks/useFetchUser';
 import { BsInfoSquare } from "react-icons/bs";
 import axios from 'axios';
-
+import { IoSearch } from "react-icons/io5";
+import { FaUserCircle } from "react-icons/fa";
 const Sidebar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -112,11 +114,15 @@ const Sidebar = () => {
             >
               <AiOutlineFundProjectionScreen className='svg-icon' /> Project Master <IoIosArrowDown />
             </div>
+            {/* AllProjects */}
             <div
               className={`dropdown-menu ${
                 activeDropdown === 'projectMaster' || isDropdownActive(['/Projects', '/Addblock', '/Addunit']) ? 'active' : ''
               }`}
             >
+              <Link to='/AllProjects'>
+                <li className={`dropdown-item ${location.pathname === '/AllProjects' ? 'active' : ''}`}>View All Projects</li>
+              </Link>
               <Link to='/Projects'>
                 <li className={`dropdown-item ${location.pathname === '/Projects' ? 'active' : ''}`}>Upload Project</li>
               </Link>
@@ -148,7 +154,6 @@ const Sidebar = () => {
               </Link>
             </div>
           </div>
-
           <div className="dropdown">
             <div
               className="dropdown-toggle"
@@ -218,39 +223,21 @@ const Sidebar = () => {
         </div>
       </div>
       <div className='center1'>
-        <div className='sabove'>
-          <div className='d-flex'>
-            <img src='./userface.png' className='userface' alt='' />
+        <div className='sideabove'>
+        <div className='relative'><IoSearch className='searchicon'/><input type='search' className='navsearch' placeholder='Search Product'/></div>  
+        <div className='right1'>    
+        <div className='bellicondiv1' onClick={toggleBellIcon} ref={bellIconRef} >
+         {bellClicked ? <PiBellFill className='bellicon' /> : <PiBellBold className='bellicon' />}
+        </div>
+         {bellClicked && (<div className={`duedate-dropdown roll-in`} ref={dropdownRef}><DueDateModal /></div> )}
+           <div className='d-flex'>
+            <FaUserCircle className='userface'/>
             {user && (
-              <div>
-                <p className='loginname'>{user.fname} {user.lname}</p>
-              </div>
+              <div>  <div className='loginname1'>{user.fname} {user.lname}</div></div>
             )}
           </div>
-          <div>
-            <IoLogOutSharp className='logout' onClick={handleSubmit} />
-            <ConfirmationModal
-              show={showConfirm}
-              onClose={() => setShowConfirm(false)}
-              onConfirm={() => {
-                setShowConfirm(false);
-                logOut();
-              }}
-              message="Are you sure you want to Logout?"
-            />
           </div>
-          <div
-            className='bellicondiv'
-            onClick={toggleBellIcon}
-            ref={bellIconRef} // Reference for the bell icon
-          >
-            {bellClicked ? <FaBell className='bellicon' /> : <FaRegBell className='bellicon' />}
-          </div>
-          {bellClicked && (
-            <div className={`duedate-dropdown roll-in`} ref={dropdownRef}>
-              <DueDateModal />
-            </div>
-          )}
+
         </div>
       </div>
     </div>
