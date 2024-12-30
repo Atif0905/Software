@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Loader from "../Confirmation/Loader";
-const ProductPage = () => {
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,} from "recharts";
+import "./Main.css";
+const Superadminstats = () => {
   const [projects, setProjects] = useState([]);
-  const [selectedProjectId, setSelectedProjectId] = useState("");
-  const [selectedBlockId, setSelectedBlockId] = useState("null");
-  const [showBlocks, setShowBlocks] = useState(true);
-  const [showUnits, setShowUnits] = useState(true);
   const [projectUnitCounts, setProjectUnitCounts] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [customers, setCustomers] = useState([]);
-  const [unitFilter, setUnitFilter] = useState(null);
-  const [expandedProjectId, setExpandedProjectId] = useState(null);
+  const [allProjectsUnits, setAllProjectsUnits] = useState(null);
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -48,7 +45,6 @@ const ProductPage = () => {
         const allProjectsResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/getAllProjects`
         );
-        console.log(allProjectsResponse);
         const allProjectsData = allProjectsResponse.data.data;
         const customersWithDetails = await Promise.all(
           viewCustomerData.map(async (customer) => {
@@ -140,7 +136,6 @@ const ProductPage = () => {
       return "Unknown";
     }
   };
-
   const fetchProjects = async () => {
     try {
       const response = await axios.get(
@@ -184,7 +179,6 @@ const ProductPage = () => {
       return 0;
     }
   };
-
   const updateProjectUnitCounts = () => {
     const counts = {};
     projects.forEach((project) => {
@@ -236,11 +230,35 @@ const ProductPage = () => {
       totalSoldUnits,
     };
   };
-  const handleClickProject = (projectId) => {
-    setSelectedProjectId(projectId);
-    setSelectedBlockId("null");
-    setShowBlocks(!showBlocks);
-    setShowUnits(true);
+  useEffect(() => {
+    const unitCounts = calculateTotalUnitsForAllProjects();
+    setAllProjectsUnits(unitCounts);
+  }, [projects]);
+  const calculateTotalUnitsForAllProjects = () => {
+    let totalUnits = 0;
+    let totalAvailableUnits = 0;
+    let totalHoldUnits = 0;
+    let totalSoldUnits = 0;
+    projects.forEach((project) => {
+      project.blocks.forEach((block) => {
+        block.units.forEach((unit) => {
+          totalUnits += 1;
+          if (unit.status === "hold") {
+            totalHoldUnits += 1;
+          } else if (unit.status === "sold") {
+            totalSoldUnits += 1;
+          } else {
+            totalAvailableUnits += 1;
+          }
+        });
+      });
+    });
+    return {
+      totalUnits,
+      totalAvailableUnits,
+      totalHoldUnits,
+      totalSoldUnits,
+    };
   };
   const calculateTotalPriceSum = (projectId) => {
     let totalPriceSum = 0;
@@ -256,107 +274,87 @@ const ProductPage = () => {
     }
     return totalPriceSum;
   };
-  const filterUnits = (units) => {
-    if (unitFilter === "available") {
-      return units.filter((unit) => unit.status === "available");
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          className="custom-tooltip"
+          style={{
+            backgroundColor: "#fff",
+            padding: "10px",
+            border: "1px solid #ccc",
+          }}
+        >
+          <p className="label">{`Project Name: ${payload[0].payload.fullName.toUpperCase()}`}</p>
+          <p>{`Available: ${payload[0].payload.available}`}</p>
+          <p>{`Hold: ${payload[0].payload.hold}`}</p>
+          <p>{`Sold: ${payload[0].payload.sold}`}</p>
+        </div>
+      );
     }
-    if (unitFilter === "hold") {
-      return units.filter((unit) => unit.status === "hold");
-    }
-    if (unitFilter === "sold") {
-      return units.filter((unit) => unit.status === "sold");
-    }
-    return units;
-  };
-  const handleProjectClick = (projectId) => {
-    setExpandedProjectId((prev) => (prev === projectId ? null : projectId));
-  };
 
-  const handleFilterClick = (filterType) => {
-    setUnitFilter((prev) => (prev === filterType ? null : filterType));
+    return null;
   };
+  const graphData = projects.map((project) => ({
+    name: project.name
+      .split(" ")
+      .map((word) => word[0].toUpperCase())
+      .join(""),
+    fullName: project.name, // Add full name for tooltip
+    available: projectUnitCounts[project._id]?.totalAvailableUnits || 0,
+    hold: projectUnitCounts[project._id]?.totalHoldUnits || 0,
+    sold: projectUnitCounts[project._id]?.totalSoldUnits || 0,
+    total: calculateTotalPriceSum(project._id),
+    received: paymentDetails[project._id] || 0,
+    due:
+      calculateTotalPriceSum(project._id) - (paymentDetails[project._id] || 0),
+  }));
   return (
     <div className="main-content">
       {loading && (
-        <div className="">
+        <div>
           <Loader />
         </div>
       )}
-      <div className="formback1 ">
-        <div className="p-2 ">
-          <table id="producttable">
-            <thead>
-              <tr>
-                <td>Name</td>
-                <td>Available Units</td>
-                <td>Hold Units</td>
-                <td>Sold Units</td>
-                <td>Total Payment</td>
-                <td>Received Payment</td>
-                <td>Due Payment</td>
-              </tr>
-            </thead>
-            <tbody>
-              {projects.slice(0, 3).map((project, index) => {
-                const totalPriceSum = calculateTotalPriceSum(project._id);
-                return (
-                  <React.Fragment key={index}>
-                    <tr onClick={() => handleProjectClick(project._id)}>
-                      <td className="tablecursor">
-                        {project.name.toUpperCase()}
-                      </td>
-                      <td
-                        className="tablecursor"
-                        onClick={() => handleFilterClick("available")}
-                      >
-                        {projectUnitCounts[project._id]?.totalAvailableUnits ||
-                          0}
-                      </td>
-                      <td
-                        className="tablecursor"
-                        onClick={() => handleFilterClick("hold")}
-                      >
-                        {projectUnitCounts[project._id]?.totalHoldUnits || 0}
-                      </td>
-                      <td
-                        className="tablecursor"
-                        onClick={() => handleFilterClick("sold")}
-                      >
-                        {projectUnitCounts[project._id]?.totalSoldUnits || 0}
-                      </td>
-                      <td>{totalPriceSum}</td>
-                      <td>{(paymentDetails[project._id] || 0).toFixed(2)}</td>
-                      <td>
-                        {(
-                          totalPriceSum - (paymentDetails[project._id] || 0)
-                        ).toFixed(2)}
-                      </td>
-                    </tr>
-                    {expandedProjectId === project._id &&
-                      project.blocks.map((block, blockIndex) => (
-                        <React.Fragment key={`block-${block._id}`}>
-                          <tr>
-                            <th>Block Name</th>
-                            <th>Unit Name</th>
-                            <th>Unit Status</th>
-                          </tr>
-                          {filterUnits(block.units).map((unit, unitIndex) => (
-                            <tr key={`unit-${unit._id}`}>
-                              <td>{block.name}</td>
-                              <td>{unit.name}</td>
-                              <td>{unit.status}</td>
-                            </tr>
-                          ))}
-                        </React.Fragment>
-                      ))}
-                  </React.Fragment>
-                );
-              })}
-            </tbody>
-          </table>
+
+      <div className="container">
+        <div>
+          <div className="summarydiv">
+            <h4>Summary</h4>
+            <div className="between summarylist summarylist1">
+              <li className="">Total Units</li>
+              <div>{allProjectsUnits.totalUnits}</div>
+            </div>
+            <div className="between summarylist summarylist2">
+              <li className="">Available Units</li>
+              <div>{allProjectsUnits.totalAvailableUnits}</div>
+            </div>
+            <div className="between summarylist summarylist3">
+              <li className="">Hold Units</li>
+              <div>{allProjectsUnits.totalHoldUnits}</div>
+            </div>
+            <div className="between summarylist summarylist4">
+              <li className="">Sold Units</li>
+              <div>{allProjectsUnits.totalSoldUnits}</div>
+            </div>
+          </div>
+        </div>
+        <div className="mt-3">
+        <ResponsiveContainer width="90%" height={400}>
+          <BarChart data={graphData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend />
+            <Bar dataKey="available" stackId="a" fill="#8C78EA" />
+            <Bar dataKey="hold" stackId="a" fill="#E0DAFF" />
+            <Bar dataKey="sold" stackId="a" fill="#FBD4F5" />
+          </BarChart>
+        </ResponsiveContainer>
         </div>
       </div>
     </div>
   );
 };
-export default ProductPage;
+export default Superadminstats;

@@ -189,18 +189,16 @@ font-weight: 500;
 }
 table {
 width: 100%;
-border: none !important;
+border-radius: 20px !important;
 }
 
 th, td {
 padding: 8px;
 text-align: left;
-border: none !important;
 font-size: 14px;
 }
 
 table th {
-border-top: none !important;
 /* border-bottom: 1px solid black !important ; */
 }
 input[type=number]::-webkit-inner-spin-button, 
@@ -520,7 +518,7 @@ margin-top: 10px;
 .formhead {
   width: 100%;
   height: 48px;
-  background: linear-gradient(90deg, #47438E 0%, #141328 134.72%);
+  background-color: rgb(114,90,179);
   border-radius: 20px;
   color: white;
   padding-left: 20px;
@@ -534,7 +532,7 @@ text-align: left;
 .formheadcenter {
   width: 100%;
   height: 48px;
-  background: linear-gradient(90deg, #47438E 0%, #141328 134.72%);
+  background-color: rgb(114,90,179);
   border-radius: 20px;
   color: white;
   padding-left: 20px;

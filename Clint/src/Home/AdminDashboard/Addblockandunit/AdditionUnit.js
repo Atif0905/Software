@@ -214,7 +214,7 @@ const AdditionUnit = () => {
           <select className="select-buttons ps-1" onChange={(e) => setSelectedProjectId(e.target.value)} required>
             <option value="">Select Project</option>
             {projects.map((project, index) => (
-              <option key={index} value={project._id}>{project.name}</option>
+              <option key={index} value={project._id}>{project.name.toUpperCase()}</option>
             ))}
           </select>
         </div>
