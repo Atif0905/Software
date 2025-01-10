@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Loader from '../Confirmation/Loader';
 
 const MailContentPage = () => {
   const [mailContent, setMailContent] = useState({
@@ -53,14 +54,14 @@ const MailContentPage = () => {
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <p><Loader/></p>;
 
   return (
-    <div style={{ maxWidth: '600px', margin: 'auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Update Mail Content</h1>
+    <div className='formback mt-3'>
+      <h1 className='formhead'>Customise Your Mail Content</h1>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="Subject" style={{ display: 'block', marginBottom: '5px' }}>Subject:</label>
+          <label htmlFor="Subject" style={{ display: 'block'}}>Subject:</label>
           <input
             type="text"
             id="Subject"
@@ -71,8 +72,8 @@ const MailContentPage = () => {
             style={{ width: '100%', padding: '10px', fontSize: '16px' }}
           />
         </div>
-        <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="Body" style={{ display: 'block', marginBottom: '5px' }}>Body:</label>
+        <div >
+          <label htmlFor="Body" style={{ display: 'block'}}>Body:</label>
           <textarea
             id="Body"
             name="Body"
@@ -84,7 +85,7 @@ const MailContentPage = () => {
           ></textarea>
         </div>
         <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="Lastdata" style={{ display: 'block', marginBottom: '5px' }}>Lastdata:</label>
+          <label htmlFor="Lastdata" style={{ display: 'block'}}>Lastdata:</label>
           <input
             type="text"
             id="Lastdata"
@@ -95,20 +96,15 @@ const MailContentPage = () => {
             style={{ width: '100%', padding: '10px', fontSize: '16px' }}
           />
         </div>
+        <div className='center'>
         <button
           type="submit"
           disabled={isUpdating}
-          style={{
-            padding: '10px 20px',
-            fontSize: '16px',
-            backgroundColor: '#007BFF',
-            color: '#fff',
-            border: 'none',
-            cursor: isUpdating ? 'not-allowed' : 'pointer',
-          }}
+          className='addbutton'
         >
           {isUpdating ? 'Updating...' : 'Update'}
         </button>
+        </div>
       </form>
     </div>
   );

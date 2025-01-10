@@ -10,7 +10,6 @@ const UpdateLogoPage = () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/logo`);
         setCurrentLogo(response.data.files[0]);
-        console.log(response.data.files[0])
       } catch (error) {
         console.error('Error fetching logo:', error);
       }
@@ -49,15 +48,9 @@ const UpdateLogoPage = () => {
     }
   };
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Update Logo</h1>
+    <div className='formback mt-3'>
+      <h1 className='formhead'>Update Logo</h1>
       <div>
-        <h3>Current Logo</h3>
-        {currentLogo ? (
-          <img src={`${process.env.REACT_APP_API_URL}/${currentLogo[0]}`}  className='sidelogo'  alt='Logo'/>
-        ) : (
-          <p>No logo available.</p>
-        )}
       </div>
       <form onSubmit={handleFormSubmit} style={{ marginTop: '20px' }}>
         <label htmlFor="fileUpload" style={{ display: 'block', marginBottom: '10px' }}>
@@ -70,7 +63,7 @@ const UpdateLogoPage = () => {
           accept="image/*"
           style={{ marginBottom: '10px' }}
         />
-        <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>
+        <button type="submit" className='addbutton'>
           Update Logo
         </button>
       </form>

@@ -25,7 +25,6 @@ export default function AdminHome({ userData }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "userData");
         // setPageCount(data.pageCount)
       });
 
@@ -37,7 +36,6 @@ export default function AdminHome({ userData }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "userData");
         setData(data.data);
       });
   };
@@ -89,16 +87,13 @@ onChange={base64}
 /> */}
 
 function handlePageClick(e){
-  console.log(e);
   setCurrentPage(e.selected+1);
   movies.current=e.selected+1
-  console.log(movies.current);
   fetch(`http://localhost:5000/users?page=${movies.current}&limit=${limit}`, {
     method: "GET",
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data, "userData");
       setData(data.data);
     });
 }
@@ -111,7 +106,6 @@ fetch(`http://localhost:5000/users?page=${movies.current}&limit=${limit}`, {
 })
   .then((res) => res.json())
   .then((data) => {
-    console.log(data, "userData");
     setData(data.data);
     setPageCount(data.pageCount)
    movies.current=1

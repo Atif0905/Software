@@ -116,8 +116,6 @@ const AdditionUnit = () => {
       setFileName(file.name);
       Papa.parse(file, {
         complete: (results) => {
-          // Log the results to inspect the data
-          console.log('CSV Results:', results);
 
           const { data, meta } = results;
           if (meta.fields) {

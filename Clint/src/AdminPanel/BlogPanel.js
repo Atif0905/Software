@@ -19,7 +19,6 @@ const BlogPanel = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/createblog`);
-        console.log(response)
         if (response.status === 200) {
           setBlogs(response.data); 
         }

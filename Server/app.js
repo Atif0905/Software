@@ -25,10 +25,8 @@ const customerRoutes = require("./Router/customerRoutes");
 const { getDatabaseURI, connectToDatabase } = require("./db");
 const path = require("path");
 const Mailcontent = require('./Models/MailContent');
-
-
-// const cors = require('cors');
-app.use(cors()); // Allows all origins
+const Requesthold = require("./Router/RequestHold")
+app.use(cors()); 
 app.use(express.json());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 const { PORT, MONGODB_URI, JWT_SECRET } = process.env;
@@ -39,6 +37,7 @@ app.use("/paymentPlans", paymentPlanRoutes);
 app.use("/DueDate", installmentRoutes);
 app.use("/paymentDetails", paymentDetailRoutes);
 app.use("/customer", customerRoutes);
+app.use("/createrequest",Requesthold )
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.set("view engine", "ejs");
@@ -71,8 +70,6 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 module.exports = upload;
-
-// Logging function
 const logChange = (action, userData) => {
   const logEntry = {
     timestamp: new Date(),
@@ -94,13 +91,8 @@ app.listen(PORT, () => {
 });
 app.get("/getAllUser", async (req, res) => {
   try {
-    // Fetch all users
     const allUsers = await User.find({});
-    
-    // Fetch all sub-admins
     const allSubAdmins = await SubAdmin.find({});
-
-    // Combine both user and subadmin data
     const combinedData = {
       users: allUsers,
       subAdmins: allSubAdmins
@@ -169,7 +161,7 @@ app.post("/uploadProject", uploadProjects.single("file"), async (req, res) => {
         skipEmptyLines: true,
         complete: function (results) {
           if (results.data && results.data.length > 0) {
-            const projectData = results.data[0]; // Assuming a single project per CSV file
+            const projectData = results.data[0]; 
             name = projectData.name || name;
             description = projectData.description || description;
             totalLand = projectData.totalLand || totalLand;
@@ -311,7 +303,7 @@ app.post("/addBlock/:projectId", upload.single("file"), async (req, res) => {
         skipEmptyLines: true,
         complete: function (results) {
           if (results.data && results.data.length > 0) {
-            const blockData = results.data[0]; // Assuming a single block per CSV file
+            const blockData = results.data[0]; 
             name = blockData.name || name;
             totalPlotInBlock = blockData.totalPlotInBlock || totalPlotInBlock;
             plotSize = blockData.plotSize || plotSize;
@@ -367,8 +359,6 @@ app.post("/addUnit/:projectId/:blockId",
       totalPrice,
       edcPrice,
     } = req.body;
-
-    // Check if a CSV file is uploaded
     if (req.file) {
       try {
         const csvFilePath = req.file.path;
@@ -749,9 +739,7 @@ app.post("/send-email", async (req, res) => {
     
     } = req.body;
 
-    // Check if ProjectName is an object and extract the name
     const projectName = typeof ProjectName === 'object' ? ProjectName.name : ProjectName;
-    // const BlockName = typeof  blockName === 'object' ? blockName.name : BlockName ;
     console.log(customerName);
     const pdfBuffer = await generatePdf(
       customerName,
@@ -914,26 +902,20 @@ app.get("/createblog", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-// POST /chanelpartner - Create a new ChannelPartner
 app.post('/chanelpartner', async (req, res) => {
   try {
     const { customerFirstName, customerSecondName, customerEmail, gender, phoneNumber, referredBy } = req.body;
-
-    // Basic validation
     if (!customerFirstName || !customerSecondName || !customerEmail || !gender || !phoneNumber || !referredBy) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-
     const newChannelPartner = new ChannelPartner(req.body);
     const savedChannelPartner = await newChannelPartner.save();
-
     res.status(201).json(savedChannelPartner);
   } catch (error) {
     console.error('Error creating Channel Partner:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
-// GET /chanelpartner - Get all ChannelPartners
 app.get('/chanelpartner', async (req, res) => {
   try {
     const partners = await ChannelPartner.find();
@@ -943,16 +925,13 @@ app.get('/chanelpartner', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-// GET /chanelpartner/:uniqueId - Get a ChannelPartner by uniqueId
 app.get('/chanelpartner/:uniqueId', async (req, res) => {
   try {
     const { uniqueId } = req.params;
     const partner = await ChannelPartner.findOne({ uniqueId });
-
     if (!partner) {
       return res.status(404).json({ error: 'Channel Partner not found' });
     }
-
     res.status(200).json(partner);
   } catch (error) {
     console.error('Error fetching Channel Partner:', error);
@@ -960,17 +939,12 @@ app.get('/chanelpartner/:uniqueId', async (req, res) => {
   }
 });
 app.post('/reminder-email', (req, res) => {
-  console.log('Request received:', req.body);  // Log the request body
-  
+  console.log('Request received:', req.body);
   const { email } = req.body;
-  
-  // Step 1: Validate the request
   if (!email) {
     console.log('Missing email, subject, or message');
     return res.status(400).send({ error: 'Missing required fields' });
   }
-
-  // Step 2: Create the Nodemailer transporter
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {

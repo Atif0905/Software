@@ -2,21 +2,21 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import './Side.css';
 import { PiBellBold , PiBellFill} from "react-icons/pi";
-import { FaRegUser } from "react-icons/fa";
+
 import { RiSecurePaymentLine } from "react-icons/ri";
 import { TfiUser } from "react-icons/tfi";
 import ConfirmationModal from '../Confirmation/ConfirmationModal';
-import { IoLogOutSharp } from "react-icons/io5";
+import { FaHistory } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { RiDashboard3Line } from "react-icons/ri";
 import { MdOutlinePayments } from "react-icons/md";
 import DueDateModal from '../Reminder/DueDateModal';
 import useFetchUser from '../hooks/useFetchUser';
-import { BsInfoSquare } from "react-icons/bs";
 import axios from 'axios';
 import { IoSearch } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
+import Request from '../Reminder/Request';
 const Sidebar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -87,14 +87,7 @@ const Sidebar = () => {
     <div>
       <div className='side'>
         <div className='center mt-3'>
-        <a href='/Admin_details'>
-  <img 
-    src={logoFiles.length > 0 ? `${process.env.REACT_APP_API_URL}/${logoFiles[0]}` : './Defaultlogo.jpg'} 
-    className='sidelogo' 
-    alt='Logo' 
-  />
-</a>
-
+        <img src={logoFiles.length > 0 ? `${process.env.REACT_APP_API_URL}/${logoFiles[0]}` : './Defaultlogo.jpg'} className='sidelogo' alt='Logo' />
         </div>
         <div className='mt-3'>
           <Link to="/AdminDashboard">
@@ -102,11 +95,7 @@ const Sidebar = () => {
               <RiDashboard3Line className='svg-icon' /> DashBoard
             </div>
           </Link>
-          <Link to="/Adminuser">
-            <div className={`Sidelink ${location.pathname === '/Adminuser' ? 'active' : ''}`}>
-              <FaRegUser className='svg-icon' /> User
-            </div>
-          </Link>
+
           <div className="dropdown">
             <div
               className="dropdown-toggle"
@@ -208,16 +197,13 @@ const Sidebar = () => {
               }`}
             >
               <Link to='/Register-User-Admin'>
-                <li className={`dropdown-item ${location.pathname === '/Register-User-Admin' ? 'active' : ''}`}>Add User</li>
-              </Link>
-              <Link to='/AssgProject'>
-                <li className={`dropdown-item ${location.pathname === '/AssgProject' ? 'active' : ''}`}>Assg project </li>
+                <li className={`dropdown-item ${location.pathname === '/Register-User-Admin' ? 'active' : ''}`}>Assign Project</li>
               </Link>
             </div>
           </div>
-          <Link to="/Info">
-            <div className={`Sidelink ${location.pathname === '/Info' ? 'active' : ''}`}>
-              <BsInfoSquare  className='svg-icon' /> Info
+          <Link to="/Admin-Hold-History">
+            <div className={`Sidelink ${location.pathname === '/Admin-Hold-History' ? 'active' : ''}`}>
+              <FaHistory  className='svg-icon' /> Hold History
             </div>
           </Link>
         </div>
@@ -229,7 +215,7 @@ const Sidebar = () => {
         <div className='bellicondiv1' onClick={toggleBellIcon} ref={bellIconRef} >
          {bellClicked ? <PiBellFill className='bellicon' /> : <PiBellBold className='bellicon' />}
         </div>
-         {bellClicked && (<div className={`duedate-dropdown roll-in`} ref={dropdownRef}><DueDateModal /></div> )}
+         {bellClicked && (<div className={`duedate-dropdown roll-in`} ref={dropdownRef}><DueDateModal /><Request/></div> )}
            <div className='d-flex'>
             <FaUserCircle className='userface'/>
             {user && (

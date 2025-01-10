@@ -76,7 +76,6 @@ const Editcustomerdetails = () => {
     
         try {
             const response = await axios.put(`${process.env.REACT_APP_API_URL}/customer/${_id}`, updatedCustomerNA);
-            console.log('Customer updated:', response.data);
             setUpdateStatus('success');
             const updatedCustomer = response.data;
             setCustomer(updatedCustomer);

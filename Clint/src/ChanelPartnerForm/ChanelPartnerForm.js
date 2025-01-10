@@ -16,7 +16,6 @@ const ChanelPartnerForm = () => {
   
   const [error, setError] = useState('');
   const [showConfirm, setShowConfirm] = useState(false); 
- // Handle input changes
  const handleChange = (e) => {
   const { name, value } = e.target;
   setFormData({
@@ -24,22 +23,15 @@ const ChanelPartnerForm = () => {
     [name]: value,
   });
 };
-
-// Handle form submission confirmation
 const handleSubmit1 = (e) => {
   e.preventDefault();
-  setShowConfirm(true); // Show the confirmation modal
+  setShowConfirm(true);
 };
-
-// Handle actual submission to the server
 const handleSubmit = async () => {
-  console.log('Form Data: ', formData); // Log form data for debugging
 
   try {
     const response = await axios.post(`${process.env.REACT_APP_API_URL}/chanelpartner`, formData);
-    setError(""); // Clear any existing errors
-    console.log("Form submitted successfully:", response.data);
-    // Reset form after successful submission
+    setError("");
     setFormData({
       customerFirstName: "",
       customerSecondName: "",

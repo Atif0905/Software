@@ -34,7 +34,6 @@ const Receivedpayments = () => {
     setPayment({ ...payment, [name]: value });
   };
   const handleSubmit = async (e) => {
-    console.log("form submit successfully");
     try {
       if (customerId !== yourCustomerId) {
         setError("Entered Customer ID does not match the searched Customer ID");
@@ -74,7 +73,6 @@ const Receivedpayments = () => {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`
       );
-      console.log(response);
       return response.data.data;
     } catch (error) {
       console.error("Error fetching payment details:", error);
@@ -208,7 +206,6 @@ const Receivedpayments = () => {
       const matchedProject = projectsData.find(
         (project) => project._id === customerDetails.project
       );
-      console.log(matchedProject);
       setProjectdetails(matchedProject || {});
       const unitDetails = await fetchUnitDetails(
         customerDetails.project,
@@ -298,9 +295,7 @@ const Receivedpayments = () => {
           });
         } catch (error) {
           if (error.response && error.response.status === 409) {
-            console.log(
-              `Duplicate entry for installment ${dueDate.installment} on ${dueDate.dueDate}`
-            );
+          
           } else {
             console.error(
               `Error storing installment ${dueDate.installment} on ${dueDate.dueDate}:`,

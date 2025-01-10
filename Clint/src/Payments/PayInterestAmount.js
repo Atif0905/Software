@@ -33,23 +33,11 @@ const PayInterestAmount = () => {
     setPayment({ ...payment, [name]: value });
   };
   const handleSubmit = async (e) => {
-    console.log("form submit successfully");
     try {
       if (customerId !== yourCustomerId) {
         setError("Entered Customer ID does not match the searched Customer ID");
         return;
       }
-      
-      console.log("Form Data:", {
-        paymentType: payment.paymentType,
-        paymentMode: payment.paymentMode,
-        amount: payment.amount,
-        reference: payment.reference,
-        comment: payment.comment,
-        customerId: yourCustomerId,
-        PaymentDate: payment.PaymentDate,
-        amounttoberecieved: payment.amounttoberecieved,
-      });
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/paymentDetails`,
         {
@@ -158,7 +146,6 @@ const PayInterestAmount = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/paymentPlans`
         );
-        console.log(response)
         if (Array.isArray(response.data.paymentPlans)) {
           const modifiedPlans = response.data.paymentPlans.map(async (plan) => {
             const modifiedInstallments = await Promise.all(
@@ -203,14 +190,12 @@ const PayInterestAmount = () => {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/customer/${customerId}`
       );
-      console.log("Fetched customer details:", response.data);
       const customerDetails = response.data;
       const unitDetails = await fetchUnitDetails(
         customerDetails.project,
         customerDetails.block,
         customerDetails.plotOrUnit
       );
-      console.log(unitDetails)
       if (Array.isArray(unitDetails) && unitDetails.length > 0) {
         const matchedUnit = unitDetails.find(
           (unit) => unit.id === customerDetails.plotOrUnit
@@ -290,7 +275,6 @@ const PayInterestAmount = () => {
           });
         } catch (error) {
           if (error.response && error.response.status === 409) {
-            console.log(`Duplicate entry for installment ${dueDate.installment} on ${dueDate.dueDate}`);
           } else {
             console.error(`Error storing installment ${dueDate.installment} on ${dueDate.dueDate}:`, error);
           }

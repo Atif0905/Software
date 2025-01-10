@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import LoginLoader from "../../Confirmation/LoginLoader";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,9 +11,9 @@ export default function Login() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [clicked, setClicked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // New state for loader
   const navigate = useNavigate();
 
-  // Unified login API call
   const attemptLogin = async (url) => {
     try {
       const response = await axios.post(
@@ -21,54 +22,48 @@ export default function Login() {
         {
           headers: {
             "Content-Type": "application/json",
-          }
+          },
         }
       );
-      // console.log("API Response:", response.data);
       return response.data;
     } catch (err) {
-      // console.error("API Error:", err);
       const errorMsg = err.response?.data?.error || "Network error. Please try again.";
       return { status: "error", error: errorMsg };
     }
   };
 
-  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setIsLoading(true); // Show loader
 
-    // Validation for missing fields
     if (!email || !password || !companyName) {
       setError("Please fill in all fields.");
+      setIsLoading(false); // Hide loader
       return;
     }
 
-    // First attempt login for users
     const userResponse = await attemptLogin("/login-user");
     if (userResponse.status === "ok") {
       handleLoginSuccess(userResponse);
     } else {
-      // If user login fails, try SubAdmin login
       const subAdminResponse = await attemptLogin("/SubAdminLogin");
       if (subAdminResponse.status === "ok") {
         handleLoginSuccess(subAdminResponse);
       } else {
         setError(subAdminResponse.error || "Invalid credentials.");
+        setIsLoading(false); // Hide loader
       }
     }
   };
 
-  // Handle successful login
   const handleLoginSuccess = (data) => {
     setSuccess("Login successful");
     localStorage.setItem("token", data.data.token);
     localStorage.setItem("email", email);
     localStorage.setItem("companyName", companyName);
     localStorage.setItem("loggedIn", true);
-
-    // Navigate to the dashboard after 2 seconds
     setTimeout(() => navigate("/DashBoard"), 2000);
   };
 
@@ -76,112 +71,117 @@ export default function Login() {
 
   return (
     <div className="white1">
-      <div>
-        <img
-          src="./signinimg.webp"
-          className={`background ${clicked ? "clicked" : ""}`}
-          alt="CRM background"
+
+        <div>
+          <div>
+            <img
+              src="./signinimg.webp"
+              className={`background ${clicked ? "clicked" : ""}`}
+              alt="CRM background"
+            />
+            <div className="container">
+              <h3 className={`loginhead ${clicked ? "clicked" : ""}`}>CRM</h3>
+              <h3 className={`loginsubhead ${clicked ? "clicked" : ""}`}>
+                Customer Relationship Management
+              </h3>
+              <p className={`logintext ${clicked ? "clicked" : ""}`}>
+                A CRM system helps businesses manage customer interactions, track
+                sales, and streamline operations.
+              </p>
+              <p className={`clickhere ${clicked ? "clicked" : ""}`}>
+                Click Here &gt;&gt;
+              </p>
+            </div>
+            <div className={`auth-wrapper ${clicked ? "clicked" : ""}`}>
+              <div className="slidewhite">
+                <div className="slideblue">
+                  <img
+                    src="./Trust.webp"
+                    className={`slidingimg ${clicked ? "rotate" : ""}`}
+                    alt="Trust"
+                    onClick={handleClick}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="offset-6 col-6">
+  {isLoading ? (
+    <LoginLoader />
+  ) : (
+    <form onSubmit={handleSubmit} className={`login ${clicked ? "clicked" : ""}`}>
+      {error && <MessageBox message={error} type="error" />}
+      {success && <MessageBox message={success} type="success" />}
+      <h3 className="welcomehead1">WELCOME USER</h3>
+      <div className="mb-3">
+        <input
+          type="text"
+          className="login-input"
+          placeholder="Enter Company Name"
+          value={companyName}
+          onChange={(e) => setCompanyName(e.target.value)}
+          required
         />
-        <div className="container">
-          <h3 className={`loginhead ${clicked ? "clicked" : ""}`}>CRM</h3>
-          <h3 className={`loginsubhead ${clicked ? "clicked" : ""}`}>
-            Customer Relationship Management
-          </h3>
-          <p className={`logintext ${clicked ? "clicked" : ""}`}>
-            A CRM system helps businesses manage customer interactions, track
-            sales, and streamline operations.
-          </p>
-          <p className={`clickhere ${clicked ? "clicked" : ""}`}>
-            Click Here &gt;&gt;
-          </p>
-        </div>
-        <div className={`auth-wrapper ${clicked ? "clicked" : ""}`}>
-          <div className="slidewhite">
-            <div className="slideblue">
-              <img
-                src="./Trust.webp"
-                className={`slidingimg ${clicked ? "rotate" : ""}`}
-                alt="Trust"
-                onClick={handleClick}
-              />
-            </div>
-          </div>
-        </div>
       </div>
-      <div className="offset-6 col-6">
-        <form
-          onSubmit={handleSubmit}
-          className={`login ${clicked ? "clicked" : ""}`}
+      <div className="mb-3">
+        <input
+          type="email"
+          className="login-input"
+          placeholder="Enter email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div className="mb-3 position-relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          className="login-input"
+          placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <span
+          className="position-absolute"
+          style={{ right: "15px", top: "8px", cursor: "pointer" }}
+          onClick={() => setShowPassword(!showPassword)}
         >
-          {error && <MessageBox message={error} type="error" />}
-          {success && <MessageBox message={success} type="success" />}
-          <h3 className="welcomehead1">WELCOME USER</h3>
-          <div className="mb-3">
-            <input
-              type="text"
-              className="login-input"
-              placeholder="Enter Company Name"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <input
-              type="email"
-              className="login-input"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3 position-relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              className="login-input"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <span
-              className="position-absolute"
-              style={{ right: "15px", top: "8px", cursor: "pointer" }}
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
-            </span>
-          </div>
-          <div className="mb-3">
-            <div className="checkbox-wrapper-33">
-              <label className="checkbox">
-                <input
-                  className="checkbox__trigger visuallyhidden"
-                  type="checkbox"
-                />
-                <span className="checkbox__symbol">
-                  <svg
-                    aria-hidden="true"
-                    className="icon-checkbox"
-                    width="28px"
-                    height="28px"
-                    viewBox="0 0 28 28"
-                  >
-                    <path d="M4 14l8 7L24 7"></path>
-                  </svg>
-                </span>
-                <p className="checkbox__textwrapper">Remember Me</p>
-              </label>
-            </div>
-          </div>
-          <div className="center">
-            <button type="submit" className="loginbutt">
-              Submit
-            </button>
-          </div>
-        </form>
+          {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
+        </span>
       </div>
+      <div className="mb-3">
+        <div className="checkbox-wrapper-33">
+          <label className="checkbox">
+            <input
+              className="checkbox__trigger visuallyhidden"
+              type="checkbox"
+            />
+            <span className="checkbox__symbol">
+              <svg
+                aria-hidden="true"
+                className="icon-checkbox"
+                width="28px"
+                height="28px"
+                viewBox="0 0 28 28"
+              >
+                <path d="M4 14l8 7L24 7"></path>
+              </svg>
+            </span>
+            <p className="checkbox__textwrapper">Remember Me</p>
+          </label>
+        </div>
+      </div>
+      <div className="center">
+        <button type="submit" className="loginbutt">
+          Submit
+        </button>
+      </div>
+    </form>
+  )}
+</div>
+
+        </div>
     </div>
   );
 }

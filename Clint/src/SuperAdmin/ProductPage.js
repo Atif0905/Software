@@ -48,7 +48,6 @@ const ProductPage = () => {
         const allProjectsResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/getAllProjects`
         );
-        console.log(allProjectsResponse);
         const allProjectsData = allProjectsResponse.data.data;
         const customersWithDetails = await Promise.all(
           viewCustomerData.map(async (customer) => {
@@ -277,11 +276,7 @@ const ProductPage = () => {
   };
   return (
     <div className="main-content">
-      {loading && (
-        <div className="">
-          <Loader />
-        </div>
-      )}
+     {loading && <Loader />}
       <div className="formback1 ">
         <div className="p-2 ">
           <table id="producttable">
@@ -334,6 +329,7 @@ const ProductPage = () => {
                     </tr>
                     {expandedProjectId === project._id &&
                       project.blocks.map((block, blockIndex) => (
+                        
                         <React.Fragment key={`block-${block._id}`}>
                           <tr>
                             <th>Block Name</th>

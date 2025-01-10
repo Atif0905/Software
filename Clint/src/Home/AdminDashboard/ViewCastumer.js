@@ -87,7 +87,7 @@ const CustomerList = () => {
         </div>
       <div className="table-wrapper formback1">
       <h2 className='formhead'>Customer List</h2>
-      <div className='formback1'>
+      <div className='formback1 p-2'>
         <table >
           <thead>
             <tr class="formtablehead1">

@@ -8,7 +8,6 @@ const Viewplan = () => {
     const fetchPaymentPlans = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
-        console.log(response)
         setPaymentPlans(response.data.paymentPlans);
         setLoading(false);
       } catch (error) {

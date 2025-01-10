@@ -9,6 +9,14 @@ export const fetchCustomers = async () => {
     throw new Error('Error fetching customers');
   }
 };
+export const fetchPaymentPlans = async () => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error fetching customers');
+  }
+};
 export const fetchPaymentDetailsByCustomerId = async (customerId) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentDetails/${customerId}`);
@@ -133,4 +141,35 @@ export const fetchCustomerDetailsById = async (customerId) => {
     console.error("Error fetching customer details:", error);
     return null;
   }
+};
+export const fetchCreateRequest = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/createrequest`);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Failed to fetch create request data.");
+    }
+  } catch (error) {
+    console.error("Error fetching create request data:", error);
+    throw error; // Re-throw the error to handle it in the component
+  }
+};
+export const fetchAllUsers = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/getAllUser`);
+    const { users, subAdmins } = response.data.data;
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Failed to fetch create request data.");
+    }
+  } catch (error) {
+    console.error("Error fetching create request data:", error);
+    throw error; // Re-throw the error to handle it in the component
+  }
+};
+export const updateRequestStatus = async (_id, status) => {
+  const response = await axios.put(`${BASE_URL}/createrequest/${_id}`, { status });
+  return response.data;
 };

@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from "react";
 import './DueDateModal.css';
-
+import axios from "axios";
 const DueDateModal = () => {
   const [customers, setCustomers] = useState([]);
   const [response, setResponse] = useState("");
-
+  
   useEffect(() => {
     fetchCustomersAndDueDates();
   }, []);
-
+  
   const fetchCustomersAndDueDates = async () => {
     try {
       const customerResponse = await fetch(`${process.env.REACT_APP_API_URL}/customer`);
       const customerData = await customerResponse.json();
       const dueDateResponse = await fetch(`${process.env.REACT_APP_API_URL}/Duedate`);
       const dueDateData = await dueDateResponse.json();
-
+      const HoldResponse = await fetch(`${process.env.REACT_APP_API_URL}/createrequest`);
+      const HoldData = await HoldResponse.json();
+      const Userresponse = await axios.get(`${process.env.REACT_APP_API_URL}/getAllUser`);
+      const { users } = Userresponse.data.data;
       const customersWithDueDates = customerData.map((customer) => {
         const customerDueDates = dueDateData
           .filter((due) => due.customerId === customer.customerId)

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import './Side.css';
-import { FaRegBell, FaBell } from "react-icons/fa";
 import { TfiUser } from "react-icons/tfi";
 import ConfirmationModal from '../Confirmation/ConfirmationModal';
 import { IoLogOutSharp } from "react-icons/io5";
@@ -9,13 +8,13 @@ import { IoIosArrowDown } from "react-icons/io";
 import { MdOutlinePayments } from "react-icons/md";
 import { RiDashboard3Line } from "react-icons/ri";
 import useFetchUser from '../hooks/useFetchUser';
+import axios from 'axios';
 const SubAdmin = () => {
     const [activeDropdown, setActiveDropdown] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const [bellClicked, setBellClicked] = useState(false);
-  const dropdownRef = useRef(null);
+  const [logoFiles, setLogoFiles] = useState([]);
   const { subAdmin, loading: userLoading } = useFetchUser();
   const handleDropdownToggle = (dropdownId) => {
     setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
@@ -30,11 +29,26 @@ const SubAdmin = () => {
   const handleSubmit = () => {
     setShowConfirm(true);
   };
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/logo`);
+        if (response.data && response.data.files && response.data.files.length > 0) {
+          setLogoFiles(response.data.files);
+        } else {
+          setLogoFiles([]);
+        }
+      } catch (error) {
+        setLogoFiles([]);
+      }
+    };
+    fetchLogo();
+  }, []);
   return (
     <div>
       <div className='newside'>
       <div>
-          <img src='./WTSlogo.png' className='sidelogo' alt='' />
+      <img src={logoFiles.length > 0 ? `${process.env.REACT_APP_API_URL}/${logoFiles[0]}` : './Defaultlogo.jpg'} className='sidelogo' alt='Logo' />
         </div>
         <div>
           <Link to="/Sub-Admin-Dashboard">

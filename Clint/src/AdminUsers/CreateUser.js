@@ -17,7 +17,6 @@ const CreateUser = () => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/getAllProjects`)
       .then((response) => {
-        console.log(response.data); // Log the response
         if (Array.isArray(response.data.data)) {
           setProjects(response.data.data); // Set projects from response.data.data
         } else {
@@ -50,7 +49,6 @@ const CreateUser = () => {
       )
       .then((response) => {
         const data = response.data;
-        console.log(data, 'subAdminRegister');
         if (data.status === 'ok') {
           alert('Work Done');
         } else {
@@ -63,38 +61,50 @@ const CreateUser = () => {
   };
 
   return (
-    <div className='create-usermain'>
-      <form onSubmit={handleSubmit}>
+    <div className='main-content'>
+      <div className='formback '>
+      <h3 className="formhead">Assign Project</h3> 
+      <form onSubmit={handleSubmit} className='p-2'>
+        <div className='row'>
+        <div className='col-6'>
         <input
           type='text'
-          placeholder='Name'
+          className="form-input-field"
+          placeholder='First Name'
           onChange={(e) => setFname(e.target.value)}
           required
         />
+        </div>
+        <div className='col-6'>
         <input
           type='text'
-          placeholder='Last'
+          className="form-input-field"
+          placeholder='Last Name'
           onChange={(e) => setLname(e.target.value)}
           required
-        />
+        /></div>
+        <div className='col-6'>
         <input
           type='email'
+          className="form-input-field"
           placeholder='Email'
           onChange={(e) => setEmail(e.target.value)}
           required
-        />
+        /></div>
+        <div className='col-6'>
         <input
           type='password'
-          placeholder='Pass'
+          className="form-input-field"
+          placeholder='Password'
           onChange={(e) => setPassword(e.target.value)}
           required
-        />
-
-        {/* Dropdown for Assigned Project */}
+        /></div>
+        <div className='col-6'>
         <select
           value={assgProject}
           onChange={(e) => setAssgProject(e.target.value)}
-          required // Make this field required
+          required 
+          className="form-input-field"
         >
           <option value='' disabled>
             Select Project
@@ -104,23 +114,24 @@ const CreateUser = () => {
               {project.name}
             </option>
           ))}
-        </select>
-
-        {/* Dropdown for User Type */}
+        </select></div>
+        <div className='col-6'>
         <select
           value={userType}
           onChange={(e) => setUserType(e.target.value)}
-          required // Make this field required
+          required 
+          className="form-input-field"
         >
           <option value='' disabled>
             Select User Type
           </option>
           <option value='SubAdmin'>SubAdmin</option>
-          {/* Add more user types as needed */}
         </select>
-
-        <button type='submit'>Register</button>
+        </div>
+        <div className='center'><button className="addbutton " type='submit'>Register</button></div>
+        </div>
       </form>
+    </div>
     </div>
   );
 };

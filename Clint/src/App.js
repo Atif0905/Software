@@ -63,11 +63,14 @@ import SubAdminAddcustomer from "./SubAdmincomponent/SubAdmincustomer";
 import SubadminRecivecustomer from "./SubAdmincomponent/SubadminRecivecustomer";
 import Info from "./Info/Info";
 import UpdateLogoPage from "./Sidebar/UpdateLogoPage";
-import MailContentPage from "./MailData/MailContentPage";
 import Superadmindashboard from "./SuperAdmin/Superadmindashboard";
 import Superadminsidebar from "./Sidebar/Superadminsidebar";
 import ProductPage from "./SuperAdmin/ProductPage";
 import Superadminstats from "./SuperAdmin/Superadminstats";
+import UserSidebar from "./Sidebar/UserSidebar";
+import UserDashBoard from "./Home/UserDashboard/UserDashBoard";
+import Holdhistory from "./Home/UserDashboard/Holdhistory";
+import AdminHoldhistory from "./Home/AdminDashboard/AdminHoldhistory";
 
 function ProtectedRoute({ element: Component, ...rest }) {
   const isLoggedIn = window.localStorage.getItem("loggedIn") === "true";
@@ -106,7 +109,7 @@ function App() {
           <Route path="/Projects" element={<Sidebar />} />
           <Route path="/Reports" element={<Sidebar />} />
           <Route path="/Users-Reports" element={<Sidebar/>} />
-          <Route path="/Adminuser" element={<Sidebar />} />
+          <Route path="/Adminuser" element={<Superadminsidebar />} />
           <Route path="/Addblock" element={<Sidebar/>}/>
           <Route path="/Addunit" element={<Sidebar/>}/>
           <Route path="/Addcustomer" element={<Sidebar/>}/>
@@ -144,10 +147,13 @@ function App() {
           <Route path="/Sub-Admin-Edit-customer-details/:_id" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-Add-customer" element={<SubAdmin/>} />
           <Route path="/Sub-Admin-Receive-customer" element={<SubAdmin/>} />
-          <Route path="/Info" element={<Sidebar/>} />
+          <Route path="/Info" element={<Superadminsidebar/>} />
           <Route path="/SuperAdminDashboard" element={<Superadminsidebar/>}/>
           <Route path="/Product" element={<Superadminsidebar/>} />
           <Route path="/Sales-Analytics" element={<Superadminsidebar/>}/>
+          <Route path="/UserDashboard" element={<UserSidebar/>}/>
+          <Route path="/Hold-History" element={<UserSidebar/>}/>
+          <Route path="/Admin-Hold-History" element={<Sidebar/>}/>
         </Routes>
         <Routes>
         <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
@@ -157,7 +163,6 @@ function App() {
     {/* Admin Dashboard Routes */}
     <Route path="/DashBoard" element={<ProtectedRoute element={UserDetails} />} />
     <Route path="/AdminDashboard" element={<ProtectedRoute element={AdminDashboard} />} />
-    <Route path="/Adminuser" element={<ProtectedRoute element={AdminUser} />} />
     <Route path="/AccountsDashBoard" element={<ProtectedRoute element={AccountsDashboard} />} />
     <Route path="/Register-User-Admin" element={<ProtectedRoute element={CreateUser} />} />
     <Route path="/AssgProject" element={<ProtectedRoute element={AssgProject} />} />
@@ -166,8 +171,8 @@ function App() {
     <Route path="/Projects" element={<ProtectedRoute element={Projects} />} />
     <Route path="/AllProjects" element={<ProtectedRoute element={UploadedProjects} />} />
     <Route path="/All-Projects" element={<ProtectedRoute element={AccountsProjects} />} />
-    <Route path="/Info" element={<ProtectedRoute element={MailContentPage} />} />
-    
+    <Route path="/Info" element={<ProtectedRoute element={Info} />} />
+    <Route path="/Admin-Hold-History" element={<ProtectedRoute element={AdminHoldhistory} />} />
     {/* User Projects and Reports */}
     <Route path="/Users-Projects" element={<ProtectedRoute element={Projects} />} />
     <Route path="/Users-Reports" element={<ProtectedRoute element={Reports} />} />
@@ -229,10 +234,14 @@ function App() {
     <Route path="/edit-expense" element={<ProtectedRoute element={EditExpense} />} />
     
     {/* SuperAdmin Pages */}
-    
+    <Route path="/Adminuser" element={<ProtectedRoute element={AdminUser} />} />
     <Route path="/SuperAdminDashboard" element={<ProtectedRoute element={Superadmindashboard}/>}/>
     <Route path="/Product" element={<ProtectedRoute element={ProductPage}/>}/>
     <Route path="/Sales-Analytics" element={<ProtectedRoute element={Superadminstats}/>}/>
+
+    {/* User Pages */}
+    <Route path="/UserDashboard" element={<ProtectedRoute element={UserDashBoard}/>}/>
+    <Route path="/Hold-History" element={<ProtectedRoute element={Holdhistory}/>}/>
     </Routes>
       </div>
     </Router>

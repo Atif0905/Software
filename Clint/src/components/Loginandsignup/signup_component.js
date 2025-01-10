@@ -35,7 +35,6 @@ export default function SignUp() {
         )
         .then((response) => {
           const data = response.data;
-          console.log(data, "userRegister");
           if (data.status === "ok") {
             alert(`Registration successful! Database created for ${companyName}`);
           } else if (data.error) {

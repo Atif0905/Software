@@ -5,7 +5,8 @@ import ConfirmationModal from '../../../Confirmation/ConfirmationModal';
 import { DateRangePicker } from 'react-date-range';
 import { addDays } from 'date-fns';
 import 'react-date-range/dist/styles.css'; 
-import 'react-date-range/dist/theme/default.css'; 
+import 'react-date-range/dist/theme/default.css';
+import { fetchAllUsers, fetchPaymentPlans } from '../../../services/customerService'; 
 const AddCustomerForm = () => {
   const [formData, setFormData] = useState({ name: '', title: '', fatherOrHusbandName: '', address: '', aadharNumber: '', panNumber: '', mobileNumber: '', income: '',  email: '', propertyType: '', selectedProjectId: '', selectedBlockId: '', selectedUnitId: '', discount: '', paymentPlan: '', bookingDate: '', bookingType: '', name2: '', fatherOrHusbandName2: '', address2: '', aadharNumber2: '', panNumber2 : '', mobileNumber2: '', email2: '', name3: '', fatherOrHusbandName3: '', address3: '', aadharNumber3: '', panNumber3: '', mobileNumber3: '', email3: '', EmployeeName: '', Teamleadname: '', permanentaddress: '', CreatedBy: '', DOB: '', DOB2: '', DOB3: '', AgreementDate: '', AllotmentDate: '', TenureStartDate: '', TenureEndDate: '', Tenuredays: '', sendEmail: false
   });
@@ -20,6 +21,8 @@ const AddCustomerForm = () => {
   const [editedIdcCharges, setEditedIdcCharges] = useState('');
   const [editedEdcPrice, setEditedEdcPrice] = useState('');
   const [editedtotalPrice, setEditedTotalPrice] = useState();
+  const [users, setUsers] = useState([]);
+  const [admin, setAdmin] = useState([]);
   // const [ dicsountPrice, setDiscountPrice  ] = useState();
   const [state, setState] = useState([
     {
@@ -35,14 +38,33 @@ const [showConfirm, setShowConfirm] = useState(false);
     fetchProjects();
   }, []);
   useEffect(() => {
-    const fetchPaymentPlans = async () => {
+    const fetchPlans = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/paymentPlans`);
-        setPaymentPlans(response.data.paymentPlans);
+        const fetchplan = await fetchPaymentPlans(); 
+        const plan = fetchplan.paymentPlans
+        setPaymentPlans(plan); 
       } catch (error) {
+        console.error('Error fetching payment plans:', error);
       }
     };
-    fetchPaymentPlans();
+  
+    fetchPlans(); // Call the async function inside useEffect
+  }, []);
+  
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const response = await fetchAllUsers();
+        const director = response.data.users.filter(users => users.userType === 'User');
+        const Crm = response.data.users.filter(users => users.userType === 'Admin'); 
+        setUsers(director);
+        setAdmin(Crm)
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      } 
+    };
+
+    getUsers();
   }, []);
   const fetchProjects = async () => {
     try {
@@ -453,16 +475,23 @@ const [showConfirm, setShowConfirm] = useState(false);
             <label>Created By</label>
             <select className="form-input-field" id="input" name="CreatedBy" value={formData.CreatedBy} onChange={handleInputChange} required >
               <option value="">Select Created By</option>
-              <option value="Vijeta">Vijeta </option>
-              <option value="Jyoti">Jyoti</option>
+              {admin.map(adminuser => (
+                  <option key={adminuser.id} value={adminuser.id}>
+                    {adminuser.fname} {adminuser.lname}
+                  </option>
+                ))}
             </select>
           </div>
           <div className=" grid-item">
             <label>Director Name</label>
-            <select className="form-input-field" id="input" name="EmployeeName" value={formData.EmployeeName} onChange={handleInputChange} required >
-              <option value="">Select Director Name</option>
-              <option value="Director 1">Director 1</option>
-            </select>
+            <select className="form-input-field" id="input" name="EmployeeName" value={formData.EmployeeName} onChange={handleInputChange} required>
+                <option value="">Select Director Name</option>
+                {users.map(user => (
+                  <option key={user.id} value={user.id}>
+                    {user.fname} {user.lname}
+                  </option>
+                ))}
+              </select>
           </div>
           <div className=" grid-item">
             <label>Team lead Name </label>
@@ -500,11 +529,11 @@ const [showConfirm, setShowConfirm] = useState(false);
             <input className="form-input-field" id="input" placeholder="Booking Date" type="date" name="bookingDate" value={formData.bookingDate} onChange={handleInputChange} />
           </div>
           <div className="grid-item">
-            <label>Plan</label>
+            <label>Payment Plan</label>
             <select className="form-input-field" id="input" name="paymentPlan" value={formData.paymentPlan} onChange={handleInputChange} required >
-              <option value="">Select plan</option>
-              {paymentPlans.map((plan, index) => (
-                <option key={index} value={plan.planName}>{plan.planName}</option>
+              <option value="">Select Plan</option>
+              {Array.isArray(paymentPlans) && paymentPlans.map(plan => (
+                <option key={plan.id} value={plan.planName}>{plan.planName}</option>
               ))}
             </select>
           </div>
@@ -513,7 +542,7 @@ const [showConfirm, setShowConfirm] = useState(false);
             <select className='form-input-field' onChange={(e) => handleClickProject(e.target.value)}>
               <option value="">Select Project</option>
               {projects.map((project, index) => (
-                <option key={index} value={project._id}>{project.name}</option>
+                <option key={index} value={project._id}>{project.name.toUpperCase()}</option>
               ))}
             </select>
             {showBlocks && formData.selectedProjectId && (

@@ -105,7 +105,6 @@ const AdditionBlock = () => {
 
       Papa.parse(file, {
         complete: (results) => {
-          console.log('CSV Results:', results);
           const { data, meta } = results;
           
           if (meta.fields) {
