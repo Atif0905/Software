@@ -7,6 +7,9 @@ body {
 .relative {
   position: relative;
 }
+p{
+  margin-bottom: 0;
+}
 .right1{
   display: flex;
   justify-content: end;

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   fetchProjects,
   fetchCreateRequest,
   fetchAllUsers,
   updateRequestStatus,
-} from '../services/customerService';
-import axios from 'axios';
+} from "../services/customerService";
+import axios from "axios";
 
 const Request = () => {
   const [projects, setProjects] = useState([]);
@@ -34,7 +34,7 @@ const Request = () => {
 
         setLoading(false);
       } catch (err) {
-        setError(err.message || 'An error occurred');
+        setError(err.message || "An error occurred");
         setLoading(false);
       }
     };
@@ -44,7 +44,7 @@ const Request = () => {
 
   const handleMarkUnitHold = async (projectId, blockId, unitId) => {
     const isConfirmed = window.confirm(
-      'Are you sure you want to mark this unit as Hold?'
+      "Are you sure you want to mark this unit as Hold?"
     );
     if (isConfirmed) {
       try {
@@ -52,14 +52,14 @@ const Request = () => {
           `${process.env.REACT_APP_API_URL}/markUnitHold/${projectId}/${blockId}/${unitId}`
         );
         const data = response.data;
-        if (response.status === 200 && data.status === 'ok') {
+        if (response.status === 200 && data.status === "ok") {
           fetchProjects();
-          alert('Unit marked as hold successfully');
+          alert("Unit marked as hold successfully");
         } else {
-          console.error('Failed to mark unit as hold:', data.error);
+          console.error("Failed to mark unit as hold:", data.error);
         }
       } catch (error) {
-        console.error('Error marking unit as hold:', error);
+        console.error("Error marking unit as hold:", error);
       }
     }
   };
@@ -67,10 +67,9 @@ const Request = () => {
   const handleUpdateStatus = async (_id, status) => {
     try {
       await updateRequestStatus(_id, status);
-      // Remove the request with the updated status
       setRequests((prevRequests) => prevRequests.filter((req) => req._id !== _id));
     } catch (err) {
-      setError('Failed to update request status');
+      setError("Failed to update request status");
     }
   };
 
@@ -99,49 +98,75 @@ const Request = () => {
     return { project: null, block: null, unit: null };
   };
 
-  const filteredRequests = requests.filter((request) => request.status === null);
+  const pendingRequests = requests.filter((request) => request.status === null);
+  const processedRequests = requests.filter((request) => request.status !== null);
 
   return (
     <div>
-      <h2>Requests</h2>
-      {filteredRequests.length > 0 ? (
-        <ul>
-          {filteredRequests.map((request) => {
-            const user = getUserById(request.user_id);
-            const { project, block, unit } = getProjectBlockAndUnitById(
-              request.project_id,
-              request.block_id,
-              request.unit_id
-            );
+      {pendingRequests.length > 0 && (
+        <div className="notpadd">
+            {pendingRequests.map((request) => {
+              const user = getUserById(request.user_id);
+              const { project, block, unit } = getProjectBlockAndUnitById(
+                request.project_id,
+                request.block_id,
+                request.unit_id
+              );
 
-            return (
-              <li key={request._id}>
-                {user && project && block && unit ? (
-                  <div>
-                    <p>
-                      {user.fname} {user.lname} is asking to hold unit {unit.name} in block {block.name} of project {project.name}.
+              return (
+                user &&
+                project &&
+                block &&
+                unit && (
+                  <div key={request._id} className="hovergray">
+                    <p className="requesttext">
+                      {user.fname} {user.lname} is asking to hold unit {unit.name} in
+                      block {block.name} of project {project.name}.
                     </p>
                     <button
                       onClick={() => {
-                        handleUpdateStatus(request._id, 'Approved');
+                        handleUpdateStatus(request._id, "Approved");
                         handleMarkUnitHold(project._id, block._id, unit._id);
                       }}
+                      className="approvebutton"
                     >
                       Approve
                     </button>
-                    <button onClick={() => handleUpdateStatus(request._id, 'Ignored')}>
+                    <button onClick={() => handleUpdateStatus(request._id, "Ignored")} className="ignorebutton">
                       Ignore
                     </button>
                   </div>
-                ) : (
-                  <p>Details not found for this request</p>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <p>No requests available</p>
+                )
+              );
+            })}
+        </div>
+      )}
+
+      {processedRequests.length > 0 && (
+        <div className="notpadd">
+            {processedRequests.map((request) => {
+              const user = getUserById(request.user_id);
+              const { project, block, unit } = getProjectBlockAndUnitById(
+                request.project_id,
+                request.block_id,
+                request.unit_id
+              );
+
+              return (
+                user &&
+                project &&
+                block &&
+                unit && (
+                  <div key={request._id} className="hovergray">
+                    <p className="requesttext">
+                      {user.fname} {user.lname} request for unit {unit.name} in block{" "}
+                      {block.name} of project {project.name} has {request.status}.
+                    </p>
+                  </div>
+                )
+              );
+            })}
+        </div>
       )}
     </div>
   );

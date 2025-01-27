@@ -74,23 +74,6 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
     return (parseFloat(calculateTotalPriceOfAllUnits) - parseFloat(calculateTotalAmountReceived)).toFixed(2);
   }, [calculateTotalPriceOfAllUnits, calculateTotalAmountReceived]);
 
-  const toggleVisibility = (key) => {
-    if (!isPasswordEntered[key]) {
-      setShowPasswordPrompt(key);
-    } else {
-      setIsVisible((prevState) => ({ ...prevState, [key]: !prevState[key] }));
-    }
-  };
-
-  const handlePasswordSubmit = (enteredPassword) => {
-    if (enteredPassword === "Admin") { 
-      setIsPasswordEntered((prevState) => ({ ...prevState, [showPasswordPrompt]: true }));
-      setIsVisible((prevState) => ({ ...prevState, [showPasswordPrompt]: true }));
-    } else {
-      alert("Incorrect password. Please try again.");
-    }
-    setShowPasswordPrompt(null);
-  };
     const paymentDataByDate = useMemo(() => {
       if (!Array.isArray(paymentDetails)) return [];
   
@@ -148,10 +131,21 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
       </div>
       </div>
       <div className=" payment-box2 ">
-      
+      <h3>Our Projects</h3>
+            { projects.map((project, Index) =>{
+              return(
+              <div key={Index}>
+                <div className="dashboardprojectsec">
+                  <GoProjectRoadmap className="projecticon"/><p className="dashboardprojecttext">{project.name.toUpperCase()}</p>
+                </div>
+              </div>
+              )
+            })
+
+            }
       </div>
       </div>
-          <div className="paymentdiv1 mt-3">
+          <div className=" mt-3">
             <div className="payment-box3">
             <ResponsiveContainer width="100%" height={400}>
               <AreaChart data={paymentDataByDate}>
@@ -175,36 +169,13 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
               </AreaChart>
             </ResponsiveContainer>
             </div>
-            <div className="payment-box2">
-            <h3>Our Projects</h3>
-            { projects.map((project, Index) =>{
-              return(
-              <div key={Index}>
-                <div className="dashboardprojectsec">
-                  <GoProjectRoadmap className="projecticon"/><p className="dashboardprojecttext">{project.name.toUpperCase()}</p>
-                </div>
-              </div>
-              )
-            })
-
-            }
-            </div>
           </div>
         </div>
       )}
     </div>
-      {/* <div className="formback1"><DashboardProjects/><a href="/Allprojects"><h4 className="center seemore">See More &gt;</h4></a></div> */}
       </div>
       )}
-      {/* {showPasswordPrompt && (
-        <PasswordPrompt
-          onSubmit={handlePasswordSubmit}
-          onClose={() => setShowPasswordPrompt(null)}
-        />
-      )} */}
-
     </div>
   );
 };
-
 export default ProjectsUpload;

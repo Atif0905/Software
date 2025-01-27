@@ -17,6 +17,7 @@ import axios from 'axios';
 import { IoSearch } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
 import Request from '../Reminder/Request';
+import Bell from './Bell';
 const Sidebar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -215,7 +216,7 @@ const Sidebar = () => {
         <div className='bellicondiv1' onClick={toggleBellIcon} ref={bellIconRef} >
          {bellClicked ? <PiBellFill className='bellicon' /> : <PiBellBold className='bellicon' />}
         </div>
-         {bellClicked && (<div className={`duedate-dropdown roll-in`} ref={dropdownRef}><DueDateModal /><Request/></div> )}
+         {bellClicked && (<div className={`duedate-dropdown roll-in`} ref={dropdownRef}><Bell/></div> )}
            <div className='d-flex'>
             <FaUserCircle className='userface'/>
             {user && (

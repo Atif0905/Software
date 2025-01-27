@@ -70,3 +70,7 @@
 {"timestamp":"2025-01-10T07:17:27.183Z","action":"login","user":"test@gmail.com","details":{"email":"test@gmail.com"}}
 {"timestamp":"2025-01-10T07:18:03.237Z","action":"login","user":"Superadmin@gmail.com","details":{"email":"Superadmin@gmail.com"}}
 {"timestamp":"2025-01-10T07:29:27.494Z","action":"login","user":"Superadmin@gmail.com","details":{"email":"Superadmin@gmail.com"}}
+{"timestamp":"2025-01-27T07:42:30.930Z","action":"login","user":"test@gmail.com","details":{"email":"test@gmail.com"}}
+{"timestamp":"2025-01-27T09:19:59.564Z","action":"login","user":"User@gmail.com","details":{"email":"User@gmail.com"}}
+{"timestamp":"2025-01-27T09:20:29.718Z","action":"login","user":"test@gmail.com","details":{"email":"test@gmail.com"}}
+{"timestamp":"2025-01-27T09:49:04.490Z","action":"login","user":"test@gmail.com","details":{"email":"test@gmail.com"}}

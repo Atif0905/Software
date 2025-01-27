@@ -91,9 +91,8 @@ const DueDateModal = () => {
   return (
     <div className="">
       <div className="">
-        <div className="notification">Notifications</div>
         <div className="">
-          {customers.length > 0 ? (
+          {customers.length > 0 && (
             <a href="/reminder">
               <div>
                 {customers.map((customer) => (
@@ -115,8 +114,6 @@ const DueDateModal = () => {
                 ))}
               </div>
             </a>
-          ) : (
-            <p>No Such Notifications</p>
           )}
           {response && <p>{response}</p>}
         </div>

@@ -90,3 +90,44 @@
     font-size: 1.5vw;
     font-weight: 600;
 }
+.notficationgrid{
+  display: grid;
+  grid-template-columns: 1fr 2px 1fr;
+}
+.midline{
+  width: 100%;
+  background-color: #BBBBBB;
+}
+.notficationbutton{
+  height: 50px ;
+  border: none;
+  background-color: white;
+  color: #707070;
+  font-weight: 600;
+}
+.notficationbutton:hover{
+  background-color: #954DF74A;
+}
+.notficationbutton.active{
+  background-color: #954DF74A;
+  color: black;
+}
+.requestbutton{
+  height: 50px ;
+  border: none;
+  background-color: white;
+  color: #707070;
+  font-weight: 600;
+}
+.requestbutton:hover{
+  background-color: #F8B2B98C;
+}
+.requestbutton.active{
+  background-color: #F8B2B98C;
+  color: black;
+}
+.midline1{
+  height: 2px;
+  width: 100%;
+  background-color: #BBBBBB;
+}
