@@ -15,7 +15,7 @@ const Bell = () => {
       </div>
       <div className='midline1' style={{ backgroundColor: activeBackgroundColor }}></div>
       <div className='mt-3'>{activeTab === 'notifications' && <DueDateModal />}</div>
-      <div className='mt-3'>{activeTab === 'requests' && <Request />}</div>
+      <div className='mt-3 data'>{activeTab === 'requests' && <Request />}</div>
     </div>
   );
 };

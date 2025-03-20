@@ -81,10 +81,10 @@ const AdminHoldhistory = () => {
 
   return (
     <div className='main-content'>
-      <h2>Hold Requests</h2>
-      <div className='formback1 p-2'>
+      <div className='formback1'>
+      <h2 className='formhead'>Hold Requests</h2>
       {requests.length > 0 ? (
-        <table border="1" cellPadding="10">
+        <table className='unit-table'>
           <thead>
             <tr>
               <th>User Name</th>
@@ -92,7 +92,7 @@ const AdminHoldhistory = () => {
               <th>Block Name</th>
               <th>Unit Name</th>
               <th>Status</th>
-              <th>Updated time</th>
+              <th>Updated Time</th>
             </tr>
           </thead>
           <tbody>

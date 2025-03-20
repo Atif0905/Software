@@ -140,19 +140,19 @@ const CustomerList = () => {
       <div className="table-wrapper formback1 mt-4">
         <h2 className="formhead">Customer List</h2>
         <div className="formback1">
-          <table>
+          <table className='unit-table'>
             <thead>
-              <tr className="formtablehead1">
-                <th>CUSTOMER ID</th>
-                <th>NAME</th>
-                <th>CONTACT NUMBER</th>
-                <th>EMAIL</th>
-                <th>PROJECT</th>
-                <th>BLOCK-PLOT/UNIT</th>
-                <th>UNIT PRICE</th>
-                <th>PAYMENT RECEIVED</th>
-                <th>BALANCE</th>
-                <th>ACTION</th>
+              <tr className="">
+                <th >CUSTOMER ID</th>
+                <th >NAME</th>
+                <th >CONTACT NUMBER</th>
+                <th >EMAIL</th>
+                <th >PROJECT</th>
+                <th >BLOCK-PLOT/UNIT</th>
+                <th >UNIT PRICE</th>
+                <th >PAYMENT RECEIVED</th>
+                <th >BALANCE</th>
+                <th >ACTION</th>
               </tr>
             </thead>
             <tbody>

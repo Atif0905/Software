@@ -112,28 +112,12 @@ const Cancelunit = () => {
   return (
     <div className="main-content">
       <div className="filter-section">
-        <select
-          className="filter-select"
-          id="projectFilter"
-          value={selectedProject}
-          onChange={(e) => setSelectedProject(e.target.value)}
-        >
-          <option value="">All Projects</option>
-          {projectNames.map((name, index) => (
-            <option key={index} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
           <button className=' btn btn-success ' onClick={handleExport}>Export to Excel</button>
-       
-        <h3 className='mt-4'>Total Payment for Selected Project: {totalPayment}</h3>
-        
-      </div>
+       </div>
       <div className="table-wrapper formback1 mt-4">
         <h2 className="formhead"> Canceled Customer List</h2>
         <div className="formback1">
-          <table>
+          <table className='unit-table'>
             <thead>
               <tr className="formtablehead1">
                 <th>CUSTOMER ID</th>

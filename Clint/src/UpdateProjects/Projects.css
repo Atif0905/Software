@@ -334,19 +334,3 @@ margin-top: 25%;
   border: 1px solid #C0C0C0;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
-.unit-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.unit-table thead {
-  border-bottom: 1.5px solid rgba(69, 68, 68, 0.788) ;
-}
-
-.unit-table tbody tr {
-  border-bottom: 1px solid rgb(69, 68, 68);
-  height: 50px;
-}
-
-.unit-table tbody tr:last-child {
-  border-bottom: none;
-}

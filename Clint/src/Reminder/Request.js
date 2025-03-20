@@ -120,8 +120,8 @@ const Request = () => {
                 unit && (
                   <div key={request._id} className="hovergray">
                     <p className="requesttext">
-                      {user.fname} {user.lname} is asking to hold unit {unit.name} in
-                      block {block.name} of project {project.name}.
+                      <b>{user.fname} {user.lname}</b> is asking to hold unit <b>{unit.name}</b> in
+                      block <b>{block.name}</b> of project <b>{project.name}</b>.
                     </p>
                     <button
                       onClick={() => {
@@ -159,8 +159,8 @@ const Request = () => {
                 unit && (
                   <div key={request._id} className="hovergray">
                     <p className="requesttext">
-                      {user.fname} {user.lname} request for unit {unit.name} in block{" "}
-                      {block.name} of project {project.name} has {request.status}.
+                      <b>{user.fname} {user.lname}</b> request for unit <b>{unit.name}</b> in block{" "}
+                      <b>{block.name}</b> of project <b>{project.name}</b> has <b>{request.status}</b>.
                     </p>
                   </div>
                 )

@@ -24,14 +24,17 @@ const Viewplan = () => {
     <div className='main-content '>
       <div className='col-4 offset-3 formback' >
         <h4 className='formhead'>Payment Plans</h4>
-        <table className='formback'>
+        <table className='unit-table'>
+          <thead>
               <tr >
                 <th>Id</th>
                 <th>Name</th>
                 <th>View Details</th>
                 </tr>
+                </thead>
               {paymentPlans.map((plan, index) => (
                 <React.Fragment key={index}>
+                  <tbody>
                   <tr >
                     <td>{index + 1}</td> 
                     <td>{plan.planName}</td>
@@ -39,6 +42,7 @@ const Viewplan = () => {
                       <a className='view' onClick={() => handleViewDetails(plan)}>View Details</a>
                     </td>
                   </tr>
+                  </tbody>
                 </React.Fragment>
               ))}
         </table>

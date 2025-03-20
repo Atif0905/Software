@@ -221,7 +221,7 @@ position: absolute;
   position: absolute;
   top: 90px;
   right: 80px;
-  width: 500px;
+  width: 350px;
   background-color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
@@ -236,15 +236,15 @@ position: absolute;
   animation: rollIn 1s ease forwards;
 }
 
-.duedate-dropdown::-webkit-scrollbar {
+.data::-webkit-scrollbar {
   width: 5px;
 }
 
-.duedate-dropdown::-webkit-scrollbar-track {
+.data::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px grey;
 }
 
-.duedate-dropdown::-webkit-scrollbar-thumb {
+.data::-webkit-scrollbar-thumb {
   background: darkgray;
   border-radius: 10px; /* Optional: Make the scrollbar thumb rounded */
 }

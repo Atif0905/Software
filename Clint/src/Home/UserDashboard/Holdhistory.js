@@ -79,10 +79,10 @@ const Holdhistory = () => {
 
   return (
     <div className="main-content">
-      <h2>Hold History</h2>
       {userRequests.length > 0 ? (
         <div className="formback1 p-2">
-          <table>
+          <h2 className='formhead'>Hold History</h2>
+          <table className='unit-table'>
             <thead>
               <tr>
                 <th>Project Name</th>

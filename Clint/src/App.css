@@ -191,12 +191,32 @@ font-weight: 500;
   text-align: center;
 }
 
-th, td {
-padding: 8px;
-text-align: left;
-font-size: 14px;
+.unit-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+.unit-table th{
+  padding-right: 30px;
+}
+.unit-table td{
+  padding-right: 30px;
+}
+.unit-table thead {
+  border-bottom: 1.5px solid rgba(69, 68, 68, 0.788) !important ;
+  height: 50px;
+}
+.unit-table thead tr{
+  background-color: rgb(245, 242, 255);
+  color: rgb(162, 128, 255);
+}
+.unit-table tbody tr {
+  border-bottom: 1px solid rgb(69, 68, 68);
+  height: 50px;
 }
 
+.unit-table tbody tr:last-child {
+  border-bottom: none;
+}
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none;
