@@ -7,7 +7,7 @@ router.post('/', async (req, res) => {
     selectedProject, selectedBlock, selectedUnit, discount, paymentPlan, bookingDate, bookingType, sendEmail,
     name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2,
     name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, email3, permanentaddress,
-    EmployeeName, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, CreatedBy, TenureStartDate, TenureEndDate, Tenuredays
+    EmployeeName, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, CreatedBy,status
   } = req.body;
   
   try {
@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
       project: selectedProject, block: selectedBlock, plotOrUnit: selectedUnit, discount, paymentPlan, bookingDate, bookingType, sendEmail,
       name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2,
       name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, email3, permanentaddress,
-      EmployeeName, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, CreatedBy, TenureStartDate, TenureEndDate, Tenuredays
+      EmployeeName, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, CreatedBy, status
     });
     res.status(201).json({ status: "ok", data: newCustomer });
   } catch (error) {
@@ -58,10 +58,10 @@ router.put("/:customerId", async (req, res) => {
       return res.status(404).json({ error: "Customer not found" });
     }
     const {
-      customerId: updatedCustomerId, title, name, fatherOrHusbandName, address, aadharNumber, panNumber, mobileNumber, email, propertyType, discount, paymentPlan, bookingDate, bookingType, sendEmail, name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2, name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, permanentaddress, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, email3
+      customerId: updatedCustomerId, title, name, fatherOrHusbandName, address, aadharNumber, panNumber, mobileNumber, email, propertyType, discount, paymentPlan, bookingDate, bookingType, sendEmail, name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2, name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, permanentaddress, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, email3, status
     } = req.body;
     Object.assign(existingCustomer, {
-      title, name, fatherOrHusbandName, address, aadharNumber, panNumber, mobileNumber, email, propertyType, discount, paymentPlan, bookingDate, bookingType, sendEmail, name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2, name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, permanentaddress, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, email3
+      title, name, fatherOrHusbandName, address, aadharNumber, panNumber, mobileNumber, email, propertyType, discount, paymentPlan, bookingDate, bookingType, sendEmail, name2, fatherOrHusbandName2, address2, aadharNumber2, panNumber2, mobileNumber2, email2, name3, fatherOrHusbandName3, address3, aadharNumber3, panNumber3, mobileNumber3, permanentaddress, Teamleadname, DOB, DOB2, DOB3, AgreementDate, AllotmentDate, email3, status
     });
     const updatedCustomer = await existingCustomer.save();
     res.json({ status: "ok", data: updatedCustomer });

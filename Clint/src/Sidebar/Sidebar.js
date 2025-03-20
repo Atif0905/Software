@@ -14,6 +14,7 @@ import axios from 'axios';
 import { IoSearch } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
 import Bell from './Bell';
+import { FaUserAltSlash } from "react-icons/fa";
 const Sidebar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [logoFiles, setLogoFiles] = useState([]);
@@ -150,7 +151,7 @@ const Sidebar = () => {
               </Link>
             </div>
           </div>
-
+            
           <div className="dropdown">
             <div
               className="dropdown-toggle"
@@ -160,17 +161,22 @@ const Sidebar = () => {
             </div>
             <div
               className={`dropdown-menu ${
-                activeDropdown === 'Payments' || isDropdownActive(['/ReceivedPayments', '/PayInterestAmount']) ? 'active' : ''
+                activeDropdown === 'Payments' || isDropdownActive(['/ReceivedPayments', '/Return-Payment']) ? 'active' : ''
               }`}
             >
               <Link to='/ReceivedPayments'>
                 <li className={`dropdown-item ${location.pathname === '/ReceivedPayments' ? 'active' : ''}`}>Received Payment</li>
               </Link>
-              {/* <Link to='/PayInterestAmount'>
-                <li className={`dropdown-item ${location.pathname === '/PayInterestAmount' ? 'active' : ''}`}>Pay Interest Amount</li>
-              </Link> */}
+              <Link to='/Return-Payment'>
+                <li className={`dropdown-item ${location.pathname === '/Return-Payment' ? 'active' : ''}`}>Return Payment</li>
+              </Link>
             </div>
           </div>
+          <Link to="/CancelUnit">
+            <div className={`Sidelink ${location.pathname === '/CancelUnit' ? 'active' : ''}`}>
+              <FaUserAltSlash className='svg-icon' /> Canceled Unit
+            </div>
+          </Link>
           <div className="dropdown">
             <div
               className="dropdown-toggle"

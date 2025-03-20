@@ -4,6 +4,7 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 export const fetchCustomers = async () => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_URL}/customer`);
+    console.log(response)
     return response.data;
   } catch (error) {
     throw new Error('Error fetching customers');

@@ -43,17 +43,13 @@
   border-radius: 10px;
 }
 .react-icon-red {
-  color: rgb(147, 21, 7);
+  color: rgb(162, 128, 255);
   margin-right: 15px;
   font-size: 70px;
   margin-top: -35px;
   transition: transform 0.7s;
 }
-.paymentmaindiv:hover {
-  .react-icon-red {
-    transform: scale(1.2);
-  }
-}
+
 .colouredtext1 {
   font-family: Kanit;
   font-size: 20px;
@@ -121,9 +117,7 @@
   }
 }
 @media (max-width: 767px) {
-  .react-icon-red {
-    display: none;
-  }
+
   .colouredtext1 {
     font-size: 14px;
   }
@@ -150,6 +144,13 @@
   padding: 20px 5px 20px 20px;
   border-radius: 20px;
   background-color: white;
+}
+.project-box1 {
+  width: 100%;
+  height: auto;
+  padding: 20px 5px 20px 20px;
+  border-radius: 20px;
+  background-color: rgb(245, 242, 255);
 }
 .payment-box3 {
   width: 100%;

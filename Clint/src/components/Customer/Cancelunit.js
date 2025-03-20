@@ -6,7 +6,7 @@ import { fetchCustomers, fetchName, fetchUnitDetails, fetchPaymentDetailsByCusto
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx'; // Import xlsx library
 
-const CustomerList = () => {
+const Cancelunit = () => {
   const { customers, loading, error } = useSelector((state) => state.customer);
   const dispatch = useDispatch();
 
@@ -52,7 +52,7 @@ const CustomerList = () => {
 
   const filteredCustomers = selectedProject
   ? customers.filter((customer) => customer.projectName === selectedProject && customer.status === "Current")
-  : customers.filter((customer) => customer.status === "Current");
+  : customers.filter((customer) => customer.status === "Canceled");
 
 
   const handleExport = () => {
@@ -108,13 +108,6 @@ const CustomerList = () => {
         : 0),
     0
   );
-  if (loading) {
-    return (
-      <div>
-        <Loader />
-      </div>
-    );
-  }
 
   return (
     <div className="main-content">
@@ -138,7 +131,7 @@ const CustomerList = () => {
         
       </div>
       <div className="table-wrapper formback1 mt-4">
-        <h2 className="formhead">Customer List</h2>
+        <h2 className="formhead"> Canceled Customer List</h2>
         <div className="formback1">
           <table>
             <thead>
@@ -193,4 +186,4 @@ const CustomerList = () => {
   );
 };
 
-export default CustomerList;
+export default Cancelunit;

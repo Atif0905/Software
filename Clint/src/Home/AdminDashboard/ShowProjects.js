@@ -442,8 +442,7 @@ const UploadedProjects = () => {
                 />
                 <div className="modal-container">
                   <div className="flexy">
-                    <div className="paymentmaindiv">
-                      <div className="coloureddiv1 p-3">
+                    <div className="project-box1 ">
                         <h3 className="colouredtext">Total Payment</h3>
                         <div className="d-flex justify-content-between">
                           <p className="colouredtext1">{totalPriceSum}</p>
@@ -451,10 +450,8 @@ const UploadedProjects = () => {
                             <FaMoneyCheck />
                           </h6>
                         </div>
-                      </div>
                     </div>
-                    <div className="paymentmaindiv">
-                      <div className="coloureddiv1 p-3">
+                    <div className="project-box1 ">
                         <h3 className="colouredtext">Received Payment</h3>
                         <div className="d-flex justify-content-between">
                           <p className="colouredtext1">
@@ -466,10 +463,8 @@ const UploadedProjects = () => {
                             <FaMoneyCheck />
                           </h6>
                         </div>
-                      </div>
                     </div>
-                    <div className="paymentmaindiv">
-                      <div className="coloureddiv1 p-3">
+                    <div className="project-box1 ">
                         <h3 className="colouredtext">Due Payment</h3>
                         <div className="d-flex justify-content-between">
                           <p className="colouredtext1">
@@ -482,40 +477,39 @@ const UploadedProjects = () => {
                             <FaMoneyCheck />
                           </h6>
                         </div>
-                      </div>
                     </div>
                   </div>
-                  <div className="d-flex justify-content-between mb-3">
+                  <div className="unitgrid">
                     <div className="totalunitsdiv mt-3">
-                      <h2 className="textunits"> Total </h2>
+                      <h2 className="textunits"> Total Units </h2>
                       <p className="unitsnum">
                         {projectUnitCounts[project._id]?.totalUnits || 0}
                       </p>
                     </div>
                     <div className="availableunitsdiv mt-3">
-                      <h2 className="textunits"> Available </h2>
+                      <h2 className="textunits"> Available Units </h2>
                       <p className="unitsnum">
                         {projectUnitCounts[project._id]?.totalAvailableUnits ||
                           0}
                       </p>
                     </div>
                     <div className="holunitsdiv mt-3">
-                      <h2 className="textunits"> Hold </h2>
+                      <h2 className="textunits"> Hold Units </h2>
                       <p className="unitsnum">
                         {projectUnitCounts[project._id]?.totalHoldUnits || 0}
                       </p>
                     </div>
                     <div className="solunitsdiv mt-3">
-                      <h2 className="textunits"> Sold </h2>
+                      <h2 className="textunits"> Sold Units </h2>
                       <p className="unitsnum">
                         {projectUnitCounts[project._id]?.totalSoldUnits || 0}
                       </p>
                     </div>
                   </div>
-                  <table>
+                  <table className="mt-3 unit-table">
                     <thead>
                       <tr>
-                        <th className="blockdivstart">ID</th>
+                        <th className="blockdiv">ID</th>
                         <th className="blockdiv">Blocks</th>
                         <th className="blockdiv">Total Units</th>
                         <th className="blockdiv">Available Units</th>

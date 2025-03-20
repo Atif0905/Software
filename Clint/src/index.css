@@ -45,11 +45,6 @@ html,
 .forgot-password a {
   color: #167bff;
 }
-table,
-th,
-td {
-  border: 1px solid black !important;
-}
 .loginbutt {
   width: 196px;
   height: 46px;

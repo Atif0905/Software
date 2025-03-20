@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import ConfirmationModal from '../../Confirmation/ConfirmationModal';
+import { useNavigate } from 'react-router-dom';
 const Editcustomerdetails = () => {
     const { _id } = useParams();
     const [customer, setCustomer] = useState(null);
+    const navigate = useNavigate();
+    const [updateStatus, setUpdateStatus] = useState(null);
     const [editedCustomer, setEditedCustomer] = useState({
         title: '',
         name: '',
@@ -32,7 +35,8 @@ const Editcustomerdetails = () => {
         AgreementDate: '',
         AllotmentDate: '',
         Teamleadname: '',
-        email3: ''
+        email3: '',
+        status: ''
     });
     const [showConfirm, setShowConfirm] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -60,7 +64,11 @@ const Editcustomerdetails = () => {
             fetchCustomerData();
         }
     }, [_id]);
-
+    useEffect(() => {
+        if (updateStatus === 'success') {
+            navigate('/Viewcustomer');
+        }
+    }, [updateStatus, navigate]);
     const handleChange = (e) => {
         const { name, value } = e.target;
         setEditedCustomer(prevState => ({
@@ -75,16 +83,16 @@ const Editcustomerdetails = () => {
                 updatedCustomerNA[key] = 'NA';
             }
         });
-
+    
         try {
             const response = await axios.put(`${process.env.REACT_APP_API_URL}/customer/${_id}`, updatedCustomerNA);
+            console.log('Customer updated:', response.data);
+            setUpdateStatus('success');
             const updatedCustomer = response.data;
             setCustomer(updatedCustomer);
-            setShowModal(true);
         } catch (error) {
             console.error('Error updating customer:', error);
-            setErrorMessage(error.text || "An unexpected error occurred.");
-        setErrorModal(true);
+            setUpdateStatus('error');
         }
     };
     const handleSubmit1 = (e) => {
@@ -222,7 +230,14 @@ const Editcustomerdetails = () => {
                                     <label>Mobile Number</label>
                                     <input className='form-input-field' type="number" name='mobileNumber3' value={editedCustomer.mobileNumber3} onChange={handleChange} placeholder='mobileNumber' />
                                 </div>
-
+                                <div className='grid-item'>
+                    <label>Do You want To Cancel?</label>
+                    <select type='text' className='input-cal input-base' name='status' value={editedCustomer.status} onChange={handleChange} placeholder='Name' required>
+                        <option>Select Option</option>
+                        <option>Current</option>
+                        <option>Canceled</option>
+                    </select>
+                    </div>
                             </div>
                         </div>
                         <div className='center'><button type="submit" className='addbutton mt-4'>Update Customer</button></div>

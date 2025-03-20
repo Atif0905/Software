@@ -1,29 +1,20 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { fetchProjects, fetchCustomers, fetchPaymentDetails } from '../../../services/customerService'; // Import the services
 import '../AdminDashboard.css';
-import { BsArrowDownRightCircleFill } from "react-icons/bs";
-import PasswordPrompt from "../../../Accountscomponent/PasswordPrompt";
 import Loader from '../../../Confirmation/Loader'
-import DashboardProjects from '../DashboardProjects'
 import { MdAccountBalanceWallet } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
 import { CgNotes } from "react-icons/cg";
 import { GoProjectRoadmap } from "react-icons/go";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import axios from "axios";
 const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => {
   const [projects, setProjects] = useState(projectsData || []);
   const [customers, setCustomers] = useState(customersData || []);
   const [paymentDetails, setPaymentDetails] = useState(paymentDetailsData || []);
   const [loading, setLoading] = useState(!projectsData || !customersData || !paymentDetailsData);
   const [error, setError] = useState(null);
-  const [isVisible, setIsVisible] = useState({
-    totalPrice: false,
-    totalReceivedPayment: false,
-    duePayment: false,
-  });
-  const [isPasswordEntered, setIsPasswordEntered] = useState({});
-  const [showPasswordPrompt, setShowPasswordPrompt] = useState(null);
-
+  const [totalAmount, setTotalAmount] = useState(0);
   useEffect(() => {
     if (!projectsData || !customersData || !paymentDetailsData) {
       fetchData();
@@ -46,7 +37,28 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/Return-payment`) 
+        const payments = response.data.data; 
 
+        if (!Array.isArray(payments)) {
+          console.error("Unexpected data structure:", payments);
+          return;
+        }
+        const sum = payments.reduce((acc, payment) => acc + (payment.amount || 0), 0);
+        console.log(sum)
+        setTotalAmount(sum);
+      } catch (error) {
+        console.error("Failed to fetch payments:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPayments();
+  }, []);
   // Optionally remove if not needed
   // const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize, edcPrice) => {
   //   return (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges) + parseFloat(edcPrice)) * parseFloat(plotSize);
@@ -112,7 +124,7 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
       </div>
         <div className=" payment-box1  ">
       <div className="d-flex"><div className="dashboardicondiv"><FaUsers/> </div><h6 className="paymenttext1">Received Payment</h6></div>
-      <p className="colouredtext">{calculateTotalAmountReceived}</p>
+      <p className="colouredtext">{(calculateTotalAmountReceived) -(totalAmount)}</p>
       </div>
       <div className=" payment-box1 ">
       <div className="d-flex"><div className="dashboardicondiv"><CgNotes/> </div><h3 className="paymenttext1"> Due Payment</h3></div>

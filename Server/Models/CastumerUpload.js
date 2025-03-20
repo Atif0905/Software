@@ -163,6 +163,10 @@ const customerSchema = new mongoose.Schema({
   Teamleadname: {
     type: String,
     default: false,
+  },
+  status:{
+    type: String,
+    default: "Current",
   }
 });
 customerSchema.pre("save", async function (next) {

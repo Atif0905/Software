@@ -66,7 +66,8 @@ import UserSidebar from "./Sidebar/UserSidebar";
 import UserDashBoard from "./Home/UserDashboard/UserDashBoard";
 import Holdhistory from "./Home/UserDashboard/Holdhistory";
 import AdminHoldhistory from "./Home/AdminDashboard/AdminHoldhistory";
-
+import Cancelunit from "./components/Customer/Cancelunit";
+import Returnedpayments from "./Payments/Returnedpayments";
 function ProtectedRoute({ element: Component, ...rest }) {
   const isLoggedIn = window.localStorage.getItem("loggedIn") === "true";
   return isLoggedIn ? <Component {...rest} /> : <Navigate to="/sign-in" />;
@@ -149,6 +150,8 @@ function App() {
           <Route path="/UserDashboard" element={<UserSidebar/>}/>
           <Route path="/Hold-History" element={<UserSidebar/>}/>
           <Route path="/Admin-Hold-History" element={<Sidebar/>}/>
+          <Route path="/CancelUnit" element={<Sidebar/>} />
+          <Route path="/Return-Payment" element={<Sidebar/>}/>
         </Routes>
         <Routes>
         <Route path="/" element={isLoggedIn === "true" ? <UserDetails /> : <Login />} />
@@ -214,6 +217,8 @@ function App() {
     <Route path="/Sales-Analytics" element={<ProtectedRoute element={Superadminstats}/>}/>
     <Route path="/UserDashboard" element={<ProtectedRoute element={UserDashBoard}/>}/>
     <Route path="/Hold-History" element={<ProtectedRoute element={Holdhistory}/>}/>
+    <Route path="/CancelUnit" element={<ProtectedRoute element={Cancelunit} />} />
+    <Route path="/Return-Payment" element={<ProtectedRoute element={Returnedpayments} />} />
     </Routes>
       </div>
     </Router>

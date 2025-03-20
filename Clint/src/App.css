@@ -190,10 +190,6 @@ font-weight: 500;
   line-height: 1.1;
   text-align: center;
 }
-table {
-width: 100%;
-border-radius: 20px !important;
-}
 
 th, td {
 padding: 8px;
@@ -201,9 +197,6 @@ text-align: left;
 font-size: 14px;
 }
 
-table th {
-/* border-bottom: 1px solid black !important ; */
-}
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none;
@@ -641,38 +634,12 @@ padding-right: 10px;
 .tr1{
   color: white;
 }
-.table {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr); /* 10 columns */
-  gap: 15px;
-  width: 100%;
-}
 .formtabletext1 {
   width: 100%;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
   margin: 10px 0;
   padding: 0 35px;
   border-radius: 20px;
-}
-.table-header {
-  background: linear-gradient(90deg, #06133D 0%, #1033A3 100%);
-  color: white;
-  padding: 5px 30px;
-  display: flex; 
-  width: 100%;
-}
-
-.table-row {
-  display: contents; /* Each .table-row acts like a grid row */
-  background-color: #f9f9f9;
-  padding: 10px 0;
-  border-radius: 30px;
-  align-items: center;
-}
-
-.table-cell {
-  padding: 10px;
-  text-align: left;
 }
 .hold-button {
   padding: 5px 10px;
