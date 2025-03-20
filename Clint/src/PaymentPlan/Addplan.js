@@ -8,6 +8,9 @@ const AddPlan = () => {
   const [numInstallments, setNumInstallments] = useState('');
   const [installments, setInstallments] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [errorModal, setErrorModal] = useState(false);
   const handleSelectChange = (event) => {
     setSelectedOption(event.target.value);
   };
@@ -51,14 +54,24 @@ const AddPlan = () => {
         setPlanName('');
         setNumInstallments('');
         setInstallments([]);
+        setShowModal(true);
       })
       .catch((error) => {
         console.error('Error:', error);
+        setErrorMessage(error.text || "An unexpected error occurred.");
+        setErrorModal(true);
       });
   };
   const handleSubmit1 = (e) => {
     e.preventDefault();
     setShowConfirm(true);
+  };
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const closeErrorModal = () => {
+    setErrorModal(false);
   };
   return (
     <div className='main-content'>
@@ -105,6 +118,22 @@ const AddPlan = () => {
       </div>
     </div>
     </div>
+    {showModal && (
+        <div className="homemodal">
+          <div className="homemodal-content">
+            <p>Payment Plan Uploaded Successfully</p>
+            <button onClick={closeModal}>Ok</button>
+          </div>
+        </div>
+      )}
+      {errorModal && (
+        <div className="homemodal">
+          <div className="homemodal-content">
+            <p>{errorMessage}</p>
+            <button onClick={closeErrorModal}>Ok</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

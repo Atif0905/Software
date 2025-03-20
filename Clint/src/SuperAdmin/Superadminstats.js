@@ -119,7 +119,7 @@ const Superadminstats = () => {
   const graphData = projects.map((project) => ({
     name: project.name
       .split(" ")
-      .map((word) => word[0].toUpperCase())
+      .map((word) => word[0])
       .join(""),
     fullName: project.name,
     available: projectUnitCounts[project._id]?.totalAvailableUnits || 0,

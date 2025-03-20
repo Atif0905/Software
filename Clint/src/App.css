@@ -247,30 +247,30 @@ position: relative;
 .yesbutton {
   min-width: 150px;
   margin: 10px;
-  padding: 10px 20px;
-  border: 2px solid #119541;
-  color: black;
+  padding: 5px 10px;
+  color: #A280FF;
   cursor: pointer;
   border-radius: 30px;
-  background-color: white;
+  background-color: #F5F2FF;
+  border: none;
 }
 .yesbutton:hover {
-  background-color:  #119541;
-  color: white;
+  background-color: #A280FF;
+    color: #F5F2FF;
 }
 .nobutton {
   min-width: 150px;
   margin: 10px;
-  padding: 10px 20px;
-  border:2px solid #D70000;
-  color: black;
+  padding: 5px 10px;
+  border: none;
+  background-color: #FFF2F1;
   cursor: pointer;
   border-radius: 30px;
-  background-color: white;
+  color: #FF6C64;
 }
 .nobutton:hover {
-  background-color: #D70000;
-  color: white;
+  background-color: #FF6C64;
+  color: #FFF2F1;
 }
 .right{
   text-align: right;
@@ -686,4 +686,42 @@ padding-right: 10px;
 .hold-button:hover {
   background-color: rgb(155, 155, 0);
   outline: none;
+}
+.homemodal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(8 10 10 / 60%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn .5s ease-in;
+}
+
+.homemodal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+}
+
+.homemodal-content p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.homemodal-content button {
+  background-color: rgb(114,90,179);
+  color: white;
+  min-width: 30%;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }

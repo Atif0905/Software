@@ -21,14 +21,10 @@ const Receivedpayments = () => {
   const [isPaymentClicked, setIsPaymentClicked] = useState(false);
   const [unitData, setUnitData] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [payment, setPayment] = useState({
-    paymentType: "",
-    paymentMode: "",
-    amount: "",
-    reference: "",
-    comment: "",
-    PaymentDate: "",
-  });
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [errorModal, setErrorModal] = useState(false);
+  const [payment, setPayment] = useState({ paymentType: "", paymentMode: "", amount: "", reference: "", comment: "", PaymentDate: "",});
   const handleChange = (e) => {
     const { name, value } = e.target;
     setPayment({ ...payment, [name]: value });
@@ -51,6 +47,7 @@ const Receivedpayments = () => {
           PaymentDate: payment.PaymentDate,
         }
       );
+      setShowModal(true);
       setSubmittedInstallments([...submittedInstallments, payment.paymentType]);
       setDisabledInstallments([...disabledInstallments, payment.paymentType]);
       setPayment({
@@ -64,8 +61,9 @@ const Receivedpayments = () => {
 
       setError(null);
     } catch (error) {
-      console.error("Error submitting payment:", error);
       setError("Error submitting payment. Please try again later.");
+      setErrorMessage(error.text || "An unexpected error occurred.");
+      setErrorModal(true);
     }
   };
   const fetchPaymentDetailsByCustomerId = async (customerId) => {
@@ -199,6 +197,8 @@ const Receivedpayments = () => {
         `${process.env.REACT_APP_API_URL}/customer/${customerId}`
       );
       const customerDetails = response.data;
+      console.log(customerDetails);
+  
       const projectsResponse = await axios.get(
         `${process.env.REACT_APP_API_URL}/getallProjects`
       );
@@ -207,11 +207,13 @@ const Receivedpayments = () => {
         (project) => project._id === customerDetails.project
       );
       setProjectdetails(matchedProject || {});
+  
       const unitDetails = await fetchUnitDetails(
         customerDetails.project,
         customerDetails.block,
         customerDetails.plotOrUnit
       );
+  
       if (Array.isArray(unitDetails) && unitDetails.length > 0) {
         const matchedUnit = unitDetails.find(
           (unit) => unit.id === customerDetails.plotOrUnit
@@ -239,7 +241,7 @@ const Receivedpayments = () => {
         setCustomerDetails(customerDetails);
         setUnitData(null);
       }
-
+  
       let installmentDueDates = [];
       if (response.data.paymentPlan) {
         const matchedPlan = paymentPlans.find(
@@ -247,16 +249,11 @@ const Receivedpayments = () => {
         );
         if (matchedPlan) {
           setSelectedPlanInstallments(matchedPlan.installments);
-          const totalInstallments = matchedPlan.numInstallments;
-          const tenureDays = customerDetails.Tenuredays;
-          const installmentInterval = tenureDays / totalInstallments;
-
+  
           installmentDueDates = matchedPlan.installments.map(
             (installment, index) => {
               const dueDate = new Date();
-              dueDate.setDate(
-                dueDate.getDate() + installmentInterval * (index + 1)
-              );
+              dueDate.setMonth(dueDate.getMonth() + index + 1);
               const amount =
                 (parseFloat(installment.amountRS) / 100) *
                 (parseFloat(unitDetails.totalPrice) -
@@ -285,6 +282,7 @@ const Receivedpayments = () => {
         ...prevDetails,
         Duedates: installmentDueDates,
       }));
+      
       for (let dueDate of installmentDueDates) {
         try {
           await axios.post(`${process.env.REACT_APP_API_URL}/DueDate`, {
@@ -295,7 +293,6 @@ const Receivedpayments = () => {
           });
         } catch (error) {
           if (error.response && error.response.status === 409) {
-          
           } else {
             console.error(
               `Error storing installment ${dueDate.installment} on ${dueDate.dueDate}:`,
@@ -304,6 +301,7 @@ const Receivedpayments = () => {
           }
         }
       }
+      
       setError(null);
       setShowCustomerDetails(true);
       setSelectedCustomerId(customerId);
@@ -312,7 +310,7 @@ const Receivedpayments = () => {
       setError("Customer not found");
       setCustomerDetails(null);
     }
-  };
+  };  
   const handleViewDetails = (customerDetails) => {
     setSelectedCustomer(customerDetails);
   };
@@ -387,6 +385,14 @@ const Receivedpayments = () => {
     return acc + payment.amount;
   }, 0);
   const balance = possessionCharges - totalAmount;
+  const closeModal = () => {
+    setShowModal(false);
+    window.location.reload();
+  };
+
+  const closeErrorModal = () => {
+    setErrorModal(false);
+  };
   return (
     <div className="main-content">
       <div className="row ">
@@ -416,58 +422,46 @@ const Receivedpayments = () => {
           {showCustomerDetails && customerDetails && (
             <div className="formback1">
               <h3 className="formhead">Customer Details</h3>
-              <div className="table-wrapper p-3">
-                <table className="fl-table d-flex">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                    </tr>
-                    <tr>
-                      <th>Father/Husband Name</th>
-                    </tr>
-                    <tr>
-                      <th>Address</th>
-                    </tr>
-                    <tr>
-                      <th>Customer ID</th>
-                    </tr>
-                    <tr>
-                      <th>Pan Number</th>
-                    </tr>
-                    <tr>
-                      <th>Mobile Number</th>
-                    </tr>
-                  </thead>
+              <div className="formback1">
+              <div className="p-3">
+                <table className="">
                   <tbody>
                     <tr>
+                      <th>Name</th>
                       <td>{customerDetails.name.toUpperCase()}</td>
                     </tr>
                     <tr>
+                      <th>Father/Husband Name</th>
                       <td>
                         {customerDetails.fatherOrHusbandName.toUpperCase()}
                       </td>
                     </tr>
                     <tr>
+                      <th>Address</th>
                       <td>{customerDetails.address.toUpperCase()}</td>
                     </tr>
                     <tr>
+                      <th>Customer ID</th>
                       <td>{customerDetails.customerId}</td>
                     </tr>
                     <tr>
+                      <th>Pan Number</th>
                       <td>{customerDetails.panNumber.toUpperCase()}</td>
                     </tr>
                     <tr>
+                      <th>Mobile Number</th>
                       <td>{customerDetails.mobileNumber}</td>
                     </tr>
                   </tbody>
                 </table>
-                <div className="center">
+              </div>
+              </div>
+              <div className="center">
                   <button className="addbutton" onClick={handleMakePayment}>
                     {" "}
                     Add Payment{" "}
                   </button>
                 </div>
-              </div>
             </div>
           )}
         </div>
@@ -511,39 +505,21 @@ const Receivedpayments = () => {
                         const balance1 = due.amount - paymentAmount;
 
                         return (
-                          <option
-                            key={index}
-                            value={due.installment}
-                            disabled={balance1 === 0}
-                          >
-                            {due.installment === 1
-                              ? "Booking"
-                              : `${ordinalSuffix(index)} Installment`}
-                            {" - "} {balance1}
+                          <option key={index} value={due.installment} disabled={balance1 === 0} >
+                            {due.installment === 1 ? "Booking": `${ordinalSuffix(index)} Installment`}{" - "} {balance1}
                           </option>
                         );
                       })}
                       {!submittedInstallments.includes(
                         "Possession Charges"
                       ) && (
-                        <option
-                          value="Possession Charges"
-                          disabled={
-                            balance === 0 ||
-                            payment.paymentType === "Possession Charges"
-                          }
-                        >
+                        <option value="Possession Charges" disabled={balance === 0 || payment.paymentType === "Possession Charges"}>
                           Possession Charges - {possessionCharges}
                         </option>
                       )}
                     </select>
                     <label>Select Payment Mode</label>
-                    <select
-                      className="select-buttons ps-1"
-                      name="paymentMode"
-                      value={payment.paymentMode}
-                      onChange={handleChange}
-                    >
+                    <select className="select-buttons ps-1" name="paymentMode" value={payment.paymentMode} onChange={handleChange} >
                       <option>Select</option>
                       <option>cheque</option>
                       <option>cash</option>
@@ -695,6 +671,22 @@ const Receivedpayments = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+            {showModal && (
+        <div className="homemodal">
+          <div className="homemodal-content">
+            <p>Payment Uploaded Successfully</p>
+            <button onClick={closeModal}>Ok</button>
+          </div>
+        </div>
+      )}
+      {errorModal && (
+        <div className="homemodal">
+          <div className="homemodal-content">
+            <p>{errorMessage}</p>
+            <button onClick={closeErrorModal}>Ok</button>
           </div>
         </div>
       )}

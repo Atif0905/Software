@@ -24,24 +24,24 @@ const Viewplan = () => {
     <div className='main-content '>
       <div className='col-4 offset-3 formback' >
         <h4 className='formhead'>Payment Plans</h4>
-        <div className='formback'>
-              <div className='formtablehead d-flex justify-content-between'>
+        <table className='formback'>
+              <tr >
                 <th>Id</th>
                 <th>Name</th>
                 <th>View Details</th>
-                </div>
+                </tr>
               {paymentPlans.map((plan, index) => (
                 <React.Fragment key={index}>
-                  <div className='formtabletext1 d-flex justify-content-between'>
+                  <tr >
                     <td>{index + 1}</td> 
                     <td>{plan.planName}</td>
                     <td>
                       <a className='view' onClick={() => handleViewDetails(plan)}>View Details</a>
                     </td>
-                  </div>
+                  </tr>
                 </React.Fragment>
               ))}
-        </div>
+        </table>
       </div>
       <div className=' mt-5'>
   {selectedPlan && (

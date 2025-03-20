@@ -4,25 +4,6 @@
     font-size: 24px;    
     font-weight: 300;
 }
-.fl-table {
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: normal;
-    border: none;
-    white-space: nowrap;
-     background: #5687e170;
-}
-.fl-table td,
-.fl-table th {
-    text-align: left;
-    padding: 8px;
-    border-bottom: none !important;
-    font-size: 12px;
-}
-.fl-table td {
-    border-right: 1px solid #f8f8f8;
-    font-size: 12px;
-}
 .butt{
     color: rgb(137, 204, 241);
     text-decoration: underline 1px rgb(200,230,246);

@@ -16,7 +16,7 @@ const ConfirmationModal = ({ show, onClose, onConfirm, message }) => {
         className="confirm-modal-content" 
         data-aos="zoom-in"
       >
-        <h3 className='mt-3'>Confirm</h3>
+        <h5 className='mt-1'>Are You Sure?</h5>
         <p>{message}</p>
         <button onClick={onConfirm} className='yesbutton'>Accept</button>
         <button onClick={onClose} className='nobutton'>Go Back</button>

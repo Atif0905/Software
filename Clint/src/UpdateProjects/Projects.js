@@ -18,6 +18,9 @@ const Projects = () => {
   const [CompanyName, setCompanyName] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [fileName, setFileName] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [errorModal, setErrorModal] = useState(false); 
   const handleCSVUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -59,7 +62,6 @@ const Projects = () => {
       });
       const data = response.data;
       if (response.status === 201 && data.status === 'ok') {
-        alert('Project uploaded successfully!');
         setName('');
         setDescription('');
         setTotalLand('');
@@ -71,19 +73,29 @@ const Projects = () => {
         setPayable('');
         setCompanyName('');
         setPosessionfinaldate('');
+        setShowModal(true);
         setBlocks([{ name: '', units: [{ name: '' }] }]);
       } else {
         alert(data.error || 'Failed to upload project');
       }
     } catch (error) {
       console.error('Error uploading project:', error);
-      alert('An error occurred while uploading project');
+      setErrorMessage(error.text || "An unexpected error occurred.");
+      setErrorModal(true);
     }
   };
   const handleSubmit1 = (e) => {
     e.preventDefault();
     setShowConfirm(true);
   };
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const closeErrorModal = () => {
+    setErrorModal(false);
+  };
+
   return (
     <div className="main-content back">
       <div className='formback'>
@@ -190,8 +202,23 @@ const Projects = () => {
           </form>
           <ConfirmationModal show={showConfirm} onClose={() => setShowConfirm(false)} onConfirm={() => {   setShowConfirm(false);   handleSubmit();}}message="Are you sure you want to add this Project?"/>
         </div>
-        
       </div>
+      {showModal && (
+        <div className="homemodal">
+          <div className="homemodal-content">
+            <p>Project Uploaded Successfully</p>
+            <button onClick={closeModal}>Ok</button>
+          </div>
+        </div>
+      )}
+      {errorModal && (
+        <div className="homemodal">
+          <div className="homemodal-content">
+            <p>{errorMessage}</p>
+            <button onClick={closeErrorModal}>Ok</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -132,7 +132,7 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
       </div>
       <div className=" payment-box2 ">
       <h3>Our Projects</h3>
-            { projects.map((project, Index) =>{
+            { projects.slice(0, 6).map((project, Index) =>{
               return(
               <div key={Index}>
                 <div className="dashboardprojectsec">
@@ -140,9 +140,7 @@ const ProjectsUpload = ({ projectsData, customersData, paymentDetailsData }) => 
                 </div>
               </div>
               )
-            })
-
-            }
+            })}
       </div>
       </div>
           <div className=" mt-3">

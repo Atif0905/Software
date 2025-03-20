@@ -85,7 +85,7 @@ const CustomerList = () => {
           </select>
           <h3>Total Payment for Selected Project: {totalPayment}</h3>
         </div>
-      <div className="table-wrapper formback1">
+      <div className=" formback1">
       <h2 className='formhead'>Customer List</h2>
       <div className='formback1 p-2'>
         <table >

@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Customer.css';
 import ConfirmationModal from '../../../Confirmation/ConfirmationModal';
-import { DateRangePicker } from 'react-date-range';
-import { addDays } from 'date-fns';
 import 'react-date-range/dist/styles.css'; 
 import 'react-date-range/dist/theme/default.css';
 import { fetchAllUsers, fetchPaymentPlans } from '../../../services/customerService'; 
 const AddCustomerForm = () => {
-  const [formData, setFormData] = useState({ name: '', title: '', fatherOrHusbandName: '', address: '', aadharNumber: '', panNumber: '', mobileNumber: '', income: '',  email: '', propertyType: '', selectedProjectId: '', selectedBlockId: '', selectedUnitId: '', discount: '', paymentPlan: '', bookingDate: '', bookingType: '', name2: '', fatherOrHusbandName2: '', address2: '', aadharNumber2: '', panNumber2 : '', mobileNumber2: '', email2: '', name3: '', fatherOrHusbandName3: '', address3: '', aadharNumber3: '', panNumber3: '', mobileNumber3: '', email3: '', EmployeeName: '', Teamleadname: '', permanentaddress: '', CreatedBy: '', DOB: '', DOB2: '', DOB3: '', AgreementDate: '', AllotmentDate: '', TenureStartDate: '', TenureEndDate: '', Tenuredays: '', sendEmail: false
+  const [formData, setFormData] = useState({ name: '', title: '', fatherOrHusbandName: '', address: '', aadharNumber: '', panNumber: '', mobileNumber: '', income: '',  email: '', propertyType: '', selectedProjectId: '', selectedBlockId: '', selectedUnitId: '', discount: '', paymentPlan: '', bookingDate: '', bookingType: '', name2: '', fatherOrHusbandName2: '', address2: '', aadharNumber2: '', panNumber2 : '', mobileNumber2: '', email2: '', name3: '', fatherOrHusbandName3: '', address3: '', aadharNumber3: '', panNumber3: '', mobileNumber3: '', email3: '', EmployeeName: '', Teamleadname: '', permanentaddress: '', CreatedBy: '', DOB: '', DOB2: '', DOB3: '', AgreementDate: '', AllotmentDate: '',  sendEmail: false
   });
   const [projects, setProjects] = useState([]);
   const [showBlocks, setShowBlocks] = useState(false);
@@ -23,14 +21,9 @@ const AddCustomerForm = () => {
   const [editedtotalPrice, setEditedTotalPrice] = useState();
   const [users, setUsers] = useState([]);
   const [admin, setAdmin] = useState([]);
-  // const [ dicsountPrice, setDiscountPrice  ] = useState();
-  const [state, setState] = useState([
-    {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 7),
-      key: 'selection'
-    }
-  ]);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [errorModal, setErrorModal] = useState(false);
   const [showSecondCustomer, setShowSecondCustomer] = useState(false);
 const [showThirdCustomer, setShowThirdCustomer] = useState(false);
 const [showConfirm, setShowConfirm] = useState(false);
@@ -135,14 +128,6 @@ const [showConfirm, setShowConfirm] = useState(false);
         const randomNum = Math.floor(Math.random() * 1000);
         return `${prefix}${timestamp}${randomNum}@${domain}`;
       };
-      const { startDate, endDate } = state[0];
-      const formatDate = (date) => {
-        const d = new Date(date);
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
       const parsedFormData = {
         ...formData,
         income: formData.income ? parseFloat(formData.income) : 'NA',
@@ -168,12 +153,7 @@ const [showConfirm, setShowConfirm] = useState(false);
         DOB2: formData.DOB2 || 'NA',
         DOB3: formData.DOB3 || 'NA',
         email3: formData.email3 || generateUniqueEmail(),
-        TenureStartDate: formatDate(startDate) || 'NA',
-        TenureEndDate: formatDate(endDate) || 'NA',
       };
-      const startDateFormatted = new Date(parsedFormData.TenureStartDate);
-    const endDateFormatted = new Date(parsedFormData.TenureEndDate);
-    const tenureDays = Math.ceil((endDateFormatted - startDateFormatted) / (1000 * 60 * 60 * 24));
       const selectedProject = projects.find(project => project._id === formData.selectedProjectId);
       const selectedBlock = selectedProject?.blocks.find(block => block._id === formData.selectedBlockId);
       const selectedUnit = selectedBlock?.units.find(unit => unit._id === formData.selectedUnitId);
@@ -182,12 +162,12 @@ const [showConfirm, setShowConfirm] = useState(false);
         selectedProject,
         selectedBlock,
         selectedUnit,
-        Tenuredays: tenureDays,
       };
       const markUnitSoldResponse = await axios.put(`${process.env.REACT_APP_API_URL}/markUnitSold/${selectedProject._id}/${selectedBlock._id}/${selectedUnit._id}`);
       if (markUnitSoldResponse.status === 200 && markUnitSoldResponse.data.status === 'ok') {
         const addCustomerResponse = await axios.post(`${process.env.REACT_APP_API_URL}/customer`, dataToSend);
         if (addCustomerResponse.status === 201) {
+          setShowModal(true);
           if (formData.sendEmail) {
             const emailData = {
               to: formData.email,
@@ -208,7 +188,14 @@ const [showConfirm, setShowConfirm] = useState(false);
               console.error('Failed to send email:', sendEmailResponse.statusText);
             }
           }
-          setFormData({ name: '', title: '', fatherOrHusbandName: '', address: '', aadharNumber: '', panNumber: '', mobileNumber: '', income: '', email: '', propertyType: '', selectedProjectId: '', selectedBlockId: '', selectedUnitId: '', discount: '', paymentPlan: '', bookingType: '', sendEmail: false, plotSize: '', rate: '', idcCharges: '', plcCharges: '', edcPrice: '', totalPrice: '', name2: '', fatherOrHusbandName2: '', address2: '', aadharNumber2: '', panNumber2: '', mobileNumber2: '', email2: '', name3: '', fatherOrHusbandName3: '', address3: '', aadharNumber3: '', panNumber3: '', mobileNumber3: '', email3: '', permanentaddress: '', EmployeeName: '', Teamleadname:'', CreatedBy: '', DOB: '', DOB2: '', DOB3: '', bookingDate: '', AgreementDate: '', AllotmentDate: '', TenureStartDate: '', TenureEndDate: '', Tenuredays: '',
+          setPlotSize('');
+          setEditedRate('');
+          setEditedIdcCharges('');
+          setEditedPlcCharges('');
+          setEditedEdcPrice('');
+          setEditedTotalPrice('');
+          setFormData({ name: '', title: '', fatherOrHusbandName: '', address: '', aadharNumber: '', panNumber: '', mobileNumber: '', income: '', email: '', propertyType: '', selectedProjectId: '', selectedBlockId: '', selectedUnitId: '', discount: '', paymentPlan: '', bookingType: '', sendEmail: false, plotSize: '', rate: '', idcCharges: '', plcCharges: '', edcPrice: '', totalPrice: '', name2: '', fatherOrHusbandName2: '', address2: '', aadharNumber2: '', panNumber2: '', mobileNumber2: '', email2: '', name3: '', fatherOrHusbandName3: '', address3: '', aadharNumber3: '', panNumber3: '', mobileNumber3: '', email3: '', permanentaddress: '', EmployeeName: '', Teamleadname:'', CreatedBy: '', DOB: '', DOB2: '', DOB3: '', bookingDate: '', AgreementDate: '', AllotmentDate: '', 
+          project : '' , block: '',  plotOrUnit: '',
           });
           await handleEditUnit();
         } else {
@@ -220,6 +207,8 @@ const [showConfirm, setShowConfirm] = useState(false);
       }
     } catch (error) {
       console.error('Error adding customer:', error);
+      setErrorMessage(error.text || "An unexpected error occurred.");
+      setErrorModal(true);
     }
   };
   const handleClickBlock = (blockId) => {
@@ -260,13 +249,10 @@ const [showConfirm, setShowConfirm] = useState(false);
              parseFloat(selectedUnit.edcPrice || 0)) * 
             parseFloat(plotSize)
         );
-        const discountAmount = parseFloat(formData.discount) || 0;
         const editedTotal = baseTotal - (baseTotal * (formData.discount / 100));
         setEditedTotalPrice(editedTotal);
     }
 };
-
-
   const handleEditUnit = async () => {
     try {
       const { selectedProjectId, selectedBlockId, selectedUnitId } = formData;
@@ -310,6 +296,14 @@ const [showConfirm, setShowConfirm] = useState(false);
   const handleSubmit1 = (e) => {
     e.preventDefault();
     setShowConfirm(true);
+  };
+  const closeModal = () => {
+    setShowModal(false);
+    window.location.reload();
+  };
+
+  const closeErrorModal = () => {
+    setErrorModal(false);
   };
   return (
     <div className='main-content back'>
@@ -603,12 +597,7 @@ const [showConfirm, setShowConfirm] = useState(false);
             </label>
             Send Email
           </div>
-        </div>
-        <div className=" mt-3">
-            <h4 className='customerhead'><span>Tenure Date</span></h4>
-            <div className='center'>
-            <DateRangePicker onChange={item => setState([item.selection])}showSelectionPreview={true}moveRangeOnFirstSelection={false}months={1}ranges={state}direction="horizontal"required/></div>
-          </div>
+        </div>   
         <div className='center mt-4'>
           <button type="submit" className="addbutton " >Submit</button>
         </div>
@@ -617,6 +606,22 @@ const [showConfirm, setShowConfirm] = useState(false);
       </form>
     </div>
     </div>
+    {showModal && (
+        <div className="homemodal">
+          <div className="homemodal-content">
+            <p>Customer Uploaded Successfully</p>
+            <button onClick={closeModal}>Ok</button>
+          </div>
+        </div>
+      )}
+      {errorModal && (
+        <div className="homemodal">
+          <div className="homemodal-content">
+            <p>{errorMessage}</p>
+            <button onClick={closeErrorModal}>Ok</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

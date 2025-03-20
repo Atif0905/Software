@@ -156,19 +156,7 @@ const customerSchema = new mongoose.Schema({
     type: String,
     default: false,
   },
-  TenureStartDate: {
-    type: String,
-    default: false,
-  },
   AllotmentDate: {
-    type: String,
-    default: false,
-  },
-  TenureEndDate: {
-    type: String,
-    default: false,
-  },
-  Tenuredays: {
     type: String,
     default: false,
   },

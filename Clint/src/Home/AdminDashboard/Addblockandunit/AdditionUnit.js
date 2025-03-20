@@ -18,6 +18,9 @@ const AdditionUnit = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [fileName, setFileName] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [errorModal, setErrorModal] = useState(false);
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -97,11 +100,14 @@ const AdditionUnit = () => {
         setPlcCharges("");
         setEdcPrice("");
         setTotalPrice(0);
+        setShowModal(true);
       } else {
         console.error("Failed to add unit:", data.error);
       }
     } catch (error) {
       console.error("Error adding unit:", error);
+      setErrorMessage(error.text || "An unexpected error occurred.");
+      setErrorModal(true);
     }
   };
 
@@ -172,7 +178,13 @@ const AdditionUnit = () => {
       e.target.focus();
     }, 0);
   };
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
+  const closeErrorModal = () => {
+    setErrorModal(false);
+  };
   return (
     <div className="main-content back">
       <div className='formback'>
@@ -290,6 +302,23 @@ const AdditionUnit = () => {
       />
     </div>
     </div>
+    {showModal && (
+        <div className="homemodal">
+          <div className="homemodal-content">
+            <p>Unit Uploaded Successfully</p>
+            <button onClick={closeModal}>Ok</button>
+          </div>
+        </div>
+      )}
+      {errorModal && (
+        <div className="homemodal">
+          <div className="homemodal-content">
+            <p>{errorMessage}</p>
+            <button onClick={closeErrorModal}>Ok</button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

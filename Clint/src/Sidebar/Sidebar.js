@@ -1,33 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import {  useLocation, Link } from "react-router-dom";
 import './Side.css';
 import { PiBellBold , PiBellFill} from "react-icons/pi";
-
 import { RiSecurePaymentLine } from "react-icons/ri";
 import { TfiUser } from "react-icons/tfi";
-import ConfirmationModal from '../Confirmation/ConfirmationModal';
 import { FaHistory } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { RiDashboard3Line } from "react-icons/ri";
 import { MdOutlinePayments } from "react-icons/md";
-import DueDateModal from '../Reminder/DueDateModal';
 import useFetchUser from '../hooks/useFetchUser';
 import axios from 'axios';
 import { IoSearch } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
-import Request from '../Reminder/Request';
 import Bell from './Bell';
 const Sidebar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [logoFiles, setLogoFiles] = useState([]);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const location = useLocation();
   const [bellClicked, setBellClicked] = useState(false);
   const dropdownRef = useRef(null);
   const bellIconRef = useRef(null);
-  const { user, loading: userLoading } = useFetchUser();
+  const { user } = useFetchUser();
 
   const handleDropdownToggle = (dropdownId) => {
     setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
@@ -35,15 +30,6 @@ const Sidebar = () => {
 
   const isDropdownActive = (routes) => {
     return routes.some((route) => location.pathname.includes(route));
-  };
-
-  const logOut = () => {
-    window.localStorage.clear();
-    navigate('/sign-in');
-  };
-
-  const handleSubmit = () => {
-    setShowConfirm(true);
   };
 
   const toggleBellIcon = () => {
@@ -107,7 +93,7 @@ const Sidebar = () => {
             {/* AllProjects */}
             <div
               className={`dropdown-menu ${
-                activeDropdown === 'projectMaster' || isDropdownActive(['/Projects', '/Addblock', '/Addunit']) ? 'active' : ''
+                activeDropdown === 'projectMaster' || isDropdownActive(['/AllProjects', '/Projects', '/Addblock', '/Addunit']) ? 'active' : ''
               }`}
             >
               <Link to='/AllProjects'>
@@ -180,9 +166,9 @@ const Sidebar = () => {
               <Link to='/ReceivedPayments'>
                 <li className={`dropdown-item ${location.pathname === '/ReceivedPayments' ? 'active' : ''}`}>Received Payment</li>
               </Link>
-              <Link to='/PayInterestAmount'>
+              {/* <Link to='/PayInterestAmount'>
                 <li className={`dropdown-item ${location.pathname === '/PayInterestAmount' ? 'active' : ''}`}>Pay Interest Amount</li>
-              </Link>
+              </Link> */}
             </div>
           </div>
           <div className="dropdown">
@@ -220,7 +206,7 @@ const Sidebar = () => {
            <div className='d-flex'>
             <FaUserCircle className='userface'/>
             {user && (
-              <div>  <div className='loginname1'>{user.fname} {user.lname}</div></div>
+              <div className='loginname1'>{user.fname.toUpperCase()} {user.lname.toUpperCase()}</div>
             )}
           </div>
           </div>
