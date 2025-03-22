@@ -138,7 +138,7 @@ const ExpensePaidByteamLeader = () => {
         {expense && (
           <p >Total Expenses by {expense.teamLeadName.toUpperCase()} <strong>({calculateTotalAmount()})</strong></p>
         )}
-        <div className=" filter-container d-flex justify-content-between">
+        <div className=" filter-container d-flex justify-content-between mt-3">
           <div>
             <label htmlFor="summaryFilter">Filter by Summary: </label>
             <select id="summaryFilter" className="filter-select" value={summaryFilter} onChange={(e) => setSummaryFilter(e.target.value)}>
@@ -174,7 +174,7 @@ const ExpensePaidByteamLeader = () => {
         </div>
         {filteredExpenses.length > 0 ? (
           <>
-            <table>
+            <table className='unit-table mt-3'>
               <thead>
                 <tr>
                   <th>Amount</th>

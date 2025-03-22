@@ -85,8 +85,9 @@ const UserDashBoard = () => {
     <div className="main-content">
       {loading && <Loader />}
       <div className="formback1">
+        <h2 className="formhead">Dashboard</h2>
         <div className="p-2">
-          <table id="producttable">
+          <table className="unit-table">
             <thead>
               <tr>
                 <td>Project Name</td>

@@ -80,8 +80,9 @@ const Holdhistory = () => {
   return (
     <div className="main-content">
       {userRequests.length > 0 ? (
-        <div className="formback1 p-2">
+        <div className="formback1">
           <h2 className='formhead'>Hold History</h2>
+          <div className='p-2'>
           <table className='unit-table'>
             <thead>
               <tr>
@@ -120,6 +121,7 @@ const Holdhistory = () => {
               })}
             </tbody>
           </table>
+          </div>
         </div>
       ) : (
         <div></div>

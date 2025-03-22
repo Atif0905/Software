@@ -48,7 +48,7 @@ const Expensedetails = () => {
           <div className='formback'>
             <h2 className='formhead'>Expense Details</h2>
             <div className='p-3'>
-              <table id='viewcustomertable'>
+              <table className='unit-table'>
                 <thead>
                   <tr>
                     <th>Team Lead Name</th> 

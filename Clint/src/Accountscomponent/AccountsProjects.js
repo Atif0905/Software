@@ -351,12 +351,12 @@ const AccountsProjects = () => {
   };
   const totalPriceSum = calculateTotalPriceSum();
   return (
-    <div className="">
+    <div className="main-content">
       {loading && <div className=""><Loader /></div>}
       <div className="formback1 ">
         
         <div className="p-2 ">
-        {projects.slice(0, 3).map((project, index) => (
+        {projects.map((project, index) => (
           <div key={index} className="">
             <div className={` projectdiv ${index === 0 ? 'projectdiv1' : index === 1 ? 'projectdiv2' : 'projectdiv3'}`}>
               <div className="coloureddiv1">

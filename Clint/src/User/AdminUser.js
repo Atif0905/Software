@@ -41,7 +41,7 @@ const AdminUser = () => {
       <div className="formback1 "  > 
       <h3 className="formhead">Welcome Admin</h3>  
       <div className="p-3">
-            <table >
+            <table className="unit-table">
               <thead className="">
               <tr>
               <th>Name</th>

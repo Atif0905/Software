@@ -114,11 +114,11 @@ const totalafterdiscount = total - total * (discount / 100);
   return (
     <div className="main-content">
       {loading && <div className="mt-5"><Loader /></div>}
-      <div className="table-wrapper formback1">
+      <div className=" formback1">
       <h2 className="formhead">Customer Details</h2>
         <div className="p-3">
         {data && (
-          <table className="fl-table ">
+          <table className="unit-table">
             <thead>
               <tr>
                 <th>NAME</th>
@@ -169,10 +169,10 @@ const totalafterdiscount = total - total * (discount / 100);
       </div>
       {data && (
         <div className="payment-details mt-4">
-          <div className="formback1">
+          <div className="formback2">
           <h3 className="formhead ">Payment Details</h3>
-            <div className="p-3">
-            <table>
+            <div className="">
+            <table className="unit-table">
               <thead>
                 <tr>
                   <th>Payment Type</th>

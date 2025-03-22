@@ -277,9 +277,10 @@ const ProductPage = () => {
   return (
     <div className="main-content">
      {loading && <Loader />}
-      <div className="formback1 ">
-        <div className="p-2 ">
-          <table id="producttable">
+      <div className="formback2 ">
+        <h2 className="formhead">Product List</h2>
+        <div className="formback1">
+          <table className="unit-table">
             <thead>
               <tr>
                 <td>Name</td>

@@ -22,7 +22,7 @@ const AccountsSidebar = () => {
 
   return (
     <div>
-      <div className='newside'>
+      <div className='side'>
         <div>
           <img src='./WTSlogo.png' className='sidelogo' alt='' />
         </div>
