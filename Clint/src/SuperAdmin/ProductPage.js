@@ -276,84 +276,86 @@ const ProductPage = () => {
   };
   return (
     <div className="main-content">
-     {loading && <Loader />}
-      <div className="formback2 ">
-        <h2 className="formhead">Product List</h2>
-        <div className="formback1">
-          <table className="unit-table">
-            <thead>
-              <tr>
-                <td>Name</td>
-                <td>Available Units</td>
-                <td>Hold Units</td>
-                <td>Sold Units</td>
-                <td>Total Payment</td>
-                <td>Received Payment</td>
-                <td>Due Payment</td>
-              </tr>
-            </thead>
-            <tbody>
-              {projects.slice(0, 3).map((project, index) => {
-                const totalPriceSum = calculateTotalPriceSum(project._id);
-                return (
-                  <React.Fragment key={index}>
-                    <tr onClick={() => handleProjectClick(project._id)}>
-                      <td className="tablecursor">
-                        {project.name.toUpperCase()}
-                      </td>
-                      <td
-                        className="tablecursor"
-                        onClick={() => handleFilterClick("available")}
-                      >
-                        {projectUnitCounts[project._id]?.totalAvailableUnits ||
-                          0}
-                      </td>
-                      <td
-                        className="tablecursor"
-                        onClick={() => handleFilterClick("hold")}
-                      >
-                        {projectUnitCounts[project._id]?.totalHoldUnits || 0}
-                      </td>
-                      <td
-                        className="tablecursor"
-                        onClick={() => handleFilterClick("sold")}
-                      >
-                        {projectUnitCounts[project._id]?.totalSoldUnits || 0}
-                      </td>
-                      <td>{totalPriceSum}</td>
-                      <td>{(paymentDetails[project._id] || 0).toFixed(2)}</td>
-                      <td>
-                        {(
-                          totalPriceSum - (paymentDetails[project._id] || 0)
-                        ).toFixed(2)}
-                      </td>
-                    </tr>
-                    {expandedProjectId === project._id &&
-                      project.blocks.map((block, blockIndex) => (
-                        
-                        <React.Fragment key={`block-${block._id}`}>
-                          <tr>
-                            <th>Block Name</th>
-                            <th>Unit Name</th>
-                            <th>Unit Status</th>
-                          </tr>
-                          {filterUnits(block.units).map((unit, unitIndex) => (
-                            <tr key={`unit-${unit._id}`}>
-                              <td>{block.name}</td>
-                              <td>{unit.name}</td>
-                              <td>{unit.status}</td>
-                            </tr>
-                          ))}
-                        </React.Fragment>
-                      ))}
-                  </React.Fragment>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    {loading ? (
+       <Loader />
+     ) : (
+     <div className="formback2 ">
+       <h2 className="formhead">Product List</h2>
+       <div className="formback1">
+         <table className="unit-table">
+           <thead>
+             <tr>
+               <td>Name</td>
+               <td>Available Units</td>
+               <td>Hold Units</td>
+               <td>Sold Units</td>
+               <td>Total Payment</td>
+               <td>Received Payment</td>
+               <td>Due Payment</td>
+             </tr>
+           </thead>
+           <tbody>
+             {projects.slice(0, 3).map((project, index) => {
+               const totalPriceSum = calculateTotalPriceSum(project._id);
+               return (
+                 <React.Fragment key={index}>
+                   <tr onClick={() => handleProjectClick(project._id)}>
+                     <td className="tablecursor">
+                       {project.name.toUpperCase()}
+                     </td>
+                     <td
+                       className="tablecursor"
+                       onClick={() => handleFilterClick("available")}
+                     >
+                       {projectUnitCounts[project._id]?.totalAvailableUnits ||
+                         0}
+                     </td>
+                     <td
+                       className="tablecursor"
+                       onClick={() => handleFilterClick("hold")}
+                     >
+                       {projectUnitCounts[project._id]?.totalHoldUnits || 0}
+                     </td>
+                     <td
+                       className="tablecursor"
+                       onClick={() => handleFilterClick("sold")}
+                     >
+                       {projectUnitCounts[project._id]?.totalSoldUnits || 0}
+                     </td>
+                     <td>{totalPriceSum}</td>
+                     <td>{(paymentDetails[project._id] || 0).toFixed(2)}</td>
+                     <td>
+                       {(
+                         totalPriceSum - (paymentDetails[project._id] || 0)
+                       ).toFixed(2)}
+                     </td>
+                   </tr>
+                   {expandedProjectId === project._id &&
+                     project.blocks.map((block, blockIndex) => (
+                       
+                       <React.Fragment key={`block-${block._id}`}>
+                         <tr>
+                           <th>Block Name</th>
+                           <th>Unit Name</th>
+                           <th>Unit Status</th>
+                         </tr>
+                         {filterUnits(block.units).map((unit, unitIndex) => (
+                           <tr key={`unit-${unit._id}`}>
+                             <td>{block.name}</td>
+                             <td>{unit.name}</td>
+                             <td>{unit.status}</td>
+                           </tr>
+                         ))}
+                       </React.Fragment>
+                     ))}
+                 </React.Fragment>
+               );
+             })}
+           </tbody>
+         </table>
+       </div>
+     </div>)}
+   </div>
   );
 };
 export default ProductPage;
