@@ -1,14 +1,26 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { fetchProjects, fetchCustomers, fetchPaymentDetails } from '../services/customerService'; // Import the services
+import {
+  fetchProjects,
+  fetchCustomers,
+  fetchPaymentDetails,
+} from "../services/customerService"; // Import the services
 import { BsArrowDownRightCircleFill } from "react-icons/bs";
 import PasswordPrompt from "./PasswordPrompt";
 import AccountsProjects from "./AccountsProjects";
 import Loader from "../Confirmation/Loader";
-const AccountsPayment = ({ projectsData, customersData, paymentDetailsData }) => {
+const AccountsPayment = ({
+  projectsData,
+  customersData,
+  paymentDetailsData,
+}) => {
   const [projects, setProjects] = useState(projectsData || []);
   const [customers, setCustomers] = useState(customersData || []);
-  const [paymentDetails, setPaymentDetails] = useState(paymentDetailsData || []);
-  const [loading, setLoading] = useState(!projectsData || !customersData || !paymentDetailsData);
+  const [paymentDetails, setPaymentDetails] = useState(
+    paymentDetailsData || []
+  );
+  const [loading, setLoading] = useState(
+    !projectsData || !customersData || !paymentDetailsData
+  );
   const [error, setError] = useState(null);
   const [isVisible, setIsVisible] = useState({
     totalPrice: false,
@@ -41,29 +53,63 @@ const AccountsPayment = ({ projectsData, customersData, paymentDetailsData }) =>
     }
   };
 
-  const calculatePerUnitPayment = (rate, plcCharges, idcCharges, plotSize, edcPrice) => {
-    return (parseFloat(rate) + parseFloat(plcCharges) + parseFloat(idcCharges) + parseFloat(edcPrice)) * parseFloat(plotSize);
+  const calculatePerUnitPayment = (
+    rate,
+    plcCharges,
+    idcCharges,
+    plotSize,
+    edcPrice
+  ) => {
+    return (
+      (parseFloat(rate) +
+        parseFloat(plcCharges) +
+        parseFloat(idcCharges) +
+        parseFloat(edcPrice)) *
+      parseFloat(plotSize)
+    );
   };
 
   const calculateTotalPriceOfAllUnits = useMemo(() => {
-    return projects.reduce((totalPrice, project) => {
-      return totalPrice + project.blocks.reduce((blockTotal, block) => {
-        return blockTotal + block.units.reduce((unitTotal, unit) => {
-          return unitTotal + calculatePerUnitPayment(unit.rate, unit.plcCharges, unit.idcCharges, unit.plotSize, unit.edcPrice);
-        }, 0);
-      }, 0);
-    }, 0).toFixed(2);
+    return projects
+      .reduce((totalPrice, project) => {
+        return (
+          totalPrice +
+          project.blocks.reduce((blockTotal, block) => {
+            return (
+              blockTotal +
+              block.units.reduce((unitTotal, unit) => {
+                return (
+                  unitTotal +
+                  calculatePerUnitPayment(
+                    unit.rate,
+                    unit.plcCharges,
+                    unit.idcCharges,
+                    unit.plotSize,
+                    unit.edcPrice
+                  )
+                );
+              }, 0)
+            );
+          }, 0)
+        );
+      }, 0)
+      .toFixed(2);
   }, [projects]);
 
   const calculateTotalAmountReceived = useMemo(() => {
     if (!Array.isArray(paymentDetails) || paymentDetails.length === 0) {
-      return '0.00';
+      return "0.00";
     }
-    return paymentDetails.reduce((sum, payment) => sum + parseFloat(payment.amount || 0), 0).toFixed(2);
+    return paymentDetails
+      .reduce((sum, payment) => sum + parseFloat(payment.amount || 0), 0)
+      .toFixed(2);
   }, [paymentDetails]);
 
   const calculateDuePayment = useMemo(() => {
-    return (parseFloat(calculateTotalPriceOfAllUnits) - parseFloat(calculateTotalAmountReceived)).toFixed(2);
+    return (
+      parseFloat(calculateTotalPriceOfAllUnits) -
+      parseFloat(calculateTotalAmountReceived)
+    ).toFixed(2);
   }, [calculateTotalPriceOfAllUnits, calculateTotalAmountReceived]);
 
   const toggleVisibility = (key) => {
@@ -75,9 +121,15 @@ const AccountsPayment = ({ projectsData, customersData, paymentDetailsData }) =>
   };
 
   const handlePasswordSubmit = (enteredPassword) => {
-    if (enteredPassword === "Admin") { 
-      setIsPasswordEntered((prevState) => ({ ...prevState, [showPasswordPrompt]: true }));
-      setIsVisible((prevState) => ({ ...prevState, [showPasswordPrompt]: true }));
+    if (enteredPassword === "Admin") {
+      setIsPasswordEntered((prevState) => ({
+        ...prevState,
+        [showPasswordPrompt]: true,
+      }));
+      setIsVisible((prevState) => ({
+        ...prevState,
+        [showPasswordPrompt]: true,
+      }));
     } else {
       alert("Incorrect password. Please try again.");
     }
@@ -85,43 +137,83 @@ const AccountsPayment = ({ projectsData, customersData, paymentDetailsData }) =>
   };
   return (
     <div className="">
-       {loading ? (
-        <Loader/>
+      {loading ? (
+        <Loader />
       ) : (
-      <div className="upperconatiner">
-      <div className="paymentdiv">
-        <h3 className="text-center mt-3">PAYMENT </h3>
-        <div className="row">
-        <div className="col-1 mt-3">
-        <div className="circle"><div className="paymentcircle1"><div className="paymentcircle"></div></div></div>
-        <div className="circle"><div className="paymentcircle1"><div className="paymentcircle"></div></div></div>
-        <div className="circle"><div className="paymentcircle1"><div className="paymentcircle"></div></div></div>
+        <div className="upperconatiner">
+          <div className="paymentdiv">
+            <h3 className="text-center mt-3">PAYMENT </h3>
+            <div className="row">
+              <div className="col-1 mt-3">
+                <div className="circle">
+                  <div className="paymentcircle1">
+                    <div className="paymentcircle"></div>
+                  </div>
+                </div>
+                <div className="circle">
+                  <div className="paymentcircle1">
+                    <div className="paymentcircle"></div>
+                  </div>
+                </div>
+                <div className="circle">
+                  <div className="paymentcircle1">
+                    <div className="paymentcircle"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-11">
+                <div className="payment-box totalpaymentdiv">
+                  <h6 className="paymenttext">Total Payment</h6>
+                  <div className="d-flex justify-content-between">
+                    <p className="colouredtext1">
+                      {isVisible.totalPrice
+                        ? calculateTotalPriceOfAllUnits
+                        : "***********"}
+                    </p>
+                    <BsArrowDownRightCircleFill
+                      className="arrowicon1 arrowicon"
+                      onClick={() => toggleVisibility("totalPrice")}
+                    />
+                  </div>
+                </div>
+                <div className=" payment-box  receivepaymentdiv">
+                  <h6 className="paymenttext">Received Payment</h6>
+                  <div className="d-flex justify-content-between">
+                    <p className="colouredtext1">
+                      {isVisible.totalReceivedPayment
+                        ? calculateTotalAmountReceived
+                        : "***********"}
+                    </p>
+                    <BsArrowDownRightCircleFill
+                      className="arrowicon2 arrowicon"
+                      onClick={() => toggleVisibility("totalReceivedPayment")}
+                    />
+                  </div>
+                </div>
+                <div className=" payment-box duepaymentdiv">
+                  <h3 className="paymenttext">Due Payment</h3>
+                  <div className="d-flex justify-content-between">
+                    <p className="colouredtext1">
+                      {isVisible.duePayment
+                        ? calculateDuePayment
+                        : "***********"}
+                    </p>
+                    <BsArrowDownRightCircleFill
+                      className="arrowicon3 arrowicon"
+                      onClick={() => toggleVisibility("duePayment")}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* <div className="formback1">
+            <AccountsProjects />
+            <a href="/All-projects">
+              <p className="center seemore">See More &gt;</p>
+            </a>
+          </div> */}
         </div>
-        <div className="col-11">
-        <div className="payment-box totalpaymentdiv">
-      <h6 className="paymenttext">Total Payment</h6>
-      <div className="d-flex justify-content-between">
-      <p className="colouredtext1" >{isVisible.totalPrice ? calculateTotalPriceOfAllUnits : '***********'}</p>
-      <BsArrowDownRightCircleFill className="arrowicon1 arrowicon" onClick={() => toggleVisibility('totalPrice')} /></div>
-      </div>
-        <div className=" payment-box  receivepaymentdiv">
-      <h6 className="paymenttext">Received Payment</h6>
-      <div className="d-flex justify-content-between">
-      <p className="colouredtext1" >{isVisible.totalReceivedPayment ? calculateTotalAmountReceived : '***********'}</p>
-      <BsArrowDownRightCircleFill className="arrowicon2 arrowicon" onClick={() => toggleVisibility('totalReceivedPayment')} /></div>
-      </div>
-      <div className=" payment-box duepaymentdiv">
-      <h3 className="paymenttext">Due Payment</h3>
-      <div className="d-flex justify-content-between">
-      <p className="colouredtext1" >{isVisible.duePayment ? calculateDuePayment : '***********'}</p>
-      <BsArrowDownRightCircleFill className="arrowicon3 arrowicon" onClick={() => toggleVisibility('duePayment')} /></div>
-      </div>
-
-        </div>
-        </div>
-      </div>
-      <div className="formback1"><AccountsProjects/><a href="/All-projects"><p className="center seemore">See More &gt;</p></a></div>
-      </div>
       )}
       {showPasswordPrompt && (
         <PasswordPrompt
@@ -129,7 +221,6 @@ const AccountsPayment = ({ projectsData, customersData, paymentDetailsData }) =>
           onClose={() => setShowPasswordPrompt(null)}
         />
       )}
-
     </div>
   );
 };

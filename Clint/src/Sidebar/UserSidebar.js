@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import './Side.css';
-import { PiBellBold , PiBellFill} from "react-icons/pi";
+import "./Side.css";
+import { PiBellBold, PiBellFill } from "react-icons/pi";
 import { RiDashboard3Line } from "react-icons/ri";
-import useFetchUser from '../hooks/useFetchUser';
-import axios from 'axios';
+import useFetchUser from "../hooks/useFetchUser";
+import axios from "axios";
 import { IoSearch } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
-import UserNotification from '../Reminder/UserNotification';
+import UserNotification from "../Reminder/UserNotification";
+import ConfirmationModal from "../Confirmation/ConfirmationModal";
 import { FaHistory } from "react-icons/fa";
 
 const UserSidebar = () => {
@@ -31,7 +32,7 @@ const UserSidebar = () => {
 
   const logOut = () => {
     window.localStorage.clear();
-    navigate('/sign-in');
+    navigate("/sign-in");
   };
 
   const handleSubmit = () => {
@@ -62,8 +63,14 @@ const UserSidebar = () => {
   useEffect(() => {
     const fetchLogo = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/logo`);
-        if (response.data && response.data.files && response.data.files.length > 0) {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/logo`
+        );
+        if (
+          response.data &&
+          response.data.files &&
+          response.data.files.length > 0
+        ) {
           setLogoFiles(response.data.files);
         } else {
           setLogoFiles([]); // Set to an empty array if response.data is null or no files exist
@@ -78,46 +85,88 @@ const UserSidebar = () => {
 
   return (
     <div>
-      <div className='side'>
-        <div className='center mt-3'>
-        <a href='/Admin_details'>
-  <img 
-    src={logoFiles.length > 0 ? `${process.env.REACT_APP_API_URL}/${logoFiles[0]}` : './Defaultlogo.jpg'} 
-    className='sidelogo' 
-    alt='Logo' 
-  />
-</a>
-
+      <div className="side">
+        <div className="center mt-3">
+          <a href="/Admin_details">
+            <img
+              src={
+                logoFiles.length > 0
+                  ? `${process.env.REACT_APP_API_URL}/${logoFiles[0]}`
+                  : "./Defaultlogo.jpg"
+              }
+              className="sidelogo"
+              alt="Logo"
+            />
+          </a>
         </div>
-        <div className='mt-3'>
+        <div className="mt-3">
           <Link to="/UserDashboard">
-            <div className={`Sidelink ${location.pathname === '/UserDashboard' ? 'active' : ''}`}>
-              <RiDashboard3Line className='svg-icon' /> DashBoard
+            <div
+              className={`Sidelink ${
+                location.pathname === "/UserDashboard" ? "active" : ""
+              }`}
+            >
+              <RiDashboard3Line className="svg-icon" /> DashBoard
             </div>
           </Link>
           <Link to="/Hold-History">
-            <div className={`Sidelink ${location.pathname === '/Hold-History' ? 'active' : ''}`}>
-              <FaHistory className='svg-icon' /> Hold History
+            <div
+              className={`Sidelink ${
+                location.pathname === "/Hold-History" ? "active" : ""
+              }`}
+            >
+              <FaHistory className="svg-icon" /> Hold History
             </div>
           </Link>
         </div>
       </div>
-      <div className='center1'>
-        <div className='sideabove'>
-        <div className='relative'><IoSearch className='searchicon'/><input type='search' className='navsearch' placeholder='Search Product'/></div>  
-        <div className='right1'>    
-        <div className='bellicondiv1' onClick={toggleBellIcon} ref={bellIconRef} >
-         {bellClicked ? <PiBellFill className='bellicon' /> : <PiBellBold className='bellicon' />}
-        </div>
-         {bellClicked && (<div className={`duedate-dropdown roll-in`} ref={dropdownRef}><UserNotification/></div> )}
-           <div className='d-flex'>
-            <FaUserCircle className='userface'/>
-            {user && (
-              <div>  <div className='loginname1'>{user.fname} {user.lname}</div></div>
+      <div className="center1">
+        <div className="sideabove">
+          <div className="relative">
+            <IoSearch className="searchicon" />
+            <input
+              type="search"
+              className="navsearch"
+              placeholder="Search Product"
+            />
+          </div>
+          <div className="right1">
+            <div
+              className="bellicondiv1"
+              onClick={toggleBellIcon}
+              ref={bellIconRef}
+            >
+              {bellClicked ? (
+                <PiBellFill className="bellicon" />
+              ) : (
+                <PiBellBold className="bellicon" />
+              )}
+            </div>
+            {bellClicked && (
+              <div className={`duedate-dropdown roll-in`} ref={dropdownRef}>
+                <UserNotification />
+              </div>
             )}
+              <div className="d-flex">
+              <FaUserCircle className="userface" onClick={handleSubmit} />
+              {user && (
+                <div className="loginname1">
+                  {user.fname.toUpperCase()} {user.lname.toUpperCase()}
+                  <div>
+                    <ConfirmationModal
+                      show={showConfirm}
+                      onClose={() => setShowConfirm(false)}
+                      onConfirm={() => {
+                        setShowConfirm(false);
+                        logOut();
+                      }}
+                      message="Are you sure you want to Logout?"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-          </div>
-
         </div>
       </div>
     </div>

@@ -181,12 +181,20 @@ const Superadminsidebar = () => {
               </div>
             )}
             <div className="d-flex">
-              <FaUserCircle className="userface" />
+              <FaUserCircle className="userface" onClick={handleSubmit} />
               {user && (
-                <div>
-                  {" "}
-                  <div className="loginname1">
-                    {user.fname} {user.lname}
+                <div className="loginname1">
+                  {user.fname.toUpperCase()} {user.lname.toUpperCase()}
+                  <div>
+                    <ConfirmationModal
+                      show={showConfirm}
+                      onClose={() => setShowConfirm(false)}
+                      onConfirm={() => {
+                        setShowConfirm(false);
+                        logOut();
+                      }}
+                      message="Are you sure you want to Logout?"
+                    />
                   </div>
                 </div>
               )}
